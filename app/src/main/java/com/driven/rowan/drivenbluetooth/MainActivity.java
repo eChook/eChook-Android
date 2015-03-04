@@ -33,6 +33,9 @@ public class MainActivity extends ActionBarActivity {
     TextView myLabel;
     EditText myTextbox;
     EditText myIncoming;
+    EditText mySpeed;
+    EditText myCurrent;
+    EditText myVoltage;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice;
@@ -59,15 +62,27 @@ public class MainActivity extends ActionBarActivity {
         myLabel = (TextView)findViewById(R.id.label);
         myTextbox = (EditText)findViewById(R.id.entry);
         myIncoming = (EditText)findViewById(R.id.incoming);
+        mySpeed = (EditText)findViewById(R.id.speed);
+        myCurrent = (EditText)findViewById(R.id.current);
+        myVoltage = (EditText)findViewById(R.id.voltage);
 
         //Open Button
         openButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
+                    deviceConnected = false;
+                    closeBT();
                     findBT();
                     openBT();
+                    if(deviceConnected)
+                        showMessage("Bluetooth Successfully Connected");
+                    else
+                        showMessage("Failed to Connect, Try Again");
+
                 }
-                catch (IOException ex) { }
+                catch (IOException ex) {
+                    showMessage("Failed to Connect, Try Again");
+                }
             }
         });
 
@@ -166,10 +181,10 @@ public class MainActivity extends ActionBarActivity {
 
 
     }
-
+       /*
     void beginListenForData() {
         final Handler handler = new Handler();
-        final byte delimiter = 92; //10 is the ASCII code for a newline character
+        final byte delimiter = 92; //10 is the ASCII code for a newline character, 92 is '\'
 
         stopWorker = false;
         readBufferPosition = 0;
@@ -184,17 +199,109 @@ public class MainActivity extends ActionBarActivity {
                             mmInputStream.read(packetBytes);
                             for(int i=0;i<bytesAvailable;i++) {
                                 byte b = packetBytes[i];
+                                byte id = packetBytes[i++];
                                 if(b == delimiter) {
                                     byte[] encodedBytes = new byte[readBufferPosition];
                                     System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
                                     final String data = new String(encodedBytes, "US-ASCII");
                                     readBufferPosition = 0;
 
-                                    handler.post(new Runnable() {
-                                        public void run() {
-                                            myIncoming.append(data+"\n");
-                                        }
-                                    });
+                                    Log.d(TAG,"Incoming Data. id= "+id+", Data= "+data);
+
+                                    if(id == 's') {
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                mySpeed.setText(data + "mph");
+                                            }
+                                        });
+                                    }else if(id == 'v') {
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                myVoltage.setText(data + "V");
+                                            }
+                                        });
+                                    }else if(id == 'i') {
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                myCurrent.setText(data + "A");
+                                            }
+                                        });
+                                    }else {
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                myIncoming.append(data + "\n");
+                                            }
+                                        });
+                                    }
+                                }
+                                else {
+                                    readBuffer[readBufferPosition++] = b;
+                                }
+                            }
+                        }
+                    }
+                    catch (IOException ex) {
+                        stopWorker = true;
+                    }
+                }
+            }
+        });
+
+        workerThread.start();
+    }*/
+
+    void beginListenForData() {
+        final Handler handler = new Handler();
+        final byte delimiter = 92; //10 is the ASCII code for a newline character, 92 is '\'
+
+        stopWorker = false;
+        readBufferPosition = 0;
+        readBuffer = new byte[2048];
+        workerThread = new Thread(new Runnable() {
+            public void run() {
+                while(!Thread.currentThread().isInterrupted() && !stopWorker) {
+                    try {
+                        int bytesAvailable = mmInputStream.available();
+                        if(bytesAvailable > 0) {
+                            byte[] packetBytes = new byte[bytesAvailable];
+                            mmInputStream.read(packetBytes);
+                            for(int i=0;i<bytesAvailable;i++) {
+                                byte b = packetBytes[i];
+                                byte id = packetBytes[i+4];
+                                if(b == delimiter) {
+                                    Log.d(TAG, "Entering Delimiter loop");
+                                    byte[] encodedBytes = new byte[readBufferPosition];
+                                    System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
+                                    final String data = new String(encodedBytes, "US-ASCII");
+                                    readBufferPosition = 0;
+
+                                    Log.d(TAG,"Incoming Data. b= "+b+", id= "+id+", Data= "+data);
+
+                                    if(id == 's') {
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                mySpeed.setText(data + "mph");
+                                            }
+                                        });
+                                    }else if(id == 'v') {
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                myVoltage.setText(data + "V");
+                                            }
+                                        });
+                                    }else if(id == 'i') {
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                myCurrent.setText(data + "A");
+                                            }
+                                        });
+                                    }else {
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                myIncoming.append(data + "\n");
+                                            }
+                                        });
+                                    }
                                 }
                                 else {
                                     readBuffer[readBufferPosition++] = b;
