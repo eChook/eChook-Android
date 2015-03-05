@@ -262,37 +262,68 @@ public class MainActivity extends ActionBarActivity {
                 while(!Thread.currentThread().isInterrupted() && !stopWorker) {
                     try {
                         int bytesAvailable = mmInputStream.available();
-                        if(bytesAvailable > 0) {
+                        int j;
+                        int lpc=0;
+                        if(bytesAvailable > 4) {
                             byte[] packetBytes = new byte[bytesAvailable];
                             mmInputStream.read(packetBytes);
                             for(int i=0;i<bytesAvailable;i++) {
                                 byte b = packetBytes[i];
-                                byte id = packetBytes[i+4];
                                 if(b == delimiter) {
-                                    Log.d(TAG, "Entering Delimiter loop");
-                                    byte[] encodedBytes = new byte[readBufferPosition];
-                                    System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
+                                    Log.d(TAG,"Bytes available = "+bytesAvailable);
+                                    Log.d(TAG,"Delimiter Position = "+i);
+                                    for(j = bytesAvailable-1; j>0; j-- ) {
+
+                                        if (packetBytes[j] == 37){
+                                            Log.d(TAG,"Start Position = "+j);
+                                            break;// exits leaving j as the position of the start byte
+                                        }
+
+                                    }
+
+                                    if(i-j-2 <= 0) { //safety case for creating the following array         %s1234\%v1234\
+                                        lpc = lpc+1;
+                                        //final int lpc2 = lpc;
+                                        handler.post(new Runnable() {
+                                            public void run() {
+                                                myIncoming.append("Lost a Packet \n");
+                                            }
+                                        });
+                                        Log.d(TAG,"Breaking. Tried to create an array of "+(i-j-2) +" count = "+lpc);
+                                        break;
+                                    }
+
+                                    byte[] encodedBytes = new byte[i-j-2];//length of incoming data, excluding start and end delimiters
+
+                                    Log.d(TAG,"Creating encodedBytes array of " + encodedBytes.length);
+                                    //Log.d(TAG,"Creating encodedBytes array of " + encodedBytes.length);
+                                    //byte[] encodedBytes = new byte[readBufferPosition];
+                                    System.arraycopy(readBuffer, j+2, encodedBytes, 0, encodedBytes.length); //encoded bytes should now be along the lines of "%s24.5\"
+                                    char id = (char) readBuffer[j+1];
                                     final String data = new String(encodedBytes, "US-ASCII");
+                                    Log.d(TAG,"Incoming String = "+data);
                                     readBufferPosition = 0;
+
+                                    //char id = (char) encodedBytes[1];
 
                                     Log.d(TAG,"Incoming Data. b= "+b+", id= "+id+", Data= "+data);
 
                                     if(id == 's') {
                                         handler.post(new Runnable() {
                                             public void run() {
-                                                mySpeed.setText(data + "mph");
+                                                mySpeed.setText(data + " mph");
                                             }
                                         });
                                     }else if(id == 'v') {
                                         handler.post(new Runnable() {
                                             public void run() {
-                                                myVoltage.setText(data + "V");
+                                                myVoltage.setText(data + " V");
                                             }
                                         });
                                     }else if(id == 'i') {
                                         handler.post(new Runnable() {
                                             public void run() {
-                                                myCurrent.setText(data + "A");
+                                                myCurrent.setText(data + " A");
                                             }
                                         });
                                     }else {
