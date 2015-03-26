@@ -12,17 +12,18 @@ import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
 
-import java.io.IOException;
-
 
 public class MainActivity extends ActionBarActivity {
 
     static TextView myLabel;
-    static EditText myTextbox;
-    static EditText myIncoming;
+    static TextView myTextbox;
+    static TextView myIncoming;
     static EditText mySpeed;
     static EditText myCurrent;
     static EditText myVoltage;
+	private Thread Gen = new Thread(new RandomGenerator());
+	private Thread Parser = new Thread(new BTDataParser());
+	private Thread UIUpdater = new Thread(new UIUpdate());
 
     boolean deviceConnected = false;
     boolean matchingDeviceFound = false;
@@ -40,8 +41,8 @@ public class MainActivity extends ActionBarActivity {
         Button sendButton = (Button)findViewById(R.id.send);
         Button closeButton = (Button)findViewById(R.id.close);
         myLabel = (TextView)findViewById(R.id.label);
-        myTextbox = (EditText)findViewById(R.id.entry);
-        myIncoming = (EditText)findViewById(R.id.incoming);
+        myTextbox = (TextView)findViewById(R.id.entry);
+        myIncoming = (TextView)findViewById(R.id.incoming);
         mySpeed = (EditText)findViewById(R.id.speed);
         myCurrent = (EditText)findViewById(R.id.current);
         myVoltage = (EditText)findViewById(R.id.voltage);
@@ -49,7 +50,18 @@ public class MainActivity extends ActionBarActivity {
         final BluetoothManager myBluetoothManager = new BluetoothManager();
 
         //Open Button
-        openButton.setOnClickListener(new View.OnClickListener() {
+		openButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				try {
+					Gen.start();
+					//Parser.start();
+					//UIUpdater.start();
+				} catch (Exception e) {
+					showMessage(e.getMessage().toString());
+				}
+			}
+		});
+        /*openButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
                     myLabel.setText("Bluetooth Device Found");
@@ -66,10 +78,16 @@ public class MainActivity extends ActionBarActivity {
                     showMessage("Failed to Connect, Try Again");
                 }
             }
-        });
+        });*/
 
         //Send Button
-        sendButton.setOnClickListener(new View.OnClickListener() {
+		sendButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				Gen.stop();
+				Parser.stop();
+			}
+		});
+        /*sendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
                     myBluetoothManager.sendData();
@@ -78,23 +96,28 @@ public class MainActivity extends ActionBarActivity {
                     showMessage("SEND FAILED");
                 }
             }
-        });
+        });*/
 
         //Close button
-        closeButton.setOnClickListener(new View.OnClickListener() {
+		closeButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				runOnUiThread(new UIUpdate());
+			}
+		});
+        /*closeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
                     myBluetoothManager.closeBT();
                 }
                 catch (IOException ex) { }
             }
-        });
+        });*/
     }
 
 
     private void showMessage(String theMsg) {
         Toast msg = Toast.makeText(getBaseContext(),
-                theMsg, (Toast.LENGTH_LONG)/160);
+                theMsg, (Toast.LENGTH_LONG));
         msg.show();
     }
 

@@ -102,7 +102,7 @@ public class BTDataParser implements Runnable {
 		double volts = rawVolts; // Apply conversion and offset TODO revisit volts
 		double timestamp = System.currentTimeMillis();
 
-		List<Double> dataPoint = new ArrayList<>();
+		ArrayList<Double> dataPoint = new ArrayList<>();
 
 		dataPoint.add(timestamp);
 		dataPoint.add(volts);
@@ -114,7 +114,7 @@ public class BTDataParser implements Runnable {
 		double amps = rawAmps; // Apply conversion and offset TODO revisit amps
 		double timestamp = System.currentTimeMillis();
 
-		List<Double> dataPoint = new ArrayList<>();
+		ArrayList<Double> dataPoint = new ArrayList<>();
 
 		dataPoint.add(timestamp);
 		dataPoint.add(amps);
@@ -126,7 +126,7 @@ public class BTDataParser implements Runnable {
 		double throttle = rawThrottle; // Apply conversion and offset TODO revisit throttle
 		double timestamp = System.currentTimeMillis();
 
-		List<Double> dataPoint = new ArrayList<>();
+		ArrayList<Double> dataPoint = new ArrayList<>();
 
 		dataPoint.add(timestamp);
 		dataPoint.add(throttle);
@@ -139,7 +139,7 @@ public class BTDataParser implements Runnable {
 		double wheelRPM = rawWheelRPM; // Apply conversion and offset TODO revisit wheelRPM
 		double timestamp = System.currentTimeMillis(); // Get current timestamp in milliseconds since 1 Jan 1970
 
-		List<Double> dataPoint = new ArrayList<>();
+		ArrayList<Double> dataPoint = new ArrayList<>();
 
 		dataPoint.add(timestamp);
 		dataPoint.add(wheelRPM);
@@ -161,7 +161,7 @@ public class BTDataParser implements Runnable {
 		double motorRPM = rawMotorRPM; // Apply conversion and offset TODO revisit motorRPM
 		double timestamp = System.currentTimeMillis();
 
-		List<Double> dataPoint = new ArrayList<>();
+		ArrayList<Double> dataPoint = new ArrayList<>();
 
 		dataPoint.add(timestamp);
 		dataPoint.add(motorRPM);

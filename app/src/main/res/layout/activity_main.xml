@@ -51,7 +51,7 @@
         android:layout_alignRight="@+id/open"
         android:layout_alignEnd="@+id/open" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/entry"
@@ -63,7 +63,7 @@
         android:layout_alignEnd="@+id/close"
         android:text="Entry" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/incoming"
@@ -73,9 +73,9 @@
         android:layout_above="@+id/speed"
         android:editable="false"
         android:inputType="text"
-        android:layout_below="@+id/entry"
         android:layout_alignLeft="@+id/speed"
-        android:layout_alignStart="@+id/speed" />
+        android:layout_alignStart="@+id/speed"
+        android:layout_below="@+id/entry"/>
 
     <TextView
         android:layout_width="wrap_content"
