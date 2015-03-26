@@ -8,16 +8,8 @@ import java.io.InputStream;
 /**
  * Created by Ben on 09/03/2015.
  *
- * This Stream reader assumes that the Bluetooth data is a string of the format XYYYY
- * Where X is an identifier and YYYY is the data
- *
- * ========  IDENTIFIERS  =============
- *      sYYYY :: wheel speed (raw)
- *      vYYYY :: voltage (raw)
- *      iYYYY :: current (raw)
- *      mYYYY :: motor speed (raw)
- *      bYYYY :: brake position (raw)
- *      tYYYY :: throttle position (raw)
+ * This Stream reader assumes that the Bluetooth data is a byte array
+ * starting with '{' and ending with '}'
  */
 public class BTStreamReader implements Runnable {
     // Member variables
@@ -59,9 +51,19 @@ public class BTStreamReader implements Runnable {
 							// delimiter not reached yet so continue adding to buffer
 							buffer[readBufferPosition] = b;
 							readBufferPosition++;
-					    } else {
+						} else {
 							// delimiter reached; flush buffer into the global queue
-							Global.BTStreamQueue.add(buffer);
+							byte[] encodedBytes = new byte[readBufferPosition];
+							System.arraycopy(buffer, 0, encodedBytes, 0, encodedBytes.length);
+
+							// encodedBytes now holds the data until the delimiter
+							// flush it to the global queue
+							Global.BTStreamQueue.add(encodedBytes);
+
+							// TODO: maybe log the raw message?
+
+							// reset the buffer pointer
+							readBufferPosition = 0;
 						}
 				    }
 			    }
