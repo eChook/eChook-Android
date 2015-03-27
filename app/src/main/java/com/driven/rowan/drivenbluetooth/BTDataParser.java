@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by Ben on 09/03/2015.
  */
-public class BTDataParser implements Runnable {
+public class BTDataParser extends Thread {
 	private byte[] poppedData;
 	private volatile boolean stopWorker = false;
 
@@ -17,7 +17,7 @@ public class BTDataParser implements Runnable {
 	@Override
 	public void run() {
 		this.stopWorker = false;
-		while (!Thread.currentThread().isInterrupted() && !this.stopWorker) {
+		while (!this.stopWorker) {
 			poppedData = Global.BTStreamQueue.poll();
 			if (poppedData != null) {
                 /* poppedData should look like {sXY}
@@ -168,7 +168,7 @@ public class BTDataParser implements Runnable {
 		Global.MotorRPM.add(dataPoint);
 	}
 
-	public void stop() {
+	public void cancel() {
 		this.stopWorker = true;
 	}
 

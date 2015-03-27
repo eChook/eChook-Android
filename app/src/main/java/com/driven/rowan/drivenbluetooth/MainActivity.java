@@ -21,9 +21,9 @@ public class MainActivity extends ActionBarActivity {
     static EditText mySpeed;
     static EditText myCurrent;
     static EditText myVoltage;
-	private Thread Gen = new Thread(new RandomGenerator());
-	private Thread Parser = new Thread(new BTDataParser());
-	private Thread UIUpdater = new Thread(new UIUpdate());
+	private RandomGenerator Gen = new RandomGenerator();
+	private BTDataParser Parser = new BTDataParser();
+	private UIUpdate UIUpdater = new UIUpdate();
 
     boolean deviceConnected = false;
     boolean matchingDeviceFound = false;
@@ -53,8 +53,12 @@ public class MainActivity extends ActionBarActivity {
 		openButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				try {
+					if (Gen.getState() == Thread.State.TERMINATED) { Gen = new RandomGenerator();}
+
+					if (Parser.getState() == Thread.State.TERMINATED) {	Parser = new BTDataParser();}
+
 					Gen.start();
-					//Parser.start();
+					Parser.start();
 					//UIUpdater.start();
 				} catch (Exception e) {
 					showMessage(e.getMessage().toString());
@@ -83,8 +87,8 @@ public class MainActivity extends ActionBarActivity {
         //Send Button
 		sendButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				Gen.stop();
-				Parser.stop();
+				Gen.cancel();
+				Parser.cancel();
 			}
 		});
         /*sendButton.setOnClickListener(new View.OnClickListener() {

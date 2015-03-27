@@ -11,7 +11,7 @@ import java.io.InputStream;
  * This Stream reader assumes that the Bluetooth data is a byte array
  * starting with '{' and ending with '}'
  */
-public class BTStreamReader implements Runnable {
+public class BTStreamReader extends Thread {
     // Member variables
     private InputStream mmInStream = null;
 	private volatile boolean stopWorker = false;
@@ -36,7 +36,7 @@ public class BTStreamReader implements Runnable {
 	    this.stopWorker = false;
 	    int readBufferPosition = 0;
 
-	    while (!Thread.currentThread().isInterrupted() && !this.stopWorker && this.mmInStream != null) {
+	    while (!this.stopWorker && this.mmInStream != null) {
 		    try {
 			    int bytesAvailable = mmInStream.available();
 
@@ -75,7 +75,7 @@ public class BTStreamReader implements Runnable {
 	    }
     }
 
-	public void stop() {
+	public void cancel() {
 		this.stopWorker = true;
 	}
 }

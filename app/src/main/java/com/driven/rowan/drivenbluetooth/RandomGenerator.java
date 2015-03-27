@@ -3,27 +3,35 @@ package com.driven.rowan.drivenbluetooth;
 import java.util.Random;
 
 /**
- * Created by BNAGY4 on 26/03/2015.
+ * Created by Ben on 26/03/2015.
  */
-public class RandomGenerator implements Runnable {
+public class RandomGenerator extends Thread {
 	Random rnd = new Random();
 	private volatile boolean stopWorker = false;
 
 	public void run() {
-		while(!Thread.currentThread().isInterrupted() && !this.stopWorker){
+		this.stopWorker = false;
+		while(!this.stopWorker){
 			byte[] Message = new byte[5];
 			// { x y z }
 
-			// fill with random shit
-			rnd.nextBytes(Message);
+			byte[] IDS = new byte[3];
+			IDS[0] = Global.VOLTID;
+			IDS[1] = Global.AMPID;
+			IDS[2] = Global.WHEELRPMID;
 
-			// organise key bytes
-			Message[0] = Global.STARTBYTE;
-			Message[4] = Global.STOPBYTE;
-			Message[1] = Global.VOLTID;
+			for (int i = 0; i < IDS.length; i++) {
+				// fill with random shit
+				rnd.nextBytes(Message);
 
-			// push to queue
-			Global.BTStreamQueue.add(Message);
+				// organise key bytes
+				Message[0] = Global.STARTBYTE;
+				Message[4] = Global.STOPBYTE;
+				Message[1] = IDS[i];
+
+				// push to queue
+				Global.BTStreamQueue.add(Message);
+			}
 
 			// wait 250 milliseconds
 			try {
@@ -32,5 +40,9 @@ public class RandomGenerator implements Runnable {
 				// ??
 			}
 		}
+	}
+
+	public void cancel() {
+		this.stopWorker = true;
 	}
 }

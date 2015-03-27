@@ -9,18 +9,36 @@ import android.view.View;
  */
 
 /* This class should only be used by posting to the UI thread */
-public class UIUpdate implements Runnable {
-
+public class UIUpdate extends Thread {
+	private volatile boolean stopWorker = false;
 	public void run() {
 
 			// code to update UI elements
 			// hopefully this is inherently thread safe
+
+		// Voltage
+		try {
+			MainActivity.myVoltage.setText(Global.Volts.get(Global.Volts.size() - 1).get(1).toString());
+		} catch (Exception e) {
+			e.toString();
+		}
+
+		// Speed
 		try {
 			MainActivity.mySpeed.setText(Global.SpeedMPH.get(Global.SpeedMPH.size() - 1).get(1).toString());
-			MainActivity.myVoltage.setText(Global.Volts.get(Global.Volts.size() - 1).get(1).toString());
+		} catch (Exception e) {
+			e.toString();
+		}
+
+		// Current
+		try {
 			MainActivity.myCurrent.setText(Global.Amps.get(Global.Amps.size() - 1).get(1).toString());
 		} catch (Exception e) {
-			// something
+			e.toString();
 		}
+	}
+
+	public void cancel() {
+		this.stopWorker = true;
 	}
 }

@@ -1,22 +1,23 @@
 package com.driven.rowan.drivenbluetooth;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Collections;
 
 /**
  * Created by Ben on 09/03/2015.
  */
 public final class Global {
-    public volatile BlockingQueue<byte[]> BTStreamQueue = new SynchronousQueue<>();
-	public volatile ArrayList<ArrayList<Double>> Volts = new ArrayList<>();
-	public volatile ArrayList<ArrayList<Double>> Amps = new ArrayList<>();
-	public volatile ArrayList<ArrayList<Double>> Throttle = new ArrayList<>();
-	public volatile ArrayList<ArrayList<Double>> MotorRPM = new ArrayList<>();
-	public volatile ArrayList<ArrayList<Double>> WheelRPM = new ArrayList<>();
-	public volatile ArrayList<ArrayList<Double>> SpeedMPH = new ArrayList<>();
-	public volatile ArrayList<ArrayList<Double>> SpeedKPH = new ArrayList<>();
+    public static volatile BlockingQueue<byte[]> BTStreamQueue = new LinkedBlockingQueue<>();
+	public static ArrayList<ArrayList<Double>> Volts = new ArrayList<>();
+	public static ArrayList<ArrayList<Double>> Amps = new ArrayList<>();
+	public static ArrayList<ArrayList<Double>> Throttle = new ArrayList<>();
+	public static ArrayList<ArrayList<Double>> MotorRPM = new ArrayList<>();
+	public static ArrayList<ArrayList<Double>> WheelRPM = new ArrayList<>();
+	public static ArrayList<ArrayList<Double>> SpeedMPH = new ArrayList<>();
+	public static ArrayList<ArrayList<Double>> SpeedKPH = new ArrayList<>();
 
 	public static final double WHEEL_DIAMETER = 0.5; // in metres
 
