@@ -21,6 +21,11 @@ public class MainActivity extends ActionBarActivity {
     static EditText mySpeed;
     static EditText myCurrent;
     static EditText myVoltage;
+
+	static TextView mySpeedDataCount;
+	static TextView myVoltsDataCount;
+	static TextView myAmpsDataCount;
+
 	private RandomGenerator Gen = new RandomGenerator();
 	private BTDataParser Parser = new BTDataParser();
 	private UIUpdate UIUpdater = new UIUpdate();
@@ -46,6 +51,11 @@ public class MainActivity extends ActionBarActivity {
         mySpeed = (EditText)findViewById(R.id.speed);
         myCurrent = (EditText)findViewById(R.id.current);
         myVoltage = (EditText)findViewById(R.id.voltage);
+
+		mySpeedDataCount = (TextView) findViewById(R.id.SpeedDataCount);
+		myVoltsDataCount = (TextView) findViewById(R.id.VoltsDataCount);
+		myAmpsDataCount = (TextView) findViewById(R.id.AmpsDataCount);
+
 
         final BluetoothManager myBluetoothManager = new BluetoothManager();
 

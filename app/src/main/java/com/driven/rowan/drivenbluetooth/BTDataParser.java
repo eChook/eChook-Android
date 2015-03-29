@@ -47,10 +47,10 @@ public class BTDataParser extends Thread {
 
 					if (poppedData[2] < 128) {
 						//FLOAT
-						value = (double) poppedData[2] + poppedData[3] / 100;
+						value = (double)poppedData[2] + (double)poppedData[3] / 100;
 					} else {
 						// INTEGER
-						value = (double) poppedData[2] * 100 + poppedData[3];
+						value = (double)poppedData[2] * 100 + (double)poppedData[3];
 					}
 
 					// Check the ID
@@ -99,7 +99,7 @@ public class BTDataParser extends Thread {
 	 */
 
 	private void AddVoltage(double rawVolts) {
-		double volts = rawVolts; // Apply conversion and offset TODO revisit volts
+		double volts = round(rawVolts, 2); // Apply conversion and offset TODO revisit volts
 		double timestamp = System.currentTimeMillis();
 
 		ArrayList<Double> dataPoint = new ArrayList<>();
@@ -111,7 +111,7 @@ public class BTDataParser extends Thread {
 	}
 
 	private void AddCurrent(double rawAmps) {
-		double amps = rawAmps; // Apply conversion and offset TODO revisit amps
+		double amps = round(rawAmps, 2); // Apply conversion and offset TODO revisit amps
 		double timestamp = System.currentTimeMillis();
 
 		ArrayList<Double> dataPoint = new ArrayList<>();
@@ -147,8 +147,8 @@ public class BTDataParser extends Thread {
 
 		/* CONVERSIONS */
 		// Speed = wheelRPM * PI * Wheel Diameter * (60 mins / 1000 metres)
-		double speedKPH = wheelRPM * (60 * Math.PI * Global.WHEEL_DIAMETER) / 1000; // km/h
-		double speedMPH = speedKPH * 1.61; // mph
+		double speedKPH = round(wheelRPM * (60 * Math.PI * Global.WHEEL_DIAMETER), 2) / 1000; // km/h
+		double speedMPH = round(speedKPH * 1.61, 2); // mph
 
 		dataPoint.set(1, speedKPH);
 		Global.SpeedKPH.add(dataPoint);
@@ -166,6 +166,12 @@ public class BTDataParser extends Thread {
 		dataPoint.add(timestamp);
 		dataPoint.add(motorRPM);
 		Global.MotorRPM.add(dataPoint);
+	}
+
+	private double round(double number, int decimalPoints) {
+		double value = Math.round(number * Math.pow(10, decimalPoints));
+		value = value / Math.pow(10, decimalPoints);
+		return value;
 	}
 
 	public void cancel() {

@@ -16,9 +16,9 @@ public class RandomGenerator extends Thread {
 			// { x y z }
 
 			byte[] IDS = new byte[3];
-			IDS[0] = Global.VOLTID;
+			IDS[0] = Global.WHEELRPMID;
 			IDS[1] = Global.AMPID;
-			IDS[2] = Global.WHEELRPMID;
+			IDS[2] = Global.VOLTID;
 
 			for (int i = 0; i < IDS.length; i++) {
 				// fill with random shit
@@ -31,6 +31,11 @@ public class RandomGenerator extends Thread {
 
 				// push to queue
 				Global.BTStreamQueue.add(Message);
+				try{
+					Thread.sleep(10); // this needs to be here otherwise the queue gets overloaded
+				} catch (Exception e) {
+
+				}
 			}
 
 			// wait 250 milliseconds
