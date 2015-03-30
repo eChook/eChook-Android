@@ -1,5 +1,6 @@
 package com.driven.rowan.drivenbluetooth;
 
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +12,11 @@ import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
+
+import android.os.Handler;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -26,9 +32,19 @@ public class MainActivity extends ActionBarActivity {
 	static TextView myVoltsDataCount;
 	static TextView myAmpsDataCount;
 
+	// Threads
 	private RandomGenerator Gen = new RandomGenerator();
 	private BTDataParser Parser = new BTDataParser();
 	private UIUpdate UIUpdater = new UIUpdate();
+
+	// UI Update Timer
+	private Timer UIUpdateTimer; // don't initialize because we have to do it below
+
+	// UI Update Handler
+	private final Handler UIUpdateHandler = new Handler();
+
+	// UI Update TimerTask
+	private TimerTask UIUpdateTask; // initialized later on
 
     boolean deviceConnected = false;
     boolean matchingDeviceFound = false;
@@ -69,7 +85,16 @@ public class MainActivity extends ActionBarActivity {
 
 					Gen.start();
 					Parser.start();
-					//UIUpdater.start();
+
+					// UI Updater TODO clean this up to make it neater - perhaps subclass it
+					UIUpdateTask = new TimerTask() {
+						public void run() {
+							UIUpdateHandler.post(new UIUpdate());
+						}
+					};
+					UIUpdateTimer = new Timer();
+					UIUpdateTimer.schedule(UIUpdateTask, 250, 250);
+
 				} catch (Exception e) {
 					showMessage(e.getMessage().toString());
 				}
@@ -99,6 +124,8 @@ public class MainActivity extends ActionBarActivity {
 			public void onClick(View v) {
 				Gen.cancel();
 				Parser.cancel();
+				UIUpdateTimer.cancel();
+				UIUpdateTimer.purge();
 			}
 		});
         /*sendButton.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +161,10 @@ public class MainActivity extends ActionBarActivity {
                 theMsg, (Toast.LENGTH_LONG));
         msg.show();
     }
+
+	private void startUIUpdateTimer() {
+
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

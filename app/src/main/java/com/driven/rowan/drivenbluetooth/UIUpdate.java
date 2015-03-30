@@ -5,7 +5,7 @@ package com.driven.rowan.drivenbluetooth;
  */
 
 /* This class should only be used by posting to the UI thread */
-public class UIUpdate extends Thread {
+public class UIUpdate implements Runnable {
 	private volatile boolean stopWorker = false;
 	public void run() {
 
@@ -35,9 +35,5 @@ public class UIUpdate extends Thread {
 		} catch (Exception e) {
 			e.toString();
 		}
-	}
-
-	public void cancel() {
-		this.stopWorker = true;
 	}
 }
