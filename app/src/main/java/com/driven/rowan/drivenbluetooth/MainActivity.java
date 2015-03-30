@@ -35,7 +35,6 @@ public class MainActivity extends ActionBarActivity {
 	// Threads
 	private RandomGenerator Gen = new RandomGenerator();
 	private BTDataParser Parser = new BTDataParser();
-	private UIUpdate UIUpdater = new UIUpdate();
 
 	// UI Update Timer
 	private Timer UIUpdateTimer; // don't initialize because we have to do it below
@@ -161,10 +160,6 @@ public class MainActivity extends ActionBarActivity {
                 theMsg, (Toast.LENGTH_LONG));
         msg.show();
     }
-
-	private void startUIUpdateTimer() {
-
-	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

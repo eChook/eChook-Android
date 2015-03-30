@@ -10,12 +10,11 @@
     <TextView android:text="Label" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/label"
-        android:layout_alignRight="@+id/close"
-        android:layout_alignEnd="@+id/close"
+        android:editable="false"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:editable="false" />
+        android:layout_marginTop="27dp"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -41,15 +40,7 @@
         android:id="@+id/close"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:layout_alignBottom="@+id/label"
-        android:layout_alignRight="@+id/open"
-        android:layout_alignEnd="@+id/open" />
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -96,7 +87,9 @@
         android:layout_alignRight="@+id/send"
         android:layout_alignEnd="@+id/send"
         android:layout_toRightOf="@+id/open"
-        android:layout_toEndOf="@+id/open" />
+        android:layout_toEndOf="@+id/open"
+        android:textAlignment="center"
+        android:inputType="none"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -116,7 +109,10 @@
         android:layout_alignLeft="@+id/speed"
         android:layout_alignStart="@+id/speed"
         android:layout_alignRight="@+id/speed"
-        android:layout_alignEnd="@+id/speed" />
+        android:layout_alignEnd="@+id/speed"
+        android:textAlignment="center"
+        android:singleLine="false"
+        android:inputType="none"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -136,7 +132,10 @@
         android:layout_alignLeft="@+id/voltage"
         android:layout_alignStart="@+id/voltage"
         android:layout_alignRight="@+id/voltage"
-        android:layout_alignEnd="@+id/voltage" />
+        android:layout_alignEnd="@+id/voltage"
+        android:textAlignment="center"
+        android:singleLine="false"
+        android:inputType="none"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -173,5 +172,14 @@
         android:layout_alignBottom="@+id/current"
         android:layout_toRightOf="@+id/current"
         android:layout_toEndOf="@+id/current"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:id="@+id/TitleTextView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
 </RelativeLayout>

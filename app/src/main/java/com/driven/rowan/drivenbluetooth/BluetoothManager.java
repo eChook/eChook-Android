@@ -25,11 +25,14 @@ public class BluetoothManager extends MainActivity {
     InputStream mmInputStream;
     Thread workerThread;
     byte[] readBuffer;
-    int readBufferPosition;
+	int readBufferPosition;
     int counter;
     volatile boolean stopWorker;
     boolean deviceConnected = false;
     boolean matchingDeviceFound = false;
+
+	//Constants
+	private final static int BTREQUEST = 1;
 
     String TAG = "DBDebug - BtManager";
 
@@ -78,9 +81,13 @@ public class BluetoothManager extends MainActivity {
                 }
             }
         }
-        Log.d(TAG, "Bluetooth Device Found");
-        myLabel.setText("Bluetooth Device Found");
+        Log.d(TAG, "Bluetooth Device Found " + this.mmDevice.getName());
+        myLabel.setText("Bluetooth Device Found" + this.mmDevice.getName());
     }
+
+	void openBTConnection() throws IOException {
+
+	}
 
 
     //_____________________________________________________________________________OPEN BT
