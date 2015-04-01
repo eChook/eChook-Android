@@ -1,6 +1,6 @@
 package com.driven.rowan.drivenbluetooth;
 
-import android.os.Message;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -32,130 +32,129 @@ public class MainActivity extends ActionBarActivity {
 	static TextView myVoltsDataCount;
 	static TextView myAmpsDataCount;
 
+	static final BluetoothManager myBluetoothManager = new BluetoothManager();
+
 	// Threads
 	private RandomGenerator Gen = new RandomGenerator();
 	private BTDataParser Parser = new BTDataParser();
+	private BTStreamReader StreamReader = new BTStreamReader();
 
 	// UI Update Timer
-	private Timer UIUpdateTimer; // don't initialize because we have to do it below
+	private Timer UIUpdateTimer; // don't initialize because it should be done below
 
 	// UI Update Handler
-	private final Handler UIUpdateHandler = new Handler();
+	public static Handler MainActivityHandler = new Handler();
 
 	// UI Update TimerTask
 	private TimerTask UIUpdateTask; // initialized later on
 
-    boolean deviceConnected = false;
-    boolean matchingDeviceFound = false;
+	private static final int RESULT_SETTINGS = 2;
 
 
     String TAG = "DBDebug";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        Button openButton = (Button)findViewById(R.id.open);
-        Button sendButton = (Button)findViewById(R.id.send);
-        Button closeButton = (Button)findViewById(R.id.close);
-        myLabel = (TextView)findViewById(R.id.label);
-        myTextbox = (TextView)findViewById(R.id.entry);
-        myIncoming = (TextView)findViewById(R.id.incoming);
-        mySpeed = (EditText)findViewById(R.id.speed);
-        myCurrent = (EditText)findViewById(R.id.current);
-        myVoltage = (EditText)findViewById(R.id.voltage);
+		Button openBTButton = (Button) findViewById(R.id.open);
+		Button startButton = (Button) findViewById(R.id.start);
+		Button stopButton = (Button) findViewById(R.id.stop);
+		Button closeBTButton = (Button) findViewById(R.id.close);
+		myLabel = (TextView) findViewById(R.id.label);
+		myTextbox = (TextView) findViewById(R.id.entry);
+		myIncoming = (TextView) findViewById(R.id.incoming);
+		mySpeed = (EditText) findViewById(R.id.speed);
+		myCurrent = (EditText) findViewById(R.id.current);
+		myVoltage = (EditText) findViewById(R.id.voltage);
 
 		mySpeedDataCount = (TextView) findViewById(R.id.SpeedDataCount);
 		myVoltsDataCount = (TextView) findViewById(R.id.VoltsDataCount);
 		myAmpsDataCount = (TextView) findViewById(R.id.AmpsDataCount);
 
 
-        final BluetoothManager myBluetoothManager = new BluetoothManager();
 
-        //Open Button
-		openButton.setOnClickListener(new View.OnClickListener() {
+
+		/**************************************************/
+		/**************** BUTTON LISTENERS ****************/
+		/**************************************************/
+
+		// Open BT Button
+		openBTButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				try {
-					if (Gen.getState() == Thread.State.TERMINATED) { Gen = new RandomGenerator();}
+					myBluetoothManager.findBT();
+					myBluetoothManager.openBT();
+				} catch (Exception e) {
+					showMessage(e.getMessage().toString());
+				}
+			}
+		});
 
-					if (Parser.getState() == Thread.State.TERMINATED) {	Parser = new BTDataParser();}
+		// Close BT Button
+		closeBTButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				try {
+					myBluetoothManager.closeBT();
+				} catch (Exception e) {
+					showMessage(e.getMessage().toString());
+				}
+			}
+		});
 
-					Gen.start();
+		// Start Button
+		startButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				try {
+					if (StreamReader.getState() == Thread.State.TERMINATED) {
+						StreamReader = new BTStreamReader();
+					}
+
+					if (Parser.getState() == Thread.State.TERMINATED) {
+						Parser = new BTDataParser();
+					}
+
+					StreamReader.start();
+
 					Parser.start();
 
-					// UI Updater TODO clean this up to make it neater - perhaps subclass it
+					// UI Updater
 					UIUpdateTask = new TimerTask() {
 						public void run() {
-							UIUpdateHandler.post(new UIUpdate());
+							MainActivityHandler.post(new UIUpdateRunnable());
 						}
 					};
 					UIUpdateTimer = new Timer();
 					UIUpdateTimer.schedule(UIUpdateTask, 250, 250);
+
+					myLabel.setText("Now Logging - press 'Stop' to cancel");
 
 				} catch (Exception e) {
 					showMessage(e.getMessage().toString());
 				}
 			}
 		});
-        /*openButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    myLabel.setText("Bluetooth Device Found");
-                    deviceConnected = false;
-                    myBluetoothManager.closeBT();
-                    myBluetoothManager.findBT();
-                    myBluetoothManager.openBT();
-                    if(deviceConnected)
-                        showMessage("Bluetooth Successfully Connected");
-                    else
-                        showMessage("Failed to Connect, Try Again");
-                }
-                catch (IOException ex) {
-                    showMessage("Failed to Connect, Try Again");
-                }
-            }
-        });*/
 
-        //Send Button
-		sendButton.setOnClickListener(new View.OnClickListener() {
+		// Stop Button
+		stopButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				Gen.cancel();
-				Parser.cancel();
-				UIUpdateTimer.cancel();
-				UIUpdateTimer.purge();
+				try{
+					StreamReader.cancel();
+					Parser.cancel();
+					UIUpdateTimer.cancel();
+					UIUpdateTimer.purge();
+					myLabel.setText("Stopped logging");
+				} catch (Exception e) {
+					showMessage(e.getMessage().toString());
+				}
 			}
 		});
-        /*sendButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    myBluetoothManager.sendData();
-                }
-                catch (IOException ex) {
-                    showMessage("SEND FAILED");
-                }
-            }
-        });*/
-
-        //Close button
-		closeButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				runOnUiThread(new UIUpdate());
-			}
-		});
-        /*closeButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    myBluetoothManager.closeBT();
-                }
-                catch (IOException ex) { }
-            }
-        });*/
-    }
+	}
 
 
-    private void showMessage(String theMsg) {
+    public void showMessage(String theMsg) {
         Toast msg = Toast.makeText(getBaseContext(),
                 theMsg, (Toast.LENGTH_LONG));
         msg.show();
@@ -177,6 +176,8 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+			Intent i = new Intent(this, SettingsActivity.class);
+			startActivityForResult(i, RESULT_SETTINGS);
             return true;
         }
 

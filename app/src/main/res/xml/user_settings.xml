@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Settings"
+        android:key="prefKeySettings">
+        <ListPreference
+            android:key="prefSpeedUnits"
+            android:title="Speed unit"
+            android:entries="@array/prefSpeedUnit"
+            android:entryValues="@array/prefSpeedUnitValues"
+            android:defaultValue="@string/prefSpeedUnitDefault"
+			android:summary="%s"
+            />
+    </PreferenceCategory>
+</PreferenceScreen>

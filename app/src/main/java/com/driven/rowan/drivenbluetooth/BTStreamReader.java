@@ -1,7 +1,5 @@
 package com.driven.rowan.drivenbluetooth;
 
-import android.bluetooth.BluetoothSocket;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -18,9 +16,9 @@ public class BTStreamReader extends Thread {
 	public int errorCount = 0;
 
 	// Constructor
-    public BTStreamReader(BluetoothSocket socket) {
+    public BTStreamReader() {
         try {
-            this.mmInStream = socket.getInputStream();
+            this.mmInStream = Global.BTSocket.getInputStream();
 
         } catch (IOException e) {
             // We need to warn that we couldn't connect to the bluetooth device
@@ -36,42 +34,67 @@ public class BTStreamReader extends Thread {
 	    this.stopWorker = false;
 	    int readBufferPosition = 0;
 
-	    while (!this.stopWorker && this.mmInStream != null) {
-		    try {
-			    int bytesAvailable = mmInStream.available();
+	    while (!this.stopWorker) {
+			if (this.mmInStream != null && Global.BTSocket.isConnected()) {
+				// still connected which is good
+				try {
+					int bytesAvailable = mmInStream.available();
 
-			    if (bytesAvailable > 0) {
-				    byte[] packetBytes = new byte[bytesAvailable];
-				    bytes = mmInStream.read(packetBytes);
+					if (bytesAvailable > 0) {
+						byte[] packetBytes = new byte[bytesAvailable];
+						bytes = mmInStream.read(packetBytes);
 
-				    for (int i = 0; i < bytesAvailable; i++) {
-					    byte b = packetBytes[i];
+						MainActivity.MainActivityHandler.post(new IncomingUIUpdateRunnable(buffer));
 
-					    if (b != Global.STOPBYTE) {
-							// delimiter not reached yet so continue adding to buffer
-							buffer[readBufferPosition] = b;
-							readBufferPosition++;
-						} else {
-							// delimiter reached; flush buffer into the global queue
-							byte[] encodedBytes = new byte[readBufferPosition];
-							System.arraycopy(buffer, 0, encodedBytes, 0, encodedBytes.length);
+						for (int i = 0; i < bytesAvailable; i++) {
+							byte b = packetBytes[i];
 
-							// encodedBytes now holds the data until the delimiter
-							// flush it to the global queue
-							Global.BTStreamQueue.add(encodedBytes);
+							if (b != Global.STOPBYTE) {
+								// delimiter not reached yet so continue adding to buffer
+								buffer[readBufferPosition] = b;
+								readBufferPosition++;
+							} else {
+								buffer[readBufferPosition] = b; // still need the delimiter
+								// delimiter reached; flush buffer into the global queue
+								byte[] encodedBytes = new byte[readBufferPosition + 1];
+								System.arraycopy(buffer, 0, encodedBytes, 0, encodedBytes.length);
 
-							// TODO: maybe log the raw message?
+								// encodedBytes now holds the data until the delimiter
+								// flush it to the global queue
+								Global.BTStreamQueue.add(encodedBytes);
 
-							// reset the buffer pointer
-							readBufferPosition = 0;
+								// TODO: maybe log the raw message?
+
+								// reset the buffer pointer
+								readBufferPosition = 0;
+							}
 						}
-				    }
-			    }
+					}
 
-		    } catch (IOException e) {
-			    // Add to error count but don't stop working
-				errorCount++;
-		    }
+				} catch (IOException e) {
+					// Add to error count but don't stop working
+					errorCount++;
+				}
+			} else {
+				// Disconnected from bluetooth
+				/* BLUETOOTH RECONNECT PROCEDURE *
+				 *
+				 * During the race it is expected that the driver is wearing gloves
+				 * as per regulation and is therefore unable to interact with
+				 * the touchscreen.
+				 *
+				 * Furthermore, it is likely that the device will be in a waterproof
+				 * or water-resistant case, blocking any input
+				 *
+				 * If the bluetooth connection drops for whatever reason, the app must
+				 * be able to reconnect without input
+				 *
+				 * The procedure:
+				 * 1. Notify the MainActivity that the Bluetooth Socket is disconnected
+				 *
+				 *
+				 */
+			}
 	    }
     }
 

@@ -5,12 +5,13 @@ package com.driven.rowan.drivenbluetooth;
  */
 
 /* This class should only be used by posting to the UI thread */
-public class UIUpdate implements Runnable {
+public class UIUpdateRunnable implements Runnable {
 	private volatile boolean stopWorker = false;
+
 	public void run() {
 
-			// code to update UI elements
-			// hopefully this is inherently thread safe
+		// code to update UI elements
+		// hopefully this is inherently thread safe
 
 		// Voltage
 		try {

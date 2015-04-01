@@ -19,25 +19,25 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open"
+        android:text="Open BT"
         android:id="@+id/open"
-        android:layout_alignTop="@+id/send"
+        android:layout_above="@+id/start"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"
-        android:id="@+id/send"
-        android:layout_alignTop="@+id/close"
+        android:text="Start"
+        android:id="@+id/start"
+        android:layout_alignTop="@+id/stop"
         android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Close"
-        android:id="@+id/close"
+        android:text="Stop"
+        android:id="@+id/stop"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
@@ -50,8 +50,8 @@
         android:layout_alignLeft="@+id/label"
         android:layout_alignStart="@+id/label"
         android:layout_marginTop="33dp"
-        android:layout_alignRight="@+id/close"
-        android:layout_alignEnd="@+id/close"
+        android:layout_alignRight="@+id/stop"
+        android:layout_alignEnd="@+id/stop"
         android:text="Entry" />
 
     <TextView
@@ -74,7 +74,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Speed"
         android:id="@+id/textView"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="100dp"
         android:layout_above="@+id/open"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -84,8 +84,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/speed"
         android:layout_alignBottom="@+id/textView"
-        android:layout_alignRight="@+id/send"
-        android:layout_alignEnd="@+id/send"
+        android:layout_alignRight="@+id/start"
+        android:layout_alignEnd="@+id/start"
         android:layout_toRightOf="@+id/open"
         android:layout_toEndOf="@+id/open"
         android:textAlignment="center"
@@ -179,6 +179,15 @@
         android:text="@string/app_name"
         android:id="@+id/TitleTextView"
         android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Close BT"
+        android:id="@+id/close"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 

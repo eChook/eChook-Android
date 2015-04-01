@@ -1,10 +1,10 @@
 package com.driven.rowan.drivenbluetooth;
 
+import android.bluetooth.BluetoothSocket;
+
 import java.util.ArrayList;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.Collections;
 
 /**
  * Created by Ben on 09/03/2015.
@@ -18,6 +18,8 @@ public final class Global {
 	public static ArrayList<ArrayList<Double>> WheelRPM = new ArrayList<>();
 	public static ArrayList<ArrayList<Double>> SpeedMPH = new ArrayList<>();
 	public static ArrayList<ArrayList<Double>> SpeedKPH = new ArrayList<>();
+
+	public static BluetoothSocket BTSocket;
 
 	public static final double WHEEL_DIAMETER = 0.5; // in metres
 

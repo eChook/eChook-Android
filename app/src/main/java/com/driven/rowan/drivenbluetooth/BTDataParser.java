@@ -1,7 +1,6 @@
 package com.driven.rowan.drivenbluetooth;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Ben on 09/03/2015.
@@ -39,11 +38,16 @@ public class BTDataParser extends Thread {
 					// data is good
 					// Now for the hard part
 
-					// if the first byte is greater than 127 then the value is treated as an INTEGER
-					// value = [first byte] * 100 + [second byte]
+					// if the byte is 255 / 0xFF / 11111111 then the value is interpreted as zero
+					if (poppedData[2] == 255) { poppedData[2] = 0; }
+					if (poppedData[3] == 255) { poppedData[3] = 0; }
 
-					// if the first byte is less than 128 then the value is treated as a FLOAT
-					// value = [first byte] + [second byte] / 100
+					/* if the first byte is greater than 127 then the value is treated as an INTEGER
+					 * value = [first byte] * 100 + [second byte]
+					 *
+					 * if the first byte is less than 128 then the value is treated as a FLOAT
+					 * value = [first byte] + [second byte] / 100
+					 */
 
 					if (poppedData[2] < 128) {
 						//FLOAT
@@ -134,27 +138,29 @@ public class BTDataParser extends Thread {
 		Global.Throttle.add(dataPoint);
 	}
 
-	private void AddSpeed(double rawWheelRPM) {
+	private void AddSpeed(double rawSpeedMPH) {
 
-		double wheelRPM = rawWheelRPM; // Apply conversion and offset TODO revisit wheelRPM
+		double speedMPH = rawSpeedMPH; // Apply conversion and offset TODO revisit wheelRPM
 		double timestamp = System.currentTimeMillis(); // Get current timestamp in milliseconds since 1 Jan 1970
 
 		ArrayList<Double> dataPoint = new ArrayList<>();
 
 		dataPoint.add(timestamp);
-		dataPoint.add(wheelRPM);
-		Global.WheelRPM.add(dataPoint);
+		dataPoint.add(speedMPH);
+		Global.SpeedMPH.add(dataPoint);
 
-		/* CONVERSIONS */
+		/* CONVERSIONS *
 		// Speed = wheelRPM * PI * Wheel Diameter * (60 mins / 1000 metres)
 		double speedKPH = round(wheelRPM * (60 * Math.PI * Global.WHEEL_DIAMETER), 2) / 1000; // km/h
 		double speedMPH = round(speedKPH * 1.61, 2); // mph
+
 
 		dataPoint.set(1, speedKPH);
 		Global.SpeedKPH.add(dataPoint);
 
 		dataPoint.set(1, speedMPH);
 		Global.SpeedMPH.add(dataPoint);
+		*/
 	}
 
 	private void AddMotorRPM(double rawMotorRPM) {
