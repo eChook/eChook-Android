@@ -6,7 +6,7 @@ package com.driven.rowan.drivenbluetooth;
 public class IncomingUIUpdateRunnable implements Runnable {
 
 	// for displaying the contents of the Bluetooth buffer
-	byte[] mBuffer;
+	private byte[] mBuffer;
 
 	public IncomingUIUpdateRunnable(byte[] buffer) {
 		this.mBuffer = buffer;

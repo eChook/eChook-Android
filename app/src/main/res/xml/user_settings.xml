@@ -11,5 +11,13 @@
             android:defaultValue="@string/prefSpeedUnitDefault"
 			android:summary="%s"
             />
+		<ListPreference
+			android:key="prefMode"
+			android:title="Mode"
+			android:entries="@array/prefMode"
+			android:entryValues="@array/prefModeValues"
+			android:defaultValue="@string/prefModeDefault"
+			android:summary="%s"
+			/>
     </PreferenceCategory>
 </PreferenceScreen>

@@ -1,7 +1,6 @@
 package com.driven.rowan.drivenbluetooth;
 
 import android.bluetooth.BluetoothSocket;
-
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -10,19 +9,39 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Created by Ben on 09/03/2015.
  */
 public final class Global {
+
+	/**********************/
+	/**********************/
+	/* ALL VARIABLES IN   */
+	/* THIS CLASS SHOULD  */
+	/* BE DECLARED STATIC */
+	/**********************/
+	/**********************/
+
+	/**********************/
+	/* THREADED VARIABLES */
+	/**********************/
+	// use the volatile keyword
     public static volatile BlockingQueue<byte[]> BTStreamQueue = new LinkedBlockingQueue<>();
-	public static ArrayList<ArrayList<Double>> Volts = new ArrayList<>();
-	public static ArrayList<ArrayList<Double>> Amps = new ArrayList<>();
-	public static ArrayList<ArrayList<Double>> Throttle = new ArrayList<>();
-	public static ArrayList<ArrayList<Double>> MotorRPM = new ArrayList<>();
-	public static ArrayList<ArrayList<Double>> WheelRPM = new ArrayList<>();
-	public static ArrayList<ArrayList<Double>> SpeedMPH = new ArrayList<>();
-	public static ArrayList<ArrayList<Double>> SpeedKPH = new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> Volts = new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> Amps = new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> Throttle = new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> MotorRPM = new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> WheelRPM = new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> SpeedMPH = new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> SpeedKPH = new ArrayList<>();
 
+
+	/**********************/
+	/* VARIABLES          */
+	/**********************/
 	public static BluetoothSocket BTSocket;
+	public static int MangledDataCount = 0;
 
+	/**********************/
+	/* CONSTANTS          */
+	/**********************/
 	public static final double WHEEL_DIAMETER = 0.5; // in metres
-
 	public static final byte STARTBYTE = 123; // ASCII Code for '{'
     public static final byte STOPBYTE = 125; // ASCII code for '}'
     public static final int PACKETLENGTH = 5; // { [id] [1] [2] }
@@ -34,12 +53,23 @@ public final class Global {
 	public static final byte WHEELRPMID = 115; // s
 	public static final byte THROTTLEID = 116; // t
 
-	public static int MangledDataCount = 0;
+	/**********************/
+	/* SETTINGS VARIABLES */
+	/**********************/
+	public static enum MODE {DEMO, RACE}
+	public static MODE Mode;
 
+	public static enum UNIT {MPH, KPH}
+	public static UNIT Unit;
+
+	/**********************/
+	/* CONSTRUCTOR        */
+	/**********************/
     private Global() {
         try {
             // Initialize an empty queue
             BTStreamQueue.clear();
+
         } catch (Error e) {
             // Do nothing
         }

@@ -37,10 +37,14 @@ public class BTDataParser extends Thread {
 						&& poppedData[Global.PACKETLENGTH - 1] == Global.STOPBYTE) { // check if ends with '}'
 					// data is good
 					// Now for the hard part
+					if (poppedData[1] == Global.THROTTLEID) {
+						byte herp = Global.THROTTLEID;
+					}
 
 					// if the byte is 255 / 0xFF / 11111111 then the value is interpreted as zero
-					if (poppedData[2] == 255) { poppedData[2] = 0; }
-					if (poppedData[3] == 255) { poppedData[3] = 0; }
+					// FYI a byte in Java is -128 to 127 so we must convert to an int by doing & 0xff
+					if ((poppedData[2] & 0xff) == 255) { poppedData[2] = 0; }
+					if ((poppedData[3] & 0xff) == 255) { poppedData[3] = 0; }
 
 					/* if the first byte is greater than 127 then the value is treated as an INTEGER
 					 * value = [first byte] * 100 + [second byte]

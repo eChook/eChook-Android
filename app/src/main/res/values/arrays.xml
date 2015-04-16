@@ -5,7 +5,15 @@
         <item>kph</item>
     </string-array>
     <string-array name="prefSpeedUnitValues">
+        <item>0</item>
         <item>1</item>
-        <item>1.609</item>
     </string-array>
+	<string-array name="prefMode">
+		<item>Demo</item>
+		<item>Race</item>
+	</string-array>
+	<string-array name="prefModeValues">
+		<item>0</item>
+		<item>1</item>
+	</string-array>
 </resources>

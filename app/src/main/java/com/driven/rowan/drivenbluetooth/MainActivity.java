@@ -1,6 +1,9 @@
 package com.driven.rowan.drivenbluetooth;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -24,6 +27,7 @@ public class MainActivity extends ActionBarActivity {
     static TextView myLabel;
     static TextView myTextbox;
     static TextView myIncoming;
+	static TextView myMode;
     static EditText mySpeed;
     static EditText myCurrent;
     static EditText myVoltage;
@@ -32,12 +36,17 @@ public class MainActivity extends ActionBarActivity {
 	static TextView myVoltsDataCount;
 	static TextView myAmpsDataCount;
 
+	private static Context context;
+
 	static final BluetoothManager myBluetoothManager = new BluetoothManager();
 
 	// Threads
-	private RandomGenerator Gen = new RandomGenerator();
-	private BTDataParser Parser = new BTDataParser();
-	private BTStreamReader StreamReader = new BTStreamReader();
+	public static RandomGenerator Gen = new RandomGenerator();
+	public static BTDataParser Parser = new BTDataParser();
+	public static BTStreamReader StreamReader; // initialize below
+
+	// This must be initialized in the main thread because reasons
+	public static BluetoothDisconnectedRunnable BTReconnect = new BluetoothDisconnectedRunnable();
 
 	// UI Update Timer
 	private Timer UIUpdateTimer; // don't initialize because it should be done below
@@ -50,8 +59,7 @@ public class MainActivity extends ActionBarActivity {
 
 	private static final int RESULT_SETTINGS = 2;
 
-
-    String TAG = "DBDebug";
+	String TAG = "DBDebug";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,19 +71,24 @@ public class MainActivity extends ActionBarActivity {
 		Button startButton = (Button) findViewById(R.id.start);
 		Button stopButton = (Button) findViewById(R.id.stop);
 		Button closeBTButton = (Button) findViewById(R.id.close);
+		Button saveButton = (Button) findViewById(R.id.save);
 		myLabel = (TextView) findViewById(R.id.label);
 		myTextbox = (TextView) findViewById(R.id.entry);
 		myIncoming = (TextView) findViewById(R.id.incoming);
 		mySpeed = (EditText) findViewById(R.id.speed);
 		myCurrent = (EditText) findViewById(R.id.current);
 		myVoltage = (EditText) findViewById(R.id.voltage);
+		myMode = (TextView) findViewById(R.id.txt_Mode);
 
 		mySpeedDataCount = (TextView) findViewById(R.id.SpeedDataCount);
 		myVoltsDataCount = (TextView) findViewById(R.id.VoltsDataCount);
 		myAmpsDataCount = (TextView) findViewById(R.id.AmpsDataCount);
 
+		/************** INITIALIZE SETTINGS ***************/
+		this.InitializeGlobalSettings();
 
-
+		/**************** CONTEXT *************************/
+		MainActivity.context = getApplicationContext();
 
 		/**************************************************/
 		/**************** BUTTON LISTENERS ****************/
@@ -108,31 +121,54 @@ public class MainActivity extends ActionBarActivity {
 		startButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				try {
-					if (StreamReader.getState() == Thread.State.TERMINATED) {
-						StreamReader = new BTStreamReader();
-					}
-
-					if (Parser.getState() == Thread.State.TERMINATED) {
-						Parser = new BTDataParser();
-					}
-
-					StreamReader.start();
-
-					Parser.start();
-
-					// UI Updater
-					UIUpdateTask = new TimerTask() {
-						public void run() {
-							MainActivityHandler.post(new UIUpdateRunnable());
+					if (Global.Mode == Global.MODE.DEMO) {
+						if (Gen.getState() != Thread.State.RUNNABLE) {
+							if (Gen.getState() == Thread.State.TERMINATED) { Gen = new RandomGenerator(); }
+							Gen.start();
 						}
-					};
-					UIUpdateTimer = new Timer();
-					UIUpdateTimer.schedule(UIUpdateTask, 250, 250);
 
-					myLabel.setText("Now Logging - press 'Stop' to cancel");
+						if (Parser.getState() != Thread.State.RUNNABLE) {
+							if (Parser.getState() == Thread.State.TERMINATED) { Parser = new BTDataParser(); }
+							Parser.start();
+						}
+
+						// UI Updater
+						UIUpdateTask = new TimerTask() {
+							public void run() {MainActivityHandler.post(new UIUpdateRunnable());
+							}
+						};
+						UIUpdateTimer = new Timer();
+						UIUpdateTimer.schedule(UIUpdateTask, 250, 250);
+
+						myLabel.setText("Now Logging - press 'Stop' to cancel");
+
+					} else if (Global.Mode == Global.MODE.RACE && Global.BTSocket != null) {
+						if (StreamReader == null) { StreamReader = new BTStreamReader();}
+						if (StreamReader.getState() != Thread.State.RUNNABLE) {
+							if (StreamReader.getState() == Thread.State.TERMINATED) { StreamReader = new BTStreamReader(); }
+							StreamReader.start();
+						}
+
+						if (Parser.getState() != Thread.State.RUNNABLE) {
+							if (Parser.getState() == Thread.State.TERMINATED) { Parser = new BTDataParser(); }
+							Parser.start();
+						}
+
+						// UI Updater
+						UIUpdateTask = new TimerTask() {
+							public void run() {	MainActivityHandler.post(new UIUpdateRunnable()); }
+						};
+						UIUpdateTimer = new Timer();
+						UIUpdateTimer.schedule(UIUpdateTask, 250, 250);
+
+						myLabel.setText("Now Logging - press 'Stop' to cancel");
+					}
+
+
 
 				} catch (Exception e) {
 					showMessage(e.getMessage().toString());
+
 				}
 			}
 		});
@@ -140,12 +176,24 @@ public class MainActivity extends ActionBarActivity {
 		// Stop Button
 		stopButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				try{
-					StreamReader.cancel();
-					Parser.cancel();
+				try {
+					if (Gen.getState() == Thread.State.RUNNABLE) { Gen.cancel(); }
+					if (StreamReader != null && StreamReader.getState() == Thread.State.RUNNABLE) { StreamReader.cancel(); }				if (Parser.getState() == Thread.State.RUNNABLE) { Parser.cancel(); }
+
 					UIUpdateTimer.cancel();
 					UIUpdateTimer.purge();
 					myLabel.setText("Stopped logging");
+				} catch (Exception e) {
+					showMessage(e.getMessage().toString());
+				}
+			}
+		});
+
+		// Save Button
+		saveButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				try {
+					MainActivityHandler.post(new SaveDataToFileRunnable());
 				} catch (Exception e) {
 					showMessage(e.getMessage().toString());
 				}
@@ -183,4 +231,22 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+	private void InitializeGlobalSettings() {
+		// Initialize the settings variables
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		try {
+			int mode = Integer.valueOf(prefs.getString("prefMode", ""));
+			Global.Mode = Global.MODE.values()[mode];
+
+			int units = Integer.valueOf(prefs.getString("prefSpeedUnits", ""));
+			Global.Unit = Global.UNIT.values()[units];
+		} catch (Exception e) {
+			showMessage("Could not retrieve settings");
+		}
+	}
+
+	public static Context getAppContext() {
+		return MainActivity.context;
+	}
 }

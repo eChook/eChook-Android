@@ -7,4 +7,5 @@
     <string name="title_activity_main_activity2">MainActivity2Activity</string>
 
     <string name="prefSpeedUnitDefault">mph</string>
+	<string name="prefModeDefault">DEMO</string>
 </resources>

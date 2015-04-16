@@ -27,7 +27,6 @@ public final class BluetoothManager extends MainActivity {
 
     String TAG = "DBDebug - BtManager";
 
-
     //_____________________________________________________________________________FIND BT
     void findBT() {
 
@@ -62,7 +61,7 @@ public final class BluetoothManager extends MainActivity {
 
                 Log.d(TAG, "Checking Name "+ device.getName());
 
-                if(device.getName().equals("JaguarJ4-62D8")) { //TODO Handle scenario where device is not paired to phone
+                if(device.getName().equals("PROJECTE")) { //TODO Handle scenario where device is not paired to phone
 
                     Log.d(TAG, "Device Matching Name Found");
                     matchingDeviceFound = true;

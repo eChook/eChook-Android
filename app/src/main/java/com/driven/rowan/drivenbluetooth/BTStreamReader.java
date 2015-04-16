@@ -89,11 +89,15 @@ public class BTStreamReader extends Thread {
 				 * If the bluetooth connection drops for whatever reason, the app must
 				 * be able to reconnect without input
 				 *
-				 * The procedure:
-				 * 1. Notify the MainActivity that the Bluetooth Socket is disconnected
+				 * The BLuetooth Reconnect procedure is handled by the
+				 * BluetoothDisconnectedRunnable class.
 				 *
+				 * Unfortunately, because of thread rules, the BluetoothDisconnectedRunnable class
+				 * must be initialized by the main (UI) thread.
 				 *
 				 */
+
+				MainActivity.BTReconnect.fixIt(); // do NOT call BTReconnect.run();
 			}
 	    }
     }
