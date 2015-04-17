@@ -24,6 +24,7 @@ import java.util.TimerTask;
 
 public class MainActivity extends ActionBarActivity {
 
+    /************** UI ELEMENTS ***************/
     static TextView myLabel;
     static TextView myTextbox;
     static TextView myIncoming;
@@ -36,28 +37,24 @@ public class MainActivity extends ActionBarActivity {
 	static TextView myVoltsDataCount;
 	static TextView myAmpsDataCount;
 
-	private static Context context;
-
-	static final BluetoothManager myBluetoothManager = new BluetoothManager();
-
-	// Threads
+    /************** THREADS ***************/
 	public static RandomGenerator Gen = new RandomGenerator();
 	public static BTDataParser Parser = new BTDataParser();
 	public static BTStreamReader StreamReader; // initialize below
+    public static DataToCsvFile DataSaver = new DataToCsvFile();
 
-	// This must be initialized in the main thread because reasons
-	public static BluetoothDisconnectedRunnable BTReconnect = new BluetoothDisconnectedRunnable();
-
-	// UI Update Timer
+    /************** UI UPDATER ***************/
 	private Timer UIUpdateTimer; // don't initialize because it should be done below
+    private TimerTask UIUpdateTask; // initialized later on
 
-	// UI Update Handler
+    /************** UI THREAD HANDLER ***************/
 	public static Handler MainActivityHandler = new Handler();
 
-	// UI Update TimerTask
-	private TimerTask UIUpdateTask; // initialized later on
-
+    /************** OTHER ***************/
 	private static final int RESULT_SETTINGS = 2;
+    private static Context context;
+    static final BluetoothManager myBluetoothManager = new BluetoothManager();
+    public static BluetoothDisconnectedRunnable BTReconnect = new BluetoothDisconnectedRunnable(); // This must be initialized in the main thread because reasons
 
 	String TAG = "DBDebug";
 
@@ -122,15 +119,15 @@ public class MainActivity extends ActionBarActivity {
 			public void onClick(View v) {
 				try {
 					if (Global.Mode == Global.MODE.DEMO) {
-						if (Gen.getState() != Thread.State.RUNNABLE) {
-							if (Gen.getState() == Thread.State.TERMINATED) { Gen = new RandomGenerator(); }
-							Gen.start();
-						}
+						if (Gen == null) { Gen = new RandomGenerator(); }
+						if (Gen.getState() != Thread.State.NEW) { Gen = new RandomGenerator(); }
+						Gen.start();
 
-						if (Parser.getState() != Thread.State.RUNNABLE) {
-							if (Parser.getState() == Thread.State.TERMINATED) { Parser = new BTDataParser(); }
-							Parser.start();
-						}
+						if (Parser.getState() != Thread.State.NEW) { Parser = new BTDataParser(); }
+						Parser.start();
+
+						if (DataSaver.getState() != Thread.State.NEW) { DataSaver = new DataToCsvFile(); }
+						DataSaver.start();
 
 						// UI Updater
 						UIUpdateTask = new TimerTask() {
@@ -143,16 +140,15 @@ public class MainActivity extends ActionBarActivity {
 						myLabel.setText("Now Logging - press 'Stop' to cancel");
 
 					} else if (Global.Mode == Global.MODE.RACE && Global.BTSocket != null) {
-						if (StreamReader == null) { StreamReader = new BTStreamReader();}
-						if (StreamReader.getState() != Thread.State.RUNNABLE) {
-							if (StreamReader.getState() == Thread.State.TERMINATED) { StreamReader = new BTStreamReader(); }
-							StreamReader.start();
-						}
+						if (StreamReader == null) { StreamReader = new BTStreamReader(); }
+						if (StreamReader.getState() != Thread.State.NEW) { StreamReader = new BTStreamReader(); }
+						StreamReader.start();
 
-						if (Parser.getState() != Thread.State.RUNNABLE) {
-							if (Parser.getState() == Thread.State.TERMINATED) { Parser = new BTDataParser(); }
-							Parser.start();
-						}
+						if (Parser.getState() != Thread.State.NEW) { Parser = new BTDataParser(); }
+						Parser.start();
+
+						if (DataSaver.getState() != Thread.State.NEW) { DataSaver = new DataToCsvFile(); }
+						DataSaver.start();
 
 						// UI Updater
 						UIUpdateTask = new TimerTask() {
@@ -177,8 +173,11 @@ public class MainActivity extends ActionBarActivity {
 		stopButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				try {
-					if (Gen.getState() == Thread.State.RUNNABLE) { Gen.cancel(); }
-					if (StreamReader != null && StreamReader.getState() == Thread.State.RUNNABLE) { StreamReader.cancel(); }				if (Parser.getState() == Thread.State.RUNNABLE) { Parser.cancel(); }
+					Thread.State state = DataSaver.getState();
+					if (Gen != null && Gen.getState() != Thread.State.TERMINATED) { Gen.cancel(); }
+					if (StreamReader != null && StreamReader.getState() != Thread.State.TERMINATED) { StreamReader.cancel(); }
+                    if (Parser != null && Parser.getState() != Thread.State.TERMINATED) { Parser.cancel(); }
+					if (DataSaver != null && DataSaver.getState() != Thread.State.TERMINATED) { DataSaver.cancel(); }
 
 					UIUpdateTimer.cancel();
 					UIUpdateTimer.purge();
@@ -193,7 +192,7 @@ public class MainActivity extends ActionBarActivity {
 		saveButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				try {
-					MainActivityHandler.post(new SaveDataToFileRunnable());
+					MainActivityHandler.post(new DataToCsvFile());
 				} catch (Exception e) {
 					showMessage(e.getMessage().toString());
 				}

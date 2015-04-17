@@ -16,7 +16,7 @@ public class RandomGenerator extends Thread {
 			// { x y z }
 
 			byte[] IDS = new byte[3];
-			IDS[0] = Global.WHEELRPMID;
+			IDS[0] = Global.THROTTLEID;
 			IDS[1] = Global.AMPID;
 			IDS[2] = Global.VOLTID;
 

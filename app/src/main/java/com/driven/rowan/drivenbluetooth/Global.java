@@ -53,6 +53,8 @@ public final class Global {
 	public static final byte WHEELRPMID = 115; // s
 	public static final byte THROTTLEID = 116; // t
 
+    public static final int DATA_SAVE_INTERVAL = 5000; // save interval in milliseconds
+
 	/**********************/
 	/* SETTINGS VARIABLES */
 	/**********************/

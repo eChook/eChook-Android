@@ -11,8 +11,11 @@ import java.util.List;
 /**
  * Created by BNAGY4 on 08/04/2015.
  */
-public class DataSerialize implements Runnable {
+public class DataSerialize extends Thread {
 
+    private volatile boolean stopWorker = false;
+
+    @Override
 	public void run() {
 
 	}
@@ -45,4 +48,8 @@ public class DataSerialize implements Runnable {
 
 		return value;
 	}
+
+    public void cancel() {
+        this.stopWorker = false;
+    }
 }
