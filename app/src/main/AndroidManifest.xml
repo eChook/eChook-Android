@@ -14,7 +14,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="Driven Bluetooth" >
+            android:label="Driven Bluetooth"
+			android:screenOrientation="landscape" >
 
 
         <intent-filter>
