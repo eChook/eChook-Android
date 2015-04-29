@@ -21,12 +21,7 @@ public class BTDataParser extends Thread {
 			if (poppedData != null) {
                 /* poppedData should look like {sXY}
                  * { } are the packet container identifiers
-                 * s identifies what kind of information it is:
-                 * 		s = wheel RPM or speed
-                 * 		i = current
-                 *		v = volts
-                 *		t = throttle
-                 *		r = motor RPM
+                 * s identifies what kind of information it is
                  */
 
 				double value; // return value
@@ -37,12 +32,17 @@ public class BTDataParser extends Thread {
 						&& poppedData[Global.PACKETLENGTH - 1] == Global.STOPBYTE) { // check if ends with '}'
 					// data is good
 					// Now for the hard part
-					if (poppedData[1] == Global.THROTTLEID) {
-						byte herp = Global.THROTTLEID;
-					}
-
 					// if the byte is 255 / 0xFF / 11111111 then the value is interpreted as zero
-					// FYI a byte in Java is -128 to 127 so we must convert to an int by doing & 0xff
+					// because you can't send null bytes over Bluetooth.
+					// A side-effect of this is that we can't send the value "255"
+					// a byte in Java is -128 to 127 so we must convert to an int by doing & 0xff
+
+					/* Explanation :
+					 * & is a bitwise AND operation
+					 * (byte) 1111111 is interpreted by Java as -128
+					 * 11111111 & 0xff converts the value to an integer, which is then interpreted as
+					 * (int) 255, thus enabling the proper comparison
+					 */
 					if ((poppedData[2] & 0xff) == 255) { poppedData[2] = 0; }
 					if ((poppedData[3] & 0xff) == 255) { poppedData[3] = 0; }
 
@@ -63,30 +63,16 @@ public class BTDataParser extends Thread {
 
 					// Check the ID
 					switch (poppedData[1]) {
-						case Global.VOLTID:
-							AddVoltage(value);
-							break;
+						case Global.VOLTID: 	AddVoltage(value); 			break;
+						case Global.AMPID:		AddCurrent(value); 			break;
+						case Global.MOTORRPMID:	AddMotorRPM(value);			break;
+						case Global.WHEELRPMID:	AddSpeed(value);			break;
+						case Global.THROTTLEID:	AddThrottle(value);			break;
+						case Global.TEMP1ID:	AddTemperature(value, 1); 	break;
+						case Global.TEMP2ID:	AddTemperature(value, 2); 	break;
+						case Global.TEMP3ID:	AddTemperature(value, 3); 	break;
 
-						case Global.AMPID:
-							AddCurrent(value);
-							break;
-
-						case Global.MOTORRPMID:
-							AddMotorRPM(value);
-							break;
-
-						case Global.WHEELRPMID:
-							AddSpeed(value);
-							break;
-
-						case Global.THROTTLEID:
-							AddThrottle(value);
-							break;
-
-						default:
-							// unrecognised id
-							Global.MangledDataCount++;
-							break;
+						default:				Global.MangledDataCount++;	break;
 					}
 				} else {
 					// data is bad
@@ -153,18 +139,10 @@ public class BTDataParser extends Thread {
 		dataPoint.add(speedMPH);
 		Global.SpeedMPH.add(dataPoint);
 
-		/* CONVERSIONS *
-		// Speed = wheelRPM * PI * Wheel Diameter * (60 mins / 1000 metres)
-		double speedKPH = round(wheelRPM * (60 * Math.PI * Global.WHEEL_DIAMETER), 2) / 1000; // km/h
-		double speedMPH = round(speedKPH * 1.61, 2); // mph
-
+		double speedKPH = round(speedMPH * 1.61, 1);
 
 		dataPoint.set(1, speedKPH);
 		Global.SpeedKPH.add(dataPoint);
-
-		dataPoint.set(1, speedMPH);
-		Global.SpeedMPH.add(dataPoint);
-		*/
 	}
 
 	private void AddMotorRPM(double rawMotorRPM) {
@@ -176,6 +154,29 @@ public class BTDataParser extends Thread {
 		dataPoint.add(timestamp);
 		dataPoint.add(motorRPM);
 		Global.MotorRPM.add(dataPoint);
+	}
+
+	private void AddTemperature(double rawTemp, int sensorId) {
+		double tempC = rawTemp;
+		double timestamp = System.currentTimeMillis();
+		ArrayList<Double> dataPoint = new ArrayList<>();
+
+		dataPoint.add(timestamp);
+		dataPoint.add(tempC);
+
+		switch (sensorId) {
+			case 1:
+				Global.TempC1.add(dataPoint);
+				break;
+			case 2:
+				Global.TempC2.add(dataPoint);
+				break;
+			case 3:
+				Global.TempC3.add(dataPoint);
+				break;
+			default:
+				break;
+		}
 	}
 
 	private double round(double number, int decimalPoints) {

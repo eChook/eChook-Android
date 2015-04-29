@@ -26,16 +26,19 @@ public class MainActivity extends ActionBarActivity {
 
     /************** UI ELEMENTS ***************/
     static TextView myLabel;
-    static TextView myTextbox;
-    static TextView myIncoming;
 	static TextView myMode;
-    static EditText mySpeed;
-    static EditText myCurrent;
-    static EditText myVoltage;
-
 	static TextView mySpeedDataCount;
 	static TextView myVoltsDataCount;
 	static TextView myAmpsDataCount;
+
+	static EditText Throttle;
+	static EditText Current;
+	static EditText Voltage;
+	static EditText Temp1;
+	static EditText Temp2;
+	static EditText Temp3;
+
+	static View ThrottleBar;
 
     /************** THREADS ***************/
 	public static RandomGenerator Gen = new RandomGenerator();
@@ -64,22 +67,30 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		Button openBTButton = (Button) findViewById(R.id.open);
-		Button startButton = (Button) findViewById(R.id.start);
-		Button stopButton = (Button) findViewById(R.id.stop);
-		Button closeBTButton = (Button) findViewById(R.id.close);
-		Button saveButton = (Button) findViewById(R.id.save);
-		myLabel = (TextView) findViewById(R.id.label);
-		myTextbox = (TextView) findViewById(R.id.entry);
-		myIncoming = (TextView) findViewById(R.id.incoming);
-		mySpeed = (EditText) findViewById(R.id.speed);
-		myCurrent = (EditText) findViewById(R.id.current);
-		myVoltage = (EditText) findViewById(R.id.voltage);
-		myMode = (TextView) findViewById(R.id.txt_Mode);
+		/* BUTTONS */
+		Button openBTButton 	= (Button) findViewById(R.id.open);
+		Button startButton 		= (Button) findViewById(R.id.start);
+		Button stopButton 		= (Button) findViewById(R.id.stop);
+		Button closeBTButton 	= (Button) findViewById(R.id.close);
+		Button saveButton 		= (Button) findViewById(R.id.save);
 
-		mySpeedDataCount = (TextView) findViewById(R.id.SpeedDataCount);
-		myVoltsDataCount = (TextView) findViewById(R.id.VoltsDataCount);
-		myAmpsDataCount = (TextView) findViewById(R.id.AmpsDataCount);
+		/* LABELS */
+		myLabel 			= (TextView) findViewById(R.id.label);
+		myMode 				= (TextView) findViewById(R.id.txt_Mode);
+		mySpeedDataCount 	= (TextView) findViewById(R.id.SpeedDataCount);
+		myVoltsDataCount 	= (TextView) findViewById(R.id.VoltsDataCount);
+		myAmpsDataCount 	= (TextView) findViewById(R.id.AmpsDataCount);
+
+		/* DATA FIELDS */
+		Throttle 	= (EditText) findViewById(R.id.throttle);
+		Current 	= (EditText) findViewById(R.id.current);
+		Voltage 	= (EditText) findViewById(R.id.voltage);
+		Temp1 		= (EditText) findViewById(R.id.temp1);
+		Temp2 		= (EditText) findViewById(R.id.temp2);
+		Temp3 		= (EditText) findViewById(R.id.temp3);
+
+		/* FILL BARS */
+		ThrottleBar		= findViewById(R.id.ThrottleBar);
 
 		/************** INITIALIZE SETTINGS ***************/
 		this.InitializeGlobalSettings();

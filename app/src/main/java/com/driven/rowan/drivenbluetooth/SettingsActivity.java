@@ -26,6 +26,7 @@ public class SettingsActivity 	extends PreferenceActivity
 				case "prefMode":
 					int mode = Integer.valueOf(sharedPreferences.getString("prefMode", ""));
 					Global.Mode = Global.MODE.values()[mode];
+					MainActivity.myMode.setText(Global.Mode.toString());
 					break;
 				case "prefSpeedUnits":
 					int units = Integer.valueOf(sharedPreferences.getString("prefSpeedUnits", ""));

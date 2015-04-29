@@ -44,7 +44,7 @@ public class BTStreamReader extends Thread {
 						byte[] packetBytes = new byte[bytesAvailable];
 						bytes = mmInStream.read(packetBytes);
 
-						MainActivity.MainActivityHandler.post(new IncomingUIUpdateRunnable(buffer));
+						//MainActivity.MainActivityHandler.post(new IncomingUIUpdateRunnable(buffer));
 
 						for (int i = 0; i < bytesAvailable; i++) {
 							byte b = packetBytes[i];

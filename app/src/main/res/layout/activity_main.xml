@@ -30,7 +30,7 @@
 		android:layout_height="wrap_content"
 		android:text="Start"
 		android:id="@+id/start"
-		android:layout_alignTop="@+id/stop"
+		android:layout_alignTop="@+id/close"
 		android:layout_centerHorizontal="true" />
 
 	<Button
@@ -46,28 +46,25 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="Speed"
+		android:text="Throttle"
 		android:id="@+id/textView"
-		android:layout_marginBottom="100dp"
-		android:layout_above="@+id/open"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentStart="true"
-		android:layout_alignRight="@+id/speed"
-		android:layout_alignEnd="@+id/speed"
 		android:gravity="center"
-		android:editable="false"/>
+		android:editable="false"
+		android:layout_alignEnd="@+id/throttle"
+		android:layout_alignStart="@+id/throttle"
+		android:layout_marginTop="60dp"/>
 
 	<EditText
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:id="@+id/speed"
+		android:id="@+id/throttle"
 		android:inputType="none"
 		android:width="80dp"
 		android:gravity="center"
-		android:layout_centerVertical="true"
-		android:layout_alignRight="@+id/open"
-		android:layout_alignEnd="@+id/open"
-		android:editable="false"/>
+		android:editable="false"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="false"
+		android:layout_below="@+id/textView"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -78,9 +75,9 @@
 		android:id="@+id/textView2"
 		android:layout_alignTop="@+id/textView"
 		android:layout_alignLeft="@+id/voltage"
-		android:layout_alignStart="@+id/voltage"
-		android:layout_toLeftOf="@+id/textView3"
-		android:layout_toStartOf="@+id/textView3"/>
+		android:layout_alignRight="@+id/voltage"
+		android:layout_alignBottom="@+id/textView"
+		android:layout_alignEnd="@+id/voltage"/>
 
 	<EditText
 		android:layout_width="wrap_content"
@@ -90,9 +87,21 @@
 		android:singleLine="false"
 		android:inputType="none"
 		android:width="80dp"
-		android:layout_alignTop="@+id/speed"
-		android:layout_toRightOf="@+id/speed"
-		android:layout_toEndOf="@+id/speed"/>
+		android:layout_alignTop="@+id/throttle"
+		android:layout_toRightOf="@+id/throttle"
+		android:layout_alignBottom="@+id/throttle"/>
+
+	<View
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/SpeedDataCount"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
+		android:layout_toStartOf="@+id/VoltsDataCount"
+		android:layout_alignRight="@+id/SpeedDataCount"
+		android:layout_above="@+id/open"
+		android:id="@+id/ThrottleBar"
+		class="com.driven.rowan.drivenbluetooth.DataBar"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -102,9 +111,10 @@
 		android:gravity="center"
 		android:id="@+id/textView3"
 		android:layout_alignTop="@+id/textView2"
-		android:layout_toRightOf="@+id/voltage"
 		android:layout_alignRight="@+id/current"
-		android:layout_alignEnd="@+id/current"/>
+		android:layout_alignEnd="@+id/current"
+		android:layout_alignLeft="@+id/current"
+		android:layout_alignBottom="@+id/textView2"/>
 
 	<EditText
 		android:layout_width="wrap_content"
@@ -116,7 +126,7 @@
 		android:width="80dp"
 		android:layout_alignTop="@+id/voltage"
 		android:layout_toRightOf="@+id/voltage"
-		android:layout_toEndOf="@+id/voltage"/>
+		android:layout_alignBottom="@+id/voltage"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -126,8 +136,8 @@
 		android:layout_alignTop="@+id/VoltsDataCount"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentStart="true"
-		android:layout_alignRight="@+id/speed"
-		android:layout_alignEnd="@+id/speed"/>
+		android:layout_alignRight="@+id/throttle"
+		android:layout_alignEnd="@+id/throttle"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -177,9 +187,10 @@
 		android:gravity="center"
 		android:id="@+id/textView4"
 		android:layout_alignBottom="@+id/textView3"
-		android:layout_toRightOf="@+id/textView3"
 		android:layout_alignRight="@+id/temp1"
-		android:layout_alignEnd="@+id/temp1"/>
+		android:layout_alignEnd="@+id/temp1"
+		android:layout_alignLeft="@+id/temp1"
+		android:layout_alignTop="@+id/textView3"/>
 
 	<EditText
 		android:layout_width="wrap_content"
@@ -191,7 +202,7 @@
 		android:width="80dp"
 		android:layout_alignTop="@+id/current"
 		android:layout_toRightOf="@+id/current"
-		android:layout_toEndOf="@+id/current"/>
+		android:layout_alignBottom="@+id/current"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -213,7 +224,7 @@
 		android:width="80dp"
 		android:layout_alignBottom="@+id/temp1"
 		android:layout_toRightOf="@+id/temp1"
-		android:layout_toEndOf="@+id/temp1"/>
+		android:layout_alignTop="@+id/temp1"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -224,9 +235,9 @@
 		android:id="@+id/textView5"
 		android:layout_alignTop="@+id/textView4"
 		android:layout_alignLeft="@+id/temp2"
-		android:layout_alignStart="@+id/temp2"
 		android:layout_alignRight="@+id/temp2"
-		android:layout_alignEnd="@+id/temp2"/>
+		android:layout_alignEnd="@+id/temp2"
+		android:layout_alignBottom="@+id/textView4"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -243,13 +254,15 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="Temp 2"
+		android:text="Temp 3"
 		android:gravity="center"
 		android:id="@+id/textView7"
-		android:layout_alignBottom="@+id/textView5"
+		android:layout_alignParentStart="false"
 		android:layout_toRightOf="@+id/textView5"
-		android:layout_toStartOf="@+id/stop"
-		android:layout_toLeftOf="@+id/stop"/>
+		android:layout_alignBottom="@+id/textView5"
+		android:layout_alignTop="@+id/textView5"
+		android:layout_alignEnd="@+id/temp3"
+		/>
 
 	<EditText
 		android:layout_width="wrap_content"
@@ -259,9 +272,9 @@
 		android:singleLine="false"
 		android:inputType="none"
 		android:width="80dp"
-		android:layout_above="@+id/Temp2DataCount"
-		android:layout_alignLeft="@+id/textView7"
-		android:layout_alignStart="@+id/textView7"/>
+		android:layout_alignBottom="@+id/temp2"
+		android:layout_toRightOf="@+id/temp2"
+		android:layout_alignTop="@+id/temp2"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -273,5 +286,23 @@
 		android:layout_alignStart="@+id/temp3"
 		android:layout_alignRight="@+id/temp3"
 		android:layout_alignEnd="@+id/temp3"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Save"
+		android:id="@+id/save"
+		android:layout_alignBottom="@+id/open"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentEnd="true"/>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:id="@+id/txt_Mode"
+		android:layout_alignTop="@+id/TitleTextView"
+		android:layout_alignRight="@+id/save"
+		android:layout_alignEnd="@+id/save"/>
 
 </RelativeLayout>
