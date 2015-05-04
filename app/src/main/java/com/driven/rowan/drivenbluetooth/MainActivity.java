@@ -38,7 +38,7 @@ public class MainActivity extends ActionBarActivity {
 	static EditText Temp2;
 	static EditText Temp3;
 
-	static View ThrottleBar;
+	static DataBar ThrottleBar;
 
     /************** THREADS ***************/
 	public static RandomGenerator Gen = new RandomGenerator();
@@ -90,7 +90,7 @@ public class MainActivity extends ActionBarActivity {
 		Temp3 		= (EditText) findViewById(R.id.temp3);
 
 		/* FILL BARS */
-		ThrottleBar		= findViewById(R.id.ThrottleBar);
+		ThrottleBar		= (DataBar) findViewById(R.id.ThrottleBar);
 
 		/************** INITIALIZE SETTINGS ***************/
 		this.InitializeGlobalSettings();
@@ -211,8 +211,7 @@ public class MainActivity extends ActionBarActivity {
 		});
 	}
 
-
-    public void showMessage(String theMsg) {
+	public void showMessage(String theMsg) {
         Toast msg = Toast.makeText(getBaseContext(),
                 theMsg, (Toast.LENGTH_LONG));
         msg.show();
@@ -248,6 +247,7 @@ public class MainActivity extends ActionBarActivity {
 		try {
 			int mode = Integer.valueOf(prefs.getString("prefMode", ""));
 			Global.Mode = Global.MODE.values()[mode];
+			myMode.setText(Global.MODE.values()[mode].name());
 
 			int units = Integer.valueOf(prefs.getString("prefSpeedUnits", ""));
 			Global.Unit = Global.UNIT.values()[units];

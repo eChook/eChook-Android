@@ -11,9 +11,11 @@ public class RandomGenerator extends Thread {
 
 	public void run() {
 		this.stopWorker = false;
+		byte i0 = 10;
+		byte i1 = 0;
+
 		while(!this.stopWorker){
 			byte[] Message = new byte[5];
-			// { x y z }
 
 			byte[] IDS = new byte[3];
 			IDS[0] = Global.THROTTLEID;
@@ -22,12 +24,14 @@ public class RandomGenerator extends Thread {
 
 			for (int i = 0; i < IDS.length; i++) {
 				// fill with random shit
-				rnd.nextBytes(Message);
+				//rnd.nextBytes(Message);
 
 				// organise key bytes
 				Message[0] = Global.STARTBYTE;
-				Message[4] = Global.STOPBYTE;
 				Message[1] = IDS[i];
+				Message[2] = i0;
+				Message[3] = i1;
+				Message[4] = Global.STOPBYTE;
 
 				// push to queue
 				Global.BTStreamQueue.add(Message);
@@ -44,6 +48,12 @@ public class RandomGenerator extends Thread {
 			} catch (Exception e) {
 				// ??
 			}
+
+			i0++;
+			i1 += 50;
+
+			if (i0 > 15) i0 = 10;
+			if (i1 > 50) i1 = 0;
 		}
 	}
 

@@ -3,6 +3,7 @@ package com.driven.rowan.drivenbluetooth;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -18,8 +19,7 @@ public class DataBar extends View {
 	public int max;
 	public int min;
 	private int nValue;
-	private int width;
-	private Rect rect = new Rect(0 , 0, 0, 0);
+	//private int width;
 
 	/* CONSTRUCTOR */
 	public DataBar(Context context) {
@@ -28,6 +28,23 @@ public class DataBar extends View {
 
 	public DataBar(Context context, AttributeSet attrs) {
 		super(context, attrs);
+
+		TypedArray a = context.getTheme().obtainStyledAttributes(
+				attrs,
+				R.styleable.DataBar,
+				0, 0);
+
+		try {
+			max = a.getInt(R.styleable.DataBar_max, 0);
+			min = a.getInt(R.styleable.DataBar_min, 0);
+			nValue = this.min;
+			//width = a.getInt(R.styleable.DataBar_width, 10);
+			color = a.getColor(R.styleable.DataBar_BarColor, 0x00);
+		} finally {
+			a.recycle();
+		}
+
+		init();
 	}
 
 	public DataBar(Context context, AttributeSet attrs, int defStyle) {
@@ -39,11 +56,11 @@ public class DataBar extends View {
 				0, 0);
 
 		try {
-			this.max = a.getInt(R.styleable.DataBar_max, 0);
-			this.min = a.getInt(R.styleable.DataBar_min, 0);
-			this.nValue = this.min;
-			this.width = a.getInt(R.styleable.DataBar_width, 10);
-			this.color = a.getColor(R.styleable.DataBar_color, 0xff);
+			max = a.getInt(R.styleable.DataBar_max, 0);
+			min = a.getInt(R.styleable.DataBar_min, 0);
+			nValue = this.min;
+			//width = a.getInt(R.styleable.DataBar_width, 10);
+			color = a.getColor(R.styleable.DataBar_BarColor, Color.BLACK);
 		} finally {
 			a.recycle();
 		}
@@ -55,8 +72,14 @@ public class DataBar extends View {
 		super.onDraw(canvas);
 
 		if (canvas != null) {
-			this.rect.set(0, 0, width, min + nValue);
-			canvas.drawRect(rect, this.p);
+			// calculate new height based on value
+			int height = this.getMeasuredHeight();
+			int width = this.getMeasuredWidth();
+			float h = (float) height - (float) (nValue - min) / (max - min) * height + min;
+			// canvas.drawRect(LEFT, TOP, RIGHT, BOTTOM, PAINT);
+			//canvas.drawRect(0, (int) h, width, 0, this.p);
+			//canvas.drawRect(0, 0, 10, 10, this.p);
+			canvas.drawRect(0, (int) h, width, height, this.p);
 		}
 	}
 
@@ -68,9 +91,13 @@ public class DataBar extends View {
 	public void setValue(float value) {
 		if (value >= (float) this.min && value <= (float) this.max) {
 			this.nValue = (int) value;
+		} else if (value > (float) this.max) {
+		 	this.nValue = this.max;
 		} else {
-		 	this.nValue = 0;
+			this.nValue = this.min;
 		}
+
+		this.invalidate();
 	}
 
 	public void setValue(double value) {
@@ -79,6 +106,8 @@ public class DataBar extends View {
 		} else {
 			this.nValue = 0;
 		}
+
+		this.invalidate();
 	}
 
 	public void setValue(int value) {
@@ -87,5 +116,7 @@ public class DataBar extends View {
 		} else {
 			this.nValue = 0;
 		}
+
+		this.invalidate();
 	}
 }

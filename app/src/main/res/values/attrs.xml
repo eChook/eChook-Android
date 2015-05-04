@@ -2,7 +2,7 @@
 <resources>
 	<declare-styleable name="DataBar">
 		<attr name="width" format="integer" />
-		<attr name="color" format="color"/>
+		<attr name="BarColor" format="color" />
 		<attr name="max" format="integer" />
 		<attr name="min" format="integer" />
 	</declare-styleable>

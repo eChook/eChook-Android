@@ -1,5 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+				xmlns:tools="http://schemas.android.com/tools"
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
 				android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
 				android:paddingRight="@dimen/activity_horizontal_margin"
 				android:paddingTop="@dimen/activity_vertical_margin"
@@ -91,17 +93,18 @@
 		android:layout_toRightOf="@+id/throttle"
 		android:layout_alignBottom="@+id/throttle"/>
 
-	<View
+	<com.driven.rowan.drivenbluetooth.DataBar
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_below="@+id/SpeedDataCount"
-		android:layout_alignParentLeft="true"
+        android:layout_alignParentLeft="true"
 		android:layout_alignParentStart="true"
-		android:layout_toStartOf="@+id/VoltsDataCount"
-		android:layout_alignRight="@+id/SpeedDataCount"
-		android:layout_above="@+id/open"
+        android:layout_above="@+id/open"
 		android:id="@+id/ThrottleBar"
-		class="com.driven.rowan.drivenbluetooth.DataBar"/>
+        custom:BarColor="#000000"
+        custom:min="0"
+        custom:max="20"
+        android:layout_alignRight="@+id/throttle"
+        android:layout_below="@+id/current"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -128,40 +131,7 @@
 		android:layout_toRightOf="@+id/voltage"
 		android:layout_alignBottom="@+id/voltage"/>
 
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:gravity="center"
-		android:id="@+id/SpeedDataCount"
-		android:layout_alignTop="@+id/VoltsDataCount"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentStart="true"
-		android:layout_alignRight="@+id/throttle"
-		android:layout_alignEnd="@+id/throttle"/>
-
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:gravity="center"
-		android:id="@+id/VoltsDataCount"
-		android:layout_alignTop="@+id/AmpsDataCount"
-		android:layout_alignLeft="@+id/voltage"
-		android:layout_alignStart="@+id/voltage"
-		android:layout_toLeftOf="@+id/AmpsDataCount"
-		android:layout_toStartOf="@+id/AmpsDataCount"/>
-
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:gravity="center"
-		android:id="@+id/AmpsDataCount"
-		android:layout_below="@+id/current"
-		android:layout_alignLeft="@+id/textView3"
-		android:layout_alignStart="@+id/textView3"
-		android:layout_alignRight="@+id/current"
-		android:layout_alignEnd="@+id/current"/>
-
-	<TextView
+    <TextView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="@string/app_name"
@@ -204,17 +174,7 @@
 		android:layout_toRightOf="@+id/current"
 		android:layout_alignBottom="@+id/current"/>
 
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:gravity="center"
-		android:id="@+id/Temp1DataCount"
-		android:layout_below="@+id/temp1"
-		android:layout_toRightOf="@+id/current"
-		android:layout_alignRight="@+id/temp1"
-		android:layout_alignEnd="@+id/temp1"/>
-
-	<EditText
+    <EditText
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/temp2"
@@ -239,18 +199,7 @@
 		android:layout_alignEnd="@+id/temp2"
 		android:layout_alignBottom="@+id/textView4"/>
 
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:gravity="center"
-		android:id="@+id/Temp2DataCount"
-		android:layout_alignTop="@+id/Temp1DataCount"
-		android:layout_alignLeft="@+id/temp2"
-		android:layout_alignStart="@+id/temp2"
-		android:layout_alignRight="@+id/temp2"
-		android:layout_alignEnd="@+id/temp2"/>
-
-	<TextView
+    <TextView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
@@ -276,18 +225,7 @@
 		android:layout_toRightOf="@+id/temp2"
 		android:layout_alignTop="@+id/temp2"/>
 
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:gravity="center"
-		android:id="@+id/Temp3DataCount"
-		android:layout_alignTop="@+id/Temp2DataCount"
-		android:layout_alignLeft="@+id/temp3"
-		android:layout_alignStart="@+id/temp3"
-		android:layout_alignRight="@+id/temp3"
-		android:layout_alignEnd="@+id/temp3"/>
-
-	<Button
+    <Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="Save"

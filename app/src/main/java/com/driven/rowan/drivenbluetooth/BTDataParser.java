@@ -53,12 +53,12 @@ public class BTDataParser extends Thread {
 					 * value = [first byte] + [second byte] / 100
 					 */
 
-					if (poppedData[2] < 128) {
+					if ((poppedData[2] & 0xff) < 128) {
 						//FLOAT
-						value = (double)poppedData[2] + (double)poppedData[3] / 100;
+						value = (double) (poppedData[2] & 0xff) + (double) (poppedData[3] & 0xff) / 100;
 					} else {
 						// INTEGER
-						value = (double)poppedData[2] * 100 + (double)poppedData[3];
+						value = (double) (poppedData[2] & 0xff) * 100 + (double) (poppedData[3] & 0xff);
 					}
 
 					// Check the ID

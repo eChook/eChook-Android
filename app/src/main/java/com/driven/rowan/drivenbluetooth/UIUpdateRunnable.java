@@ -38,8 +38,10 @@ public class UIUpdateRunnable implements Runnable {
 
 		// Throttle
 		try {
-			MainActivity.Current.setText(Global.Amps.get(Global.Amps.size() - 1).get(1).toString() + " A");
-			MainActivity.myAmpsDataCount.setText(Integer.toString(Global.Amps.size()));
+			double value = Global.Throttle.get(Global.Throttle.size() - 1).get(1);
+			MainActivity.Throttle.setText(String.valueOf(value) + " %");
+			//MainActivity.myThrottleDataCount.setText(Integer.toString(Global.Amps.size()));
+			MainActivity.ThrottleBar.setValue(value);
 		} catch (Exception e) {
 			e.toString();
 		}
