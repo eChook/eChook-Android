@@ -77,8 +77,6 @@ public class DataBar extends View {
 			int width = this.getMeasuredWidth();
 			float h = (float) height - (float) (nValue - min) / (max - min) * height + min;
 			// canvas.drawRect(LEFT, TOP, RIGHT, BOTTOM, PAINT);
-			//canvas.drawRect(0, (int) h, width, 0, this.p);
-			//canvas.drawRect(0, 0, 10, 10, this.p);
 			canvas.drawRect(0, (int) h, width, height, this.p);
 		}
 	}
@@ -118,5 +116,26 @@ public class DataBar extends View {
 		}
 
 		this.invalidate();
+	}
+
+	private int RGScale(int percent) {
+		if (percent < 0) { percent = 0; }
+		if (percent > 100) { percent = 100;}
+
+		int r = 0;
+		int g = 0;
+		int b = 0;
+
+		if (percent <= 50) {
+			r = 255;
+			g = (int) (percent * 5.1);
+			b = 0;
+		} else if (percent > 50) {
+			r = (int) (255 - (percent - 50) * 5.1);
+			g = 255;
+			b = 0;
+		}
+
+		return Color.rgb(r, g, b);
 	}
 }

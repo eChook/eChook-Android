@@ -16,7 +16,6 @@ public class UIUpdateRunnable implements Runnable {
 		// Voltage
 		try {
 			MainActivity.Voltage.setText(Global.Volts.get(Global.Volts.size() - 1).get(1).toString() + " V");
-			MainActivity.myVoltsDataCount.setText(Integer.toString(Global.Volts.size()));
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -26,10 +25,8 @@ public class UIUpdateRunnable implements Runnable {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
 				MainActivity.Throttle.setText(Global.SpeedMPH.get(Global.SpeedMPH.size() - 1).get(1).toString() + " mph");
-				MainActivity.mySpeedDataCount.setText(Integer.toString(Global.SpeedMPH.size()));
 			} else if (Global.Unit == Global.UNIT.KPH) {
 				MainActivity.Throttle.setText(Global.SpeedKPH.get(Global.SpeedKPH.size() - 1).get(1).toString() + " kph");
-				MainActivity.mySpeedDataCount.setText(Integer.toString(Global.SpeedKPH.size()));
 			}
 
 		} catch (Exception e) {
@@ -49,7 +46,6 @@ public class UIUpdateRunnable implements Runnable {
 		// Current
 		try {
 			MainActivity.Current.setText(Global.Amps.get(Global.Amps.size() - 1).get(1).toString() + " A");
-			MainActivity.myAmpsDataCount.setText(Integer.toString(Global.Amps.size()));
 		} catch (Exception e) {
 			e.toString();
 		}

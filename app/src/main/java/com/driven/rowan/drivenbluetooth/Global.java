@@ -21,18 +21,18 @@ public final class Global {
 	/**********************/
 	/* THREADED VARIABLES */
 	/**********************/
-	// use the volatile keyword
-    public static volatile BlockingQueue<byte[]> BTStreamQueue = new LinkedBlockingQueue<>();
-	public static volatile ArrayList<ArrayList<Double>> Volts = new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> Amps = new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> Throttle = new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> MotorRPM = new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> WheelRPM = new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> SpeedMPH = new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> SpeedKPH = new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> TempC1 = new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> TempC2 = new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> TempC3 = new ArrayList<>();
+	// use the volatile keyword for thread safety
+    public static volatile BlockingQueue<byte[]> BTStreamQueue = 	new LinkedBlockingQueue<>();
+	public static volatile ArrayList<ArrayList<Double>> Volts = 	new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> Amps = 		new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> Throttle = 	new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> MotorRPM = 	new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> WheelRPM = 	new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> SpeedMPH = 	new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> SpeedKPH = 	new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> TempC1 = 	new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> TempC2 = 	new ArrayList<>();
+	public static volatile ArrayList<ArrayList<Double>> TempC3 = 	new ArrayList<>();
 
 
 	/**********************/
@@ -44,11 +44,10 @@ public final class Global {
 	/**********************/
 	/* CONSTANTS          */
 	/**********************/
-	public static final double WHEEL_DIAMETER = 0.5; // in metres
-	public static final byte STARTBYTE = 123; // ASCII Code for '{'
-    public static final byte STOPBYTE = 125; // ASCII code for '}'
-    public static final int PACKETLENGTH = 5; // { [id] [1] [2] }
-                                              // 1   2   3   4  5
+	public static final byte STARTBYTE 	= 	123; // ASCII Code for '{'
+    public static final byte STOPBYTE = 	125; // ASCII code for '}'
+    public static final int PACKETLENGTH = 	5; 	 // { [id] [1] [2] }
+                                              	 // 1   2   3   4  5
 
 	public static final byte VOLTID = 		118; // v
 	public static final byte AMPID = 		105; // i

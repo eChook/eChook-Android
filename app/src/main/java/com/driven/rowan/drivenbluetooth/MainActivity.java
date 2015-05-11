@@ -27,9 +27,6 @@ public class MainActivity extends ActionBarActivity {
     /************** UI ELEMENTS ***************/
     static TextView myLabel;
 	static TextView myMode;
-	static TextView mySpeedDataCount;
-	static TextView myVoltsDataCount;
-	static TextView myAmpsDataCount;
 
 	static EditText Throttle;
 	static EditText Current;
@@ -41,10 +38,10 @@ public class MainActivity extends ActionBarActivity {
 	static DataBar ThrottleBar;
 
     /************** THREADS ***************/
-	public static RandomGenerator Gen = new RandomGenerator();
-	public static BTDataParser Parser = new BTDataParser();
+	public static RandomGenerator Gen = 		new RandomGenerator();
+	public static BTDataParser Parser = 		new BTDataParser();
+    public static DataToCsvFile DataSaver = 	new DataToCsvFile();
 	public static BTStreamReader StreamReader; // initialize below
-    public static DataToCsvFile DataSaver = new DataToCsvFile();
 
     /************** UI UPDATER ***************/
 	private Timer UIUpdateTimer; // don't initialize because it should be done below
@@ -77,9 +74,6 @@ public class MainActivity extends ActionBarActivity {
 		/* LABELS */
 		myLabel 			= (TextView) findViewById(R.id.label);
 		myMode 				= (TextView) findViewById(R.id.txt_Mode);
-		mySpeedDataCount 	= (TextView) findViewById(R.id.SpeedDataCount);
-		myVoltsDataCount 	= (TextView) findViewById(R.id.VoltsDataCount);
-		myAmpsDataCount 	= (TextView) findViewById(R.id.AmpsDataCount);
 
 		/* DATA FIELDS */
 		Throttle 	= (EditText) findViewById(R.id.throttle);
