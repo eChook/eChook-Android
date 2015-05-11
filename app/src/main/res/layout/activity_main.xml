@@ -102,7 +102,7 @@
 		android:id="@+id/ThrottleBar"
         custom:BarColor="#000000"
         custom:min="0"
-        custom:max="20"
+        custom:max="100"
         android:layout_alignRight="@+id/throttle"
         android:layout_below="@+id/current"/>
 

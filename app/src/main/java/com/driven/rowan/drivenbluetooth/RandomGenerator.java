@@ -11,7 +11,7 @@ public class RandomGenerator extends Thread {
 
 	public void run() {
 		this.stopWorker = false;
-		byte i0 = 10;
+		byte i0 = 0;
 		byte i1 = 0;
 
 		while(!this.stopWorker){
@@ -49,10 +49,10 @@ public class RandomGenerator extends Thread {
 				// ??
 			}
 
-			i0++;
+			i0 += 10;
 			i1 += 50;
 
-			if (i0 > 15) i0 = 10;
+			if (i0 > 100) i0 = 0;
 			if (i1 > 50) i1 = 0;
 		}
 	}

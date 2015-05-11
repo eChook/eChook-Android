@@ -75,7 +75,9 @@ public class DataBar extends View {
 			// calculate new height based on value
 			int height = this.getMeasuredHeight();
 			int width = this.getMeasuredWidth();
+			float pct = (float) (nValue - min) / (max - min) * 100;
 			float h = (float) height - (float) (nValue - min) / (max - min) * height + min;
+			this.p.setColor(HSVScale((int)pct, 0, 120));
 			// canvas.drawRect(LEFT, TOP, RIGHT, BOTTOM, PAINT);
 			canvas.drawRect(0, (int) h, width, height, this.p);
 		}
@@ -118,11 +120,31 @@ public class DataBar extends View {
 		this.invalidate();
 	}
 
-	private int RGScale(int percent) {
+	private int HSVScale(int percent, int hue_min, int hue_max) {
 		if (percent < 0) { percent = 0; }
 		if (percent > 100) { percent = 100;}
 
-		int r = 0;
+		if (hue_min > 360) {hue_min = 360;}
+		if (hue_min < 0) {hue_min = 0;}
+		if (hue_max > 360) {hue_min = 360;}
+		if (hue_max < 0) {hue_max = 0;}
+
+		float h = hue_min; // hue
+		float s = (float) 0.7; // saturation
+		float v = (float) 0.7; // value
+
+		if (hue_min < hue_max) {
+			h = (float) (hue_min + (hue_min - hue_max) * percent / 100);
+
+		} else if (hue_min > hue_max) {
+			int diff = 360 - hue_min + hue_max;
+			h = (float) hue_min + diff * percent / 100;
+			if (h > 360) {h -= 360;}
+		}
+
+		return Color.HSVToColor(new float[] {h, s, v});
+
+		/*int r = 0;
 		int g = 0;
 		int b = 0;
 
@@ -136,6 +158,6 @@ public class DataBar extends View {
 			b = 0;
 		}
 
-		return Color.rgb(r, g, b);
+		return Color.rgb(r, g, b);*/
 	}
 }
