@@ -79,7 +79,7 @@ public class DataBar extends View {
 			float h = (float) height - (float) (nValue - min) / (max - min) * height + min;
 			this.p.setColor(HSVScale((int)pct, 0, 120));
 			// canvas.drawRect(LEFT, TOP, RIGHT, BOTTOM, PAINT);
-			canvas.drawRect(0, (int) h, width, height, this.p);
+			canvas.drawRect(0, (int) h, width, height, this.p); //
 		}
 	}
 
