@@ -49,5 +49,13 @@ public class UIUpdateRunnable implements Runnable {
 		} catch (Exception e) {
 			e.toString();
 		}
+
+		// TempC1
+		try {
+			double value = Global.TempC1.get(Global.TempC1.size() - 1).get(1);
+			MainActivity.Temp1.setText(String.valueOf(value) + " C");
+		} catch (Exception e) {
+			e.toString();
+		}
 	}
 }

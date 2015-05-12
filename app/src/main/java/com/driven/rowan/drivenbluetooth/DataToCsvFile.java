@@ -37,13 +37,15 @@ public class DataToCsvFile extends Thread {
                     {
                             Global.Throttle,
                             Global.Volts,
-                            Global.Amps
+                            Global.Amps,
+                            Global.TempC1
                     };
             try {
                 String[] variables = {
                         new String(new byte[] {Global.THROTTLEID}, "UTF-8"), // these should match the array above
                         new String(new byte[] {Global.VOLTID}, "UTF-8"),
-                        new String(new byte[] {Global.AMPID}, "UTF-8")
+                        new String(new byte[] {Global.AMPID}, "UTF-8"),
+                        new String(new byte[] {Global.TEMP1ID}, "UTF-8")
                 };
 
                 int i = 0;
