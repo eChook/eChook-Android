@@ -25,22 +25,33 @@ import java.util.TimerTask;
 public class MainActivity extends ActionBarActivity {
 
     /************** UI ELEMENTS ***************/
-    static TextView myLabel;
-	static TextView myMode;
+    public static TextView myLabel;
+	public static TextView myMode;
 
-	static EditText Throttle;
-	static EditText Current;
-	static EditText Voltage;
-	static EditText Temp1;
-	static EditText Temp2;
-	static EditText Temp3;
+	public static EditText Throttle;
+	public static EditText Current;
+	public static EditText Voltage;
+	public static EditText Temp1;
+	public static EditText RPM;
+	public static EditText Speed;
 
-	static DataBar ThrottleBar;
+	public static DataBar ThrottleBar;
+	public static DataBar CurrentBar;
+	public static DataBar VoltageBar;
+	public static DataBar T1Bar;
+	public static DataBar RPMBar;
+	public static DataBar SpeedBar;
 
-    /************** THREADS ***************/
-	public static RandomGenerator Gen = 		new RandomGenerator();
-	public static BTDataParser Parser = 		new BTDataParser();
-    public static DataToCsvFile DataSaver = 	new DataToCsvFile();
+	static Button openBTButton;
+	static Button startButton;
+	static Button stopButton;
+	static Button closeBTButton;
+	static Button saveButton;
+
+	/************** THREADS ***************/
+	public static RandomGenerator Gen 			= new RandomGenerator();
+	public static BTDataParser Parser 			= new BTDataParser();
+    public static DataToCsvFile DataSaver 		= new DataToCsvFile();
 	public static BTStreamReader StreamReader; // initialize below
 
     /************** UI UPDATER ***************/
@@ -56,7 +67,7 @@ public class MainActivity extends ActionBarActivity {
     static final BluetoothManager myBluetoothManager = new BluetoothManager();
     public static BluetoothDisconnectedRunnable BTReconnect = new BluetoothDisconnectedRunnable(); // This must be initialized in the main thread because reasons
 
-	String TAG = "DBDebug";
+	String TAG = "DrivenBluetooth";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,19 +83,25 @@ public class MainActivity extends ActionBarActivity {
 		Button saveButton 		= (Button) findViewById(R.id.save);
 
 		/* LABELS */
-		myLabel 			= (TextView) findViewById(R.id.label);
-		myMode 				= (TextView) findViewById(R.id.txt_Mode);
+		myLabel 				= (TextView) findViewById(R.id.label);
+		myMode 					= (TextView) findViewById(R.id.txt_Mode);
 
 		/* DATA FIELDS */
-		Throttle 	= (EditText) findViewById(R.id.throttle);
-		Current 	= (EditText) findViewById(R.id.current);
-		Voltage 	= (EditText) findViewById(R.id.voltage);
-		Temp1 		= (EditText) findViewById(R.id.temp1);
-		Temp2 		= (EditText) findViewById(R.id.temp2);
-		Temp3 		= (EditText) findViewById(R.id.temp3);
+		Throttle 				= (EditText) findViewById(R.id.throttle);
+		Current 				= (EditText) findViewById(R.id.current);
+		Voltage 				= (EditText) findViewById(R.id.voltage);
+		Temp1 					= (EditText) findViewById(R.id.temp1);
+		RPM 					= (EditText) findViewById(R.id.rpm);
+		Speed 					= (EditText) findViewById(R.id.speed);
 
 		/* FILL BARS */
-		ThrottleBar		= (DataBar) findViewById(R.id.ThrottleBar);
+		ThrottleBar				= (DataBar) findViewById(R.id.ThrottleBar);
+		CurrentBar				= (DataBar) findViewById(R.id.CurrentBar);
+		VoltageBar				= (DataBar) findViewById(R.id.VoltageBar);
+		T1Bar					= (DataBar) findViewById(R.id.T1Bar);
+		RPMBar					= (DataBar) findViewById(R.id.RPMBar);
+		SpeedBar				= (DataBar) findViewById(R.id.SpeedBar);
+
 
 		/************** INITIALIZE SETTINGS ***************/
 		this.InitializeGlobalSettings();
@@ -164,12 +181,8 @@ public class MainActivity extends ActionBarActivity {
 
 						myLabel.setText("Now Logging - press 'Stop' to cancel");
 					}
-
-
-
 				} catch (Exception e) {
 					showMessage(e.getMessage().toString());
-
 				}
 			}
 		});

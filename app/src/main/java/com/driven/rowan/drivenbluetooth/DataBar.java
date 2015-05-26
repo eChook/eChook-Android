@@ -19,7 +19,9 @@ public class DataBar extends View {
 	public int max;
 	public int min;
 	private int nValue;
-	//private int width;
+
+	public double xWidth; // width multiplier
+	public double xHeight; // height multiplier
 
 	/* CONSTRUCTOR */
 	public DataBar(Context context) {
@@ -40,6 +42,8 @@ public class DataBar extends View {
 			nValue = this.min;
 			//width = a.getInt(R.styleable.DataBar_width, 10);
 			color = a.getColor(R.styleable.DataBar_BarColor, 0x00);
+			xWidth = a.getFloat(R.styleable.DataBar_xWidth, 1);
+			xHeight = a.getFloat(R.styleable.DataBar_xHeight, 1);
 		} finally {
 			a.recycle();
 		}
@@ -73,8 +77,8 @@ public class DataBar extends View {
 
 		if (canvas != null) {
 			// calculate new height based on value
-			int height = this.getMeasuredHeight();
-			int width = this.getMeasuredWidth();
+			int height = (int) (this.getMeasuredHeight() * this.xHeight);
+			int width = (int) (this.getMeasuredWidth() * this.xWidth);
 			float pct = (float) (nValue - min) / (max - min) * 100;
 			float h = (float) height - (float) (nValue - min) / (max - min) * height + min;
 			this.p.setColor(HSVScale((int)pct, 0, 120));

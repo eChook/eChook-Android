@@ -35,17 +35,26 @@ public class DataToCsvFile extends Thread {
         while (!this.stopWorker) {
             ArrayList[] ArrayOfLists = new ArrayList[]
                     {
-                            Global.Throttle,
-                            Global.Volts,
-                            Global.Amps,
-                            Global.TempC1
+						Global.Throttle,	// 1
+						Global.Volts,		// 2
+						Global.Amps,		// 3
+						Global.MotorRPM,	// 4
+						Global.SpeedMPH,	// 5
+						Global.TempC1,		// 6
+						Global.TempC2,		// 7
+						Global.TempC3		// 8
                     };
             try {
                 String[] variables = {
-                        new String(new byte[] {Global.THROTTLEID}, "UTF-8"), // these should match the array above
-                        new String(new byte[] {Global.VOLTID}, "UTF-8"),
-                        new String(new byte[] {Global.AMPID}, "UTF-8"),
-                        new String(new byte[] {Global.TEMP1ID}, "UTF-8")
+						// these should match the array above
+                        new String(new byte[] {Global.THROTTLEID}, "UTF-8"),	// 1
+                        new String(new byte[] {Global.VOLTID}, "UTF-8"),		// 2
+                        new String(new byte[] {Global.AMPID}, "UTF-8"),			// 3
+                        new String(new byte[] {Global.MOTORRPMID}, "UTF-8"),	// 4
+                        new String(new byte[] {Global.SPEEDMPHID}, "UTF-8"),	// 5
+                        new String(new byte[] {Global.TEMP1ID}, "UTF-8"),		// 6
+                        new String(new byte[] {Global.TEMP2ID}, "UTF-8"),		// 7
+						new String(new byte[] {Global.TEMP3ID}, "UTF-8")		// 8
                 };
 
                 int i = 0;
