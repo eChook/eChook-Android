@@ -59,10 +59,9 @@ public final class Global {
 
 	public static final byte VOLTID = 		118; // v
 	public static final byte AMPID = 		105; // i
-	public static final byte MOTORRPMID =	114; // r
-	public static final byte WHEELRPMID =	115; // s
+	public static final byte MOTORRPMID =	109; // m
 	public static final byte THROTTLEID =	116; // t
-	public static final byte SPEEDMPHID =	117; // u
+	public static final byte SPEEDMPHID =	115; // s
 	public static final byte TEMP1ID = 		97;	 // a
 	public static final byte TEMP2ID = 		98;	 // b
 	public static final byte TEMP3ID = 		99;  // c

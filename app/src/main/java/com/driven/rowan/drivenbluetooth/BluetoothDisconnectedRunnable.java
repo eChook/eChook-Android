@@ -10,10 +10,11 @@ public final class BluetoothDisconnectedRunnable implements Runnable {
 	@Deprecated
 	public void run() {
 		try {
+			Global.BTSocket = null;
 			do {
-				MainActivity.myLabel.setText("Bluetooth disconnected. Attempting to reconnect... [" + this.mNumberOfAttempts++ + "]");
 				MainActivity.myBluetoothManager.reconnectBT();
-			} while (Global.BTSocket == null && this.mNumberOfAttempts <= 10);
+				MainActivity.myLabel.setText("Bluetooth disconnected. Attempting to reconnect... [" + this.mNumberOfAttempts++ + "]");
+			} while (!Global.BTSocket.isConnected() && this.mNumberOfAttempts <= 10);
 
 			if (this.mNumberOfAttempts >= 10) {
 				// after 10 attempts it is clear that something else is up
@@ -25,6 +26,9 @@ public final class BluetoothDisconnectedRunnable implements Runnable {
 					}
 				});
 			}
+		} catch (Exception e) {
+			e.toString();
+			MainActivity.stopButton.callOnClick();
 		} finally {
 			// notify the blocked BTStreamReader thread to continue
 			synchronized (Global.BTReconnectLock) {

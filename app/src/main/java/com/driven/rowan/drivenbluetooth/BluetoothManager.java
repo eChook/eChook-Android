@@ -113,7 +113,7 @@ public final class BluetoothManager extends MainActivity {
 			// if the above succeeds, return true
 			return true;
 		} catch (Exception e) {
-			showMessage(e.getMessage().toString());
+			e.getMessage().toString();
 			return false;
 		}
 	}
