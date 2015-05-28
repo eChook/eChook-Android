@@ -66,7 +66,7 @@ public class BTDataParser extends Thread {
 						case Global.VOLTID: 	AddVoltage(value); 			break;
 						case Global.AMPID:		AddCurrent(value); 			break;
 						case Global.MOTORRPMID:	AddMotorRPM(value);			break;
-						case Global.WHEELRPMID:	AddSpeed(value);			break;
+						case Global.SPEEDMPHID:	AddSpeed(value);			break;
 						case Global.THROTTLEID:	AddThrottle(value);			break;
 						case Global.TEMP1ID:	AddTemperature(value, 1); 	break;
 						case Global.TEMP2ID:	AddTemperature(value, 2); 	break;
@@ -117,7 +117,7 @@ public class BTDataParser extends Thread {
 	}
 
 	private void AddThrottle(double rawThrottle) {
-		double throttle = rawThrottle; // Apply conversion and offset TODO revisit throttle
+		double throttle = (int) rawThrottle; // Apply conversion and offset TODO revisit throttle
 		double timestamp = System.currentTimeMillis();
 
 		ArrayList<Double> dataPoint = new ArrayList<>();

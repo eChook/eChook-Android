@@ -1,7 +1,12 @@
 package com.driven.rowan.drivenbluetooth;
 
+import android.app.AlarmManager;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -34,12 +39,15 @@ public final class Global {
 	public static volatile ArrayList<ArrayList<Double>> TempC2 = 	new ArrayList<>();
 	public static volatile ArrayList<ArrayList<Double>> TempC3 = 	new ArrayList<>();
 
+	public static volatile Object BTReconnectLock = new Object();
 
 	/**********************/
 	/* VARIABLES          */
 	/**********************/
 	public static BluetoothSocket BTSocket;
 	public static int MangledDataCount = 0;
+	public static GregorianCalendar RaceStartTime;
+	public static AlarmManager AlarmManager;
 
 	/**********************/
 	/* CONSTANTS          */
@@ -60,6 +68,7 @@ public final class Global {
 	public static final byte TEMP3ID = 		99;  // c
 
     public static final int DATA_SAVE_INTERVAL = 5000; // save interval in milliseconds
+	public static final int BT_DATA_TIMEOUT = 2000; // Bluetooth connection timeout in milliseconds
 
 	/**********************/
 	/* SETTINGS VARIABLES */

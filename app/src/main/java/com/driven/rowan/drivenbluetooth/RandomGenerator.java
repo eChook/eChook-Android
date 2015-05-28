@@ -17,20 +17,23 @@ public class RandomGenerator extends Thread {
 		while(!this.stopWorker){
 			byte[] Message = new byte[5];
 
-			byte[] IDS = new byte[3];
+			byte[] IDS = new byte[6];
 			IDS[0] = Global.THROTTLEID;
 			IDS[1] = Global.AMPID;
 			IDS[2] = Global.VOLTID;
+			IDS[3] = Global.TEMP1ID;
+			IDS[4] = Global.MOTORRPMID;
+			IDS[5] = Global.SPEEDMPHID;
 
 			for (int i = 0; i < IDS.length; i++) {
 				// fill with random shit
-				//rnd.nextBytes(Message);
+				rnd.nextBytes(Message);
 
 				// organise key bytes
 				Message[0] = Global.STARTBYTE;
 				Message[1] = IDS[i];
-				Message[2] = i0;
-				Message[3] = i1;
+				//Message[2] = i0;
+				//Message[3] = i1;
 				Message[4] = Global.STOPBYTE;
 
 				// push to queue

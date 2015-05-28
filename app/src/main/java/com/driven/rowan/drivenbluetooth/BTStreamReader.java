@@ -30,13 +30,23 @@ public class BTStreamReader extends Thread {
     public void run() {
 		byte[] buffer = new byte[1024];
 	    int bytes;
+		long latestMillis = 0;
 
 	    this.stopWorker = false;
 	    int readBufferPosition = 0;
 
 	    while (!this.stopWorker) {
 			if (this.mmInStream != null && Global.BTSocket.isConnected()) {
-				// still connected which is good
+				/* using isConnected() is not a reliable way to check whether the Bluetooth
+				 * connection is still alive.
+				 *
+				 * Instead, every time a successful packet is received, update an internal
+				 * timekeeping variable to the current millis(). Every loop gone by without
+				 * data received will not update this variable, therefore we can implement a
+				 * check to how long it has been since we have last received data. If this time
+				 * becomes greater than a preset time, we can assume that the Bluetooth connection
+				 * has been lost
+				 */
 				try {
 					int bytesAvailable = mmInStream.available();
 
@@ -44,7 +54,8 @@ public class BTStreamReader extends Thread {
 						byte[] packetBytes = new byte[bytesAvailable];
 						bytes = mmInStream.read(packetBytes);
 
-						//MainActivity.MainActivityHandler.post(new IncomingUIUpdateRunnable(buffer));
+						// update the timekeeping variable
+						latestMillis = System.currentTimeMillis();
 
 						for (int i = 0; i < bytesAvailable; i++) {
 							byte b = packetBytes[i];
@@ -63,8 +74,6 @@ public class BTStreamReader extends Thread {
 								// flush it to the global queue
 								Global.BTStreamQueue.add(encodedBytes);
 
-								// TODO: maybe log the raw message?
-
 								// reset the buffer pointer
 								readBufferPosition = 0;
 							}
@@ -75,29 +84,39 @@ public class BTStreamReader extends Thread {
 					// Add to error count but don't stop working
 					errorCount++;
 				}
-			} else {
-				// Disconnected from bluetooth
-				/* BLUETOOTH RECONNECT PROCEDURE *
-				 *
-				 * During the race it is expected that the driver is wearing gloves
-				 * as per regulation and is therefore unable to interact with
-				 * the touchscreen.
-				 *
-				 * Furthermore, it is likely that the device will be in a waterproof
-				 * or water-resistant case, blocking any input
-				 *
-				 * If the bluetooth connection drops for whatever reason, the app must
-				 * be able to reconnect without input
-				 *
-				 * The BLuetooth Reconnect procedure is handled by the
-				 * BluetoothDisconnectedRunnable class.
-				 *
-				 * Unfortunately, because of thread rules, the BluetoothDisconnectedRunnable class
-				 * must be initialized by the main (UI) thread.
-				 *
-				 */
 
-				MainActivity.BTReconnect.fixIt(); // do NOT call BTReconnect.run();
+				if (System.currentTimeMillis() - latestMillis > Global.BT_DATA_TIMEOUT) {
+					// Disconnected from bluetooth
+					/* BLUETOOTH RECONNECT PROCEDURE *
+					 *
+					 * During the race it is expected that the driver is wearing gloves
+					 * as per regulation and is therefore unable to interact with
+					 * the touchscreen.Furthermore, it is likely that the device will be in a waterproof
+					 * or water-resistant case, blocking any input from the driver
+					 *
+					 * If the bluetooth connection drops for whatever reason, the app must
+					 * be able to reconnect without external input
+					 *
+					 * The Bluetooth Reconnect procedure is handled by the
+					 * BluetoothDisconnectedRunnable class.
+					 *
+					 * Unfortunately, because of thread rules, the BluetoothDisconnectedRunnable class
+					 * must be initialized by the main (UI) thread and called from here
+					 */
+
+					MainActivity.BTReconnect.fixIt(); // do NOT call BTReconnect.run()
+
+					// Now this thread has to block until it receives notification from
+					// BTReconnect. We do this by calling wait() on a Globally accessible object
+					// which blocks until another thread calls notify() or notifyAll() on it.
+					synchronized (Global.BTReconnectLock) {
+						try {
+							Global.BTReconnectLock.wait();
+						} catch (InterruptedException e) {
+							cancel();
+						}
+					}
+				}
 			}
 	    }
     }

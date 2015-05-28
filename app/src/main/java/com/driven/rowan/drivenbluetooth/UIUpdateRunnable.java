@@ -17,6 +17,7 @@ public class UIUpdateRunnable implements Runnable {
 		UpdateThrottle();
 		UpdateSpeed();
 		UpdateTemp(1);
+		UpdateMotorRPM();
 	}
 
 	private void UpdateVoltage() {
@@ -42,8 +43,8 @@ public class UIUpdateRunnable implements Runnable {
 	private void UpdateThrottle() {
 		try {
 			double value = Global.Throttle.get(Global.Throttle.size() - 1).get(1);
-			MainActivity.Throttle.setText(String.valueOf(value) + " %");
-			MainActivity.ThrottleBar.setValue(value);
+			MainActivity.Throttle.setText(String.valueOf((int) value) + " %");
+			MainActivity.ThrottleBar.setValue((int) value);
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -99,8 +100,8 @@ public class UIUpdateRunnable implements Runnable {
 	private void UpdateMotorRPM() {
 		try {
 			double value = Global.MotorRPM.get(Global.MotorRPM.size() - 1).get(1);
-			MainActivity.RPM.setText(String.valueOf(value) + " RPM");
-			MainActivity.RPMBar.setValue(value);
+			MainActivity.RPM.setText(String.valueOf((int) value));
+			MainActivity.RPMBar.setValue((int) value);
 		} catch (Exception e) {
 			e.toString();
 		}

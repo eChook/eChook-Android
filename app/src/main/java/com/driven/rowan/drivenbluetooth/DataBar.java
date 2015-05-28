@@ -77,13 +77,37 @@ public class DataBar extends View {
 
 		if (canvas != null) {
 			// calculate new height based on value
+			/*
+			 *	O ->
+			 *	|
+			 *	V
+			 *
+			 *  x0, y0	 _______	x1, y0		all values measured from top-left (O)
+			 * 			|       |
+			 * 			|       |
+			 * 			|       |
+			 * 	x0, y1	|_______|	x1, y1
+			 *
+			 * 	drawRect(x0, y0, x1, y1);
+			 *
+			 */
+			int boxHeight = this.getMeasuredHeight();
+			int boxWidth = this.getMeasuredWidth();
+
+			int x0 = (int) (boxWidth * (1 - xWidth) / 2);
+			int y0 = (int) (boxHeight - (float) (nValue - min) / (max - min) * boxHeight + min);
+			int x1 = (int) (x0 + boxWidth * xWidth);
+			int y1 = boxHeight;
+
+			/*
+			float y0 = (float) boxWidth - (float) (nValue - min) / (max - min) * height + min;
 			int height = (int) (this.getMeasuredHeight() * this.xHeight);
 			int width = (int) (this.getMeasuredWidth() * this.xWidth);
 			float pct = (float) (nValue - min) / (max - min) * 100;
 			float h = (float) height - (float) (nValue - min) / (max - min) * height + min;
-			this.p.setColor(HSVScale((int)pct, 0, 120));
-			// canvas.drawRect(LEFT, TOP, RIGHT, BOTTOM, PAINT);
-			canvas.drawRect(0, (int) h, width, height, this.p); //
+			//this.p.setColor(HSVScale((int)pct, 0, 120));
+			// canvas.drawRect(LEFT, TOP, RIGHT, BOTTOM, PAINT); */
+			canvas.drawRect(x0, y0, x1, y1, this.p); //
 		}
 	}
 

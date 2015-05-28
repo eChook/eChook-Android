@@ -75,7 +75,7 @@ public class DataToCsvFile extends Thread {
                 e.toString();
             }
 
-            try {
+            try { // for some reason this needs to be in a try/catch block
                 Thread.sleep(Global.DATA_SAVE_INTERVAL);
             } catch (Exception e) {
                 // ??
