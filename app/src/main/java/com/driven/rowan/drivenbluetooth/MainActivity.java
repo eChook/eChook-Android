@@ -6,8 +6,9 @@ import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.media.MediaScannerConnection;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -24,8 +25,8 @@ import android.widget.Toast;
 
 import android.os.Handler;
 
+import java.io.File;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -65,6 +66,7 @@ public class MainActivity extends ActionBarActivity {
 	public static BTDataParser Parser 			= new BTDataParser();
     public static DataToCsvFile DataSaver 		= new DataToCsvFile();
 	public static BTStreamReader StreamReader; // initialize below
+	public static BluetoothDisconnectedThread BTReconnect; // Initialize when required
 
     /************** UI UPDATER ***************/
 	private Timer UIUpdateTimer; // don't initialize because it should be done below
@@ -77,7 +79,6 @@ public class MainActivity extends ActionBarActivity {
 	private static final int RESULT_SETTINGS = 2;
     private static Context context;
     static final BluetoothManager myBluetoothManager = new BluetoothManager();
-    public static BluetoothDisconnectedRunnable BTReconnect = new BluetoothDisconnectedRunnable(); // This must be initialized in the main thread because reasons
 	private PendingIntent pendingIntent;
 
 	String TAG = "DrivenBluetooth";
@@ -244,6 +245,11 @@ public class MainActivity extends ActionBarActivity {
 				UIUpdateTimer.cancel();
 				UIUpdateTimer.purge();
 				myLabel.setText("Stopped logging");
+
+				// scan for the data file to ensure it can be viewed from a computer
+				File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
+				MediaScannerConnection.scanFile(MainActivity.getAppContext(), new String[]{f.getAbsolutePath()}, null, null);
+
 			} catch (Exception e) {
 				showMessage(e.getMessage().toString());
 			}

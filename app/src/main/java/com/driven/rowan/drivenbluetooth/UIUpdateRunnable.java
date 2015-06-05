@@ -12,19 +12,21 @@ public class UIUpdateRunnable implements Runnable {
 	private volatile boolean stopWorker = false;
 
 	public void run() {
+		// Sensor readings
 		UpdateVoltage();
 		UpdateCurrent();
 		UpdateThrottle();
 		UpdateSpeed();
 		UpdateTemp(1);
 		UpdateMotorRPM();
+
+		UpdateBTStatus();
 	}
 
 	private void UpdateVoltage() {
 		try {
-			double value = Global.Volts.get(Global.Volts.size() - 1).get(1);
-			MainActivity.Voltage.setText(String.valueOf(value) + " V");
-			MainActivity.VoltageBar.setValue(value);
+			MainActivity.Voltage.setText(Global.Volts.toString());
+			MainActivity.VoltageBar.setValue(Global.Volts);
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -32,9 +34,8 @@ public class UIUpdateRunnable implements Runnable {
 
 	private void UpdateCurrent() {
 		try {
-			double value = Global.Amps.get(Global.Amps.size() - 1).get(1);
-			MainActivity.Current.setText(String.valueOf(value) + " A");
-			MainActivity.CurrentBar.setValue(value);
+			MainActivity.Current.setText(Global.Amps.toString());
+			MainActivity.CurrentBar.setValue(Global.Amps);
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -42,9 +43,8 @@ public class UIUpdateRunnable implements Runnable {
 
 	private void UpdateThrottle() {
 		try {
-			double value = Global.Throttle.get(Global.Throttle.size() - 1).get(1);
-			MainActivity.Throttle.setText(String.valueOf((int) value) + " %");
-			MainActivity.ThrottleBar.setValue((int) value);
+			MainActivity.Throttle.setText(Global.Throttle.toString());
+			MainActivity.ThrottleBar.setValue(Global.Throttle);
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -54,13 +54,11 @@ public class UIUpdateRunnable implements Runnable {
 		try {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
-				double value = Global.SpeedMPH.get(Global.SpeedMPH.size() - 1).get(1);
-				MainActivity.Speed.setText(String.valueOf(value) + " mph");
-				MainActivity.SpeedBar.setValue(value);
+				MainActivity.Speed.setText(Global.SpeedMPH.toString());
+				MainActivity.SpeedBar.setValue(Global.SpeedMPH);
 			} else if (Global.Unit == Global.UNIT.KPH) {
-				double value = Global.SpeedKPH.get(Global.SpeedKPH.size() - 1).get(1);
-				MainActivity.Speed.setText(String.valueOf(value) + " kph");
-				MainActivity.SpeedBar.setValue(value);
+				MainActivity.Speed.setText(Global.SpeedKPH.toString());
+				MainActivity.SpeedBar.setValue(Global.SpeedKPH);
 			}
 
 		} catch (Exception e) {
@@ -69,28 +67,27 @@ public class UIUpdateRunnable implements Runnable {
 	}
 
 	private void UpdateTemp(int sensorIndex) {
-		ArrayList<ArrayList<Double>> TempArray;
+		Double TempValue;
 		EditText TempText;
 		DataBar TempBar;
 		switch (sensorIndex) {
 			case 1:
-				TempArray = Global.TempC1;
+				TempValue = Global.TempC1;
 				TempText = MainActivity.Temp1;
 				TempBar = MainActivity.T1Bar;
 				break;
 
 			default:
-				TempArray = null;
+				TempValue = null;
 				TempText = null;
 				TempBar = null;
 				break;
 		}
 
-		if (TempArray != null && TempText != null && TempBar != null) {
+		if (TempValue != null && TempText != null && TempBar != null) {
 			try {
-				double value = TempArray.get(Global.TempC1.size() - 1).get(1);
-				TempText.setText(String.valueOf(value) + " C");
-				TempBar.setValue(value);
+				TempText.setText(String.valueOf(TempValue) + " C");
+				TempBar.setValue(TempValue);
 			} catch (Exception e) {
 				e.toString();
 			}
@@ -99,11 +96,26 @@ public class UIUpdateRunnable implements Runnable {
 
 	private void UpdateMotorRPM() {
 		try {
-			double value = Global.MotorRPM.get(Global.MotorRPM.size() - 1).get(1);
-			MainActivity.RPM.setText(String.valueOf((int) value));
-			MainActivity.RPMBar.setValue((int) value);
+			MainActivity.RPM.setText(Global.MotorRPM.toString());
+			MainActivity.RPMBar.setValue(Global.MotorRPM);
 		} catch (Exception e) {
 			e.toString();
+		}
+	}
+
+	private void UpdateBTStatus() {
+		switch (Global.BTState) {
+			case NONE:
+				MainActivity.myLabel.setText("Select 'Open BT' to connect to Bluetooth");
+				break;
+
+			case CONNECTED:
+				MainActivity.myLabel.setText("Logging...");
+				break;
+
+			case DISCONNECTED:
+				MainActivity.myLabel.setText("Bluetooth disconnected. Retrying... [" + Global.BTReconnectAttempts + "]");
+				break;
 		}
 	}
 }

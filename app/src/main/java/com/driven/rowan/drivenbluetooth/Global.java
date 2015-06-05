@@ -28,18 +28,24 @@ public final class Global {
 	/**********************/
 	// use the volatile keyword for thread safety
     public static volatile BlockingQueue<byte[]> BTStreamQueue = 	new LinkedBlockingQueue<>();
-	public static volatile ArrayList<ArrayList<Double>> Volts = 	new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> Amps = 		new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> Throttle = 	new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> MotorRPM = 	new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> WheelRPM = 	new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> SpeedMPH = 	new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> SpeedKPH = 	new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> TempC1 = 	new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> TempC2 = 	new ArrayList<>();
-	public static volatile ArrayList<ArrayList<Double>> TempC3 = 	new ArrayList<>();
+	public static volatile Double Volts 	= 	0.0;
+	public static volatile Double Amps 		= 	0.0;
+	public static volatile Double Throttle 	= 	0.0;
+	public static volatile Double MotorRPM 	= 	0.0;
+	public static volatile Double WheelRPM 	= 	0.0;
+	public static volatile Double SpeedMPH 	= 	0.0;
+	public static volatile Double SpeedKPH 	= 	0.0;
+	public static volatile Double TempC1 	= 	0.0;
+	public static volatile Double TempC2 	= 	0.0;
+	public static volatile Double TempC3 	= 	0.0;
 
+	/* BLUETOOTH RECONNECT VARIABLES */
 	public static volatile Object BTReconnectLock = new Object();
+	public static volatile int BTReconnectAttempts = 0;
+
+	/* BLUETOOTH STATE TRACKER */
+	public enum BTSTATE {NONE, CONNECTED, DISCONNECTED}
+	public static volatile BTSTATE BTState = BTSTATE.NONE;
 
 	/**********************/
 	/* VARIABLES          */
@@ -66,16 +72,18 @@ public final class Global {
 	public static final byte TEMP2ID = 		98;	 // b
 	public static final byte TEMP3ID = 		99;  // c
 
-    public static final int DATA_SAVE_INTERVAL = 5000; // save interval in milliseconds
+    public static final int DATA_SAVE_INTERVAL = 250; // save interval in milliseconds
 	public static final int BT_DATA_TIMEOUT = 2000; // Bluetooth connection timeout in milliseconds
+
+	public static final String DATA_FILE = "arduino.csv";
 
 	/**********************/
 	/* SETTINGS VARIABLES */
 	/**********************/
-	public static enum MODE {DEMO, RACE}
+	public enum MODE {DEMO, RACE}
 	public static MODE Mode;
 
-	public static enum UNIT {MPH, KPH}
+	public enum UNIT {MPH, KPH}
 	public static UNIT Unit;
 
 	/**********************/

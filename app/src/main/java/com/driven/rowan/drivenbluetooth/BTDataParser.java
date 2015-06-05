@@ -1,7 +1,5 @@
 package com.driven.rowan.drivenbluetooth;
 
-import java.util.ArrayList;
-
 /**
  * Created by Ben on 09/03/2015.
  */
@@ -63,14 +61,14 @@ public class BTDataParser extends Thread {
 
 					// Check the ID
 					switch (poppedData[1]) {
-						case Global.VOLTID: 	AddVoltage(value); 			break;
-						case Global.AMPID:		AddCurrent(value); 			break;
-						case Global.MOTORRPMID:	AddMotorRPM(value);			break;
-						case Global.SPEEDMPHID:	AddSpeed(value);			break;
-						case Global.THROTTLEID:	AddThrottle(value);			break;
-						case Global.TEMP1ID:	AddTemperature(value, 1); 	break;
-						case Global.TEMP2ID:	AddTemperature(value, 2); 	break;
-						case Global.TEMP3ID:	AddTemperature(value, 3); 	break;
+						case Global.VOLTID: 	SetVoltage(value); 			break;
+						case Global.AMPID:		SetCurrent(value); 			break;
+						case Global.MOTORRPMID:	SetMotorRPM(value);			break;
+						case Global.SPEEDMPHID:	SetSpeed(value);			break;
+						case Global.THROTTLEID:	SetThrottle(value);			break;
+						case Global.TEMP1ID:	SetTemperature(value, 1); 	break;
+						case Global.TEMP2ID:	SetTemperature(value, 2); 	break;
+						case Global.TEMP3ID:	SetTemperature(value, 3); 	break;
 
 						default:				Global.MangledDataCount++;	break;
 					}
@@ -92,87 +90,39 @@ public class BTDataParser extends Thread {
 
 	 */
 
-	private void AddVoltage(double rawVolts) {
-		double volts = round(rawVolts, 2); // Apply conversion and offset TODO revisit volts
-		double timestamp = System.currentTimeMillis();
-
-		ArrayList<Double> dataPoint = new ArrayList<>();
-
-		dataPoint.add(timestamp);
-		dataPoint.add(volts);
-
-		Global.Volts.add(dataPoint);
+	private void SetVoltage(double rawVolts) {
+		Global.Volts = round(rawVolts, 2); // Apply conversion and offset TODO revisit volts
 	}
 
-	private void AddCurrent(double rawAmps) {
-		double amps = round(rawAmps, 2); // Apply conversion and offset TODO revisit amps
-		double timestamp = System.currentTimeMillis();
-
-		ArrayList<Double> dataPoint = new ArrayList<>();
-
-		dataPoint.add(timestamp);
-		dataPoint.add(amps);
-
-		Global.Amps.add(dataPoint);
+	private void SetCurrent(double rawAmps) {
+		Global.Amps = round(rawAmps, 2); // Apply conversion and offset TODO revisit amps
 	}
 
-	private void AddThrottle(double rawThrottle) {
-		double throttle = (int) rawThrottle; // Apply conversion and offset TODO revisit throttle
-		double timestamp = System.currentTimeMillis();
-
-		ArrayList<Double> dataPoint = new ArrayList<>();
-
-		dataPoint.add(timestamp);
-		dataPoint.add(throttle);
-
-		Global.Throttle.add(dataPoint);
+	private void SetThrottle(double rawThrottle) {
+		Global.Throttle = rawThrottle; // Apply conversion and offset TODO revisit throttle
 	}
 
-	private void AddSpeed(double rawSpeedMPH) {
-
-		double speedMPH = rawSpeedMPH; // Apply conversion and offset TODO revisit wheelRPM
-		double timestamp = System.currentTimeMillis(); // Get current timestamp in milliseconds since 1 Jan 1970
-
-		ArrayList<Double> dataPoint = new ArrayList<>();
-
-		dataPoint.add(timestamp);
-		dataPoint.add(speedMPH);
-		Global.SpeedMPH.add(dataPoint);
-
-		double speedKPH = round(speedMPH * 1.61, 1);
-
-		dataPoint.set(1, speedKPH);
-		Global.SpeedKPH.add(dataPoint);
+	private void SetSpeed(double rawSpeedMPH) {
+		Global.SpeedMPH = rawSpeedMPH; // Apply conversion and offset TODO revisit wheelRPM
+		Global.SpeedKPH = round(Global.SpeedMPH * 1.61, 1);
 	}
 
-	private void AddMotorRPM(double rawMotorRPM) {
-		double motorRPM = rawMotorRPM; // Apply conversion and offset TODO revisit motorRPM
-		double timestamp = System.currentTimeMillis();
-
-		ArrayList<Double> dataPoint = new ArrayList<>();
-
-		dataPoint.add(timestamp);
-		dataPoint.add(motorRPM);
-		Global.MotorRPM.add(dataPoint);
+	private void SetMotorRPM(double rawMotorRPM) {
+		Global.MotorRPM = rawMotorRPM; // Apply conversion and offset TODO revisit motorRPM
 	}
 
-	private void AddTemperature(double rawTemp, int sensorId) {
+	private void SetTemperature(double rawTemp, int sensorId) {
 		double tempC = rawTemp;
-		double timestamp = System.currentTimeMillis();
-		ArrayList<Double> dataPoint = new ArrayList<>();
-
-		dataPoint.add(timestamp);
-		dataPoint.add(tempC);
 
 		switch (sensorId) {
 			case 1:
-				Global.TempC1.add(dataPoint);
+				Global.TempC1 = rawTemp;
 				break;
 			case 2:
-				Global.TempC2.add(dataPoint);
+				Global.TempC2 = rawTemp;
 				break;
 			case 3:
-				Global.TempC3.add(dataPoint);
+				Global.TempC3 = rawTemp;
 				break;
 			default:
 				break;
