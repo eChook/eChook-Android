@@ -35,38 +35,36 @@ import java.util.TimerTask;
 public class MainActivity extends ActionBarActivity {
 
     /************** UI ELEMENTS ***************/
-    public static TextView myLabel;
-	public static TextView myMode;
-	public static TextView SMSZone;
+    public static TextView 	myLabel;
+	public static TextView 	myMode;
+	public static TextView 	SMSZone;
 
-	public static EditText Throttle;
-	public static EditText Current;
-	public static EditText Voltage;
-	public static EditText Temp1;
-	public static EditText RPM;
-	public static EditText Speed;
+	public static EditText 	Throttle;
+	public static EditText 	Current;
+	public static EditText 	Voltage;
+	public static EditText 	Temp1;
+	public static EditText 	RPM;
+	public static EditText 	Speed;
 
-	public static EditText RaceStartTime;
+	public static EditText 	RaceStartTime;
 
-	public static DataBar ThrottleBar;
-	public static DataBar CurrentBar;
-	public static DataBar VoltageBar;
-	public static DataBar T1Bar;
-	public static DataBar RPMBar;
-	public static DataBar SpeedBar;
+	public static DataBar 	ThrottleBar;
+	public static DataBar 	CurrentBar;
+	public static DataBar 	VoltageBar;
+	public static DataBar 	T1Bar;
+	public static DataBar 	RPMBar;
+	public static DataBar 	SpeedBar;
 
-	static Button openBTButton;
-	static Button startButton;
-	static Button stopButton;
-	static Button closeBTButton;
-	static Button saveButton;
+	public static Button 	openBTButton;
+	public static Button 	startButton;
+	public static Button 	stopButton;
+	public static Button 	closeBTButton;
 
 	/************** THREADS ***************/
 	public static RandomGenerator Gen 			= new RandomGenerator();
 	public static BTDataParser Parser 			= new BTDataParser();
     public static DataToCsvFile DataSaver 		= new DataToCsvFile();
 	public static BTStreamReader StreamReader; // initialize below
-	public static BluetoothDisconnectedThread BTReconnect; // Initialize when required
 
     /************** UI UPDATER ***************/
 	private Timer UIUpdateTimer; // don't initialize because it should be done below
@@ -90,33 +88,33 @@ public class MainActivity extends ActionBarActivity {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		/* BUTTONS */
-		Button openBTButton 	= (Button) findViewById(R.id.open);
-		Button startButton 		= (Button) findViewById(R.id.start);
-		Button stopButton 		= (Button) findViewById(R.id.stop);
-		Button closeBTButton 	= (Button) findViewById(R.id.close);
+		openBTButton 			= (Button) 		findViewById(R.id.open);
+		startButton 			= (Button) 		findViewById(R.id.start);
+		stopButton 				= (Button) 		findViewById(R.id.stop);
+		closeBTButton 			= (Button) 		findViewById(R.id.close);
 
 		/* LABELS */
-		myLabel 				= (TextView) findViewById(R.id.label);
-		myMode 					= (TextView) findViewById(R.id.txt_Mode);
+		myLabel 				= (TextView) 	findViewById(R.id.label);
+		myMode 					= (TextView) 	findViewById(R.id.txt_Mode);
 
 		/* DATA FIELDS */
-		Throttle 				= (EditText) findViewById(R.id.throttle);
-		Current 				= (EditText) findViewById(R.id.current);
-		Voltage 				= (EditText) findViewById(R.id.voltage);
-		Temp1 					= (EditText) findViewById(R.id.temp1);
-		RPM 					= (EditText) findViewById(R.id.rpm);
-		Speed 					= (EditText) findViewById(R.id.speed);
+		Throttle 				= (EditText) 	findViewById(R.id.throttle);
+		Current 				= (EditText) 	findViewById(R.id.current);
+		Voltage 				= (EditText) 	findViewById(R.id.voltage);
+		Temp1 					= (EditText) 	findViewById(R.id.temp1);
+		RPM 					= (EditText) 	findViewById(R.id.rpm);
+		Speed 					= (EditText) 	findViewById(R.id.speed);
 
-		RaceStartTime			= (EditText) findViewById(R.id.raceStartTime);
-		SMSZone					= (TextView) findViewById(R.id.smsBox);
+		RaceStartTime			= (EditText) 	findViewById(R.id.raceStartTime);
+		SMSZone					= (TextView) 	findViewById(R.id.smsBox);
 
 		/* FILL BARS */
-		ThrottleBar				= (DataBar) findViewById(R.id.ThrottleBar);
-		CurrentBar				= (DataBar) findViewById(R.id.CurrentBar);
-		VoltageBar				= (DataBar) findViewById(R.id.VoltageBar);
-		T1Bar					= (DataBar) findViewById(R.id.T1Bar);
-		RPMBar					= (DataBar) findViewById(R.id.RPMBar);
-		SpeedBar				= (DataBar) findViewById(R.id.SpeedBar);
+		ThrottleBar				= (DataBar) 	findViewById(R.id.ThrottleBar);
+		CurrentBar				= (DataBar) 	findViewById(R.id.CurrentBar);
+		VoltageBar				= (DataBar) 	findViewById(R.id.VoltageBar);
+		T1Bar					= (DataBar) 	findViewById(R.id.T1Bar);
+		RPMBar					= (DataBar) 	findViewById(R.id.RPMBar);
+		SpeedBar				= (DataBar) 	findViewById(R.id.SpeedBar);
 
 
 		/************** INITIALIZE SETTINGS ***************/
@@ -299,7 +297,6 @@ public class MainActivity extends ActionBarActivity {
 					UIUpdateTimer = new Timer();
 					UIUpdateTimer.schedule(UIUpdateTask, 250, 250);
 
-					myLabel.setText("Now Logging - press 'Stop' to cancel");
 				}
 			} catch (Exception e) {
 				showMessage(e.getMessage().toString());
@@ -321,7 +318,7 @@ public class MainActivity extends ActionBarActivity {
 			int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
 			int minute = mcurrentTime.get(Calendar.MINUTE);
 			TimePickerDialog mTimePicker;
-			mTimePicker = new TimePickerDialog(MainActivity.this, t, hour, minute, true);//Yes 24 hour time
+			mTimePicker = new TimePickerDialog(MainActivity.this, t, hour, minute, true);//true for 24 hour time
 			mTimePicker.setTitle("Select Time");
 			mTimePicker.show();
 		}
@@ -336,7 +333,7 @@ public class MainActivity extends ActionBarActivity {
 				int month = mcurrentTime.get(Calendar.MONTH);
 				int day = mcurrentTime.get(Calendar.DAY_OF_MONTH);
 				// Race countdown timer starts 10 seconds before so minute - 1, 50 seconds
-				Global.RaceStartTime = new GregorianCalendar(year, month, day, hourOfDay, minute - 1, 50);
+				Global.RaceStartTime = new GregorianCalendar(year, month, day, hourOfDay, minute, 0);
 				setRaceNotifier();
 			}
 		};

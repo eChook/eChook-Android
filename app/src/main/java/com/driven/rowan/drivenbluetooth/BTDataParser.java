@@ -41,6 +41,10 @@ public class BTDataParser extends Thread {
 					 * 11111111 & 0xff converts the value to an integer, which is then interpreted as
 					 * (int) 255, thus enabling the proper comparison
 					 */
+
+					if ((poppedData[1] == Global.MOTORRPMID)) {
+						byte[] herp = poppedData;
+					}
 					if ((poppedData[2] & 0xff) == 255) { poppedData[2] = 0; }
 					if ((poppedData[3] & 0xff) == 255) { poppedData[3] = 0; }
 
@@ -56,6 +60,7 @@ public class BTDataParser extends Thread {
 						value = (double) (poppedData[2] & 0xff) + (double) (poppedData[3] & 0xff) / 100;
 					} else {
 						// INTEGER
+						poppedData[2] -= 128;
 						value = (double) (poppedData[2] & 0xff) * 100 + (double) (poppedData[3] & 0xff);
 					}
 

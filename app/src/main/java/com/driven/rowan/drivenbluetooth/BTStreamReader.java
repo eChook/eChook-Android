@@ -87,27 +87,40 @@ public class BTStreamReader extends Thread {
 				 * If the bluetooth connection drops for whatever reason, the app must
 				 * be able to reconnect without external input
 				 *
-				 * The Bluetooth Reconnect procedure is handled by the
-				 * BluetoothDisconnectedThread class.
 				 *
 				 */
-				Global.BTState = Global.BTSTATE.DISCONNECTED;
-				MainActivity.BTReconnect = new BluetoothDisconnectedThread();
-				MainActivity.BTReconnect.start();
 
-				// Now this thread has to block until it receives notification from
-				// BTReconnect. We do this by calling wait() on a Globally accessible object
-				// which blocks until another thread calls notify() or notifyAll() on it.
-				synchronized (Global.BTReconnectLock) {
+				if (Global.BTReconnectAttempts++ <= 10) {
+					Global.BTState = Global.BTSTATE.DISCONNECTED;
+					DisconnectedBTRoutine();
+					latestMillis = System.currentTimeMillis();
 					try {
-						Global.BTReconnectLock.wait();
-					} catch (InterruptedException e) {
-						cancel();
+						// the input stream needs to be reset
+						this.mmInStream = Global.BTSocket.getInputStream();
+					} catch (Exception e) {
+						// do nothing
 					}
+				} else {
+					MainActivity.MainActivityHandler.post(new Runnable() {
+						public void run() {
+							MainActivity.stopButton.callOnClick();
+							MainActivity.myLabel.setText("Could not reconnect Bluetooth. Please check hardware");
+						}
+					});
+					Global.BTReconnectAttempts = 0;
 				}
 			}
 	    }
     }
+
+	private void DisconnectedBTRoutine() {
+		try {
+			Global.BTSocket = null;
+			MainActivity.myBluetoothManager.reconnectBT();
+		} catch (Exception e) {
+			e.toString();
+		}
+	}
 
 	public void cancel() {
 		this.stopWorker = true;

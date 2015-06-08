@@ -14,6 +14,8 @@ public class DataToCsvFile extends Thread {
 
 	private Double[] ArrayOfVariables;
 	private String[] variable_identifiers;
+	private File f;
+	private FileOutputStream oStream;
 
 	/********* SAVING DATA TO FILE **********/
 
@@ -40,17 +42,6 @@ public class DataToCsvFile extends Thread {
 	private volatile boolean stopWorker = false;
 
 	public DataToCsvFile() {
-		this.ArrayOfVariables = new Double[] {
-					Global.Throttle,    // 1
-					Global.Volts,       // 2
-					Global.Amps,        // 3
-					Global.MotorRPM,    // 4
-					Global.SpeedMPH,    // 5
-					Global.TempC1,      // 6
-					Global.TempC2,      // 7
-					Global.TempC3       // 8
-		};
-
 		try {
 			this.variable_identifiers = new String[]{
 					// these should match the array above
@@ -66,11 +57,28 @@ public class DataToCsvFile extends Thread {
 		} catch (Exception e) {
 			MainActivity.showMessage(MainActivity.getAppContext(), e.toString(), Toast.LENGTH_SHORT);
 		}
+
+		try {
+			this.f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
+			this.oStream = new FileOutputStream(f, true);
+		} catch (Exception e) {
+			MainActivity.showMessage(MainActivity.getAppContext(), e.toString(), Toast.LENGTH_LONG);
+		}
 	}
 
 	public void run() {
 		while (!this.stopWorker) {
 			try {
+				this.ArrayOfVariables = new Double[] {
+						Global.Throttle,    // 1
+						Global.Volts,       // 2
+						Global.Amps,        // 3
+						Global.MotorRPM,    // 4
+						Global.SpeedMPH,    // 5
+						Global.TempC1,      // 6
+						Global.TempC2,      // 7
+						Global.TempC3       // 8
+				};
 
 				WriteToFile(Global.DATA_FILE, GetLatestDataAsString());
 
@@ -110,8 +118,6 @@ public class DataToCsvFile extends Thread {
 	private void WriteToFile(String filename, String data) {
 		if (data.length() > 0) {
 			try {
-				File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
-				FileOutputStream oStream = new FileOutputStream(f, true);
 
 				if (f.length() == 0) {
 					// file is empty; write headers
@@ -135,15 +141,20 @@ public class DataToCsvFile extends Thread {
 
 				// Write data
 				oStream.write(data.getBytes());
-				oStream.close();
 
 			} catch (Exception e) {
 				e.toString();
+				try {
+					oStream.close();
+				} catch (Exception ex) {}
 			}
 		}
 	}
 
 	public void cancel() {
 		this.stopWorker = true;
+		try {
+			oStream.close();
+		} catch (Exception ex) {}
 	}
 }

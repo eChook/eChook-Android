@@ -84,10 +84,12 @@ public final class BluetoothManager extends MainActivity {
             Log.d(TAG, "Connecting Socket Service to device");
             mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
 
+			mBluetoothAdapter.cancelDiscovery();
 			Global.BTSocket = mmSocket;
 			Global.BTSocket.connect();
 
             deviceConnected = true;
+			Global.BTState = Global.BTSTATE.CONNECTED;
             myLabel.setText("Bluetooth Connection Open - Please press 'Start'");
         } else {
             Log.d(TAG, "No matching device found to open");
@@ -102,12 +104,12 @@ public final class BluetoothManager extends MainActivity {
 			Global.BTSocket.close();
             myLabel.setText("Bluetooth Closed");
             deviceConnected = false;
+			Global.BTState = Global.BTSTATE.NONE;
         }
     }
 
 	public boolean reconnectBT() {
 		try {
-			this.findBT();
 			this.openBT();
 
 			// if the above succeeds, return true
