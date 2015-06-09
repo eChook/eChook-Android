@@ -5,7 +5,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 
 /**
  * Created by BNAGY4 on 15/04/2015.
@@ -44,15 +43,24 @@ public class DataToCsvFile extends Thread {
 	public DataToCsvFile() {
 		try {
 			this.variable_identifiers = new String[]{
-					// these should match the array above
-					new String(new byte[]{Global.THROTTLEID}, "UTF-8"),    // 1
-					new String(new byte[]{Global.VOLTID}, "UTF-8"),        // 2
-					new String(new byte[]{Global.AMPID}, "UTF-8"),         // 3
-					new String(new byte[]{Global.MOTORRPMID}, "UTF-8"),    // 4
-					new String(new byte[]{Global.SPEEDMPHID}, "UTF-8"),    // 5
-					new String(new byte[]{Global.TEMP1ID}, "UTF-8"),       // 6
-					new String(new byte[]{Global.TEMP2ID}, "UTF-8"),       // 7
-					new String(new byte[]{Global.TEMP3ID}, "UTF-8")        // 8
+					// these should match ArrayOfVariables
+					new String(new byte[]{Global.THROTTLEID}, "UTF-8"),    	// 1
+					new String(new byte[]{Global.VOLTID}, "UTF-8"),        	// 2
+					new String(new byte[]{Global.AMPID}, "UTF-8"),         	// 3
+					new String(new byte[]{Global.MOTORRPMID}, "UTF-8"),    	// 4
+					new String(new byte[]{Global.SPEEDMPHID}, "UTF-8"),    	// 5
+					new String(new byte[]{Global.TEMP1ID}, "UTF-8"),       	// 6
+					new String(new byte[]{Global.TEMP2ID}, "UTF-8"),       	// 7
+					new String(new byte[]{Global.TEMP3ID}, "UTF-8"),        // 8
+
+					/* Location */
+					"Latitude",												// 9
+					"Longitude",											// 10
+					"Altitude",												// 11
+					"Bearing",												// 12
+					"SpeedGPS",												// 13
+					"GPSTime",												// 14
+					"Accuracy"												// 15
 			};
 		} catch (Exception e) {
 			MainActivity.showMessage(MainActivity.getAppContext(), e.toString(), Toast.LENGTH_SHORT);
@@ -77,10 +85,19 @@ public class DataToCsvFile extends Thread {
 						Global.SpeedMPH,    // 5
 						Global.TempC1,      // 6
 						Global.TempC2,      // 7
-						Global.TempC3       // 8
+						Global.TempC3,      // 8
+
+						/* Location */
+						Global.Latitude,	// 9
+						Global.Longitude,	// 10
+						Global.Altitude,	// 11
+						Global.Bearing,		// 12
+						Global.SpeedGPS,	// 13
+						Global.GPSTime,		// 14
+						Global.Accuracy,	// 15
 				};
 
-				WriteToFile(Global.DATA_FILE, GetLatestDataAsString());
+				WriteToFile(GetLatestDataAsString());
 
 			} catch (Exception e) {
 				e.toString();
@@ -115,7 +132,7 @@ public class DataToCsvFile extends Thread {
 		return data_string;
 	}
 
-	private void WriteToFile(String filename, String data) {
+	private void WriteToFile(String data) {
 		if (data.length() > 0) {
 			try {
 
@@ -146,7 +163,7 @@ public class DataToCsvFile extends Thread {
 				e.toString();
 				try {
 					oStream.close();
-				} catch (Exception ex) {}
+				} catch (Exception ignored) {}
 			}
 		}
 	}
@@ -155,6 +172,6 @@ public class DataToCsvFile extends Thread {
 		this.stopWorker = true;
 		try {
 			oStream.close();
-		} catch (Exception ex) {}
+		} catch (Exception ignored) {}
 	}
 }

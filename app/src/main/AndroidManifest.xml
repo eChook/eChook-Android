@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -26,7 +27,7 @@
 
         </activity>
         <activity android:name=".SettingsActivity" />
-        <receiver android:name=".MainActivity$RaceNotifier"/>
+        <!--receiver android:name=".MainActivity$RaceNotifier"/ -->
 
 		<!--receiver android:name=".SMSListener">
 			<intent-filter android:priority="2147483647">

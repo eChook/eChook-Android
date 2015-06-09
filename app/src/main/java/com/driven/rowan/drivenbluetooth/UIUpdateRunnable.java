@@ -21,6 +21,7 @@ public class UIUpdateRunnable implements Runnable {
 		UpdateMotorRPM();
 
 		UpdateBTStatus();
+		UpdateLocation();
 	}
 
 	private void UpdateVoltage() {
@@ -117,5 +118,12 @@ public class UIUpdateRunnable implements Runnable {
 				MainActivity.myLabel.setText("Bluetooth disconnected. Retrying... [" + Global.BTReconnectAttempts + "]");
 				break;
 		}
+	}
+
+	private void UpdateLocation() {
+		try {
+			MainActivity.myLatitude.setText(String.valueOf(Global.Latitude));
+			MainActivity.myLongitude.setText(String.valueOf(Global.Longitude));
+		} catch (Exception ignored) {}
 	}
 }

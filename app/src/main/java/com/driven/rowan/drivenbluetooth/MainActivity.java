@@ -7,11 +7,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -25,19 +27,33 @@ import android.widget.Toast;
 
 import android.os.Handler;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
 import java.io.File;
+import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity
+		extends ActionBarActivity
+		implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 
     /************** UI ELEMENTS ***************/
     public static TextView 	myLabel;
 	public static TextView 	myMode;
 	public static TextView 	SMSZone;
+	public static TextView 	myLongitude;
+	public static TextView 	myLatitude;
 
 	public static EditText 	Throttle;
 	public static EditText 	Current;
@@ -60,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
 	public static Button 	stopButton;
 	public static Button 	closeBTButton;
 
-	/************** THREADS ***************/
+	/************** THREADS ******************/
 	public static RandomGenerator Gen 			= new RandomGenerator();
 	public static BTDataParser Parser 			= new BTDataParser();
     public static DataToCsvFile DataSaver 		= new DataToCsvFile();
@@ -70,8 +86,15 @@ public class MainActivity extends ActionBarActivity {
 	private Timer UIUpdateTimer; // don't initialize because it should be done below
     private TimerTask UIUpdateTask; // initialized later on
 
-    /************** UI THREAD HANDLER ***************/
+    /************** UI THREAD HANDLER ********/
 	public static Handler MainActivityHandler = new Handler();
+
+	/****** GOOGLE LOCATION API **************/
+	public static GoogleApiClient GoogleApi;
+	public Location mLocation;
+	public String mLastUpdateTime;
+	public Boolean mRequestingLocationUpdates = true;
+	private LocationRequest mLocationRequest;
 
     /************** OTHER ***************/
 	private static final int RESULT_SETTINGS = 2;
@@ -96,6 +119,8 @@ public class MainActivity extends ActionBarActivity {
 		/* LABELS */
 		myLabel 				= (TextView) 	findViewById(R.id.label);
 		myMode 					= (TextView) 	findViewById(R.id.txt_Mode);
+		myLongitude				= (TextView)	findViewById(R.id.txtLongitude);
+		myLatitude				= (TextView)	findViewById(R.id.txtLatitude);
 
 		/* DATA FIELDS */
 		Throttle 				= (EditText) 	findViewById(R.id.throttle);
@@ -126,24 +151,28 @@ public class MainActivity extends ActionBarActivity {
 		/**************** ALARM MANAGER *******************/
 		Global.AlarmManager = (AlarmManager) MainActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
 
+		/*************** GOOGLE LOCATION API **************/
+		this.mLocationRequest = new LocationRequest();
+		buildGoogleApiClient();
+
 		/**************************************************/
 		/**************** BUTTON LISTENERS ****************/
 		/**************************************************/
 
-		// Open BT Button
 		openBTButton.setOnClickListener(new OpenBT());
-
-		// Close BT Button
 		closeBTButton.setOnClickListener(new CloseBT());
-
-		// Start Button
 		startButton.setOnClickListener(new StartAllThreads());
-
-		// Stop Button
 		stopButton.setOnClickListener(new CancelAllThreads());
 
 		/**************** TIMEPICKER ***********************/
 		RaceStartTime.setOnClickListener(new SetTimeDialog(RaceStartTime));
+
+		/**************** UI UPDATER ***********************/
+		UIUpdateTask = new TimerTask() {
+			public void run() {	MainActivityHandler.post(new UIUpdateRunnable()); }
+		};
+		UIUpdateTimer = new Timer();
+		UIUpdateTimer.schedule(UIUpdateTask, 250, 250);
 	}
 
 	public void showMessage(String theMsg) {
@@ -217,7 +246,7 @@ public class MainActivity extends ActionBarActivity {
 				myBluetoothManager.findBT();
 				myBluetoothManager.openBT();
 			} catch (Exception e) {
-				showMessage(e.getMessage().toString());
+				showMessage(e.getMessage());
 			}
 		}
 	}
@@ -227,7 +256,7 @@ public class MainActivity extends ActionBarActivity {
 			try {
 				myBluetoothManager.closeBT();
 			} catch (Exception e) {
-				showMessage(e.getMessage().toString());
+				showMessage(e.getMessage());
 			}
 		}
 	}
@@ -240,8 +269,6 @@ public class MainActivity extends ActionBarActivity {
 				if (Parser != null && Parser.getState() != Thread.State.TERMINATED) { Parser.cancel(); }
 				if (DataSaver != null && DataSaver.getState() != Thread.State.TERMINATED) { DataSaver.cancel(); }
 
-				UIUpdateTimer.cancel();
-				UIUpdateTimer.purge();
 				myLabel.setText("Stopped logging");
 
 				// scan for the data file to ensure it can be viewed from a computer
@@ -249,7 +276,7 @@ public class MainActivity extends ActionBarActivity {
 				MediaScannerConnection.scanFile(MainActivity.getAppContext(), new String[]{f.getAbsolutePath()}, null, null);
 
 			} catch (Exception e) {
-				showMessage(e.getMessage().toString());
+				showMessage(e.getMessage());
 			}
 		}
 
@@ -290,16 +317,9 @@ public class MainActivity extends ActionBarActivity {
 					if (DataSaver.getState() != Thread.State.NEW) { DataSaver = new DataToCsvFile(); }
 					DataSaver.start();
 
-					// UI Updater
-					UIUpdateTask = new TimerTask() {
-						public void run() {	MainActivityHandler.post(new UIUpdateRunnable()); }
-					};
-					UIUpdateTimer = new Timer();
-					UIUpdateTimer.schedule(UIUpdateTask, 250, 250);
-
 				}
 			} catch (Exception e) {
-				showMessage(e.getMessage().toString());
+				showMessage(e.getMessage());
 			}
 		}
 	}
@@ -313,7 +333,6 @@ public class MainActivity extends ActionBarActivity {
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
 			Calendar mcurrentTime = Calendar.getInstance();
 			int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
 			int minute = mcurrentTime.get(Calendar.MINUTE);
@@ -351,5 +370,83 @@ public class MainActivity extends ActionBarActivity {
 			// Race will start in 10 seconds
 
 		}
+	}
+
+	protected synchronized void buildGoogleApiClient() {
+		GoogleApi = new GoogleApiClient.Builder(this)
+				.addConnectionCallbacks(this)
+				.addOnConnectionFailedListener(this)
+				.addApi(LocationServices.API)
+				.build();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		GoogleApi.connect();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if (GoogleApi.isConnected()) {
+			GoogleApi.disconnect();
+		}
+	}
+
+	/**
+	 * Runs when a GoogleApiClient object successfully connects.
+	 */
+	@Override
+	public void onConnected(Bundle connectionHint) {
+		if (mRequestingLocationUpdates) {
+			startLocationUpdates();
+		}
+		mLocation = LocationServices.FusedLocationApi.getLastLocation(GoogleApi);
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult result) {
+		// Refer to the javadoc for ConnectionResult to see what error codes might be returned in
+		// onConnectionFailed.
+		Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+	}
+
+
+	@Override
+	public void onConnectionSuspended(int cause) {
+		// The connection to Google Play services was lost for some reason. We call connect() to
+		// attempt to re-establish the connection.
+		Log.i(TAG, "Connection suspended");
+		GoogleApi.connect();
+	}
+
+	protected void startLocationUpdates() {
+		try {
+			LocationServices.FusedLocationApi.requestLocationUpdates(
+					GoogleApi, mLocationRequest, this);
+		} catch (Exception e) {
+			e.toString();
+		}
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		mLocation = location;
+		Global.Latitude 	= 				location.getLatitude();
+		Global.Longitude 	= 				location.getLongitude();
+		Global.Altitude		= 				location.getAltitude();
+		Global.Bearing		=	(double) 	location.getBearing();
+		Global.SpeedGPS		=	(double) 	location.getSpeed();
+		Global.GPSTime		=	(double) 	location.getTime();
+		Global.Accuracy		= 	(double) 	location.getAccuracy();
+
+		mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+		Global.LocationUpdateCounter++;
+	}
+
+	protected void stopLocationUpdates() {
+		LocationServices.FusedLocationApi.removeLocationUpdates(
+				GoogleApi, this);
 	}
 }
