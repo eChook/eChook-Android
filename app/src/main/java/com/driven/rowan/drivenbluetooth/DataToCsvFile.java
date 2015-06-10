@@ -54,13 +54,14 @@ public class DataToCsvFile extends Thread {
 					new String(new byte[]{Global.TEMP3ID}, "UTF-8"),        // 8
 
 					/* Location */
-					"Latitude",												// 9
-					"Longitude",											// 10
-					"Altitude",												// 11
-					"Bearing",												// 12
-					"SpeedGPS",												// 13
-					"GPSTime",												// 14
-					"Accuracy"												// 15
+					"Latitude (deg)",										// 9
+					"Longitude (deg)",										// 10
+					"Altitude (m)",											// 11
+					"Bearing (deg)",										// 12
+					"SpeedGPS (m/s)",										// 13
+					"GPSTime",			// milliseconds since epoch (UTC)	// 14
+					"Accuracy (m)",		// radius of 68% confidence			// 15
+					"DeltaDistance (m)"										// 16
 			};
 		} catch (Exception e) {
 			MainActivity.showMessage(MainActivity.getAppContext(), e.toString(), Toast.LENGTH_SHORT);
@@ -78,23 +79,24 @@ public class DataToCsvFile extends Thread {
 		while (!this.stopWorker) {
 			try {
 				this.ArrayOfVariables = new Double[] {
-						Global.Throttle,    // 1
-						Global.Volts,       // 2
-						Global.Amps,        // 3
-						Global.MotorRPM,    // 4
-						Global.SpeedMPH,    // 5
-						Global.TempC1,      // 6
-						Global.TempC2,      // 7
-						Global.TempC3,      // 8
+									Global.Throttle,    	// 1
+									Global.Volts,       	// 2
+									Global.Amps,        	// 3
+									Global.MotorRPM,    	// 4
+									Global.SpeedMPH,    	// 5
+									Global.TempC1,      	// 6
+									Global.TempC2,      	// 7
+									Global.TempC3,      	// 8
 
-						/* Location */
-						Global.Latitude,	// 9
-						Global.Longitude,	// 10
-						Global.Altitude,	// 11
-						Global.Bearing,		// 12
-						Global.SpeedGPS,	// 13
-						Global.GPSTime,		// 14
-						Global.Accuracy,	// 15
+									/* Location */
+									Global.Latitude,		// 9
+									Global.Longitude,		// 10
+									Global.Altitude,		// 11
+									Global.Bearing,			// 12
+									Global.SpeedGPS,		// 13
+									Global.GPSTime,			// 14
+									Global.Accuracy,		// 15
+						(double) 	Global.DeltaDistance	// 16
 				};
 
 				WriteToFile(GetLatestDataAsString());
@@ -154,6 +156,9 @@ public class DataToCsvFile extends Thread {
 
 					// write to file
 					oStream.write(headers.getBytes());
+
+					// reset DeltaDistance
+					Global.DeltaDistance = 0;
 				}
 
 				// Write data

@@ -38,13 +38,14 @@ public final class Global {
 	public static volatile Double TempC2 	= 	0.0;
 	public static volatile Double TempC3 	= 	0.0;
 
-	public static volatile Double Latitude 	=	0.0;
-	public static volatile Double Longitude	=	0.0;
-	public static volatile Double Altitude	=	0.0;
-	public static volatile Double Bearing	=	0.0;
-	public static volatile Double SpeedGPS	=	0.0;
-	public static volatile Double GPSTime	=	0.0;
-	public static volatile Double Accuracy	=	0.0;
+	public static volatile Double Latitude 		=	0.0;
+	public static volatile Double Longitude		=	0.0;
+	public static volatile Double Altitude		=	0.0;
+	public static volatile Double Bearing		=	0.0;
+	public static volatile Double SpeedGPS		=	0.0;
+	public static volatile Double GPSTime		=	0.0;
+	public static volatile Double Accuracy		=	0.0;
+	public static volatile float DeltaDistance	=	0;	// difference between current and previous location in meters
 	public static volatile int LocationUpdateCounter = 0;
 
 	public static volatile int BTReconnectAttempts = 0;
@@ -78,10 +79,16 @@ public final class Global {
 	public static final byte TEMP2ID 		= 	98;	 // b
 	public static final byte TEMP3ID 		= 	99;  // c
 
-    public static final int DATA_SAVE_INTERVAL = 250; // save interval in milliseconds
+    public static final int 	DATA_SAVE_INTERVAL 	= 250; // save interval in milliseconds
+	public static final String 	DATA_FILE 			= "arduino.csv";
+
 	public static final int BT_DATA_TIMEOUT = 2000; // Bluetooth connection timeout in milliseconds
 
-	public static final String DATA_FILE = "arduino.csv";
+	public static final int LOCATION_INTERVAL 		= 10000; 	// Low speed location update interval in ms
+	public static final int LOCATION_FAST_INTERVAL 	= 5000;		// High speed location update interval in ms
+
+	public static final Double DEG_LATITUDE_KM	= 111.23063;	// 1 degree of latitude in KM (roughly) in the UK (between 51-53 degrees North)
+	public static final Double DEG_LONGITUDE_KM	=  59.54930;	// 1 degree of longitude in KM (roughly) in the UK (between 51-53 degrees North)
 
 	/**********************/
 	/* SETTINGS VARIABLES */

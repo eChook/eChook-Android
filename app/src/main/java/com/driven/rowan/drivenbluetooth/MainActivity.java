@@ -91,7 +91,8 @@ public class MainActivity
 
 	/****** GOOGLE LOCATION API **************/
 	public static GoogleApiClient GoogleApi;
-	public Location mLocation;
+	public Location CurrentLocation;
+	public Location PreviousLocation;
 	public String mLastUpdateTime;
 	public Boolean mRequestingLocationUpdates = true;
 	private LocationRequest mLocationRequest;
@@ -152,7 +153,7 @@ public class MainActivity
 		Global.AlarmManager = (AlarmManager) MainActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
 
 		/*************** GOOGLE LOCATION API **************/
-		this.mLocationRequest = new LocationRequest();
+		createLocationRequest();
 		buildGoogleApiClient();
 
 		/**************************************************/
@@ -380,6 +381,13 @@ public class MainActivity
 				.build();
 	}
 
+	protected void createLocationRequest() {
+		this.mLocationRequest = new LocationRequest();
+		mLocationRequest.setInterval(Global.LOCATION_INTERVAL);
+		mLocationRequest.setFastestInterval(Global.LOCATION_FAST_INTERVAL);
+		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+	}
+
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -402,7 +410,7 @@ public class MainActivity
 		if (mRequestingLocationUpdates) {
 			startLocationUpdates();
 		}
-		mLocation = LocationServices.FusedLocationApi.getLastLocation(GoogleApi);
+		CurrentLocation = LocationServices.FusedLocationApi.getLastLocation(GoogleApi);
 	}
 
 	@Override
@@ -432,14 +440,17 @@ public class MainActivity
 
 	@Override
 	public void onLocationChanged(Location location) {
-		mLocation = location;
+		PreviousLocation = CurrentLocation;
+		CurrentLocation = location;
 		Global.Latitude 	= 				location.getLatitude();
 		Global.Longitude 	= 				location.getLongitude();
 		Global.Altitude		= 				location.getAltitude();
-		Global.Bearing		=	(double) 	location.getBearing();
+		Global.Bearing		=	(double)	location.getBearing();
 		Global.SpeedGPS		=	(double) 	location.getSpeed();
 		Global.GPSTime		=	(double) 	location.getTime();
 		Global.Accuracy		= 	(double) 	location.getAccuracy();
+
+		Global.DeltaDistance = calculateDistanceBetween(PreviousLocation, CurrentLocation);
 
 		mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 		Global.LocationUpdateCounter++;
@@ -448,5 +459,9 @@ public class MainActivity
 	protected void stopLocationUpdates() {
 		LocationServices.FusedLocationApi.removeLocationUpdates(
 				GoogleApi, this);
+	}
+
+	protected float calculateDistanceBetween(Location location1, Location location2) {
+		return location1.distanceTo(location2);
 	}
 }
