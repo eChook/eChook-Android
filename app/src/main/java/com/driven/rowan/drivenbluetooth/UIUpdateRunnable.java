@@ -12,7 +12,7 @@ public class UIUpdateRunnable implements Runnable {
 	private volatile boolean stopWorker = false;
 
 	public void run() {
-		// Sensor readings
+		// Arduino sensor readings
 		UpdateVoltage();
 		UpdateCurrent();
 		UpdateThrottle();
@@ -20,6 +20,10 @@ public class UIUpdateRunnable implements Runnable {
 		UpdateTemp(1);
 		UpdateMotorRPM();
 
+		// Android sensor readings
+
+
+		// Other readings
 		UpdateBTStatus();
 		UpdateLocation();
 	}
@@ -125,5 +129,9 @@ public class UIUpdateRunnable implements Runnable {
 			MainActivity.myLatitude.setText(String.valueOf(Global.Latitude));
 			MainActivity.myLongitude.setText(String.valueOf(Global.Longitude));
 		} catch (Exception ignored) {}
+	}
+
+	private void UpdateAccelerometer() {
+
 	}
 }

@@ -157,8 +157,7 @@ public class DataToCsvFile extends Thread {
 					// write to file
 					oStream.write(headers.getBytes());
 
-					// reset DeltaDistance
-					Global.DeltaDistance = 0;
+					resetValues();
 				}
 
 				// Write data
@@ -171,6 +170,15 @@ public class DataToCsvFile extends Thread {
 				} catch (Exception ignored) {}
 			}
 		}
+	}
+
+	private void resetValues() {
+		// This function holds the references to each value which needs to be reset when they are
+		// written to file, e.g. accelerometer, delta distances
+		Global.DeltaDistance = 0;
+		Global.Gx = 0;
+		Global.Gy = 0;
+		Global.Gz = 0;
 	}
 
 	public void cancel() {

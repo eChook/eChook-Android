@@ -2,6 +2,7 @@ package com.driven.rowan.drivenbluetooth;
 
 import android.app.AlarmManager;
 import android.bluetooth.BluetoothSocket;
+import android.hardware.Sensor;
 
 import java.util.GregorianCalendar;
 import java.util.concurrent.BlockingQueue;
@@ -48,6 +49,10 @@ public final class Global {
 	public static volatile float DeltaDistance	=	0;	// difference between current and previous location in meters
 	public static volatile int LocationUpdateCounter = 0;
 
+	public static volatile float Gx = 0;	// Acceleration minus gravity in the x direction
+	public static volatile float Gy = 0;	// Acceleration minus gravity in the y direction
+	public static volatile float Gz = 0;	// Acceleration minus gravity in the z direction
+
 	public static volatile int BTReconnectAttempts = 0;
 
 	/* BLUETOOTH STATE TRACKER */
@@ -61,6 +66,11 @@ public final class Global {
 	public static int MangledDataCount = 0;
 	public static GregorianCalendar RaceStartTime;
 	public static AlarmManager AlarmManager;
+
+	/**********************/
+	/* SENSORS            */
+	/**********************/
+	public static Sensor Gravity;
 
 	/**********************/
 	/* CONSTANTS          */
@@ -79,6 +89,7 @@ public final class Global {
 	public static final byte TEMP2ID 		= 	98;	 // b
 	public static final byte TEMP3ID 		= 	99;  // c
 
+	public static final int 	UI_UPDATE_INTERVAL	= 100; // UI update interval in milliseconds
     public static final int 	DATA_SAVE_INTERVAL 	= 250; // save interval in milliseconds
 	public static final String 	DATA_FILE 			= "arduino.csv";
 

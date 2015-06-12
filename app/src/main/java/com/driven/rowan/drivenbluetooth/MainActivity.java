@@ -1,5 +1,6 @@
 package com.driven.rowan.drivenbluetooth;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
@@ -7,11 +8,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -40,56 +44,61 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
 public class MainActivity
-		extends ActionBarActivity
-		implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
+		extends Activity
+		implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener, SensorEventListener {
 
-    /************** UI ELEMENTS ***************/
-    public static TextView 	myLabel;
-	public static TextView 	myMode;
-	public static TextView 	SMSZone;
-	public static TextView 	myLongitude;
-	public static TextView 	myLatitude;
+	/************* UI ELEMENTS ***************/
+	public static TextView myLabel;
+	public static TextView myMode;
+	public static TextView SMSZone;
+	public static TextView myLongitude;
+	public static TextView myLatitude;
 
-	public static EditText 	Throttle;
-	public static EditText 	Current;
-	public static EditText 	Voltage;
-	public static EditText 	Temp1;
-	public static EditText 	RPM;
-	public static EditText 	Speed;
+	public static TextView myGx;
+	public static TextView myGy;
+	public static TextView myGz;
 
-	public static EditText 	RaceStartTime;
+	public static EditText Throttle;
+	public static EditText Current;
+	public static EditText Voltage;
+	public static EditText Temp1;
+	public static EditText RPM;
+	public static EditText Speed;
 
-	public static DataBar 	ThrottleBar;
-	public static DataBar 	CurrentBar;
-	public static DataBar 	VoltageBar;
-	public static DataBar 	T1Bar;
-	public static DataBar 	RPMBar;
-	public static DataBar 	SpeedBar;
+	public static EditText RaceStartTime;
 
-	public static Button 	openBTButton;
-	public static Button 	startButton;
-	public static Button 	stopButton;
-	public static Button 	closeBTButton;
+	public static DataBar ThrottleBar;
+	public static DataBar CurrentBar;
+	public static DataBar VoltageBar;
+	public static DataBar T1Bar;
+	public static DataBar RPMBar;
+	public static DataBar SpeedBar;
 
-	/************** THREADS ******************/
-	public static RandomGenerator Gen 			= new RandomGenerator();
-	public static BTDataParser Parser 			= new BTDataParser();
-    public static DataToCsvFile DataSaver 		= new DataToCsvFile();
+	public static Button openBTButton;
+	public static Button startButton;
+	public static Button stopButton;
+	public static Button closeBTButton;
+
+	/************* THREADS ******************/
+	public static RandomGenerator Gen = new RandomGenerator();
+	public static BTDataParser Parser = new BTDataParser();
+	public static DataToCsvFile DataSaver = new DataToCsvFile();
 	public static BTStreamReader StreamReader; // initialize below
 
-    /************** UI UPDATER ***************/
+	/************* UI UPDATER ***************/
 	private Timer UIUpdateTimer; // don't initialize because it should be done below
-    private TimerTask UIUpdateTask; // initialized later on
+	private TimerTask UIUpdateTask; // initialized later on
 
-    /************** UI THREAD HANDLER ********/
+	/************* UI THREAD HANDLER ********/
 	public static Handler MainActivityHandler = new Handler();
 
-	/****** GOOGLE LOCATION API **************/
+	/***** GOOGLE LOCATION API **************/
 	public static GoogleApiClient GoogleApi;
 	public Location CurrentLocation;
 	public Location PreviousLocation;
@@ -97,50 +106,65 @@ public class MainActivity
 	public Boolean mRequestingLocationUpdates = true;
 	private LocationRequest mLocationRequest;
 
-    /************** OTHER ***************/
+	/******** SENSOR MANAGER ****************/
+	private SensorManager mSensorManager;
+	private Sensor mGravitySensor;
+	private boolean supportsGravity = false;
+
+	/************* OTHER ***************/
 	private static final int RESULT_SETTINGS = 2;
-    private static Context context;
-    static final BluetoothManager myBluetoothManager = new BluetoothManager();
+	private static Context context;
+	static final BluetoothManager myBluetoothManager = new BluetoothManager();
 	private PendingIntent pendingIntent;
 
 	String TAG = "DrivenBluetooth";
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+	/**************************************************/
+	/**************** MAINACTIVITY ONCREATE ***********/
+	/**************************************************/
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		/* BUTTONS */
-		openBTButton 			= (Button) 		findViewById(R.id.open);
-		startButton 			= (Button) 		findViewById(R.id.start);
-		stopButton 				= (Button) 		findViewById(R.id.stop);
-		closeBTButton 			= (Button) 		findViewById(R.id.close);
+		openBTButton 	= (Button) findViewById(R.id.open);
+		startButton 	= (Button) findViewById(R.id.start);
+		stopButton 		= (Button) findViewById(R.id.stop);
+		closeBTButton	= (Button) findViewById(R.id.close);
 
 		/* LABELS */
-		myLabel 				= (TextView) 	findViewById(R.id.label);
-		myMode 					= (TextView) 	findViewById(R.id.txt_Mode);
-		myLongitude				= (TextView)	findViewById(R.id.txtLongitude);
-		myLatitude				= (TextView)	findViewById(R.id.txtLatitude);
+		myLabel 		= (TextView) findViewById(R.id.label);
+		myMode 			= (TextView) findViewById(R.id.txt_Mode);
+
+		myLongitude 	= (TextView) findViewById(R.id.txtLongitude);
+		myLatitude 		= (TextView) findViewById(R.id.txtLatitude);
+
+		/* ACCELEROMETER VALUES */
+		myGx			= (TextView) findViewById(R.id.txtGx);
+		myGy			= (TextView) findViewById(R.id.txtGy);
+		myGz			= (TextView) findViewById(R.id.txtGz);
 
 		/* DATA FIELDS */
-		Throttle 				= (EditText) 	findViewById(R.id.throttle);
-		Current 				= (EditText) 	findViewById(R.id.current);
-		Voltage 				= (EditText) 	findViewById(R.id.voltage);
-		Temp1 					= (EditText) 	findViewById(R.id.temp1);
-		RPM 					= (EditText) 	findViewById(R.id.rpm);
-		Speed 					= (EditText) 	findViewById(R.id.speed);
+		Throttle 		= (EditText) findViewById(R.id.throttle);
+		Current 		= (EditText) findViewById(R.id.current);
+		Voltage 		= (EditText) findViewById(R.id.voltage);
+		Temp1 			= (EditText) findViewById(R.id.temp1);
+		RPM 			= (EditText) findViewById(R.id.rpm);
+		Speed 			= (EditText) findViewById(R.id.speed);
 
-		RaceStartTime			= (EditText) 	findViewById(R.id.raceStartTime);
-		SMSZone					= (TextView) 	findViewById(R.id.smsBox);
+		RaceStartTime 	= (EditText) findViewById(R.id.raceStartTime);
+		//SMSZone 		= (TextView) findViewById(R.id.smsBox);
 
 		/* FILL BARS */
-		ThrottleBar				= (DataBar) 	findViewById(R.id.ThrottleBar);
-		CurrentBar				= (DataBar) 	findViewById(R.id.CurrentBar);
-		VoltageBar				= (DataBar) 	findViewById(R.id.VoltageBar);
-		T1Bar					= (DataBar) 	findViewById(R.id.T1Bar);
-		RPMBar					= (DataBar) 	findViewById(R.id.RPMBar);
-		SpeedBar				= (DataBar) 	findViewById(R.id.SpeedBar);
+		ThrottleBar 	= (DataBar) findViewById(R.id.ThrottleBar);
+		CurrentBar 		= (DataBar) findViewById(R.id.CurrentBar);
+		VoltageBar 		= (DataBar) findViewById(R.id.VoltageBar);
+		T1Bar 			= (DataBar) findViewById(R.id.T1Bar);
+		RPMBar 			= (DataBar) findViewById(R.id.RPMBar);
+		SpeedBar 		= (DataBar) findViewById(R.id.SpeedBar);
 
 
 		/************** INITIALIZE SETTINGS ***************/
@@ -156,6 +180,10 @@ public class MainActivity
 		createLocationRequest();
 		buildGoogleApiClient();
 
+		/********* SENSOR MANAGER ****************/
+		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		InitializeAccelerometer();
+
 		/**************************************************/
 		/**************** BUTTON LISTENERS ****************/
 		/**************************************************/
@@ -170,17 +198,23 @@ public class MainActivity
 
 		/**************** UI UPDATER ***********************/
 		UIUpdateTask = new TimerTask() {
-			public void run() {	MainActivityHandler.post(new UIUpdateRunnable()); }
+			public void run() {
+				MainActivityHandler.post(new UIUpdateRunnable());
+			}
 		};
 		UIUpdateTimer = new Timer();
-		UIUpdateTimer.schedule(UIUpdateTask, 250, 250);
+		UIUpdateTimer.schedule(UIUpdateTask, 0, Global.UI_UPDATE_INTERVAL);
 	}
 
+	/**************************************************/
+	/**************** TOASTER          ****************/
+	/**************************************************/
+
 	public void showMessage(String theMsg) {
-        Toast msg = Toast.makeText(getBaseContext(),
-                theMsg, (Toast.LENGTH_LONG));
-        msg.show();
-    }
+		Toast msg = Toast.makeText(getBaseContext(),
+				theMsg, (Toast.LENGTH_LONG));
+		msg.show();
+	}
 
 	public static void showMessage(Context context, String string, int length) {
 		final Toast msg = Toast.makeText(context, string, length);
@@ -195,29 +229,33 @@ public class MainActivity
 		}
 	}
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+	/**************************************************/
+	/**************** SETTINGS         ****************/
+	/**************************************************/
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+		//noinspection SimplifiableIfStatement
+		if (id == R.id.action_settings) {
 			Intent i = new Intent(this, SettingsActivity.class);
 			startActivityForResult(i, RESULT_SETTINGS);
-            return true;
-        }
+			return true;
+		}
 
-        return super.onOptionsItemSelected(item);
-    }
+		return super.onOptionsItemSelected(item);
+	}
 
 	private void InitializeGlobalSettings() {
 		// Initialize the settings variables
@@ -234,13 +272,10 @@ public class MainActivity
 		}
 	}
 
-	public static Context getAppContext() {
-		return MainActivity.context;
-	}
-
 	/**************************************************/
 	/**************** BUTTON LISTENERS ****************/
 	/**************************************************/
+
 	public class OpenBT implements View.OnClickListener {
 		public void onClick(View v) {
 			try {
@@ -265,10 +300,18 @@ public class MainActivity
 	public class CancelAllThreads implements View.OnClickListener {
 		public void onClick(View v) {
 			try {
-				if (Gen != null && Gen.getState() != Thread.State.TERMINATED) { Gen.cancel(); }
-				if (StreamReader != null && StreamReader.getState() != Thread.State.TERMINATED) { StreamReader.cancel(); }
-				if (Parser != null && Parser.getState() != Thread.State.TERMINATED) { Parser.cancel(); }
-				if (DataSaver != null && DataSaver.getState() != Thread.State.TERMINATED) { DataSaver.cancel(); }
+				if (Gen != null && Gen.getState() != Thread.State.TERMINATED) {
+					Gen.cancel();
+				}
+				if (StreamReader != null && StreamReader.getState() != Thread.State.TERMINATED) {
+					StreamReader.cancel();
+				}
+				if (Parser != null && Parser.getState() != Thread.State.TERMINATED) {
+					Parser.cancel();
+				}
+				if (DataSaver != null && DataSaver.getState() != Thread.State.TERMINATED) {
+					DataSaver.cancel();
+				}
 
 				myLabel.setText("Stopped logging");
 
@@ -287,19 +330,28 @@ public class MainActivity
 		public void onClick(View v) {
 			try {
 				if (Global.Mode == Global.MODE.DEMO) {
-					if (Gen == null) { Gen = new RandomGenerator(); }
-					if (Gen.getState() != Thread.State.NEW) { Gen = new RandomGenerator(); }
+					if (Gen == null) {
+						Gen = new RandomGenerator();
+					}
+					if (Gen.getState() != Thread.State.NEW) {
+						Gen = new RandomGenerator();
+					}
 					Gen.start();
 
-					if (Parser.getState() != Thread.State.NEW) { Parser = new BTDataParser(); }
+					if (Parser.getState() != Thread.State.NEW) {
+						Parser = new BTDataParser();
+					}
 					Parser.start();
 
-					if (DataSaver.getState() != Thread.State.NEW) { DataSaver = new DataToCsvFile(); }
+					if (DataSaver.getState() != Thread.State.NEW) {
+						DataSaver = new DataToCsvFile();
+					}
 					DataSaver.start();
 
 					// UI Updater
 					UIUpdateTask = new TimerTask() {
-						public void run() {MainActivityHandler.post(new UIUpdateRunnable());
+						public void run() {
+							MainActivityHandler.post(new UIUpdateRunnable());
 						}
 					};
 					UIUpdateTimer = new Timer();
@@ -308,14 +360,22 @@ public class MainActivity
 					myLabel.setText("Now Logging - press 'Stop' to cancel");
 
 				} else if (Global.Mode == Global.MODE.RACE && Global.BTSocket != null) {
-					if (StreamReader == null) { StreamReader = new BTStreamReader(); }
-					if (StreamReader.getState() != Thread.State.NEW) { StreamReader = new BTStreamReader(); }
+					if (StreamReader == null) {
+						StreamReader = new BTStreamReader();
+					}
+					if (StreamReader.getState() != Thread.State.NEW) {
+						StreamReader = new BTStreamReader();
+					}
 					StreamReader.start();
 
-					if (Parser.getState() != Thread.State.NEW) { Parser = new BTDataParser(); }
+					if (Parser.getState() != Thread.State.NEW) {
+						Parser = new BTDataParser();
+					}
 					Parser.start();
 
-					if (DataSaver.getState() != Thread.State.NEW) { DataSaver = new DataToCsvFile(); }
+					if (DataSaver.getState() != Thread.State.NEW) {
+						DataSaver = new DataToCsvFile();
+					}
 					DataSaver.start();
 
 				}
@@ -347,7 +407,7 @@ public class MainActivity
 			@Override
 			public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 				// %02d sets the string length to 2 and pads with zeros if necessary
-				editText.setText( String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
+				editText.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
 				Calendar mcurrentTime = Calendar.getInstance();
 				int year = mcurrentTime.get(Calendar.YEAR);
 				int month = mcurrentTime.get(Calendar.MONTH);
@@ -372,6 +432,10 @@ public class MainActivity
 
 		}
 	}
+
+	/**************************************************/
+	/**************** LOCATION STUFF      *************/
+	/**************************************************/
 
 	protected synchronized void buildGoogleApiClient() {
 		GoogleApi = new GoogleApiClient.Builder(this)
@@ -402,9 +466,6 @@ public class MainActivity
 		}
 	}
 
-	/**
-	 * Runs when a GoogleApiClient object successfully connects.
-	 */
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		if (mRequestingLocationUpdates) {
@@ -419,7 +480,6 @@ public class MainActivity
 		// onConnectionFailed.
 		Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
 	}
-
 
 	@Override
 	public void onConnectionSuspended(int cause) {
@@ -442,13 +502,13 @@ public class MainActivity
 	public void onLocationChanged(Location location) {
 		PreviousLocation = CurrentLocation;
 		CurrentLocation = location;
-		Global.Latitude 	= 				location.getLatitude();
-		Global.Longitude 	= 				location.getLongitude();
-		Global.Altitude		= 				location.getAltitude();
-		Global.Bearing		=	(double)	location.getBearing();
-		Global.SpeedGPS		=	(double) 	location.getSpeed();
-		Global.GPSTime		=	(double) 	location.getTime();
-		Global.Accuracy		= 	(double) 	location.getAccuracy();
+		Global.Latitude = location.getLatitude();
+		Global.Longitude = location.getLongitude();
+		Global.Altitude = location.getAltitude();
+		Global.Bearing = (double) location.getBearing();
+		Global.SpeedGPS = (double) location.getSpeed();
+		Global.GPSTime = (double) location.getTime();
+		Global.Accuracy = (double) location.getAccuracy();
 
 		Global.DeltaDistance = calculateDistanceBetween(PreviousLocation, CurrentLocation);
 
@@ -463,5 +523,80 @@ public class MainActivity
 
 	protected float calculateDistanceBetween(Location location1, Location location2) {
 		return location1.distanceTo(location2);
+	}
+
+	/**************************************************/
+	/**************** SENSORS             *************/
+	/**************************************************/
+
+	public void InitializeAccelerometer() {
+		if (mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) != null) {
+			List<Sensor> gravSensors = mSensorManager.getSensorList(Sensor.TYPE_LINEAR_ACCELERATION);
+			for (int i = 0; i < gravSensors.size(); i++) {
+				if (gravSensors.get(i).getVendor().contains("Google Inc.")
+						&& gravSensors.get(i).getVersion() == 3) {
+					mGravitySensor = gravSensors.get(i);
+					supportsGravity = true;
+				} else {
+					showMessage("Device does not support accelerometer");
+					supportsGravity = false;
+				}
+			}
+		} else {
+			showMessage("Device does not support accelerometer");
+			supportsGravity = false;
+		}
+	}
+	public void startAccelerometerData() {
+		if (supportsGravity) {
+			try {
+				mSensorManager.registerListener(this, mGravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+			} catch (Exception e) {
+				showMessage(e.toString());
+			}
+		}
+	}
+
+	public void stopAccelerometerData() {
+		try {
+			mSensorManager.unregisterListener(this);
+		} catch (Exception e) {
+			showMessage(e.toString());
+		}
+	}
+
+	@Override
+	public final void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// Do something here if sensor accuracy changes.
+	}
+
+	@Override
+	public final void onSensorChanged(SensorEvent event) {
+		// The linear accelerometer returns 3 values
+
+		Global.Gx = event.values[0];
+		Global.Gy = event.values[1];
+		Global.Gz = event.values[2];
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		startAccelerometerData();
+
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		stopAccelerometerData();
+	}
+
+	/**************************************************/
+	/**************** OTHER SHIT          *************/
+	/**************************************************/
+
+	public static Context getAppContext() {
+		return MainActivity.context;
 	}
 }
