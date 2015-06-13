@@ -21,7 +21,7 @@ public class UIUpdateRunnable implements Runnable {
 		UpdateMotorRPM();
 
 		// Android sensor readings
-
+		UpdateAccelerometer();
 
 		// Other readings
 		UpdateBTStatus();
@@ -132,6 +132,8 @@ public class UIUpdateRunnable implements Runnable {
 	}
 
 	private void UpdateAccelerometer() {
-
+		MainActivity.myGx.setText(String.format("%.2f", Global.Gx));
+		MainActivity.myGy.setText(String.format("%.2f", Global.Gy));
+		MainActivity.myGz.setText(String.format("%.2f", Global.Gz));
 	}
 }

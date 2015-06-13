@@ -108,8 +108,11 @@ public class MainActivity
 
 	/******** SENSOR MANAGER ****************/
 	private SensorManager mSensorManager;
-	private Sensor mGravitySensor;
-	private boolean supportsGravity = false;
+	private Sensor mAccelerometer;
+	private boolean supportsAccelerometer = false;
+	private float filterX[] = new float[3];
+	private float filterY[] = new float[3];
+	private float filterZ[] = new float[3];
 
 	/************* OTHER ***************/
 	private static final int RESULT_SETTINGS = 2;
@@ -532,25 +535,22 @@ public class MainActivity
 	public void InitializeAccelerometer() {
 		if (mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) != null) {
 			List<Sensor> gravSensors = mSensorManager.getSensorList(Sensor.TYPE_LINEAR_ACCELERATION);
-			for (int i = 0; i < gravSensors.size(); i++) {
-				if (gravSensors.get(i).getVendor().contains("Google Inc.")
-						&& gravSensors.get(i).getVersion() == 3) {
-					mGravitySensor = gravSensors.get(i);
-					supportsGravity = true;
-				} else {
-					showMessage("Device does not support accelerometer");
-					supportsGravity = false;
-				}
+			if (gravSensors.size() > 0) {
+				mAccelerometer = gravSensors.get(0);
+				supportsAccelerometer = true;
+			} else {
+				showMessage("Device does not support accelerometer");
+				supportsAccelerometer = false;
 			}
 		} else {
 			showMessage("Device does not support accelerometer");
-			supportsGravity = false;
+			supportsAccelerometer = false;
 		}
 	}
 	public void startAccelerometerData() {
-		if (supportsGravity) {
+		if (supportsAccelerometer) {
 			try {
-				mSensorManager.registerListener(this, mGravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+				mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 			} catch (Exception e) {
 				showMessage(e.toString());
 			}
@@ -573,10 +573,39 @@ public class MainActivity
 	@Override
 	public final void onSensorChanged(SensorEvent event) {
 		// The linear accelerometer returns 3 values
+		// smoothing using a filter
 
-		Global.Gx = event.values[0];
-		Global.Gy = event.values[1];
-		Global.Gz = event.values[2];
+
+		/*
+
+													^ -y to top of screen
+			-------------	^ to top of screen		|   / +z into the screen
+			|			|	| y is negative 		|  /
+			|			|							| /
+			|			|							--------> -x to right of screen
+			|			|
+			|			|
+			|			|
+			|			|
+			-------------
+
+
+
+
+
+
+
+
+		 */
+		final float alpha = 0.9f;
+
+		Global.Gx = event.values[0] * alpha + Global.Gx * (1.0f - alpha);
+		Global.Gy = event.values[1] * alpha + Global.Gy * (1.0f - alpha);
+		Global.Gz = event.values[2] * alpha + Global.Gz * (1.0f - alpha);
+
+		Global.Gx = (float)Math.round(event.values[0] * alpha + Global.Gx * (1.0f - alpha) * 1000) / 1000;
+		Global.Gy = (float)Math.round(event.values[1] * alpha + Global.Gy * (1.0f - alpha) * 1000) / 1000;
+		Global.Gz = (float)Math.round(event.values[2] * alpha + Global.Gz * (1.0f - alpha) * 1000) / 1000;
 	}
 
 	@Override
