@@ -55,6 +55,8 @@ public final class Global {
 
 	public static volatile int BTReconnectAttempts = 0;
 
+	public static volatile long DataFileLength = 0;
+
 	/* BLUETOOTH STATE TRACKER */
 	public enum BTSTATE {NONE, CONNECTED, DISCONNECTED}
 	public static volatile BTSTATE BTState = BTSTATE.NONE;

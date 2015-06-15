@@ -64,6 +64,8 @@ public class MainActivity
 	public static TextView myGy;
 	public static TextView myGz;
 
+	public static TextView myDataFileSize;
+
 	public static EditText Throttle;
 	public static EditText Current;
 	public static EditText Voltage;
@@ -144,6 +146,8 @@ public class MainActivity
 
 		myLongitude 	= (TextView) findViewById(R.id.txtLongitude);
 		myLatitude 		= (TextView) findViewById(R.id.txtLatitude);
+
+		myDataFileSize	= (TextView) findViewById(R.id.txtDataFileSize);
 
 		/* ACCELEROMETER VALUES */
 		myGx			= (TextView) findViewById(R.id.txtGx);
@@ -364,6 +368,7 @@ public class MainActivity
 			// scan for the data file to ensure it can be viewed from a computer
 			File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
 			MediaScannerConnection.scanFile(MainActivity.getAppContext(), new String[]{f.getAbsolutePath()}, null, null);
+			Global.DataFileLength = f.length();
 
 		} catch (Exception e) {
 			showMessage(e.getMessage());

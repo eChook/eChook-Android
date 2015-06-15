@@ -112,7 +112,7 @@
 		custom:BarColor="#000000"
 		custom:min="0"
 		custom:max="100"
-		custom:xWidth="@dimen/databar_xWidth"
+		custom:xWidth="@integer/databar_xWidth"
 		android:layout_above="@+id/textView9"/>
 
 	<!-- **************************	-->
@@ -160,7 +160,7 @@
 		custom:BarColor="#A3C2FF"
 		custom:min="0"
 		custom:max="28"
-		custom:xWidth="@dimen/databar_xWidth"/>
+		custom:xWidth="@integer/databar_xWidth"/>
 
 	<!-- **************************	-->
 	<!--		 CURRENT			-->
@@ -206,7 +206,7 @@
 		custom:BarColor="#ffffea2e"
 		custom:min="0"
 		custom:max="50"
-		custom:xWidth="@dimen/databar_xWidth"/>
+		custom:xWidth="@integer/databar_xWidth"/>
 
 	<!-- **************************	-->
 	<!--		 TEMP 1				-->
@@ -252,7 +252,7 @@
 		custom:BarColor="#ffff5358"
 		custom:min="0"
 		custom:max="85"
-		custom:xWidth="@dimen/databar_xWidth"/>
+		custom:xWidth="@integer/databar_xWidth"/>
 
 	<!-- **************************	-->
 	<!--		 RPM				-->
@@ -298,7 +298,7 @@
 		custom:BarColor="#ffff5358"
 		custom:min="0"
 		custom:max="2500"
-		custom:xWidth="@dimen/databar_xWidth"/>
+		custom:xWidth="@integer/databar_xWidth"/>
 
 	<!-- **************************	-->
 	<!--		 SPEED				-->
@@ -344,7 +344,7 @@
 		custom:BarColor="#ffff5358"
 		custom:min="0"
 		custom:max="50"
-		custom:xWidth="@dimen/databar_xWidth"/>
+		custom:xWidth="@integer/databar_xWidth"/>
 
 	<!-- **************************	-->
 	<!--		 something				-->
@@ -415,7 +415,8 @@
 		android:id="@+id/txtLongitude"
 		android:layout_alignTop="@+id/textView9"
 		android:layout_alignEnd="@+id/RPMBar"
-		android:layout_alignStart="@+id/RPMBar"/>
+		android:layout_alignStart="@+id/RPMBar"
+		android:gravity="right"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -424,7 +425,8 @@
 		android:id="@+id/txtLatitude"
 		android:layout_below="@+id/txtLongitude"
 		android:layout_alignEnd="@+id/start"
-		android:layout_alignStart="@+id/start"/>
+		android:layout_alignStart="@+id/start"
+		android:gravity="right"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -488,5 +490,22 @@
 		android:layout_below="@+id/textView12"
 		android:layout_alignStart="@+id/textView12"
 		android:layout_alignEnd="@+id/textView12"/>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:text="arduino.csv"
+		android:id="@+id/textView13"
+		android:layout_below="@+id/label"
+		android:layout_alignParentStart="true"/>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:id="@+id/txtDataFileSize"
+		android:layout_alignBottom="@+id/textView13"
+		android:layout_alignStart="@+id/textView2"/>
 
 </RelativeLayout>

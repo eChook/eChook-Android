@@ -30,7 +30,7 @@ public class UIUpdateRunnable implements Runnable {
 
 	private void UpdateVoltage() {
 		try {
-			MainActivity.Voltage.setText(Global.Volts.toString());
+			MainActivity.Voltage.setText(String.format("%.2f", Global.Volts));
 			MainActivity.VoltageBar.setValue(Global.Volts);
 		} catch (Exception e) {
 			e.toString();
@@ -39,7 +39,7 @@ public class UIUpdateRunnable implements Runnable {
 
 	private void UpdateCurrent() {
 		try {
-			MainActivity.Current.setText(Global.Amps.toString());
+			MainActivity.Current.setText(String.format("%.2f", Global.Amps));
 			MainActivity.CurrentBar.setValue(Global.Amps);
 		} catch (Exception e) {
 			e.toString();
@@ -48,7 +48,7 @@ public class UIUpdateRunnable implements Runnable {
 
 	private void UpdateThrottle() {
 		try {
-			MainActivity.Throttle.setText(Global.Throttle.toString());
+			MainActivity.Throttle.setText(String.format("%.0f", Global.Throttle));
 			MainActivity.ThrottleBar.setValue(Global.Throttle);
 		} catch (Exception e) {
 			e.toString();
@@ -59,10 +59,10 @@ public class UIUpdateRunnable implements Runnable {
 		try {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
-				MainActivity.Speed.setText(Global.SpeedMPH.toString());
+				MainActivity.Speed.setText(String.format("%.1f", Global.SpeedMPH) + " mph");
 				MainActivity.SpeedBar.setValue(Global.SpeedMPH);
 			} else if (Global.Unit == Global.UNIT.KPH) {
-				MainActivity.Speed.setText(Global.SpeedKPH.toString());
+				MainActivity.Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
 				MainActivity.SpeedBar.setValue(Global.SpeedKPH);
 			}
 
@@ -91,7 +91,7 @@ public class UIUpdateRunnable implements Runnable {
 
 		if (TempValue != null && TempText != null && TempBar != null) {
 			try {
-				TempText.setText(String.valueOf(TempValue) + " C");
+				TempText.setText(String.format("%.1f", TempValue) + " C");
 				TempBar.setValue(TempValue);
 			} catch (Exception e) {
 				e.toString();
@@ -101,7 +101,7 @@ public class UIUpdateRunnable implements Runnable {
 
 	private void UpdateMotorRPM() {
 		try {
-			MainActivity.RPM.setText(Global.MotorRPM.toString());
+			MainActivity.RPM.setText(String.format("%.0f", Global.MotorRPM));
 			MainActivity.RPMBar.setValue(Global.MotorRPM);
 		} catch (Exception e) {
 			e.toString();
@@ -126,8 +126,8 @@ public class UIUpdateRunnable implements Runnable {
 
 	private void UpdateLocation() {
 		try {
-			MainActivity.myLatitude.setText(String.valueOf(Global.Latitude));
-			MainActivity.myLongitude.setText(String.valueOf(Global.Longitude));
+			MainActivity.myLatitude.setText(String.format("%.5f", Global.Latitude));
+			MainActivity.myLongitude.setText(String.format("%.5f", Global.Longitude));
 		} catch (Exception ignored) {}
 	}
 
@@ -135,5 +135,15 @@ public class UIUpdateRunnable implements Runnable {
 		MainActivity.myGx.setText(String.format("%.2f", Global.Gx));
 		MainActivity.myGy.setText(String.format("%.2f", Global.Gy));
 		MainActivity.myGz.setText(String.format("%.2f", Global.Gz));
+	}
+
+	private void UpdateFileSize() {
+		if (Global.DataFileLength < 1024) {
+			MainActivity.myDataFileSize.setText(String.valueOf(Global.DataFileLength) + " B");
+		} else if (Global.DataFileLength < 1048576) {
+			MainActivity.myDataFileSize.setText(String.format("%.2f", (float) Global.DataFileLength / 1024.0) + " KB");
+		} else {
+
+		}
 	}
 }

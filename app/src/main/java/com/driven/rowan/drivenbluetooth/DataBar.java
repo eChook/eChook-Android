@@ -42,7 +42,7 @@ public class DataBar extends View {
 			nValue = this.min;
 			//width = a.getInt(R.styleable.DataBar_width, 10);
 			color = a.getColor(R.styleable.DataBar_BarColor, 0x00);
-			xWidth = a.getFloat(R.styleable.DataBar_xWidth, 1);
+			xWidth = (double) a.getFloat(R.styleable.DataBar_xWidth, 100) / 100.0;
 			xHeight = a.getFloat(R.styleable.DataBar_xHeight, 1);
 		} finally {
 			a.recycle();
