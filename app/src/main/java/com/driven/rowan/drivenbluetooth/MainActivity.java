@@ -187,15 +187,6 @@ public class MainActivity
 		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		InitializeAccelerometer();
 
-		/**************************************************/
-		/**************** BUTTON LISTENERS ****************/
-		/**************************************************/
-
-		openBTButton.setOnClickListener(new OpenBT());
-		closeBTButton.setOnClickListener(new CloseBT());
-		startButton.setOnClickListener(new StartAllThreads());
-		stopButton.setOnClickListener(new CancelAllThreads());
-
 		/**************** TIMEPICKER ***********************/
 		RaceStartTime.setOnClickListener(new SetTimeDialog(RaceStartTime));
 
@@ -251,7 +242,7 @@ public class MainActivity
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
+		if (id == R.id.btnSettings) {
 			Intent i = new Intent(this, SettingsActivity.class);
 			startActivityForResult(i, RESULT_SETTINGS);
 			return true;
@@ -279,113 +270,109 @@ public class MainActivity
 	/**************** BUTTON LISTENERS ****************/
 	/**************************************************/
 
-	public class OpenBT implements View.OnClickListener {
-		public void onClick(View v) {
-			try {
-				myBluetoothManager.findBT();
-				myBluetoothManager.openBT();
-			} catch (Exception e) {
-				showMessage(e.getMessage());
-			}
+	public void OpenBT(View v) {
+		try {
+			myBluetoothManager.findBT();
+			myBluetoothManager.openBT();
+		} catch (Exception e) {
+			showMessage(e.getMessage());
 		}
 	}
 
-	public class CloseBT implements View.OnClickListener {
-		public void onClick(View v) {
-			try {
-				myBluetoothManager.closeBT();
-			} catch (Exception e) {
-				showMessage(e.getMessage());
-			}
+	public void CloseBT(View v) {
+		try {
+			myBluetoothManager.closeBT();
+		} catch (Exception e) {
+			showMessage(e.getMessage());
 		}
 	}
 
-	public class CancelAllThreads implements View.OnClickListener {
-		public void onClick(View v) {
-			try {
-				if (Gen != null && Gen.getState() != Thread.State.TERMINATED) {
-					Gen.cancel();
+	public void StartAllThreads(View v) {
+		try {
+			if (Global.Mode == Global.MODE.DEMO) {
+				if (Gen == null) {
+					Gen = new RandomGenerator();
 				}
-				if (StreamReader != null && StreamReader.getState() != Thread.State.TERMINATED) {
-					StreamReader.cancel();
+				if (Gen.getState() != Thread.State.NEW) {
+					Gen = new RandomGenerator();
 				}
-				if (Parser != null && Parser.getState() != Thread.State.TERMINATED) {
-					Parser.cancel();
-				}
-				if (DataSaver != null && DataSaver.getState() != Thread.State.TERMINATED) {
-					DataSaver.cancel();
-				}
+				Gen.start();
 
-				myLabel.setText("Stopped logging");
+				if (Parser.getState() != Thread.State.NEW) {
+					Parser = new BTDataParser();
+				}
+				Parser.start();
 
-				// scan for the data file to ensure it can be viewed from a computer
-				File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
-				MediaScannerConnection.scanFile(MainActivity.getAppContext(), new String[]{f.getAbsolutePath()}, null, null);
+				if (DataSaver.getState() != Thread.State.NEW) {
+					DataSaver = new DataToCsvFile();
+				}
+				DataSaver.start();
 
-			} catch (Exception e) {
-				showMessage(e.getMessage());
+				// UI Updater
+				UIUpdateTask = new TimerTask() {
+					public void run() {
+						MainActivityHandler.post(new UIUpdateRunnable());
+					}
+				};
+				UIUpdateTimer = new Timer();
+				UIUpdateTimer.schedule(UIUpdateTask, 250, 250);
+
+				myLabel.setText("Now Logging - press 'Stop' to cancel");
+
+			} else if (Global.Mode == Global.MODE.RACE && Global.BTSocket != null) {
+				if (StreamReader == null) {
+					StreamReader = new BTStreamReader();
+				}
+				if (StreamReader.getState() != Thread.State.NEW) {
+					StreamReader = new BTStreamReader();
+				}
+				StreamReader.start();
+
+				if (Parser.getState() != Thread.State.NEW) {
+					Parser = new BTDataParser();
+				}
+				Parser.start();
+
+				if (DataSaver.getState() != Thread.State.NEW) {
+					DataSaver = new DataToCsvFile();
+				}
+				DataSaver.start();
+
 			}
+		} catch (Exception e) {
+			showMessage(e.getMessage());
 		}
-
 	}
 
-	public class StartAllThreads implements View.OnClickListener {
-		public void onClick(View v) {
-			try {
-				if (Global.Mode == Global.MODE.DEMO) {
-					if (Gen == null) {
-						Gen = new RandomGenerator();
-					}
-					if (Gen.getState() != Thread.State.NEW) {
-						Gen = new RandomGenerator();
-					}
-					Gen.start();
-
-					if (Parser.getState() != Thread.State.NEW) {
-						Parser = new BTDataParser();
-					}
-					Parser.start();
-
-					if (DataSaver.getState() != Thread.State.NEW) {
-						DataSaver = new DataToCsvFile();
-					}
-					DataSaver.start();
-
-					// UI Updater
-					UIUpdateTask = new TimerTask() {
-						public void run() {
-							MainActivityHandler.post(new UIUpdateRunnable());
-						}
-					};
-					UIUpdateTimer = new Timer();
-					UIUpdateTimer.schedule(UIUpdateTask, 250, 250);
-
-					myLabel.setText("Now Logging - press 'Stop' to cancel");
-
-				} else if (Global.Mode == Global.MODE.RACE && Global.BTSocket != null) {
-					if (StreamReader == null) {
-						StreamReader = new BTStreamReader();
-					}
-					if (StreamReader.getState() != Thread.State.NEW) {
-						StreamReader = new BTStreamReader();
-					}
-					StreamReader.start();
-
-					if (Parser.getState() != Thread.State.NEW) {
-						Parser = new BTDataParser();
-					}
-					Parser.start();
-
-					if (DataSaver.getState() != Thread.State.NEW) {
-						DataSaver = new DataToCsvFile();
-					}
-					DataSaver.start();
-
-				}
-			} catch (Exception e) {
-				showMessage(e.getMessage());
+	public void CancelAllThreads(View v) {
+		try {
+			if (Gen != null && Gen.getState() != Thread.State.TERMINATED) {
+				Gen.cancel();
 			}
+			if (StreamReader != null && StreamReader.getState() != Thread.State.TERMINATED) {
+				StreamReader.cancel();
+			}
+			if (Parser != null && Parser.getState() != Thread.State.TERMINATED) {
+				Parser.cancel();
+			}
+			if (DataSaver != null && DataSaver.getState() != Thread.State.TERMINATED) {
+				DataSaver.cancel();
+			}
+
+			myLabel.setText("Stopped logging");
+
+			// scan for the data file to ensure it can be viewed from a computer
+			File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
+			MediaScannerConnection.scanFile(MainActivity.getAppContext(), new String[]{f.getAbsolutePath()}, null, null);
+
+		} catch (Exception e) {
+			showMessage(e.getMessage());
 		}
+	}
+
+	public void LaunchSettings(View v) {
+		Intent i = new Intent(this, SettingsActivity.class);
+		startActivityForResult(i, RESULT_SETTINGS);
 	}
 
 	public class SetTimeDialog implements View.OnClickListener {

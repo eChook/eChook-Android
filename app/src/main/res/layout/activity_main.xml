@@ -23,8 +23,27 @@
 		android:text="Open BT"
 		android:id="@+id/open"
 		android:layout_alignParentBottom="true"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentStart="true"/>
+		android:layout_alignParentStart="true"
+		android:onClick="OpenBT"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Close BT"
+		android:id="@+id/close"
+		android:layout_alignParentBottom="true"
+		android:layout_toRightOf="@+id/open"
+		android:layout_toEndOf="@+id/open"
+		android:onClick="CloseBT"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Settings"
+		android:id="@+id/btnSettings"
+		android:layout_alignParentBottom="true"
+		android:layout_toEndOf="@+id/txtGy"
+		android:onClick="LaunchSettings"/>
 
 	<Button
 		android:layout_width="wrap_content"
@@ -34,7 +53,8 @@
 		android:textStyle="bold"
 		android:layout_alignParentBottom="true"
 		android:layout_toLeftOf="@+id/stop"
-		android:layout_toStartOf="@+id/stop"/>
+		android:layout_toStartOf="@+id/stop"
+		android:onClick="StartAllThreads"/>
 
 	<Button
 		android:layout_width="wrap_content"
@@ -44,7 +64,9 @@
 		android:layout_alignParentBottom="true"
 		android:layout_alignParentRight="true"
 		android:layout_alignParentEnd="true"
-		/>
+		android:onClick="CancelAllThreads"/>
+
+
 
 	<!-- **************************	-->
 	<!--		 THROTTLE			-->
@@ -90,7 +112,7 @@
 		custom:BarColor="#000000"
 		custom:min="0"
 		custom:max="100"
-		custom:xWidth="0.8"
+		custom:xWidth="@dimen/databar_xWidth"
 		android:layout_above="@+id/textView9"/>
 
 	<!-- **************************	-->
@@ -138,7 +160,7 @@
 		custom:BarColor="#A3C2FF"
 		custom:min="0"
 		custom:max="28"
-		custom:xWidth="0.8"/>
+		custom:xWidth="@dimen/databar_xWidth"/>
 
 	<!-- **************************	-->
 	<!--		 CURRENT			-->
@@ -184,7 +206,7 @@
 		custom:BarColor="#ffffea2e"
 		custom:min="0"
 		custom:max="50"
-		custom:xWidth="0.8"/>
+		custom:xWidth="@dimen/databar_xWidth"/>
 
 	<!-- **************************	-->
 	<!--		 TEMP 1				-->
@@ -230,7 +252,7 @@
 		custom:BarColor="#ffff5358"
 		custom:min="0"
 		custom:max="85"
-		custom:xWidth="0.8"/>
+		custom:xWidth="@dimen/databar_xWidth"/>
 
 	<!-- **************************	-->
 	<!--		 RPM				-->
@@ -276,7 +298,7 @@
 		custom:BarColor="#ffff5358"
 		custom:min="0"
 		custom:max="2500"
-		custom:xWidth="0.8"/>
+		custom:xWidth="@dimen/databar_xWidth"/>
 
 	<!-- **************************	-->
 	<!--		 SPEED				-->
@@ -322,20 +344,11 @@
 		custom:BarColor="#ffff5358"
 		custom:min="0"
 		custom:max="50"
-		custom:xWidth="0.8"/>
+		custom:xWidth="@dimen/databar_xWidth"/>
 
 	<!-- **************************	-->
 	<!--		 something				-->
 	<!-- **************************	-->
-
-	<Button
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="Close BT"
-		android:id="@+id/close"
-		android:layout_alignParentBottom="true"
-		android:layout_toRightOf="@+id/open"
-		android:layout_toEndOf="@+id/open"/>
 
 	<TextView
 		android:layout_width="wrap_content"
