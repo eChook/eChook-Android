@@ -1,5 +1,9 @@
 package com.driven.rowan.drivenbluetooth;
 
+import android.widget.Toast;
+
+import com.jjoe64.graphview.series.DataPoint;
+
 /**
  * Created by Ben on 09/03/2015.
  */

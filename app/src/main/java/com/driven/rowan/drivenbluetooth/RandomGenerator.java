@@ -32,8 +32,8 @@ public class RandomGenerator extends Thread {
 				// organise key bytes
 				Message[0] = Global.STARTBYTE;
 				Message[1] = IDS[i];
-				//Message[2] = i0;
-				//Message[3] = i1;
+				Message[2] = (byte) rnd.nextInt(127);
+				Message[3] = (byte) rnd.nextInt(99);
 				Message[4] = Global.STOPBYTE;
 
 				// push to queue

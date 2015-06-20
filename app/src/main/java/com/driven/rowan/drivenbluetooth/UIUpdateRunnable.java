@@ -1,7 +1,8 @@
 package com.driven.rowan.drivenbluetooth;
 
-import android.widget.EditText;
-import java.util.ArrayList;
+import android.widget.TextView;
+
+import com.jjoe64.graphview.series.DataPoint;
 
 /**
  * Created by BNAGY4 on 26/03/2015.
@@ -26,12 +27,16 @@ public class UIUpdateRunnable implements Runnable {
 		// Other readings
 		UpdateBTStatus();
 		UpdateLocation();
+		UpdateFileSize();
+
+		Global.GraphTimeStamp += (float) Global.UI_UPDATE_INTERVAL / 1000.0f;
 	}
 
 	private void UpdateVoltage() {
 		try {
 			MainActivity.Voltage.setText(String.format("%.2f", Global.Volts));
 			MainActivity.VoltageBar.setValue(Global.Volts);
+			Global.VoltsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Volts), true, Global.maxGraphDataPoints);
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -41,6 +46,7 @@ public class UIUpdateRunnable implements Runnable {
 		try {
 			MainActivity.Current.setText(String.format("%.2f", Global.Amps));
 			MainActivity.CurrentBar.setValue(Global.Amps);
+			Global.AmpsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Amps), true, Global.maxGraphDataPoints);
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -50,6 +56,7 @@ public class UIUpdateRunnable implements Runnable {
 		try {
 			MainActivity.Throttle.setText(String.format("%.0f", Global.Throttle));
 			MainActivity.ThrottleBar.setValue(Global.Throttle);
+			Global.ThrottleHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Throttle), true, Global.maxGraphDataPoints);
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -61,9 +68,11 @@ public class UIUpdateRunnable implements Runnable {
 			if (Global.Unit == Global.UNIT.MPH) {
 				MainActivity.Speed.setText(String.format("%.1f", Global.SpeedMPH) + " mph");
 				MainActivity.SpeedBar.setValue(Global.SpeedMPH);
+				Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedMPH), true, Global.maxGraphDataPoints);
 			} else if (Global.Unit == Global.UNIT.KPH) {
 				MainActivity.Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
 				MainActivity.SpeedBar.setValue(Global.SpeedKPH);
+				Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedKPH), true, Global.maxGraphDataPoints);
 			}
 
 		} catch (Exception e) {
@@ -73,7 +82,7 @@ public class UIUpdateRunnable implements Runnable {
 
 	private void UpdateTemp(int sensorIndex) {
 		Double TempValue;
-		EditText TempText;
+		TextView TempText;
 		DataBar TempBar;
 		switch (sensorIndex) {
 			case 1:
@@ -93,6 +102,7 @@ public class UIUpdateRunnable implements Runnable {
 			try {
 				TempText.setText(String.format("%.1f", TempValue) + " C");
 				TempBar.setValue(TempValue);
+				Global.TempC1History.appendData(new DataPoint(Global.GraphTimeStamp, TempValue), true, Global.maxGraphDataPoints);
 			} catch (Exception e) {
 				e.toString();
 			}
@@ -103,6 +113,7 @@ public class UIUpdateRunnable implements Runnable {
 		try {
 			MainActivity.RPM.setText(String.format("%.0f", Global.MotorRPM));
 			MainActivity.RPMBar.setValue(Global.MotorRPM);
+			Global.MotorRPMHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.MotorRPM), true, Global.maxGraphDataPoints);
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -143,7 +154,7 @@ public class UIUpdateRunnable implements Runnable {
 		} else if (Global.DataFileLength < 1048576) {
 			MainActivity.myDataFileSize.setText(String.format("%.2f", (float) Global.DataFileLength / 1024.0) + " KB");
 		} else {
-
+			MainActivity.myDataFileSize.setText(String.format("%.2f", (float) Global.DataFileLength / 1048576) + " MB");
 		}
 	}
 }

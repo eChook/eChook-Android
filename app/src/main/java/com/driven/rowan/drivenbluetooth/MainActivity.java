@@ -2,56 +2,42 @@ package com.driven.rowan.drivenbluetooth;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.FragmentManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Location;
 import android.media.MediaScannerConnection;
-import android.os.Environment;
-import android.preference.PreferenceManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Environment;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
-import android.widget.EditText;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import android.os.Handler;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
+import com.jjoe64.graphview.GraphView;
 
 import java.io.File;
-import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
 public class MainActivity
 		extends Activity
-		implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener, SensorEventListener {
+		implements GraphViewFragment.OnFragmentInteractionListener {
 
 	/************* UI ELEMENTS ***************/
 	public static TextView myLabel;
@@ -66,12 +52,12 @@ public class MainActivity
 
 	public static TextView myDataFileSize;
 
-	public static EditText Throttle;
-	public static EditText Current;
-	public static EditText Voltage;
-	public static EditText Temp1;
-	public static EditText RPM;
-	public static EditText Speed;
+	public static TextView Throttle;
+	public static TextView Current;
+	public static TextView Voltage;
+	public static TextView Temp1;
+	public static TextView RPM;
+	public static TextView Speed;
 
 	public static EditText RaceStartTime;
 
@@ -87,6 +73,13 @@ public class MainActivity
 	public static Button stopButton;
 	public static Button closeBTButton;
 
+	public static GraphView myThrottleGraph;
+	public static GraphView myVoltsGraph;
+	public static GraphView myAmpsGraph;
+	public static GraphView myMotorRPMGraph;
+	public static GraphView myTempC1Graph;
+	public static GraphView mySpeedGraph;
+
 	/************* THREADS ******************/
 	public static RandomGenerator Gen = new RandomGenerator();
 	public static BTDataParser Parser = new BTDataParser();
@@ -100,29 +93,16 @@ public class MainActivity
 	/************* UI THREAD HANDLER ********/
 	public static Handler MainActivityHandler = new Handler();
 
-	/***** GOOGLE LOCATION API **************/
-	public static GoogleApiClient GoogleApi;
-	public Location CurrentLocation;
-	public Location PreviousLocation;
-	public String mLastUpdateTime;
-	public Boolean mRequestingLocationUpdates = true;
-	private LocationRequest mLocationRequest;
+	/***** LOCATION CLASS *******************/
+	public static DrivenLocation myDrivenLocation;
 
 	/******** SENSOR MANAGER ****************/
-	private SensorManager mSensorManager;
-	private Sensor mAccelerometer;
-	private boolean supportsAccelerometer = false;
-	private float filterX[] = new float[3];
-	private float filterY[] = new float[3];
-	private float filterZ[] = new float[3];
+	private Accelerometer myAccelerometer;
 
 	/************* OTHER ***************/
 	private static final int RESULT_SETTINGS = 2;
 	private static Context context;
 	static final BluetoothManager myBluetoothManager = new BluetoothManager();
-	private PendingIntent pendingIntent;
-
-	String TAG = "DrivenBluetooth";
 
 	/**************************************************/
 	/**************** MAINACTIVITY ONCREATE ***********/
@@ -155,12 +135,12 @@ public class MainActivity
 		myGz			= (TextView) findViewById(R.id.txtGz);
 
 		/* DATA FIELDS */
-		Throttle 		= (EditText) findViewById(R.id.throttle);
-		Current 		= (EditText) findViewById(R.id.current);
-		Voltage 		= (EditText) findViewById(R.id.voltage);
-		Temp1 			= (EditText) findViewById(R.id.temp1);
-		RPM 			= (EditText) findViewById(R.id.rpm);
-		Speed 			= (EditText) findViewById(R.id.speed);
+		Throttle 		= (TextView) findViewById(R.id.throttle);
+		Current 		= (TextView) findViewById(R.id.current);
+		Voltage 		= (TextView) findViewById(R.id.voltage);
+		Temp1 			= (TextView) findViewById(R.id.temp1);
+		RPM 			= (TextView) findViewById(R.id.rpm);
+		Speed 			= (TextView) findViewById(R.id.speed);
 
 		RaceStartTime 	= (EditText) findViewById(R.id.raceStartTime);
 		//SMSZone 		= (TextView) findViewById(R.id.smsBox);
@@ -173,6 +153,27 @@ public class MainActivity
 		RPMBar 			= (DataBar) findViewById(R.id.RPMBar);
 		SpeedBar 		= (DataBar) findViewById(R.id.SpeedBar);
 
+		/* GRAPHS */
+		myThrottleGraph	= (GraphView) findViewById(R.id.throttleGraph);
+		myThrottleGraph.addSeries(Global.ThrottleHistory);
+		myThrottleGraph.getViewport().setYAxisBoundsManual(true);
+		myThrottleGraph.getViewport().setMinY(0.0);
+		myThrottleGraph.getViewport().setMaxY(100.0);
+		myThrottleGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+
+		myVoltsGraph = (GraphView) findViewById(R.id.voltsGraph);
+		myVoltsGraph.addSeries(Global.VoltsHistory);
+		myVoltsGraph.getViewport().setYAxisBoundsManual(true);
+		myVoltsGraph.getViewport().setMinY(0.0);
+		myVoltsGraph.getViewport().setMaxY(28.0);
+		myVoltsGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+
+		myAmpsGraph = (GraphView) findViewById(R.id.ampsGraph);
+		myAmpsGraph.addSeries(Global.AmpsHistory);
+		myAmpsGraph.getViewport().setYAxisBoundsManual(true);
+		myAmpsGraph.getViewport().setMinY(0.0);
+		myAmpsGraph.getViewport().setMaxY(40.0);
+		myAmpsGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
 		/************** INITIALIZE SETTINGS ***************/
 		this.InitializeGlobalSettings();
@@ -183,13 +184,11 @@ public class MainActivity
 		/**************** ALARM MANAGER *******************/
 		Global.AlarmManager = (AlarmManager) MainActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
 
-		/*************** GOOGLE LOCATION API **************/
-		createLocationRequest();
-		buildGoogleApiClient();
+		/*************** LOCATION CLASS *******************/
+		myDrivenLocation = new DrivenLocation();
 
-		/********* SENSOR MANAGER ****************/
-		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		InitializeAccelerometer();
+		/******************* ACCELEROMETER ****************/
+		myAccelerometer = new Accelerometer((SensorManager) getSystemService(Context.SENSOR_SERVICE));
 
 		/**************** TIMEPICKER ***********************/
 		RaceStartTime.setOnClickListener(new SetTimeDialog(RaceStartTime));
@@ -380,6 +379,14 @@ public class MainActivity
 		startActivityForResult(i, RESULT_SETTINGS);
 	}
 
+	public void ViewGraph(View v) {
+		FragmentManager fragmentManager = getFragmentManager();
+		fragmentManager.beginTransaction()
+				.add(R.id.graphview_overlay, new GraphViewFragment())
+				.addToBackStack(null)
+				.commit();
+	}
+
 	public class SetTimeDialog implements View.OnClickListener {
 		EditText editText;
 
@@ -415,6 +422,7 @@ public class MainActivity
 
 		private void setRaceNotifier() {
 			Intent myIntent = new Intent(MainActivity.this, RaceNotifier.class);
+			PendingIntent pendingIntent;
 			pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent, 0);
 			Global.AlarmManager.set(AlarmManager.RTC, Global.RaceStartTime.getTimeInMillis(), pendingIntent);
 		}
@@ -428,189 +436,28 @@ public class MainActivity
 		}
 	}
 
-	/**************************************************/
-	/**************** LOCATION STUFF      *************/
-	/**************************************************/
-
-	protected synchronized void buildGoogleApiClient() {
-		GoogleApi = new GoogleApiClient.Builder(this)
-				.addConnectionCallbacks(this)
-				.addOnConnectionFailedListener(this)
-				.addApi(LocationServices.API)
-				.build();
-	}
-
-	protected void createLocationRequest() {
-		this.mLocationRequest = new LocationRequest();
-		mLocationRequest.setInterval(Global.LOCATION_INTERVAL);
-		mLocationRequest.setFastestInterval(Global.LOCATION_FAST_INTERVAL);
-		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-	}
-
 	@Override
 	protected void onStart() {
 		super.onStart();
-		GoogleApi.connect();
+		myDrivenLocation.connect();
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if (GoogleApi.isConnected()) {
-			GoogleApi.disconnect();
-		}
-	}
-
-	@Override
-	public void onConnected(Bundle connectionHint) {
-		if (mRequestingLocationUpdates) {
-			startLocationUpdates();
-		}
-		CurrentLocation = LocationServices.FusedLocationApi.getLastLocation(GoogleApi);
-	}
-
-	@Override
-	public void onConnectionFailed(ConnectionResult result) {
-		// Refer to the javadoc for ConnectionResult to see what error codes might be returned in
-		// onConnectionFailed.
-		Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
-	}
-
-	@Override
-	public void onConnectionSuspended(int cause) {
-		// The connection to Google Play services was lost for some reason. We call connect() to
-		// attempt to re-establish the connection.
-		Log.i(TAG, "Connection suspended");
-		GoogleApi.connect();
-	}
-
-	protected void startLocationUpdates() {
-		try {
-			LocationServices.FusedLocationApi.requestLocationUpdates(
-					GoogleApi, mLocationRequest, this);
-		} catch (Exception e) {
-			e.toString();
-		}
-	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-		PreviousLocation = CurrentLocation;
-		CurrentLocation = location;
-		Global.Latitude = location.getLatitude();
-		Global.Longitude = location.getLongitude();
-		Global.Altitude = location.getAltitude();
-		Global.Bearing = (double) location.getBearing();
-		Global.SpeedGPS = (double) location.getSpeed();
-		Global.GPSTime = (double) location.getTime();
-		Global.Accuracy = (double) location.getAccuracy();
-
-		Global.DeltaDistance = calculateDistanceBetween(PreviousLocation, CurrentLocation);
-
-		mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-		Global.LocationUpdateCounter++;
-	}
-
-	protected void stopLocationUpdates() {
-		LocationServices.FusedLocationApi.removeLocationUpdates(
-				GoogleApi, this);
-	}
-
-	protected float calculateDistanceBetween(Location location1, Location location2) {
-		return location1.distanceTo(location2);
-	}
-
-	/**************************************************/
-	/**************** SENSORS             *************/
-	/**************************************************/
-
-	public void InitializeAccelerometer() {
-		if (mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) != null) {
-			List<Sensor> gravSensors = mSensorManager.getSensorList(Sensor.TYPE_LINEAR_ACCELERATION);
-			if (gravSensors.size() > 0) {
-				mAccelerometer = gravSensors.get(0);
-				supportsAccelerometer = true;
-			} else {
-				showMessage("Device does not support accelerometer");
-				supportsAccelerometer = false;
-			}
-		} else {
-			showMessage("Device does not support accelerometer");
-			supportsAccelerometer = false;
-		}
-	}
-	public void startAccelerometerData() {
-		if (supportsAccelerometer) {
-			try {
-				mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-			} catch (Exception e) {
-				showMessage(e.toString());
-			}
-		}
-	}
-
-	public void stopAccelerometerData() {
-		try {
-			mSensorManager.unregisterListener(this);
-		} catch (Exception e) {
-			showMessage(e.toString());
-		}
-	}
-
-	@Override
-	public final void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// Do something here if sensor accuracy changes.
-	}
-
-	@Override
-	public final void onSensorChanged(SensorEvent event) {
-		// The linear accelerometer returns 3 values
-		// smoothing using a filter
-
-
-		/*
-
-													^ -y to top of screen
-			-------------	^ to top of screen		|   / +z into the screen
-			|			|	| y is negative 		|  /
-			|			|							| /
-			|			|							--------> -x to right of screen
-			|			|
-			|			|
-			|			|
-			|			|
-			-------------
-
-
-
-
-
-
-
-
-		 */
-		final float alpha = 0.9f;
-
-		Global.Gx = event.values[0] * alpha + Global.Gx * (1.0f - alpha);
-		Global.Gy = event.values[1] * alpha + Global.Gy * (1.0f - alpha);
-		Global.Gz = event.values[2] * alpha + Global.Gz * (1.0f - alpha);
-
-		Global.Gx = (float)Math.round(event.values[0] * alpha + Global.Gx * (1.0f - alpha) * 1000) / 1000;
-		Global.Gy = (float)Math.round(event.values[1] * alpha + Global.Gy * (1.0f - alpha) * 1000) / 1000;
-		Global.Gz = (float)Math.round(event.values[2] * alpha + Global.Gz * (1.0f - alpha) * 1000) / 1000;
+		myDrivenLocation.disconnect();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		startAccelerometerData();
-
+		myAccelerometer.startAccelerometerData();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		stopAccelerometerData();
+		myAccelerometer.stopAccelerometerData();
 	}
 
 	/**************************************************/
@@ -619,5 +466,10 @@ public class MainActivity
 
 	public static Context getAppContext() {
 		return MainActivity.context;
+	}
+
+	@Override
+	public void onFragmentInteraction(Uri uri) {
+
 	}
 }

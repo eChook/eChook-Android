@@ -4,6 +4,9 @@ import android.app.AlarmManager;
 import android.bluetooth.BluetoothSocket;
 import android.hardware.Sensor;
 
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import java.util.GregorianCalendar;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -39,10 +42,19 @@ public final class Global {
 	public static volatile Double TempC2 	= 	0.0;
 	public static volatile Double TempC3 	= 	0.0;
 
+	public static 			int							maxGraphDataPoints	=	20 * 1000 / Global.UI_UPDATE_INTERVAL;
+	public static 			float 						GraphTimeStamp 		=	0.0f;
+	public static volatile 	LineGraphSeries<DataPoint> 	ThrottleHistory		=	new LineGraphSeries<>();
+	public static volatile 	LineGraphSeries<DataPoint> 	AmpsHistory			=	new LineGraphSeries<>();
+	public static volatile 	LineGraphSeries<DataPoint> 	VoltsHistory		=	new LineGraphSeries<>();
+	public static volatile 	LineGraphSeries<DataPoint> 	MotorRPMHistory		=	new LineGraphSeries<>();
+	public static volatile 	LineGraphSeries<DataPoint> 	SpeedHistory		=	new LineGraphSeries<>();
+	public static volatile 	LineGraphSeries<DataPoint> 	TempC1History		=	new LineGraphSeries<>();
+
 	public static volatile Double Latitude 		=	0.0;
 	public static volatile Double Longitude		=	0.0;
 	public static volatile Double Altitude		=	0.0;
-	public static volatile Double Bearing		=	0.0;
+	public static volatile Double Bearing		=	-1.0;
 	public static volatile Double SpeedGPS		=	0.0;
 	public static volatile Double GPSTime		=	0.0;
 	public static volatile Double Accuracy		=	0.0;

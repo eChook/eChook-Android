@@ -22,20 +22,9 @@ public class DataToCsvFile extends Thread {
 	/**
 	 * All of the variables are now stored as a global Double which is updated by the parser
 	 *
-	 * Every save interval the logger will write each variable to the file
-	 */
-
-    /* OLD PROCESS */
-	/* Each variable will have its own .csv file.
-	 * We can't compile it all into one because each variable
-	 * reading will have a different timestamp.
-	 *
-	 * Each filename will be named after its identifier code, e.g.
-	 *              "v.csv"
-	 * for voltage.
-	 *
-	 * The lists are effectively 'buffers' and need to be emptied out
-	 * every time a line is written.
+	 * Every save interval the logger will write each variable to a common file. The save interval
+	 * generates the timestamp, it is NOT generated when the data is received. There may be a delay
+	 * between the actual values though it is negligible
 	 */
 
 	private volatile boolean stopWorker = false;
@@ -44,14 +33,14 @@ public class DataToCsvFile extends Thread {
 		try {
 			this.variable_identifiers = new String[]{
 					// these should match ArrayOfVariables
-					new String(new byte[]{Global.THROTTLEID}, "UTF-8"),    	// 1
-					new String(new byte[]{Global.VOLTID}, "UTF-8"),        	// 2
-					new String(new byte[]{Global.AMPID}, "UTF-8"),         	// 3
-					new String(new byte[]{Global.MOTORRPMID}, "UTF-8"),    	// 4
-					new String(new byte[]{Global.SPEEDMPHID}, "UTF-8"),    	// 5
-					new String(new byte[]{Global.TEMP1ID}, "UTF-8"),       	// 6
-					new String(new byte[]{Global.TEMP2ID}, "UTF-8"),       	// 7
-					new String(new byte[]{Global.TEMP3ID}, "UTF-8"),        // 8
+					"Throttle (%)",    										// 1
+					"Volts (V)",        									// 2
+					"Amps (A)",         									// 3
+					"Motor speed (RPM)",    								// 4
+					"Speed (mph)",    										// 5
+					"Temp 1 (C)",       									// 6
+					"Temp 2 (C)",       									// 7
+					"Temp 3 (C)",        									// 8
 
 					/* Location */
 					"Latitude (deg)",										// 9
