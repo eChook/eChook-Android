@@ -42,7 +42,7 @@ public final class Global {
 	public static volatile Double TempC2 	= 	0.0;
 	public static volatile Double TempC3 	= 	0.0;
 
-	public static 			int							maxGraphDataPoints	=	20 * 1000 / Global.UI_UPDATE_INTERVAL;
+	public static 			int							maxGraphDataPoints	=	15 * 1000 / Global.UI_UPDATE_INTERVAL;
 	public static 			float 						GraphTimeStamp 		=	0.0f;
 	public static volatile 	LineGraphSeries<DataPoint> 	ThrottleHistory		=	new LineGraphSeries<>();
 	public static volatile 	LineGraphSeries<DataPoint> 	AmpsHistory			=	new LineGraphSeries<>();
@@ -70,8 +70,8 @@ public final class Global {
 	public static volatile long DataFileLength = 0;
 
 	/* BLUETOOTH STATE TRACKER */
-	public enum BTSTATE {NONE, CONNECTED, DISCONNECTED}
-	public static volatile BTSTATE BTState = BTSTATE.NONE;
+	public enum BTSTATE {DISCONNECTED, CONNECTING, CONNECTED, RECONNECTING}
+	public static volatile BTSTATE BTState = BTSTATE.DISCONNECTED;
 
 	/**********************/
 	/* VARIABLES          */
@@ -103,7 +103,7 @@ public final class Global {
 	public static final byte TEMP2ID 		= 	98;	 // b
 	public static final byte TEMP3ID 		= 	99;  // c
 
-	public static final int 	UI_UPDATE_INTERVAL	= 100; // UI update interval in milliseconds
+	public static final int 	UI_UPDATE_INTERVAL	= 125; // UI update interval in milliseconds
     public static final int 	DATA_SAVE_INTERVAL 	= 250; // save interval in milliseconds
 	public static final String 	DATA_FILE 			= "arduino.csv";
 
@@ -123,6 +123,12 @@ public final class Global {
 
 	public enum UNIT {MPH, KPH}
 	public static UNIT Unit;
+
+	public enum LOCATION {DISABLED, ENABLED} // REMINDER: KEEP THESE CONSISTENT WITH ARRAYS.XML!
+	public static LOCATION Location;
+
+	public enum ACCELEROMETER {DISABLED, ENABLED}
+	public static ACCELEROMETER Accelerometer;
 
 	/**********************/
 	/* CONSTRUCTOR        */

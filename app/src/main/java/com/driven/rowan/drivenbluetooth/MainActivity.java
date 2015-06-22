@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -51,6 +52,10 @@ public class MainActivity
 	public static TextView myGz;
 
 	public static TextView myDataFileSize;
+	public static TextView myDataFileName;
+
+	public static TextView myBTState;
+	public static TextView myLogging;
 
 	public static TextView Throttle;
 	public static TextView Current;
@@ -58,8 +63,6 @@ public class MainActivity
 	public static TextView Temp1;
 	public static TextView RPM;
 	public static TextView Speed;
-
-	public static EditText RaceStartTime;
 
 	public static DataBar ThrottleBar;
 	public static DataBar CurrentBar;
@@ -87,8 +90,8 @@ public class MainActivity
 	public static BTStreamReader StreamReader; // initialize below
 
 	/************* UI UPDATER ***************/
-	private Timer UIUpdateTimer; // don't initialize because it should be done below
-	private TimerTask UIUpdateTask; // initialized later on
+	private static Timer UIUpdateTimer; // don't initialize because it should be done below
+	private static TimerTask UIUpdateTask; // initialized later on
 
 	/************* UI THREAD HANDLER ********/
 	public static Handler MainActivityHandler = new Handler();
@@ -97,12 +100,13 @@ public class MainActivity
 	public static DrivenLocation myDrivenLocation;
 
 	/******** SENSOR MANAGER ****************/
-	private Accelerometer myAccelerometer;
+	public static Accelerometer myAccelerometer;
 
 	/************* OTHER ***************/
 	private static final int RESULT_SETTINGS = 2;
 	private static Context context;
 	static final BluetoothManager myBluetoothManager = new BluetoothManager();
+
 
 	/**************************************************/
 	/**************** MAINACTIVITY ONCREATE ***********/
@@ -114,46 +118,81 @@ public class MainActivity
 		setContentView(R.layout.activity_main);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		/* BUTTONS */
-		openBTButton 	= (Button) findViewById(R.id.open);
-		startButton 	= (Button) findViewById(R.id.start);
-		stopButton 		= (Button) findViewById(R.id.stop);
-		closeBTButton	= (Button) findViewById(R.id.close);
+		/************** INITIALIZE UI ELEMENTS ************/
+		InitializeButtons();
+		InitializeDataFields();
+		InitializeDataBars();
+		InitializeGraphs();
 
-		/* LABELS */
+		/* OTHERS */
 		myLabel 		= (TextView) findViewById(R.id.label);
 		myMode 			= (TextView) findViewById(R.id.txt_Mode);
 
-		myLongitude 	= (TextView) findViewById(R.id.txtLongitude);
-		myLatitude 		= (TextView) findViewById(R.id.txtLatitude);
-
+		myDataFileName	= (TextView) findViewById(R.id.txtDataFileName);
 		myDataFileSize	= (TextView) findViewById(R.id.txtDataFileSize);
 
-		/* ACCELEROMETER VALUES */
-		myGx			= (TextView) findViewById(R.id.txtGx);
-		myGy			= (TextView) findViewById(R.id.txtGy);
-		myGz			= (TextView) findViewById(R.id.txtGz);
+		myBTState		= (TextView) findViewById(R.id.txtBTState);
+		myLogging		= (TextView) findViewById(R.id.txtLogging);
 
-		/* DATA FIELDS */
+		StartUIUpdater(0, Global.UI_UPDATE_INTERVAL);
+
+		InitializeGlobalSettings();
+
+		/**************** CONTEXT *************************/
+		MainActivity.context = getApplicationContext();
+
+		/**************** ALARM MANAGER *******************/
+		Global.AlarmManager = (AlarmManager) MainActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
+
+		/********* INITIALIZE LOCATION CLASS **************/
+		myDrivenLocation = new DrivenLocation();
+
+		/******************* ACCELEROMETER ****************/
+		myAccelerometer = new Accelerometer((SensorManager) getSystemService(Context.SENSOR_SERVICE));
+
+		/**************** TIMEPICKER **********************/
+		//RaceStartTime.setOnClickListener(new SetTimeDialog(RaceStartTime));
+
+		UpdateDataFileInfo();
+
+		MainActivity.myLogging.setText("NO");
+		MainActivity.myLogging.setTextColor(Color.RED);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		myDrivenLocation.connect();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		myDrivenLocation.disconnect();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		myAccelerometer.update();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		myAccelerometer.stopAccelerometerData();
+	}
+
+	private void InitializeDataFields() {
 		Throttle 		= (TextView) findViewById(R.id.throttle);
 		Current 		= (TextView) findViewById(R.id.current);
 		Voltage 		= (TextView) findViewById(R.id.voltage);
 		Temp1 			= (TextView) findViewById(R.id.temp1);
 		RPM 			= (TextView) findViewById(R.id.rpm);
 		Speed 			= (TextView) findViewById(R.id.speed);
+	}
 
-		RaceStartTime 	= (EditText) findViewById(R.id.raceStartTime);
-		//SMSZone 		= (TextView) findViewById(R.id.smsBox);
-
-		/* FILL BARS */
-		ThrottleBar 	= (DataBar) findViewById(R.id.ThrottleBar);
-		CurrentBar 		= (DataBar) findViewById(R.id.CurrentBar);
-		VoltageBar 		= (DataBar) findViewById(R.id.VoltageBar);
-		T1Bar 			= (DataBar) findViewById(R.id.T1Bar);
-		RPMBar 			= (DataBar) findViewById(R.id.RPMBar);
-		SpeedBar 		= (DataBar) findViewById(R.id.SpeedBar);
-
-		/* GRAPHS */
+	private void InitializeGraphs() {
 		myThrottleGraph	= (GraphView) findViewById(R.id.throttleGraph);
 		myThrottleGraph.addSeries(Global.ThrottleHistory);
 		myThrottleGraph.getViewport().setYAxisBoundsManual(true);
@@ -175,32 +214,43 @@ public class MainActivity
 		myAmpsGraph.getViewport().setMaxY(40.0);
 		myAmpsGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
-		/************** INITIALIZE SETTINGS ***************/
-		this.InitializeGlobalSettings();
+		myTempC1Graph = (GraphView) findViewById(R.id.T1Graph);
+		myTempC1Graph.addSeries(Global.TempC1History);
+		myTempC1Graph.getViewport().setYAxisBoundsManual(true);
+		myTempC1Graph.getViewport().setMinY(0.0);
+		myTempC1Graph.getViewport().setMaxY(100.0);
+		myTempC1Graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
-		/**************** CONTEXT *************************/
-		MainActivity.context = getApplicationContext();
+		myMotorRPMGraph = (GraphView) findViewById(R.id.RPMGraph);
+		myMotorRPMGraph.addSeries(Global.MotorRPMHistory);
+		myMotorRPMGraph.getViewport().setYAxisBoundsManual(true);
+		myMotorRPMGraph.getViewport().setMinY(0.0);
+		myMotorRPMGraph.getViewport().setMaxY(2500);
+		myMotorRPMGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
-		/**************** ALARM MANAGER *******************/
-		Global.AlarmManager = (AlarmManager) MainActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
+		mySpeedGraph = (GraphView) findViewById(R.id.SpeedGraph);
+		mySpeedGraph.addSeries(Global.SpeedHistory);
+		mySpeedGraph.getViewport().setYAxisBoundsManual(true);
+		mySpeedGraph.getViewport().setMinY(0.0);
+		if (Global.Unit == Global.UNIT.MPH) { mySpeedGraph.getViewport().setMaxY(50.0); }
+		if (Global.Unit == Global.UNIT.KPH) { mySpeedGraph.getViewport().setMaxY(80.0); }
+		mySpeedGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+	}
 
-		/*************** LOCATION CLASS *******************/
-		myDrivenLocation = new DrivenLocation();
+	private void InitializeDataBars() {
+		ThrottleBar 	= (DataBar) findViewById(R.id.ThrottleBar);
+		CurrentBar 		= (DataBar) findViewById(R.id.CurrentBar);
+		VoltageBar 		= (DataBar) findViewById(R.id.VoltageBar);
+		T1Bar 			= (DataBar) findViewById(R.id.T1Bar);
+		RPMBar 			= (DataBar) findViewById(R.id.RPMBar);
+		SpeedBar 		= (DataBar) findViewById(R.id.SpeedBar);
+	}
 
-		/******************* ACCELEROMETER ****************/
-		myAccelerometer = new Accelerometer((SensorManager) getSystemService(Context.SENSOR_SERVICE));
-
-		/**************** TIMEPICKER ***********************/
-		RaceStartTime.setOnClickListener(new SetTimeDialog(RaceStartTime));
-
-		/**************** UI UPDATER ***********************/
-		UIUpdateTask = new TimerTask() {
-			public void run() {
-				MainActivityHandler.post(new UIUpdateRunnable());
-			}
-		};
-		UIUpdateTimer = new Timer();
-		UIUpdateTimer.schedule(UIUpdateTask, 0, Global.UI_UPDATE_INTERVAL);
+	private void InitializeButtons() {
+		openBTButton 	= (Button) findViewById(R.id.open);
+		startButton 	= (Button) findViewById(R.id.start);
+		stopButton 		= (Button) findViewById(R.id.stop);
+		closeBTButton	= (Button) findViewById(R.id.close);
 	}
 
 	/**************************************************/
@@ -256,6 +306,7 @@ public class MainActivity
 
 	private void InitializeGlobalSettings() {
 		// Initialize the settings variables
+		PreferenceManager.setDefaultValues(this, R.xml.user_settings, false);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		try {
 			int mode = Integer.valueOf(prefs.getString("prefMode", ""));
@@ -264,6 +315,9 @@ public class MainActivity
 
 			int units = Integer.valueOf(prefs.getString("prefSpeedUnits", ""));
 			Global.Unit = Global.UNIT.values()[units];
+
+			int location = Integer.valueOf(prefs.getString("prefLocation", ""));
+			Global.Location = Global.LOCATION.values()[location];
 		} catch (Exception e) {
 			showMessage("Could not retrieve settings");
 		}
@@ -277,6 +331,8 @@ public class MainActivity
 		try {
 			myBluetoothManager.findBT();
 			myBluetoothManager.openBT();
+			StartStreamReader();
+			StartParser();
 		} catch (Exception e) {
 			showMessage(e.getMessage());
 		}
@@ -290,84 +346,46 @@ public class MainActivity
 		}
 	}
 
-	public void StartAllThreads(View v) {
+	public void Start(View v) {
 		try {
 			if (Global.Mode == Global.MODE.DEMO) {
-				if (Gen == null) {
-					Gen = new RandomGenerator();
-				}
-				if (Gen.getState() != Thread.State.NEW) {
-					Gen = new RandomGenerator();
-				}
-				Gen.start();
-
-				if (Parser.getState() != Thread.State.NEW) {
-					Parser = new BTDataParser();
-				}
-				Parser.start();
-
-				if (DataSaver.getState() != Thread.State.NEW) {
-					DataSaver = new DataToCsvFile();
-				}
-				DataSaver.start();
-
-				// UI Updater
-				UIUpdateTask = new TimerTask() {
-					public void run() {
-						MainActivityHandler.post(new UIUpdateRunnable());
-					}
-				};
-				UIUpdateTimer = new Timer();
-				UIUpdateTimer.schedule(UIUpdateTask, 250, 250);
-
-				myLabel.setText("Now Logging - press 'Stop' to cancel");
-
-			} else if (Global.Mode == Global.MODE.RACE && Global.BTSocket != null) {
-				if (StreamReader == null) {
-					StreamReader = new BTStreamReader();
-				}
-				if (StreamReader.getState() != Thread.State.NEW) {
-					StreamReader = new BTStreamReader();
-				}
-				StreamReader.start();
-
-				if (Parser.getState() != Thread.State.NEW) {
-					Parser = new BTDataParser();
-				}
-				Parser.start();
-
-				if (DataSaver.getState() != Thread.State.NEW) {
-					DataSaver = new DataToCsvFile();
-				}
-				DataSaver.start();
-
+				StartDemoMode();
+			} else if (Global.Mode == Global.MODE.RACE) {
+				StartRaceMode();
 			}
 		} catch (Exception e) {
 			showMessage(e.getMessage());
 		}
 	}
 
-	public void CancelAllThreads(View v) {
+	public void Stop(View v) {
 		try {
-			if (Gen != null && Gen.getState() != Thread.State.TERMINATED) {
-				Gen.cancel();
-			}
-			if (StreamReader != null && StreamReader.getState() != Thread.State.TERMINATED) {
-				StreamReader.cancel();
-			}
-			if (Parser != null && Parser.getState() != Thread.State.TERMINATED) {
-				Parser.cancel();
-			}
-			if (DataSaver != null && DataSaver.getState() != Thread.State.TERMINATED) {
-				DataSaver.cancel();
-			}
+			StopRandomGenerator();
+			StopDataSaver();
 
 			myLabel.setText("Stopped logging");
+			MainActivity.myLogging.setText("NO");
+			MainActivity.myLogging.setTextColor(Color.RED);
 
-			// scan for the data file to ensure it can be viewed from a computer
-			File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
-			MediaScannerConnection.scanFile(MainActivity.getAppContext(), new String[]{f.getAbsolutePath()}, null, null);
-			Global.DataFileLength = f.length();
+			UpdateDataFileInfo();
+
+		} catch (Exception e) {
+			showMessage(e.getMessage());
+		}
+	}
+
+	public void ForceStop(View v) {
+		try {
+			StopRandomGenerator();
+			StopDataSaver();
+			StopParser();
+			StopStreamReader();
+
+			myLabel.setText("Stopped logging");
+			MainActivity.myLogging.setText("NO");
+			MainActivity.myLogging.setTextColor(Color.RED);
+
+			UpdateDataFileInfo();
 
 		} catch (Exception e) {
 			showMessage(e.getMessage());
@@ -375,8 +393,11 @@ public class MainActivity
 	}
 
 	public void LaunchSettings(View v) {
-		Intent i = new Intent(this, SettingsActivity.class);
-		startActivityForResult(i, RESULT_SETTINGS);
+		SettingsFragment settingsFragment = new SettingsFragment();
+		getFragmentManager().beginTransaction()
+				.replace(R.id.graphview_overlay, settingsFragment)
+				.addToBackStack(null)
+				.commit();
 	}
 
 	public void ViewGraph(View v) {
@@ -386,6 +407,90 @@ public class MainActivity
 				.addToBackStack(null)
 				.commit();
 	}
+
+	/**************************************************/
+	/**************** THREADS          ****************/
+	/**************************************************/
+
+	private void StartRaceMode() {
+		StartStreamReader();
+		StartParser();
+		StartDataSaver();
+	}
+
+	private void StartDemoMode() {
+		StartRandomGenerator();
+		StartParser();
+	}
+
+	private static void StartDataSaver() {
+		if (!DataSaver.isAlive() && DataSaver.getState() != Thread.State.NEW) {
+			DataSaver = new DataToCsvFile();
+		}
+		DataSaver.start();
+		MainActivity.myLogging.setText("LOGGING");
+		MainActivity.myLogging.setTextColor(Color.GREEN);
+	}
+
+	private static void StartParser() {
+		if (!Parser.isAlive() && Parser.getState() != Thread.State.NEW) {
+			Parser = new BTDataParser();
+		}
+		Parser.start();
+	}
+
+	private static void StartStreamReader() {
+		if (StreamReader == null) {
+			StreamReader = new BTStreamReader();
+		} else if (!StreamReader.isAlive() && StreamReader.getState() != Thread.State.NEW) {
+			StreamReader = new BTStreamReader();
+		}
+		StreamReader.start();
+	}
+
+	private static void StartRandomGenerator() {
+		if (Gen == null) {
+			Gen = new RandomGenerator();
+		} else if (!Gen.isAlive() && Gen.getState() != Thread.State.NEW) {
+			Gen = new RandomGenerator();
+		}
+		Gen.start();
+	}
+
+	private static void StartUIUpdater(int delay, int uiUpdateInterval) {
+		UIUpdateTask = new TimerTask() {
+			public void run() {
+				MainActivityHandler.post(new UIUpdateRunnable());
+			}
+		};
+		UIUpdateTimer = new Timer();
+		UIUpdateTimer.schedule(UIUpdateTask, delay, uiUpdateInterval);
+	}
+
+	private static void StopDataSaver() {
+		if (DataSaver != null && DataSaver.getState() != Thread.State.TERMINATED) {
+			DataSaver.cancel();
+		}
+	}
+
+	private static void StopRandomGenerator() {
+		if (Gen != null && Gen.getState() != Thread.State.TERMINATED) {
+			Gen.cancel();
+		}
+	}
+
+	private static void StopStreamReader() {
+		if (StreamReader != null && StreamReader.getState() != Thread.State.TERMINATED) {
+			StreamReader.cancel();
+		}
+	}
+
+	private static void StopParser() {
+		if (Parser != null && Parser.getState() != Thread.State.TERMINATED) {
+			Parser.cancel();
+		}
+	}
+
 
 	public class SetTimeDialog implements View.OnClickListener {
 		EditText editText;
@@ -436,30 +541,6 @@ public class MainActivity
 		}
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		myDrivenLocation.connect();
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		myDrivenLocation.disconnect();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		myAccelerometer.startAccelerometerData();
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		myAccelerometer.stopAccelerometerData();
-	}
-
 	/**************************************************/
 	/**************** OTHER SHIT          *************/
 	/**************************************************/
@@ -471,5 +552,12 @@ public class MainActivity
 	@Override
 	public void onFragmentInteraction(Uri uri) {
 
+	}
+
+	private static void UpdateDataFileInfo() {
+		File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
+		MediaScannerConnection.scanFile(MainActivity.getAppContext(), new String[]{f.getAbsolutePath()}, null, null);
+		Global.DataFileLength = f.length();
+		myDataFileName.setText(Global.DATA_FILE);
 	}
 }

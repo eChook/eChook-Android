@@ -2,7 +2,6 @@ package com.driven.rowan.drivenbluetooth;
 
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -56,10 +55,9 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks, Goog
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		if (mRequestingLocationUpdates) {
+		if (Global.Location == Global.LOCATION.ENABLED) {
 			startLocationUpdates();
 		}
-		CurrentLocation = LocationServices.FusedLocationApi.getLastLocation(GoogleApi);
 	}
 
 	@Override
@@ -80,6 +78,7 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks, Goog
 		try {
 			LocationServices.FusedLocationApi.requestLocationUpdates(
 					GoogleApi, mLocationRequest, this);
+			CurrentLocation = LocationServices.FusedLocationApi.getLastLocation(GoogleApi);
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -99,7 +98,9 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks, Goog
 		Global.GPSTime = (double) location.getTime();
 		Global.Accuracy = (double) location.getAccuracy();
 
-		Global.DeltaDistance = calculateDistanceBetween(PreviousLocation, CurrentLocation);
+		if (CurrentLocation != null && PreviousLocation != null) {
+			Global.DeltaDistance = calculateDistanceBetween(PreviousLocation, CurrentLocation);
+		}
 
 		mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 		Global.LocationUpdateCounter++;
@@ -112,5 +113,16 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks, Goog
 
 	protected float calculateDistanceBetween(Location location1, Location location2) {
 		return location1.distanceTo(location2);
+	}
+
+	public void update() {
+		switch (Global.Location) {
+			case ENABLED:
+				startLocationUpdates();
+				break;
+			case DISABLED:
+				stopLocationUpdates();
+				break;
+		}
 	}
 }

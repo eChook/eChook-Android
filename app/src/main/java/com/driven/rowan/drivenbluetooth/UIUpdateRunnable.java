@@ -1,5 +1,6 @@
 package com.driven.rowan.drivenbluetooth;
 
+import android.graphics.Color;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.series.DataPoint;
@@ -22,11 +23,11 @@ public class UIUpdateRunnable implements Runnable {
 		UpdateMotorRPM();
 
 		// Android sensor readings
-		UpdateAccelerometer();
+		//UpdateAccelerometer();
 
 		// Other readings
 		UpdateBTStatus();
-		UpdateLocation();
+		//UpdateLocation();
 		UpdateFileSize();
 
 		Global.GraphTimeStamp += (float) Global.UI_UPDATE_INTERVAL / 1000.0f;
@@ -44,7 +45,7 @@ public class UIUpdateRunnable implements Runnable {
 
 	private void UpdateCurrent() {
 		try {
-			MainActivity.Current.setText(String.format("%.2f", Global.Amps));
+			MainActivity.Current.setText(String.format("%.1f", Global.Amps));
 			MainActivity.CurrentBar.setValue(Global.Amps);
 			Global.AmpsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Amps), true, Global.maxGraphDataPoints);
 		} catch (Exception e) {
@@ -121,16 +122,21 @@ public class UIUpdateRunnable implements Runnable {
 
 	private void UpdateBTStatus() {
 		switch (Global.BTState) {
-			case NONE:
-				MainActivity.myLabel.setText("Select 'Open BT' to connect to Bluetooth");
-				break;
-
-			case CONNECTED:
-				MainActivity.myLabel.setText("Logging...");
-				break;
-
 			case DISCONNECTED:
-				MainActivity.myLabel.setText("Bluetooth disconnected. Retrying... [" + Global.BTReconnectAttempts + "]");
+				MainActivity.myBTState.setText("DISCONNECTED");
+				MainActivity.myBTState.setTextColor(Color.RED);
+				break;
+			case CONNECTING:
+				MainActivity.myBTState.setText("CONNECTING");
+				MainActivity.myBTState.setTextColor(Color.YELLOW);
+				break;
+			case CONNECTED:
+				MainActivity.myBTState.setText("CONNECTED");
+				MainActivity.myBTState.setTextColor(Color.GREEN);
+				break;
+			case RECONNECTING:
+				MainActivity.myBTState.setText("RECONNECTING... [" + Global.BTReconnectAttempts + "]");
+				MainActivity.myBTState.setTextColor(Color.YELLOW);
 				break;
 		}
 	}

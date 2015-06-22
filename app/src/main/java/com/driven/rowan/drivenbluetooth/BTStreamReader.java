@@ -90,7 +90,7 @@ public class BTStreamReader extends Thread {
 				 *
 				 */
 
-				if (Global.BTReconnectAttempts++ <= 10) {
+				if (true) {
 					Global.BTState = Global.BTSTATE.DISCONNECTED;
 					DisconnectedBTRoutine();
 					latestMillis = System.currentTimeMillis();
@@ -116,6 +116,7 @@ public class BTStreamReader extends Thread {
 	private void DisconnectedBTRoutine() {
 		try {
 			Global.BTSocket = null;
+			Global.BTState = Global.BTSTATE.RECONNECTING;
 			MainActivity.myBluetoothManager.reconnectBT();
 		} catch (Exception e) {
 			e.toString();

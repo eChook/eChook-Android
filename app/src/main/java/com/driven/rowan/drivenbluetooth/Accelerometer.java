@@ -41,7 +41,7 @@ public class Accelerometer implements SensorEventListener {
 	}
 
 	public void startAccelerometerData() {
-		if (supportsAccelerometer) {
+		if (supportsAccelerometer && Global.Accelerometer == Global.ACCELEROMETER.ENABLED) {
 			try {
 				mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 			} catch (Exception ignored) {}
@@ -100,5 +100,10 @@ public class Accelerometer implements SensorEventListener {
 			output[i] = output[i] + 0.25f * (input[i] - output[i]);
 		}
 		return output;
+	}
+
+	public void update() {
+		stopAccelerometerData();
+		startAccelerometerData();
 	}
 }

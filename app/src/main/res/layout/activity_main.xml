@@ -55,7 +55,7 @@
 			android:layout_alignParentBottom="true"
 			android:layout_toLeftOf="@+id/stop"
 			android:layout_toStartOf="@+id/stop"
-			android:onClick="StartAllThreads"/>
+			android:onClick="Start"/>
 
 		<Button
 			android:layout_width="wrap_content"
@@ -65,7 +65,7 @@
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentRight="true"
 			android:layout_alignParentEnd="true"
-			android:onClick="CancelAllThreads"/>
+			android:onClick="Stop"/>
 
 		<Button
 			android:layout_width="wrap_content"
@@ -90,6 +90,7 @@
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:text="Throttle"
+			android:onClick="ForceStop"
 			android:id="@+id/textView"
 			android:gravity="center"
 			android:editable="false"
@@ -379,63 +380,11 @@
 			android:layout_alignParentEnd="true"
 			android:layout_alignParentTop="true"/>
 
-		<EditText
-			android:focusable="false"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:inputType="time"
-			android:ems="10"
-			android:id="@+id/raceStartTime"
-			android:layout_alignParentTop="true"
-			android:layout_toRightOf="@+id/textView4"
-			android:layout_toLeftOf="@+id/textView7"
-			android:layout_toStartOf="@+id/textView7"
-			android:gravity="center"/>
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:text="Race Start"
-			android:id="@+id/textView6"
-			android:layout_alignBottom="@+id/raceStartTime"
-			android:layout_alignLeft="@+id/textView4"
-			android:layout_alignStart="@+id/textView4"
-			android:layout_toLeftOf="@+id/raceStartTime"
-			android:layout_toStartOf="@+id/raceStartTime"
-			android:layout_alignParentTop="true"
-			android:gravity="center_vertical|center"/>
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:text="Latitude     "
-			android:id="@+id/textView10"
-			android:layout_above="@+id/start"
-			android:layout_alignStart="@+id/T1Bar"
-			android:layout_alignEnd="@+id/T1Bar"
-			android:gravity="right"
-			android:visibility="gone"/>
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:text="Longitude     "
-			android:id="@+id/textView9"
-			android:layout_above="@+id/textView10"
-			android:layout_alignStart="@+id/T1Bar"
-			android:layout_alignEnd="@+id/T1Bar"
-			android:gravity="right"
-			android:visibility="gone"/>
-
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:id="@+id/txtLongitude"
-			android:layout_alignTop="@+id/textView9"
 			android:layout_alignEnd="@+id/RPMBar"
 			android:layout_alignStart="@+id/RPMBar"
 			android:gravity="right"
@@ -456,77 +405,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:text="Gx"
-			android:id="@+id/textView8"
-			android:layout_below="@+id/ThrottleBar"
-			android:layout_alignParentStart="true"
-			android:layout_alignRight="@+id/ThrottleBar"
-			android:gravity="center"
-			android:visibility="gone"/>
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:text="Gy"
-			android:id="@+id/textView11"
-			android:layout_alignTop="@+id/textView8"
-			android:layout_alignStart="@+id/VoltageBar"
-			android:gravity="center"
-			android:layout_alignRight="@+id/VoltageBar"
-			android:visibility="gone"/>
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:text="Gz"
-			android:id="@+id/textView12"
-			android:gravity="center"
-			android:layout_alignTop="@+id/textView11"
-			android:layout_toEndOf="@+id/textView11"
-			android:layout_alignRight="@+id/CurrentBar"
-			android:visibility="gone"/>
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:id="@+id/txtGx"
-			android:gravity="center"
-			android:layout_below="@+id/textView8"
-			android:layout_alignParentStart="true"
-			android:layout_alignEnd="@+id/textView8"
-			android:visibility="gone"/>
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:id="@+id/txtGy"
-			android:gravity="center"
-			android:layout_below="@+id/textView11"
-			android:layout_alignStart="@+id/textView11"
-			android:layout_alignEnd="@+id/textView11"
-			android:visibility="gone"/>
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:id="@+id/txtGz"
-			android:gravity="center"
-			android:layout_below="@+id/textView12"
-			android:layout_alignStart="@+id/textView12"
-			android:layout_alignEnd="@+id/textView12"
-			android:visibility="gone"/>
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:text="arduino.csv"
-			android:id="@+id/textView13"
+			android:id="@+id/txtDataFileName"
 			android:layout_below="@+id/label"
 			android:layout_alignParentStart="true"/>
 
@@ -535,7 +414,7 @@
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:id="@+id/txtDataFileSize"
-			android:layout_alignBottom="@+id/textView13"
+			android:layout_alignBottom="@+id/txtDataFileName"
 			android:layout_alignStart="@+id/textView2"/>
 
 		<com.jjoe64.graphview.GraphView
@@ -568,12 +447,89 @@
 			android:layout_alignBottom="@+id/voltsGraph"
 			android:layout_toStartOf="@+id/graph"/>
 
+		<view
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			class="com.jjoe64.graphview.GraphView"
+			android:id="@+id/T1Graph"
+			android:layout_below="@+id/T1Bar"
+			android:layout_alignStart="@+id/T1Bar"
+			android:layout_alignBottom="@+id/ampsGraph"
+			android:layout_alignRight="@+id/T1Bar"
+			android:layout_toEndOf="@+id/T1Bar"/>
+
+		<view
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			class="com.jjoe64.graphview.GraphView"
+			android:id="@+id/RPMGraph"
+			android:layout_below="@+id/T1Bar"
+			android:layout_alignStart="@+id/RPMBar"
+			android:layout_toEndOf="@+id/RPMBar"
+			android:layout_alignBottom="@+id/T1Graph"
+			android:layout_alignRight="@+id/RPMBar"/>
+
+		<view
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			class="com.jjoe64.graphview.GraphView"
+			android:id="@+id/SpeedGraph"
+			android:layout_below="@+id/RPMBar"
+			android:layout_toEndOf="@+id/RPMBar"
+			android:layout_alignRight="@+id/SpeedBar"
+			android:layout_alignBottom="@+id/RPMGraph"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="Bluetooth"
+			android:id="@+id/textView6"
+			android:layout_alignTop="@+id/txt_Mode"
+			android:gravity="right"
+			android:layout_marginRight="10dp"
+			android:layout_alignLeft="@+id/textView4"
+			android:width="20dp"
+			android:layout_alignEnd="@+id/textView4"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="Logging"
+			android:id="@+id/textView8"
+			android:gravity="right"
+			android:layout_alignEnd="@+id/textView6"
+			android:layout_below="@+id/textView6"
+			android:layout_alignLeft="@+id/textView6"
+			android:layout_alignRight="@+id/textView6"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:id="@+id/txtBTState"
+			android:layout_alignTop="@+id/textView6"
+			android:layout_toRightOf="@+id/textView6"
+			android:gravity="left"
+			android:textStyle="bold"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:id="@+id/txtLogging"
+			android:layout_below="@+id/txtBTState"
+			android:layout_alignStart="@+id/txtBTState"
+			android:textStyle="bold"/>
+
 	</RelativeLayout>
 
 	<FrameLayout android:id="@+id/graphview_overlay"
-				 android:layout_width="match_parent"
-				 android:layout_height="match_parent"
-				 android:visibility="gone">
+				 android:layout_width="wrap_content"
+				 android:layout_height="wrap_content"
+				 android:visibility="visible"
+				 android:background="@color/background_material_light">
 
 	</FrameLayout>
 </merge>

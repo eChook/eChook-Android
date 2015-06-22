@@ -46,9 +46,6 @@ public class BTDataParser extends Thread {
 					 * (int) 255, thus enabling the proper comparison
 					 */
 
-					if ((poppedData[1] == Global.MOTORRPMID)) {
-						byte[] herp = poppedData;
-					}
 					if ((poppedData[2] & 0xff) == 255) { poppedData[2] = 0; }
 					if ((poppedData[3] & 0xff) == 255) { poppedData[3] = 0; }
 

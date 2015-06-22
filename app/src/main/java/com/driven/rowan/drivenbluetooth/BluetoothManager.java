@@ -22,9 +22,6 @@ public final class BluetoothManager extends MainActivity {
 	private boolean deviceConnected = false;
     private boolean matchingDeviceFound = false;
 
-	//Constants
-	private final static int BTREQUEST = 1;
-
     String TAG = "DBDebug - BtManager";
 
     //_____________________________________________________________________________FIND BT
@@ -70,8 +67,8 @@ public final class BluetoothManager extends MainActivity {
                 }
             }
         }
-        Log.d(TAG, "Bluetooth Device Found " + this.mmDevice.getName());
-        myLabel.setText("Bluetooth Device Found: " + this.mmDevice.getName());
+        Log.d(TAG, "Bluetooth Device Found " + mmDevice.getName());
+        myLabel.setText("Bluetooth Device Found: " + mmDevice.getName());
     }
 
     //_____________________________________________________________________________OPEN BT
@@ -104,7 +101,7 @@ public final class BluetoothManager extends MainActivity {
 			Global.BTSocket.close();
             myLabel.setText("Bluetooth Closed");
             deviceConnected = false;
-			Global.BTState = Global.BTSTATE.NONE;
+			Global.BTState = Global.BTSTATE.DISCONNECTED;
         }
     }
 
@@ -115,7 +112,7 @@ public final class BluetoothManager extends MainActivity {
 			// if the above succeeds, return true
 			return true;
 		} catch (Exception e) {
-			e.getMessage().toString();
+			e.getMessage();
 			return false;
 		}
 	}
