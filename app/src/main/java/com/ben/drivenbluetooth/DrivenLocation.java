@@ -1,4 +1,4 @@
-package com.driven.rowan.drivenbluetooth;
+package com.ben.drivenbluetooth;
 
 import android.location.Location;
 import android.os.Bundle;

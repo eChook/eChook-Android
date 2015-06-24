@@ -1,4 +1,4 @@
-package com.driven.rowan.drivenbluetooth;
+package com.ben.drivenbluetooth;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

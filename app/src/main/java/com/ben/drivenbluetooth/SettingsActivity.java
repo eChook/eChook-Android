@@ -1,26 +1,29 @@
-package com.driven.rowan.drivenbluetooth;
+package com.ben.drivenbluetooth;
 
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+
+import com.ben.drivenbluetooth.drivenbluetooth.R;
 
 /**
- * Created by BNAGY4 on 22/06/2015.
+ * Created by BNAGY4 on 01/04/2015.
  */
-public class SettingsFragment 	extends PreferenceFragment
-								implements SharedPreferences.OnSharedPreferenceChangeListener
-{
+public class SettingsActivity 	extends PreferenceActivity
+								implements SharedPreferences.OnSharedPreferenceChangeListener {
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.user_settings);
+		PreferenceManager.setDefaultValues(this, R.xml.user_settings, false);
 	}
 
-	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		try {
-			switch (key) {
+
+			try {
+				switch (key) {
 				case "prefMode":
 					int mode = Integer.valueOf(sharedPreferences.getString("prefMode", ""));
 					Global.Mode = Global.MODE.values()[mode];
@@ -30,33 +33,23 @@ public class SettingsFragment 	extends PreferenceFragment
 					int units = Integer.valueOf(sharedPreferences.getString("prefSpeedUnits", ""));
 					Global.Unit = Global.UNIT.values()[units];
 					break;
-				case "prefLocation":
-					int location = Integer.valueOf(sharedPreferences.getString("prefLocation", ""));
-					Global.Location = Global.LOCATION.values()[location];
-					MainActivity.myDrivenLocation.update();
-					break;
-				case "prefAccelerometer":
-					int accelerometer = Integer.valueOf(sharedPreferences.getString("prefAccelerometer", ""));
-					Global.Accelerometer = Global.ACCELEROMETER.values()[accelerometer];
-					MainActivity.myAccelerometer.update();
-					break;
 				default:
 					break;
-			}
-		} catch (Exception e) {
-			e.toString();
+				}
+			} catch (Exception e) {
+				e.toString();
 		}
 	}
 
 	@Override
-	public void onResume() {
+	protected void onResume() {
 		super.onResume();
 		getPreferenceScreen().getSharedPreferences()
 				.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
-	public void onPause() {
+	protected void onPause() {
 		super.onPause();
 		getPreferenceScreen().getSharedPreferences()
 				.unregisterOnSharedPreferenceChangeListener(this);

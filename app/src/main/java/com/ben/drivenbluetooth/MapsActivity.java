@@ -1,8 +1,9 @@
-package com.driven.rowan.drivenbluetooth;
+package com.ben.drivenbluetooth;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;

@@ -1,4 +1,4 @@
-package com.driven.rowan.drivenbluetooth;
+package com.ben.drivenbluetooth;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,7 +17,6 @@ public class SMSListener extends BroadcastReceiver {
 		if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
 			for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
 				String messageBody = smsMessage.getMessageBody();
-				MainActivity.SMSZone.append("\n" + messageBody);
 				MainActivity.showMessage(MainActivity.getAppContext(), messageBody, Toast.LENGTH_LONG);
 			}
 		}

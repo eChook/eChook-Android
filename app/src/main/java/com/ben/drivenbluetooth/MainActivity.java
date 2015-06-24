@@ -1,4 +1,4 @@
-package com.driven.rowan.drivenbluetooth;
+package com.ben.drivenbluetooth;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -23,10 +23,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.jjoe64.graphview.GraphView;
 
 import java.io.File;
@@ -37,19 +39,14 @@ import java.util.TimerTask;
 
 
 public class MainActivity
-		extends Activity
-		implements GraphViewFragment.OnFragmentInteractionListener {
+		extends 	Activity
+		implements 	GraphViewFragment.OnFragmentInteractionListener,
+					SixGraphsBars.OnFragmentInteractionListener
+{
 
 	/************* UI ELEMENTS ***************/
 	public static TextView myLabel;
 	public static TextView myMode;
-	public static TextView SMSZone;
-	public static TextView myLongitude;
-	public static TextView myLatitude;
-
-	public static TextView myGx;
-	public static TextView myGy;
-	public static TextView myGz;
 
 	public static TextView myDataFileSize;
 	public static TextView myDataFileName;
@@ -75,6 +72,7 @@ public class MainActivity
 	public static Button startButton;
 	public static Button stopButton;
 	public static Button closeBTButton;
+	public static Button settingsButton;
 
 	public static GraphView myThrottleGraph;
 	public static GraphView myVoltsGraph;
@@ -82,6 +80,9 @@ public class MainActivity
 	public static GraphView myMotorRPMGraph;
 	public static GraphView myTempC1Graph;
 	public static GraphView mySpeedGraph;
+
+	private enum UISTATE {SIX_GRAPHS_BARS, FOUR_GRAPHS_BARS}
+	private UISTATE UIState = UISTATE.SIX_GRAPHS_BARS;
 
 	/************* THREADS ******************/
 	public static RandomGenerator Gen = new RandomGenerator();
@@ -116,6 +117,9 @@ public class MainActivity
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		RelativeLayout RL = (RelativeLayout) findViewById(R.id.CenterView);
+		View child = getLayoutInflater().inflate(R.layout.six_graphs_bars, null);
+		RL.addView(child);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		/************** INITIALIZE UI ELEMENTS ************/
@@ -157,6 +161,8 @@ public class MainActivity
 
 		MainActivity.myLogging.setText("NO");
 		MainActivity.myLogging.setTextColor(Color.RED);
+
+		Parser.start();
 	}
 
 	@Override
@@ -201,35 +207,35 @@ public class MainActivity
 		myThrottleGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
 		myVoltsGraph = (GraphView) findViewById(R.id.voltsGraph);
-		myVoltsGraph.addSeries(Global.VoltsHistory);
+		//myVoltsGraph.addSeries(Global.VoltsHistory);
 		myVoltsGraph.getViewport().setYAxisBoundsManual(true);
 		myVoltsGraph.getViewport().setMinY(0.0);
 		myVoltsGraph.getViewport().setMaxY(28.0);
 		myVoltsGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
 		myAmpsGraph = (GraphView) findViewById(R.id.ampsGraph);
-		myAmpsGraph.addSeries(Global.AmpsHistory);
+		//myAmpsGraph.addSeries(Global.AmpsHistory);
 		myAmpsGraph.getViewport().setYAxisBoundsManual(true);
 		myAmpsGraph.getViewport().setMinY(0.0);
 		myAmpsGraph.getViewport().setMaxY(40.0);
 		myAmpsGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
 		myTempC1Graph = (GraphView) findViewById(R.id.T1Graph);
-		myTempC1Graph.addSeries(Global.TempC1History);
+		//myTempC1Graph.addSeries(Global.TempC1History);
 		myTempC1Graph.getViewport().setYAxisBoundsManual(true);
 		myTempC1Graph.getViewport().setMinY(0.0);
 		myTempC1Graph.getViewport().setMaxY(100.0);
 		myTempC1Graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
 		myMotorRPMGraph = (GraphView) findViewById(R.id.RPMGraph);
-		myMotorRPMGraph.addSeries(Global.MotorRPMHistory);
+		//myMotorRPMGraph.addSeries(Global.MotorRPMHistory);
 		myMotorRPMGraph.getViewport().setYAxisBoundsManual(true);
 		myMotorRPMGraph.getViewport().setMinY(0.0);
 		myMotorRPMGraph.getViewport().setMaxY(2500);
 		myMotorRPMGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
 		mySpeedGraph = (GraphView) findViewById(R.id.SpeedGraph);
-		mySpeedGraph.addSeries(Global.SpeedHistory);
+		//mySpeedGraph.addSeries(Global.SpeedHistory);
 		mySpeedGraph.getViewport().setYAxisBoundsManual(true);
 		mySpeedGraph.getViewport().setMinY(0.0);
 		if (Global.Unit == Global.UNIT.MPH) { mySpeedGraph.getViewport().setMaxY(50.0); }
@@ -251,6 +257,22 @@ public class MainActivity
 		startButton 	= (Button) findViewById(R.id.start);
 		stopButton 		= (Button) findViewById(R.id.stop);
 		closeBTButton	= (Button) findViewById(R.id.close);
+	}
+
+	public void CycleView(View v) {
+		try {
+			int state = UIState.ordinal();
+			if (++state >= UISTATE.values().length) {
+				state = 0;
+			}
+			UIState = UISTATE.values()[state];
+			RelativeLayout RL = (RelativeLayout) findViewById(R.id.CenterView);
+			RL.removeAllViews();
+			View child = getLayoutInflater().inflate(R.layout.four_graphs_bars, null);
+			RL.addView(child);
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	/**************************************************/
@@ -332,7 +354,6 @@ public class MainActivity
 			myBluetoothManager.findBT();
 			myBluetoothManager.openBT();
 			StartStreamReader();
-			StartParser();
 		} catch (Exception e) {
 			showMessage(e.getMessage());
 		}
@@ -378,7 +399,6 @@ public class MainActivity
 		try {
 			StopRandomGenerator();
 			StopDataSaver();
-			StopParser();
 			StopStreamReader();
 
 			myLabel.setText("Stopped logging");
@@ -386,6 +406,8 @@ public class MainActivity
 			MainActivity.myLogging.setTextColor(Color.RED);
 
 			UpdateDataFileInfo();
+
+			UIUpdateTimer.purge();
 
 		} catch (Exception e) {
 			showMessage(e.getMessage());
@@ -414,13 +436,11 @@ public class MainActivity
 
 	private void StartRaceMode() {
 		StartStreamReader();
-		StartParser();
 		StartDataSaver();
 	}
 
 	private void StartDemoMode() {
 		StartRandomGenerator();
-		StartParser();
 	}
 
 	private static void StartDataSaver() {
@@ -430,13 +450,6 @@ public class MainActivity
 		DataSaver.start();
 		MainActivity.myLogging.setText("LOGGING");
 		MainActivity.myLogging.setTextColor(Color.GREEN);
-	}
-
-	private static void StartParser() {
-		if (!Parser.isAlive() && Parser.getState() != Thread.State.NEW) {
-			Parser = new BTDataParser();
-		}
-		Parser.start();
 	}
 
 	private static void StartStreamReader() {
@@ -484,13 +497,6 @@ public class MainActivity
 			StreamReader.cancel();
 		}
 	}
-
-	private static void StopParser() {
-		if (Parser != null && Parser.getState() != Thread.State.TERMINATED) {
-			Parser.cancel();
-		}
-	}
-
 
 	public class SetTimeDialog implements View.OnClickListener {
 		EditText editText;

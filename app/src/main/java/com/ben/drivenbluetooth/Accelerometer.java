@@ -1,6 +1,5 @@
-package com.driven.rowan.drivenbluetooth;
+package com.ben.drivenbluetooth;
 
-import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;

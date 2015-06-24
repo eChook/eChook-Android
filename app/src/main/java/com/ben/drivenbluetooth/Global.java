@@ -1,4 +1,4 @@
-package com.driven.rowan.drivenbluetooth;
+package com.ben.drivenbluetooth;
 
 import android.app.AlarmManager;
 import android.bluetooth.BluetoothSocket;
@@ -103,7 +103,7 @@ public final class Global {
 	public static final byte TEMP2ID 		= 	98;	 // b
 	public static final byte TEMP3ID 		= 	99;  // c
 
-	public static final int 	UI_UPDATE_INTERVAL	= 125; // UI update interval in milliseconds
+	public static final int 	UI_UPDATE_INTERVAL	= 100; // UI update interval in milliseconds
     public static final int 	DATA_SAVE_INTERVAL 	= 250; // save interval in milliseconds
 	public static final String 	DATA_FILE 			= "arduino.csv";
 

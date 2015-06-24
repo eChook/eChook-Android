@@ -1,4 +1,4 @@
-package com.driven.rowan.drivenbluetooth;
+package com.ben.drivenbluetooth;
 
 import android.graphics.Color;
 import android.widget.TextView;
@@ -139,19 +139,6 @@ public class UIUpdateRunnable implements Runnable {
 				MainActivity.myBTState.setTextColor(Color.YELLOW);
 				break;
 		}
-	}
-
-	private void UpdateLocation() {
-		try {
-			MainActivity.myLatitude.setText(String.format("%.5f", Global.Latitude));
-			MainActivity.myLongitude.setText(String.format("%.5f", Global.Longitude));
-		} catch (Exception ignored) {}
-	}
-
-	private void UpdateAccelerometer() {
-		MainActivity.myGx.setText(String.format("%.2f", Global.Gx));
-		MainActivity.myGy.setText(String.format("%.2f", Global.Gy));
-		MainActivity.myGz.setText(String.format("%.2f", Global.Gz));
 	}
 
 	private void UpdateFileSize() {

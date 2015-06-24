@@ -1,8 +1,8 @@
-package com.driven.rowan.drivenbluetooth;
+package com.ben.drivenbluetooth;
 
-import android.widget.Toast;
-
-import com.jjoe64.graphview.series.DataPoint;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 
 /**
  * Created by Ben on 09/03/2015.
@@ -10,6 +10,7 @@ import com.jjoe64.graphview.series.DataPoint;
 public class BTDataParser extends Thread {
 	private byte[] poppedData;
 	private volatile boolean stopWorker = false;
+	public Handler mHandler;
 
 	public BTDataParser() {
 		// Nothing special for the constructor
@@ -17,27 +18,28 @@ public class BTDataParser extends Thread {
 
 	@Override
 	public void run() {
-		this.stopWorker = false;
-		while (!this.stopWorker) {
-			poppedData = Global.BTStreamQueue.poll();
-			if (poppedData != null) {
+		Looper.prepare();
+		mHandler = new Handler() {
+			public void handleMessage(Message msg) {
+				poppedData = Global.BTStreamQueue.poll();
+				if (poppedData != null) {
                 /* poppedData should look like {sXY}
                  * { } are the packet container identifiers
                  * s identifies what kind of information it is
                  */
 
-				double value; // return value
+					double value; // return value
 
-				// First check if the packet is valid
-				if (poppedData.length == Global.PACKETLENGTH	// check if correct length
-						&& poppedData[0] == Global.STARTBYTE	// check if starts with '{'
-						&& poppedData[Global.PACKETLENGTH - 1] == Global.STOPBYTE) { // check if ends with '}'
-					// data is good
-					// Now for the hard part
-					// if the byte is 255 / 0xFF / 11111111 then the value is interpreted as zero
-					// because you can't send null bytes over Bluetooth.
-					// A side-effect of this is that we can't send the value "255"
-					// a byte in Java is -128 to 127 so we must convert to an int by doing & 0xff
+					// First check if the packet is valid
+					if (poppedData.length == Global.PACKETLENGTH    // check if correct length
+							&& poppedData[0] == Global.STARTBYTE    // check if starts with '{'
+							&& poppedData[Global.PACKETLENGTH - 1] == Global.STOPBYTE) { // check if ends with '}'
+						// data is good
+						// Now for the hard part
+						// if the byte is 255 / 0xFF / 11111111 then the value is interpreted as zero
+						// because you can't send null bytes over Bluetooth.
+						// A side-effect of this is that we can't send the value "255"
+						// a byte in Java is -128 to 127 so we must convert to an int by doing & 0xff
 
 					/* Explanation :
 					 * & is a bitwise AND operation
@@ -46,8 +48,12 @@ public class BTDataParser extends Thread {
 					 * (int) 255, thus enabling the proper comparison
 					 */
 
-					if ((poppedData[2] & 0xff) == 255) { poppedData[2] = 0; }
-					if ((poppedData[3] & 0xff) == 255) { poppedData[3] = 0; }
+						if ((poppedData[2] & 0xff) == 255) {
+							poppedData[2] = 0;
+						}
+						if ((poppedData[3] & 0xff) == 255) {
+							poppedData[3] = 0;
+						}
 
 					/* if the first byte is greater than 127 then the value is treated as an INTEGER
 					 * value = [first byte] * 100 + [second byte]
@@ -56,34 +62,54 @@ public class BTDataParser extends Thread {
 					 * value = [first byte] + [second byte] / 100
 					 */
 
-					if ((poppedData[2] & 0xff) < 128) {
-						//FLOAT
-						value = (double) (poppedData[2] & 0xff) + (double) (poppedData[3] & 0xff) / 100;
+						if ((poppedData[2] & 0xff) < 128) {
+							//FLOAT
+							value = (double) (poppedData[2] & 0xff) + (double) (poppedData[3] & 0xff) / 100;
+						} else {
+							// INTEGER
+							poppedData[2] -= 128;
+							value = (double) (poppedData[2] & 0xff) * 100 + (double) (poppedData[3] & 0xff);
+						}
+
+						// Check the ID
+						switch (poppedData[1]) {
+							case Global.VOLTID:
+								SetVoltage(value);
+								break;
+							case Global.AMPID:
+								SetCurrent(value);
+								break;
+							case Global.MOTORRPMID:
+								SetMotorRPM(value);
+								break;
+							case Global.SPEEDMPHID:
+								SetSpeed(value);
+								break;
+							case Global.THROTTLEID:
+								SetThrottle(value);
+								break;
+							case Global.TEMP1ID:
+								SetTemperature(value, 1);
+								break;
+							case Global.TEMP2ID:
+								SetTemperature(value, 2);
+								break;
+							case Global.TEMP3ID:
+								SetTemperature(value, 3);
+								break;
+
+							default:
+								Global.MangledDataCount++;
+								break;
+						}
 					} else {
-						// INTEGER
-						poppedData[2] -= 128;
-						value = (double) (poppedData[2] & 0xff) * 100 + (double) (poppedData[3] & 0xff);
+						// data is bad
+						Global.MangledDataCount++;
 					}
-
-					// Check the ID
-					switch (poppedData[1]) {
-						case Global.VOLTID: 	SetVoltage(value); 			break;
-						case Global.AMPID:		SetCurrent(value); 			break;
-						case Global.MOTORRPMID:	SetMotorRPM(value);			break;
-						case Global.SPEEDMPHID:	SetSpeed(value);			break;
-						case Global.THROTTLEID:	SetThrottle(value);			break;
-						case Global.TEMP1ID:	SetTemperature(value, 1); 	break;
-						case Global.TEMP2ID:	SetTemperature(value, 2); 	break;
-						case Global.TEMP3ID:	SetTemperature(value, 3); 	break;
-
-						default:				Global.MangledDataCount++;	break;
-					}
-				} else {
-					// data is bad
-					Global.MangledDataCount++;
 				}
 			}
-		}
+		};
+		Looper.loop();
 	}
 
 	/* DATA INPUT FUNCTIONS
@@ -143,6 +169,7 @@ public class BTDataParser extends Thread {
 
 	public void cancel() {
 		this.stopWorker = true;
+		Looper.myLooper().quitSafely();
 	}
 
 }

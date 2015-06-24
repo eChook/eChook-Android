@@ -1,4 +1,4 @@
-package com.driven.rowan.drivenbluetooth;
+package com.ben.drivenbluetooth;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,6 +63,9 @@ public class BTStreamReader extends Thread {
 							// encodedBytes now holds the data until the delimiter
 							// flush it to the global queue
 							Global.BTStreamQueue.add(encodedBytes);
+
+							// post message to BTDataParser
+							MainActivity.Parser.mHandler.sendEmptyMessage(0);
 
 							// reset the buffer pointer
 							readBufferPosition = 0;

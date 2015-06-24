@@ -1,4 +1,4 @@
-package com.driven.rowan.drivenbluetooth;
+package com.ben.drivenbluetooth;
 
 import java.util.Random;
 
@@ -38,11 +38,12 @@ public class RandomGenerator extends Thread {
 
 				// push to queue
 				Global.BTStreamQueue.add(Message);
+
+				// send message to BTDataParser
+				MainActivity.Parser.mHandler.sendEmptyMessage(0);
 				try{
 					Thread.sleep(10); // this needs to be here otherwise the queue gets overloaded
-				} catch (Exception e) {
-
-				}
+				} catch (Exception ignored) {}
 			}
 
 			// wait 250 milliseconds
