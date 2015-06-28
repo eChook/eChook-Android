@@ -1,4 +1,7 @@
-package com.ben.drivenbluetooth;
+package com.ben.drivenbluetooth.threads;
+
+import com.ben.drivenbluetooth.Global;
+import com.ben.drivenbluetooth.MainActivity;
 
 import java.io.IOException;
 import java.io.InputStream;

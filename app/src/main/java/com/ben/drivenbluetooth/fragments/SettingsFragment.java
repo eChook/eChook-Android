@@ -1,9 +1,11 @@
-package com.ben.drivenbluetooth;
+package com.ben.drivenbluetooth.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
+import com.ben.drivenbluetooth.Global;
+import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 
 /**

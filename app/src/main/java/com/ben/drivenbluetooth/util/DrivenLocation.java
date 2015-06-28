@@ -1,8 +1,10 @@
-package com.ben.drivenbluetooth;
+package com.ben.drivenbluetooth.util;
 
 import android.location.Location;
 import android.os.Bundle;
 
+import com.ben.drivenbluetooth.Global;
+import com.ben.drivenbluetooth.MainActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -10,6 +12,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -22,6 +25,7 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks, Goog
 	public String mLastUpdateTime;
 	public Boolean mRequestingLocationUpdates = true;
 	private LocationRequest mLocationRequest;
+	private ArrayList<Location> InitialRaceDataPoints = new ArrayList<>();
 
 	public DrivenLocation() {
 		createLocationRequest();

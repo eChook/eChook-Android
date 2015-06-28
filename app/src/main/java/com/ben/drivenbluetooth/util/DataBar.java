@@ -1,4 +1,4 @@
-package com.ben.drivenbluetooth;
+package com.ben.drivenbluetooth.util;
 
 import android.content.Context;
 import android.content.res.TypedArray;

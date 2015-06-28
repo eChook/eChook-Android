@@ -1,4 +1,4 @@
-package com.ben.drivenbluetooth;
+package com.ben.drivenbluetooth.fragments;
 
 import android.app.Activity;
 import android.net.Uri;

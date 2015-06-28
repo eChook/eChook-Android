@@ -39,7 +39,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.ben.drivenbluetooth.SettingsActivity" />
         <!-- receiver android:name=".MainActivity$RaceNotifier"/ -->
 
 
@@ -57,10 +56,6 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name="com.ben.drivenbluetooth.MapsActivity"
-            android:label="@string/title_activity_maps" >
-        </activity>
     </application>
 
 </manifest>

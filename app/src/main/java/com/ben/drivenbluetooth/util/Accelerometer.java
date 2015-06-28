@@ -1,10 +1,13 @@
-package com.ben.drivenbluetooth;
+package com.ben.drivenbluetooth.util;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.Toast;
+
+import com.ben.drivenbluetooth.Global;
+import com.ben.drivenbluetooth.MainActivity;
 
 import java.util.List;
 

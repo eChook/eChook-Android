@@ -42,6 +42,10 @@ public final class Global {
 	public static volatile Double TempC2 	= 	0.0;
 	public static volatile Double TempC3 	= 	0.0;
 
+	public static volatile int		StartBearing	=	0;
+	public static volatile Double	StartLatitude	=	0.0;
+	public static volatile Double	StartLongitude	=	0.0;
+
 	public static 			int							maxGraphDataPoints	=	15 * 1000 / Global.UI_UPDATE_INTERVAL;
 	public static 			float 						GraphTimeStamp 		=	0.0f;
 	public static volatile 	LineGraphSeries<DataPoint> 	ThrottleHistory		=	new LineGraphSeries<>();

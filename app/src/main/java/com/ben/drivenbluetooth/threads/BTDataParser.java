@@ -1,16 +1,18 @@
-package com.ben.drivenbluetooth;
+package com.ben.drivenbluetooth.threads;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import com.ben.drivenbluetooth.Global;
+
 /**
  * Created by Ben on 09/03/2015.
  */
 public class BTDataParser extends Thread {
-	private byte[] poppedData;
+	private static byte[] poppedData;
 	private volatile boolean stopWorker = false;
-	public Handler mHandler;
+	public static Handler mHandler;
 
 	public BTDataParser() {
 		// Nothing special for the constructor
@@ -19,8 +21,9 @@ public class BTDataParser extends Thread {
 	@Override
 	public void run() {
 		Looper.prepare();
-		mHandler = new Handler() {
-			public void handleMessage(Message msg) {
+		mHandler = new Handler(new Handler.Callback() {
+			@Override
+			public boolean handleMessage(Message msg) {
 				poppedData = Global.BTStreamQueue.poll();
 				if (poppedData != null) {
                 /* poppedData should look like {sXY}
@@ -100,15 +103,18 @@ public class BTDataParser extends Thread {
 
 							default:
 								Global.MangledDataCount++;
-								break;
+								return false;
 						}
+						return true;
 					} else {
 						// data is bad
 						Global.MangledDataCount++;
+						return false;
 					}
 				}
+				return false;
 			}
-		};
+		});
 		Looper.loop();
 	}
 

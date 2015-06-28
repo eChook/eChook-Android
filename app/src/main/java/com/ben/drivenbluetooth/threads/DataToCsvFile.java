@@ -1,7 +1,10 @@
-package com.ben.drivenbluetooth;
+package com.ben.drivenbluetooth.threads;
 
 import android.os.Environment;
 import android.widget.Toast;
+
+import com.ben.drivenbluetooth.Global;
+import com.ben.drivenbluetooth.MainActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;

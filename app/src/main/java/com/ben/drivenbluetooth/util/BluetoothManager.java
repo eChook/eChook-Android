@@ -1,10 +1,13 @@
-package com.ben.drivenbluetooth;
+package com.ben.drivenbluetooth.util;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.util.Log;
+
+import com.ben.drivenbluetooth.Global;
+import com.ben.drivenbluetooth.MainActivity;
 
 import java.io.IOException;
 import java.util.Set;
@@ -25,7 +28,7 @@ public final class BluetoothManager extends MainActivity {
     String TAG = "DBDebug - BtManager";
 
     //_____________________________________________________________________________FIND BT
-    void findBT() {
+    public void findBT() {
 
 		Log.d(TAG, "Entering FindBT");
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -73,7 +76,7 @@ public final class BluetoothManager extends MainActivity {
 
     //_____________________________________________________________________________OPEN BT
     //TODO Set this to open in a separate thread
-    void openBT() throws IOException {
+    public void openBT() throws IOException {
         if(matchingDeviceFound) {
             Log.d(TAG, "Attempting to open BT Device");
 
@@ -94,8 +97,7 @@ public final class BluetoothManager extends MainActivity {
     }
 
     //_____________________________________________________________________________CLOSE BT
-    void closeBT() throws IOException {
-
+    public void closeBT() throws IOException {
 		if (deviceConnected) {
             mmSocket.close();
 			Global.BTSocket.close();
