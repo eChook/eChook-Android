@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.ben.drivenbluetooth.fragments.FourGraphsBars;
 import com.ben.drivenbluetooth.fragments.GraphViewFragment;
+import com.ben.drivenbluetooth.fragments.MainMapFragment;
 import com.ben.drivenbluetooth.fragments.SettingsFragment;
 import com.ben.drivenbluetooth.fragments.SixGraphsBars;
 import com.ben.drivenbluetooth.threads.BTDataParser;
@@ -52,7 +53,8 @@ public class MainActivity
 		extends 	Activity
 		implements 	GraphViewFragment.OnFragmentInteractionListener,
 					SixGraphsBars.OnFragmentInteractionListener,
-					FourGraphsBars.OnFragmentInteractionListener
+					FourGraphsBars.OnFragmentInteractionListener,
+					MainMapFragment.OnFragmentInteractionListener
 {
 
 	/************* UI ELEMENTS ***************/
@@ -172,6 +174,7 @@ public class MainActivity
 	}
 
 	private void InitializeFragmentList() {
+		FragmentList.add(new MainMapFragment());
 		FragmentList.add(new SixGraphsBars());
 		FragmentList.add(new FourGraphsBars());
 	}

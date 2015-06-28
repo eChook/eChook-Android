@@ -13,6 +13,7 @@ import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.ben.drivenbluetooth.util.DataBar;
+import com.ben.drivenbluetooth.util.DrivenLocation;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 
@@ -84,7 +85,7 @@ public class SixGraphsBars extends Fragment {
 		myAmpsGraph.getViewport().setMaxY(40.0);
 		myAmpsGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
-		myTempC1Graph = (GraphView) v.findViewById(R.id.T1Bar);
+		myTempC1Graph = (GraphView) v.findViewById(R.id.T1Graph);
 		myTempC1Graph.addSeries(Global.TempC1History);
 		myTempC1Graph.getViewport().setYAxisBoundsManual(true);
 		myTempC1Graph.getViewport().setMinY(0.0);

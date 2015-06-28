@@ -58,7 +58,7 @@ public final class Global {
 	public static volatile Double Latitude 		=	0.0;
 	public static volatile Double Longitude		=	0.0;
 	public static volatile Double Altitude		=	0.0;
-	public static volatile Double Bearing		=	-1.0;
+	public static volatile Double Bearing		=	0.0;
 	public static volatile Double SpeedGPS		=	0.0;
 	public static volatile Double GPSTime		=	0.0;
 	public static volatile Double Accuracy		=	0.0;
