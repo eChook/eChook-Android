@@ -47,13 +47,7 @@ public class FourGraphsBars extends Fragment {
 
 	private OnFragmentInteractionListener mListener;
 
-	private static TimerTask 	FragmentUpdateTask;
 	private static Timer 		FragmentUpdateTimer;
-
-	public static FourGraphsBars newInstance() {
-		FourGraphsBars fragment = new FourGraphsBars();
-		return fragment;
-	}
 
 	public FourGraphsBars() {
 		// Required empty public constructor
@@ -124,8 +118,6 @@ public class FourGraphsBars extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (getArguments() != null) {
-		}
 	}
 
 	@Override
@@ -142,12 +134,6 @@ public class FourGraphsBars extends Fragment {
 		InitializeDataFields();
 		InitializeGraphs();
 		StartFragmentUpdater();
-	}
-
-	public void onButtonPressed(Uri uri) {
-		if (mListener != null) {
-			mListener.onFragmentInteraction(uri);
-		}
 	}
 
 	@Override
@@ -244,13 +230,13 @@ public class FourGraphsBars extends Fragment {
 	 */
 	public interface OnFragmentInteractionListener {
 		// TODO: Update argument type and name
-		public void onFragmentInteraction(Uri uri);
+		void onFragmentInteraction(Uri uri);
 	}
 
 	/** FRAGMENT UI UPDATERS **/
 
 	private void StartFragmentUpdater() {
-		FragmentUpdateTask = new TimerTask() {
+		TimerTask fragmentUpdateTask = new TimerTask() {
 			public void run() {
 				MainActivity.MainActivityHandler.post(new Runnable() {
 					public void run() {
@@ -260,7 +246,7 @@ public class FourGraphsBars extends Fragment {
 			}
 		};
 		FragmentUpdateTimer = new Timer();
-		FragmentUpdateTimer.schedule(FragmentUpdateTask, 250, Global.UI_UPDATE_INTERVAL);
+		FragmentUpdateTimer.schedule(fragmentUpdateTask, 250, Global.UI_UPDATE_INTERVAL);
 	}
 
 	private void StopFragmentUpdater() {

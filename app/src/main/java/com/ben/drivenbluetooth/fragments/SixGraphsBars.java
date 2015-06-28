@@ -1,4 +1,4 @@
-package com.ben.drivenbluetooth;
+package com.ben.drivenbluetooth.fragments;
 
 import android.app.Activity;
 import android.net.Uri;
@@ -9,19 +9,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.ben.drivenbluetooth.Global;
+import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
+import com.ben.drivenbluetooth.util.DataBar;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 
+import java.util.Timer;
+import java.util.TimerTask;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link SixGraphsBars.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link SixGraphsBars#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class SixGraphsBars extends Fragment {
 
 	private static TextView Throttle;
@@ -38,18 +36,23 @@ public class SixGraphsBars extends Fragment {
 	private static DataBar RPMBar;
 	private static DataBar SpeedBar;
 
+	private static GraphView myThrottleGraph;
+	private static GraphView myVoltsGraph;
+	private static GraphView myAmpsGraph;
+	private static GraphView myMotorRPMGraph;
+	private static GraphView mySpeedGraph;
+	private static GraphView myTempC1Graph;
+
 	private OnFragmentInteractionListener mListener;
 
-	public static SixGraphsBars newInstance() {
-		SixGraphsBars fragment = new SixGraphsBars();
-		return fragment;
-	}
+	private static Timer 		FragmentUpdateTimer;
 
 	public SixGraphsBars() {
 		// Required empty public constructor
 	}
 
-	private void InitializeDataFields(View v) {
+	private void InitializeDataFields() {
+		View v = getView();
 		Throttle 		= (TextView) v.findViewById(R.id.throttle);
 		Current 		= (TextView) v.findViewById(R.id.current);
 		Voltage 		= (TextView) v.findViewById(R.id.voltage);
@@ -58,44 +61,46 @@ public class SixGraphsBars extends Fragment {
 		Speed 			= (TextView) v.findViewById(R.id.speed);
 	}
 
-	private void InitializeGraphs(View v) {
-		GraphView myThrottleGraph = (GraphView) v.findViewById(R.id.throttleGraph);
+	private void InitializeGraphs() {
+		View v = getView();
+		myThrottleGraph = (GraphView) v.findViewById(R.id.throttleGraph);
 		myThrottleGraph.addSeries(Global.ThrottleHistory);
 		myThrottleGraph.getViewport().setYAxisBoundsManual(true);
 		myThrottleGraph.getViewport().setMinY(0.0);
 		myThrottleGraph.getViewport().setMaxY(100.0);
 		myThrottleGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
-		GraphView myVoltsGraph = (GraphView) v.findViewById(R.id.voltsGraph);
-		//myVoltsGraph.addSeries(Global.VoltsHistory);
+		myVoltsGraph = (GraphView) v.findViewById(R.id.voltsGraph);
+		myVoltsGraph.addSeries(Global.VoltsHistory);
 		myVoltsGraph.getViewport().setYAxisBoundsManual(true);
 		myVoltsGraph.getViewport().setMinY(0.0);
 		myVoltsGraph.getViewport().setMaxY(28.0);
 		myVoltsGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
-		GraphView myAmpsGraph = (GraphView) v.findViewById(R.id.ampsGraph);
-		//myAmpsGraph.addSeries(Global.AmpsHistory);
+		myAmpsGraph = (GraphView) v.findViewById(R.id.ampsGraph);
+		myAmpsGraph.addSeries(Global.AmpsHistory);
 		myAmpsGraph.getViewport().setYAxisBoundsManual(true);
 		myAmpsGraph.getViewport().setMinY(0.0);
 		myAmpsGraph.getViewport().setMaxY(40.0);
 		myAmpsGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
-		GraphView myTempC1Graph = (GraphView) v.findViewById(R.id.T1Graph);
-		//myTempC1Graph.addSeries(Global.TempC1History);
+		myTempC1Graph = (GraphView) v.findViewById(R.id.T1Bar);
+		myTempC1Graph.addSeries(Global.TempC1History);
 		myTempC1Graph.getViewport().setYAxisBoundsManual(true);
 		myTempC1Graph.getViewport().setMinY(0.0);
 		myTempC1Graph.getViewport().setMaxY(100.0);
 		myTempC1Graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
-		GraphView myMotorRPMGraph = (GraphView) v.findViewById(R.id.RPMGraph);
-		//myMotorRPMGraph.addSeries(Global.MotorRPMHistory);
+		myMotorRPMGraph = (GraphView) v.findViewById(R.id.RPMGraph);
+		myMotorRPMGraph.addSeries(Global.MotorRPMHistory);
 		myMotorRPMGraph.getViewport().setYAxisBoundsManual(true);
 		myMotorRPMGraph.getViewport().setMinY(0.0);
 		myMotorRPMGraph.getViewport().setMaxY(2500);
 		myMotorRPMGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 
-		GraphView mySpeedGraph = (GraphView) v.findViewById(R.id.SpeedGraph);
-		//mySpeedGraph.addSeries(Global.SpeedHistory);
+
+		mySpeedGraph = (GraphView) v.findViewById(R.id.SpeedGraph);
+		mySpeedGraph.addSeries(Global.SpeedHistory);
 		mySpeedGraph.getViewport().setYAxisBoundsManual(true);
 		mySpeedGraph.getViewport().setMinY(0.0);
 		if (Global.Unit == Global.UNIT.MPH) { mySpeedGraph.getViewport().setMaxY(50.0); }
@@ -103,8 +108,8 @@ public class SixGraphsBars extends Fragment {
 		mySpeedGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
 	}
 
-	private void InitializeDataBars(View v) {
-
+	private void InitializeDataBars() {
+		View v = getView();
 		ThrottleBar 	= (DataBar) v.findViewById(R.id.ThrottleBar);
 		CurrentBar 		= (DataBar) v.findViewById(R.id.CurrentBar);
 		VoltageBar 		= (DataBar) v.findViewById(R.id.VoltageBar);
@@ -116,21 +121,22 @@ public class SixGraphsBars extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (getArguments() != null) {
-		}
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		View v = inflater.inflate(R.layout.fragment_six_graphs_bars, container, false);
+		return inflater.inflate(R.layout.fragment_six_graphs_bars, container, false);
+	}
 
-		InitializeDataBars(v);
-		InitializeDataFields(v);
-		InitializeGraphs(v);
-
-		return v;
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		InitializeDataBars();
+		InitializeDataFields();
+		InitializeGraphs();
+		StartFragmentUpdater();
 	}
 
 	public void onButtonPressed(Uri uri) {
@@ -148,6 +154,32 @@ public class SixGraphsBars extends Fragment {
 			throw new ClassCastException(activity.toString()
 					+ " must implement OnFragmentInteractionListener");
 		}
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		StopFragmentUpdater();
+		Current				= null;
+		Voltage				= null;
+		RPM					= null;
+		Speed				= null;
+		Temp1				= null;
+		Throttle			= null;
+
+		CurrentBar			= null;
+		VoltageBar			= null;
+		RPMBar				= null;
+		SpeedBar			= null;
+		T1Bar				= null;
+		ThrottleBar			= null;
+
+		myVoltsGraph		= null;
+		myAmpsGraph			= null;
+		myMotorRPMGraph		= null;
+		mySpeedGraph		= null;
+		myTempC1Graph		= null;
+		myThrottleGraph		= null;
 	}
 
 	@Override
@@ -252,18 +284,27 @@ public class SixGraphsBars extends Fragment {
 		}
 	}
 
-	/**
-	 * This interface must be implemented by activities that contain this
-	 * fragment to allow an interaction in this fragment to be communicated
-	 * to the activity and potentially other fragments contained in that
-	 * activity.
-	 * <p/>
-	 * See the Android Training lesson <a href=
-	 * "http://developer.android.com/training/basics/fragments/communicating.html"
-	 * >Communicating with Other Fragments</a> for more information.
-	 */
 	public interface OnFragmentInteractionListener {
 		// TODO: Update argument type and name
 		public void onFragmentInteraction(Uri uri);
+	}
+
+	private void StartFragmentUpdater() {
+		TimerTask fragmentUpdateTask = new TimerTask() {
+			public void run() {
+				MainActivity.MainActivityHandler.post(new Runnable() {
+					public void run() {
+						UpdateFragmentUI();
+					}
+				});
+			}
+		};
+		FragmentUpdateTimer = new Timer();
+		FragmentUpdateTimer.schedule(fragmentUpdateTask, 250, Global.UI_UPDATE_INTERVAL);
+	}
+
+	private void StopFragmentUpdater() {
+		FragmentUpdateTimer.cancel();
+		FragmentUpdateTimer.purge();
 	}
 }

@@ -18,7 +18,8 @@
 		android:layout_alignEnd="@+id/VoltageBar"
 		android:layout_below="@+id/VoltageBar"
 		android:layout_alignLeft="@+id/VoltageBar"
-		android:layout_alignRight="@+id/VoltageBar"/>
+		android:layout_alignRight="@+id/VoltageBar"
+		android:layout_alignParentBottom="true"/>
 
 	<view
 		android:layout_width="wrap_content"
