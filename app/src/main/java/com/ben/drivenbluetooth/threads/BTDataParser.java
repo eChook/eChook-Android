@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.ben.drivenbluetooth.Global;
+import com.jjoe64.graphview.series.DataPoint;
 
 /**
  * Created by Ben on 09/03/2015.
@@ -130,23 +131,33 @@ public class BTDataParser extends Thread {
 
 	private void SetVoltage(double rawVolts) {
 		Global.Volts = round(rawVolts, 2); // Apply conversion and offset TODO revisit volts
+		Global.VoltsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Volts), false, Global.maxGraphDataPoints);
 	}
 
 	private void SetCurrent(double rawAmps) {
 		Global.Amps = round(rawAmps, 2); // Apply conversion and offset TODO revisit amps
+		Global.AmpsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Amps), false, Global.maxGraphDataPoints);
 	}
 
 	private void SetThrottle(double rawThrottle) {
 		Global.Throttle = rawThrottle; // Apply conversion and offset TODO revisit throttle
+		Global.ThrottleHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Throttle), false, Global.maxGraphDataPoints);
 	}
 
 	private void SetSpeed(double rawSpeedMPH) {
 		Global.SpeedMPH = rawSpeedMPH; // Apply conversion and offset TODO revisit wheelRPM
 		Global.SpeedKPH = round(Global.SpeedMPH * 1.61, 1);
+
+		if (Global.Unit == Global.UNIT.MPH) {
+			Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedMPH), false, Global.maxGraphDataPoints);
+		} else if (Global.Unit == Global.UNIT.KPH) {
+			Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedKPH), false, Global.maxGraphDataPoints);
+		}
 	}
 
 	private void SetMotorRPM(double rawMotorRPM) {
 		Global.MotorRPM = rawMotorRPM; // Apply conversion and offset TODO revisit motorRPM
+		Global.MotorRPMHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.MotorRPM), false, Global.maxGraphDataPoints);
 	}
 
 	private void SetTemperature(double rawTemp, int sensorId) {

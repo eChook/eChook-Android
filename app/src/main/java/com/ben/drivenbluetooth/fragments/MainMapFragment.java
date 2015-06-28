@@ -111,7 +111,7 @@ public class MainMapFragment 	extends MapFragment
 				.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
 				.tilt(30)                   // Sets the tilt of the camera to 30 degrees
 				.build();                   // Creates a CameraPosition from the builder
-		map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 	}
 
 	private void StartFragmentUpdater() {

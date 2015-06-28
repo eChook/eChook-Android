@@ -174,7 +174,6 @@ public class FourGraphsBars extends Fragment {
 		try {
 			this.Voltage.setText(String.format("%.2f", Global.Volts));
 			this.VoltageBar.setValue(Global.Volts);
-			Global.VoltsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Volts), true, Global.maxGraphDataPoints);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -184,7 +183,6 @@ public class FourGraphsBars extends Fragment {
 		try {
 			this.Current.setText(String.format("%.1f", Global.Amps));
 			this.CurrentBar.setValue(Global.Amps);
-			Global.AmpsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Amps), true, Global.maxGraphDataPoints);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -196,11 +194,9 @@ public class FourGraphsBars extends Fragment {
 			if (Global.Unit == Global.UNIT.MPH) {
 				this.Speed.setText(String.format("%.1f", Global.SpeedMPH) + " mph");
 				this.SpeedBar.setValue(Global.SpeedMPH);
-				Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedMPH), true, Global.maxGraphDataPoints);
 			} else if (Global.Unit == Global.UNIT.KPH) {
 				this.Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
 				this.SpeedBar.setValue(Global.SpeedKPH);
-				Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedKPH), true, Global.maxGraphDataPoints);
 			}
 
 		} catch (Exception e) {
@@ -212,7 +208,6 @@ public class FourGraphsBars extends Fragment {
 		try {
 			this.RPM.setText(String.format("%.0f", Global.MotorRPM));
 			this.RPMBar.setValue(Global.MotorRPM);
-			Global.MotorRPMHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.MotorRPM), true, Global.maxGraphDataPoints);
 		} catch (Exception e) {
 			e.getMessage();
 		}

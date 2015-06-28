@@ -202,7 +202,6 @@ public class SixGraphsBars extends Fragment {
 		try {
 			Voltage.setText(String.format("%.2f", Global.Volts));
 			VoltageBar.setValue(Global.Volts);
-			Global.VoltsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Volts), true, Global.maxGraphDataPoints);
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -212,7 +211,6 @@ public class SixGraphsBars extends Fragment {
 		try {
 			Current.setText(String.format("%.1f", Global.Amps));
 			CurrentBar.setValue(Global.Amps);
-			Global.AmpsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Amps), true, Global.maxGraphDataPoints);
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -222,7 +220,6 @@ public class SixGraphsBars extends Fragment {
 		try {
 			Throttle.setText(String.format("%.0f", Global.Throttle));
 			ThrottleBar.setValue(Global.Throttle);
-			Global.ThrottleHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Throttle), true, Global.maxGraphDataPoints);
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -234,11 +231,9 @@ public class SixGraphsBars extends Fragment {
 			if (Global.Unit == Global.UNIT.MPH) {
 				Speed.setText(String.format("%.1f", Global.SpeedMPH) + " mph");
 				SpeedBar.setValue(Global.SpeedMPH);
-				Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedMPH), true, Global.maxGraphDataPoints);
 			} else if (Global.Unit == Global.UNIT.KPH) {
 				Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
 				SpeedBar.setValue(Global.SpeedKPH);
-				Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedKPH), true, Global.maxGraphDataPoints);
 			}
 
 		} catch (Exception e) {
@@ -268,7 +263,7 @@ public class SixGraphsBars extends Fragment {
 			try {
 				TempText.setText(String.format("%.1f", TempValue) + " C");
 				TempBar.setValue(TempValue);
-				Global.TempC1History.appendData(new DataPoint(Global.GraphTimeStamp, TempValue), true, Global.maxGraphDataPoints);
+				//Global.TempC1History.appendData(new DataPoint(Global.GraphTimeStamp, TempValue), true, Global.maxGraphDataPoints);
 			} catch (Exception e) {
 				e.toString();
 			}
@@ -279,7 +274,6 @@ public class SixGraphsBars extends Fragment {
 		try {
 			RPM.setText(String.format("%.0f", Global.MotorRPM));
 			RPMBar.setValue(Global.MotorRPM);
-			Global.MotorRPMHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.MotorRPM), true, Global.maxGraphDataPoints);
 		} catch (Exception e) {
 			e.toString();
 		}
