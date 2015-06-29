@@ -13,7 +13,9 @@ import android.widget.Toast;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
+import com.ben.drivenbluetooth.util.DrivenLocation;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -92,7 +94,13 @@ public class MainMapFragment 	extends MapFragment
 			LatLng curLoc = new LatLng(Global.Latitude, Global.Longitude);
 			map = googleMap;
 			map.setMyLocationEnabled(true);
-			map.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 13));
+			CameraPosition cameraPosition = new CameraPosition.Builder()
+					.target(new LatLng(Global.Latitude, Global.Longitude))      // Sets the center of the map to Mountain View
+					.zoom(17)                   // Sets the zoom
+					.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
+					.tilt(30)                   // Sets the tilt of the camera to 30 degrees
+					.build();
+			map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 		} catch (Exception e){
 			MainActivity.showMessage(MainActivity.getAppContext(), e.getMessage(), Toast.LENGTH_LONG);
 		}
@@ -105,13 +113,9 @@ public class MainMapFragment 	extends MapFragment
 	}
 
 	public void UpdateFragmentUI() {
-		CameraPosition cameraPosition = new CameraPosition.Builder()
-				.target(new LatLng(Global.Latitude, Global.Longitude))      // Sets the center of the map to Mountain View
-				.zoom(17)                   // Sets the zoom
-				.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
-				.tilt(30)                   // Sets the tilt of the camera to 30 degrees
-				.build();                   // Creates a CameraPosition from the builder
-		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+		CameraUpdate herp = CameraUpdateFactory.newLatLngZoom(new LatLng(Global.Latitude, Global.Longitude), 17);
+		map.animateCamera(herp);
+		map.addPolyline(MainActivity.myDrivenLocation.pathHistory);
 	}
 
 	private void StartFragmentUpdater() {
@@ -125,7 +129,7 @@ public class MainMapFragment 	extends MapFragment
 			}
 		};
 		FragmentUpdateTimer = new Timer();
-		FragmentUpdateTimer.schedule(fragmentUpdateTask, 5000, Global.UI_UPDATE_INTERVAL);
+		FragmentUpdateTimer.schedule(fragmentUpdateTask, 5000, 5000);
 	}
 
 	private void StopFragmentUpdater() {

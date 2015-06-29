@@ -10,6 +10,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -26,6 +29,7 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks, Goog
 	public Boolean mRequestingLocationUpdates = true;
 	private LocationRequest mLocationRequest;
 	private ArrayList<Location> InitialRaceDataPoints = new ArrayList<>();
+	public PolylineOptions pathHistory = new PolylineOptions();
 
 	public DrivenLocation() {
 		createLocationRequest();
@@ -83,6 +87,8 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks, Goog
 			LocationServices.FusedLocationApi.requestLocationUpdates(
 					GoogleApi, mLocationRequest, this);
 			CurrentLocation = LocationServices.FusedLocationApi.getLastLocation(GoogleApi);
+			Global.Latitude = CurrentLocation.getLatitude();
+			Global.Longitude = CurrentLocation.getLongitude();
 		} catch (Exception e) {
 			e.toString();
 		}
@@ -108,6 +114,8 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks, Goog
 
 		mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 		Global.LocationUpdateCounter++;
+
+		addToPathHistory(location);
 	}
 
 	protected void stopLocationUpdates() {
@@ -117,6 +125,14 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks, Goog
 
 	protected float calculateDistanceBetween(Location location1, Location location2) {
 		return location1.distanceTo(location2);
+	}
+
+	private void addToPathHistory(Location loc) {
+		if (pathHistory.getPoints().size() >= 20) {
+			this.pathHistory = null;
+			this.pathHistory = new PolylineOptions();
+		}
+		this.pathHistory.add(new LatLng(loc.getLatitude(), loc.getLongitude()));
 	}
 
 	public void update() {

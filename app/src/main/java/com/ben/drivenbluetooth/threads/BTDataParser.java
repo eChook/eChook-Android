@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.ben.drivenbluetooth.Global;
+import com.ben.drivenbluetooth.MainActivity;
 import com.jjoe64.graphview.series.DataPoint;
 
 /**
@@ -131,17 +132,29 @@ public class BTDataParser extends Thread {
 
 	private void SetVoltage(double rawVolts) {
 		Global.Volts = round(rawVolts, 2); // Apply conversion and offset TODO revisit volts
-		Global.VoltsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Volts), false, Global.maxGraphDataPoints);
+		MainActivity.MainActivityHandler.post(new Runnable() {
+			public void run() {
+				Global.VoltsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Volts), true, Global.maxGraphDataPoints);
+			}
+		});
 	}
 
 	private void SetCurrent(double rawAmps) {
 		Global.Amps = round(rawAmps, 2); // Apply conversion and offset TODO revisit amps
-		Global.AmpsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Amps), false, Global.maxGraphDataPoints);
+		MainActivity.MainActivityHandler.post(new Runnable() {
+			public void run() {
+				Global.AmpsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Amps), true, Global.maxGraphDataPoints);
+			}
+		});
 	}
 
 	private void SetThrottle(double rawThrottle) {
 		Global.Throttle = rawThrottle; // Apply conversion and offset TODO revisit throttle
-		Global.ThrottleHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Throttle), false, Global.maxGraphDataPoints);
+		MainActivity.MainActivityHandler.post(new Runnable() {
+			public void run() {
+				Global.ThrottleHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Throttle), true, Global.maxGraphDataPoints);
+			}
+		});
 	}
 
 	private void SetSpeed(double rawSpeedMPH) {
@@ -149,15 +162,27 @@ public class BTDataParser extends Thread {
 		Global.SpeedKPH = round(Global.SpeedMPH * 1.61, 1);
 
 		if (Global.Unit == Global.UNIT.MPH) {
-			Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedMPH), false, Global.maxGraphDataPoints);
+			MainActivity.MainActivityHandler.post(new Runnable() {
+				public void run() {
+					Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedMPH), true, Global.maxGraphDataPoints);
+				}
+			});
 		} else if (Global.Unit == Global.UNIT.KPH) {
-			Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedKPH), false, Global.maxGraphDataPoints);
+			MainActivity.MainActivityHandler.post(new Runnable() {
+				public void run() {
+					Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedKPH), true, Global.maxGraphDataPoints);
+				}
+			});
 		}
 	}
 
 	private void SetMotorRPM(double rawMotorRPM) {
 		Global.MotorRPM = rawMotorRPM; // Apply conversion and offset TODO revisit motorRPM
-		Global.MotorRPMHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.MotorRPM), false, Global.maxGraphDataPoints);
+		MainActivity.MainActivityHandler.post(new Runnable() {
+			public void run() {
+				Global.MotorRPMHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.MotorRPM), true, Global.maxGraphDataPoints);
+			}
+		});
 	}
 
 	private void SetTemperature(double rawTemp, int sensorId) {

@@ -42,11 +42,7 @@ public final class Global {
 	public static volatile Double TempC2 	= 	0.0;
 	public static volatile Double TempC3 	= 	0.0;
 
-	public static volatile int		StartBearing	=	0;
-	public static volatile Double	StartLatitude	=	0.0;
-	public static volatile Double	StartLongitude	=	0.0;
-
-	public static 			int							maxGraphDataPoints	=	15 * 1000 / Global.UI_UPDATE_INTERVAL;
+	public static 			int							maxGraphDataPoints	=	15 * 1000 / 250;
 	public static 			float 						GraphTimeStamp 		=	0.0f;
 	public static volatile 	LineGraphSeries<DataPoint> 	ThrottleHistory		=	new LineGraphSeries<>();
 	public static volatile 	LineGraphSeries<DataPoint> 	AmpsHistory			=	new LineGraphSeries<>();
@@ -86,11 +82,6 @@ public final class Global {
 	public static AlarmManager AlarmManager;
 
 	/**********************/
-	/* SENSORS            */
-	/**********************/
-	public static Sensor Gravity;
-
-	/**********************/
 	/* CONSTANTS          */
 	/**********************/
 	public static final byte STARTBYTE 		= 	123; // ASCII Code for '{'
@@ -115,9 +106,6 @@ public final class Global {
 
 	public static final int LOCATION_INTERVAL 		= 10000; 	// Low speed location update interval in ms
 	public static final int LOCATION_FAST_INTERVAL 	= 5000;		// High speed location update interval in ms
-
-	public static final Double DEG_LATITUDE_KM	= 111.23063;	// 1 degree of latitude in KM (roughly) in the UK (between 51-53 degrees North)
-	public static final Double DEG_LONGITUDE_KM	=  59.54930;	// 1 degree of longitude in KM (roughly) in the UK (between 51-53 degrees North)
 
 	/**********************/
 	/* SETTINGS VARIABLES */

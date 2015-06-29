@@ -196,6 +196,7 @@ public class SixGraphsBars extends Fragment {
 		UpdateSpeed();
 		UpdateTemp(1);
 		UpdateMotorRPM();
+		Global.GraphTimeStamp += (float) Global.UI_UPDATE_INTERVAL / 1000.0f;
 	}
 
 	private void UpdateVoltage() {
