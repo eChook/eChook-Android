@@ -8,6 +8,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
@@ -34,11 +35,16 @@ import java.util.TimerTask;
  * Use the {@link MainMapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainMapFragment 	extends MapFragment
+public class MainMapFragment 	extends Fragment
 								implements 	OnMapReadyCallback
 {
 	private GoogleMap map;
 	private OnFragmentInteractionListener mListener;
+
+	private TextView Current;
+	private TextView Voltage;
+	private TextView RPM;
+	private TextView Speed;
 
 	private static Timer FragmentUpdateTimer;
 
@@ -46,15 +52,33 @@ public class MainMapFragment 	extends MapFragment
 		// Required empty public constructor
 	}
 
+	private void InitializeDataFields() {
+		View v = getView();
+		Current 		= (TextView) v.findViewById(R.id.current);
+		Voltage 		= (TextView) v.findViewById(R.id.voltage);
+		RPM 			= (TextView) v.findViewById(R.id.rpm);
+		Speed 			= (TextView) v.findViewById(R.id.speed);
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.getMapAsync(this);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+							 Bundle savedInstanceState) {
+		// Inflate the layout for this fragment
+		return inflater.inflate(R.layout.fragment_map, container, false);
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		MapFragment mFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+		mFragment.getMapAsync(this);
+		InitializeDataFields();
+
 		StartFragmentUpdater();
 	}
 
@@ -113,9 +137,54 @@ public class MainMapFragment 	extends MapFragment
 	}
 
 	public void UpdateFragmentUI() {
+		UpdateCurrent();
+		UpdateMotorRPM();
+		UpdateVoltage();
+		UpdateSpeed();
+	}
+
+	public void UpdateMap() {
 		CameraUpdate herp = CameraUpdateFactory.newLatLngZoom(new LatLng(Global.Latitude, Global.Longitude), 17);
 		map.animateCamera(herp);
 		map.addPolyline(MainActivity.myDrivenLocation.pathHistory);
+	}
+
+	private void UpdateVoltage() {
+		try {
+			this.Voltage.setText(String.format("%.2f", Global.Volts) + " V");
+		} catch (Exception e) {
+			e.getMessage();
+		}
+	}
+
+	private void UpdateCurrent() {
+		try {
+			this.Current.setText(String.format("%.1f", Global.Amps) + " A");
+		} catch (Exception e) {
+			e.getMessage();
+		}
+	}
+
+	private void UpdateSpeed() {
+		try {
+			// check user preference for speed
+			if (Global.Unit == Global.UNIT.MPH) {
+				this.Speed.setText(String.format("%.1f", Global.SpeedMPH) + " mph");
+			} else if (Global.Unit == Global.UNIT.KPH) {
+				this.Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
+			}
+
+		} catch (Exception e) {
+			e.getMessage();
+		}
+	}
+
+	private void UpdateMotorRPM() {
+		try {
+			this.RPM.setText(String.format("%.0f", Global.MotorRPM) + " RPM");
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	private void StartFragmentUpdater() {
@@ -128,8 +197,20 @@ public class MainMapFragment 	extends MapFragment
 				});
 			}
 		};
+
+		TimerTask mapUpdateTask = new TimerTask() {
+			public void run() {
+				MainActivity.MainActivityHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						UpdateMap();
+					}
+				});
+			}
+		};
 		FragmentUpdateTimer = new Timer();
-		FragmentUpdateTimer.schedule(fragmentUpdateTask, 5000, 5000);
+		FragmentUpdateTimer.schedule(mapUpdateTask, 5000, 5000);
+		FragmentUpdateTimer.schedule(fragmentUpdateTask, 0, Global.UI_UPDATE_INTERVAL);
 	}
 
 	private void StopFragmentUpdater() {
