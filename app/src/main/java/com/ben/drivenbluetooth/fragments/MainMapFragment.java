@@ -137,4 +137,5 @@ public class MainMapFragment 	extends MapFragment
 		FragmentUpdateTimer.purge();
 	}
 
+
 }
