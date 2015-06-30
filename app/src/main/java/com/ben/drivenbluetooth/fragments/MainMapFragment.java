@@ -1,6 +1,8 @@
 package com.ben.drivenbluetooth.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,8 +16,7 @@ import android.widget.Toast;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
-import com.ben.drivenbluetooth.util.DrivenLocation;
-import com.google.android.gms.location.LocationListener;
+import com.ben.drivenbluetooth.util.RaceObserver;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,20 +24,16 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MainMapFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MainMapFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MainMapFragment 	extends Fragment
-								implements 	OnMapReadyCallback
+								implements 	OnMapReadyCallback,
+											GoogleMap.OnMapClickListener,
+											GoogleMap.OnInfoWindowClickListener
 {
 	private GoogleMap map;
 	private OnFragmentInteractionListener mListener;
@@ -75,8 +72,12 @@ public class MainMapFragment 	extends Fragment
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		MapFragment mFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-		mFragment.getMapAsync(this);
+		MapFragment mFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+		if (mFragment != null) {
+			mFragment.getMapAsync(this);
+		} else {
+			MainActivity.showMessage(MainActivity.getAppContext(), "Could not find map fragment", Toast.LENGTH_LONG);
+		}
 		InitializeDataFields();
 
 		StartFragmentUpdater();
@@ -125,10 +126,47 @@ public class MainMapFragment 	extends Fragment
 					.tilt(30)                   // Sets the tilt of the camera to 30 degrees
 					.build();
 			map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-		} catch (Exception e){
+			map.setOnMapClickListener(this);
+			map.setOnInfoWindowClickListener(this);
+		} catch (Exception e) {
 			MainActivity.showMessage(MainActivity.getAppContext(), e.getMessage(), Toast.LENGTH_LONG);
 		}
+	}
 
+	@Override
+	public void onMapClick(LatLng latLng) {
+		map.clear(); // clear any markers already present
+		map.addMarker(new MarkerOptions()
+				.position(latLng)
+				.title("Observer location")
+				.snippet("Click here to confirm"));
+	}
+
+	@Override
+	public void onInfoWindowClick(Marker marker) {
+		final Location loc = new Location("");
+		loc.setLatitude(marker.getPosition().latitude);
+		loc.setLongitude(marker.getPosition().longitude);
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setMessage("Track orientation");
+		builder.setPositiveButton("Clockwise", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				MainActivity.myDrivenLocation.myRaceObserver = new RaceObserver(loc, RaceObserver.ORIENTATION.CLOCKWISE);
+			}
+		});
+		builder.setNegativeButton("Anticlockwise", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				MainActivity.myDrivenLocation.myRaceObserver = new RaceObserver(loc, RaceObserver.ORIENTATION.ANTICLOCKWISE);
+			}
+		});
+		builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// do nothing
+			}
+		});
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 
 	public interface OnFragmentInteractionListener {
@@ -214,9 +252,9 @@ public class MainMapFragment 	extends Fragment
 	}
 
 	private void StopFragmentUpdater() {
-		FragmentUpdateTimer.cancel();
-		FragmentUpdateTimer.purge();
+		try {
+			FragmentUpdateTimer.cancel();
+			FragmentUpdateTimer.purge();
+		} catch (Exception ignored) {}
 	}
-
-
 }

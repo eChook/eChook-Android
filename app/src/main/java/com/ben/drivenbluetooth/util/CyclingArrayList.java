@@ -30,4 +30,12 @@ public class CyclingArrayList<E> extends ArrayList<E> {
 			return get(selectedItem);
 		}
 	}
+
+	public E getActiveElement() {
+		try {
+			return get(selectedItem);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
 }

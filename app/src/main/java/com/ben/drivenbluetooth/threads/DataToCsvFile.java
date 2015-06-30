@@ -36,24 +36,25 @@ public class DataToCsvFile extends Thread {
 		try {
 			this.variable_identifiers = new String[]{
 					// these should match ArrayOfVariables
-					"Throttle (%)",    										// 1
-					"Volts (V)",        									// 2
-					"Amps (A)",         									// 3
-					"Motor speed (RPM)",    								// 4
-					"Speed (mph)",    										// 5
-					"Temp 1 (C)",       									// 6
-					"Temp 2 (C)",       									// 7
-					"Temp 3 (C)",        									// 8
+					"InputThrottle (%)",
+					"ActualThrottle (%)",
+					"Volts (V)",
+					"Amps (A)",
+					"Motor speed (RPM)",
+					"Speed (mph)",
+					"Temp 1 (C)",
+					"Temp 2 (C)",
+					"Temp 3 (C)",
 
 					/* Location */
-					"Latitude (deg)",										// 9
-					"Longitude (deg)",										// 10
-					"Altitude (m)",											// 11
-					"Bearing (deg)",										// 12
-					"SpeedGPS (m/s)",										// 13
-					"GPSTime",			// milliseconds since epoch (UTC)	// 14
-					"Accuracy (m)",		// radius of 68% confidence			// 15
-					"DeltaDistance (m)"										// 16
+					"Latitude (deg)",
+					"Longitude (deg)",
+					"Altitude (m)",
+					"Bearing (deg)",
+					"SpeedGPS (m/s)",
+					"GPSTime",			// milliseconds since epoch (UTC)
+					"Accuracy (m)",		// radius of 68% confidence
+					"DeltaDistance (m)"
 			};
 		} catch (Exception e) {
 			MainActivity.showMessage(MainActivity.getAppContext(), e.toString(), Toast.LENGTH_SHORT);
@@ -71,24 +72,25 @@ public class DataToCsvFile extends Thread {
 		while (!this.stopWorker) {
 			try {
 				this.ArrayOfVariables = new Double[] {
-									Global.Throttle,    	// 1
-									Global.Volts,       	// 2
-									Global.Amps,        	// 3
-									Global.MotorRPM,    	// 4
-									Global.SpeedMPH,    	// 5
-									Global.TempC1,      	// 6
-									Global.TempC2,      	// 7
-									Global.TempC3,      	// 8
+									Global.InputThrottle,
+									Global.ActualThrottle,
+									Global.Volts,
+									Global.Amps,
+									Global.MotorRPM,
+									Global.SpeedMPH,
+									Global.TempC1,
+									Global.TempC2,
+									Global.TempC3,
 
 									/* Location */
-									Global.Latitude,		// 9
-									Global.Longitude,		// 10
-									Global.Altitude,		// 11
-									Global.Bearing,			// 12
-									Global.SpeedGPS,		// 13
-									Global.GPSTime,			// 14
-									Global.Accuracy,		// 15
-						(double) 	Global.DeltaDistance	// 16
+									Global.Latitude,
+									Global.Longitude,
+									Global.Altitude,
+									Global.Bearing,
+									Global.SpeedGPS,
+									Global.GPSTime,
+									Global.Accuracy,
+						(double) 	Global.DeltaDistance
 				};
 
 				WriteToFile(GetLatestDataAsString());

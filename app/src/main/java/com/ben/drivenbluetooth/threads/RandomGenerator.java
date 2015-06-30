@@ -20,13 +20,14 @@ public class RandomGenerator extends Thread {
 		while(!this.stopWorker){
 			byte[] Message = new byte[5];
 
-			byte[] IDS = new byte[6];
-			IDS[0] = Global.THROTTLEID;
-			IDS[1] = Global.AMPID;
-			IDS[2] = Global.VOLTID;
+			byte[] IDS = new byte[7];
+			IDS[0] = Global.THR_INPUT_ID;
+			IDS[1] = Global.AMPS_ID;
+			IDS[2] = Global.VOLTS_ID;
 			IDS[3] = Global.TEMP1ID;
-			IDS[4] = Global.MOTORRPMID;
-			IDS[5] = Global.SPEEDMPHID;
+			IDS[4] = Global.MOTOR_RPM_ID;
+			IDS[5] = Global.SPEED_MPH_ID;
+			IDS[6] = Global.THR_ACTUAL_ID;
 
 			for (int i = 0; i < IDS.length; i++) {
 				// fill with random shit

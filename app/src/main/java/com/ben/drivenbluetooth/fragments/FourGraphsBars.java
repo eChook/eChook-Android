@@ -20,14 +20,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FourGraphsBars.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FourGraphsBars#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FourGraphsBars extends Fragment {
 
 	private TextView Current;

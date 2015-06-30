@@ -13,9 +13,7 @@ import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.ben.drivenbluetooth.util.DataBar;
-import com.ben.drivenbluetooth.util.DrivenLocation;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -219,8 +217,12 @@ public class SixGraphsBars extends Fragment {
 
 	private void UpdateThrottle() {
 		try {
-			Throttle.setText(String.format("%.0f", Global.Throttle));
-			ThrottleBar.setValue(Global.Throttle);
+			if (Global.ActualThrottle < Global.InputThrottle) {
+				Throttle.setText(String.format("%.0f", Global.InputThrottle) + " (" + String.format("%.0f", Global.ActualThrottle) + ")");
+			} else {
+				Throttle.setText(String.format("%.0f", Global.InputThrottle));
+			}
+			ThrottleBar.setValue(Global.InputThrottle);
 		} catch (Exception e) {
 			e.toString();
 		}

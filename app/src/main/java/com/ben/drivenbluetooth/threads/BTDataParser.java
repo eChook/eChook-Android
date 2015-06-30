@@ -1,8 +1,10 @@
 package com.ben.drivenbluetooth.threads;
 
+import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -78,20 +80,23 @@ public class BTDataParser extends Thread {
 
 						// Check the ID
 						switch (poppedData[1]) {
-							case Global.VOLTID:
+							case Global.VOLTS_ID:
 								SetVoltage(value);
 								break;
-							case Global.AMPID:
+							case Global.AMPS_ID:
 								SetCurrent(value);
 								break;
-							case Global.MOTORRPMID:
+							case Global.MOTOR_RPM_ID:
 								SetMotorRPM(value);
 								break;
-							case Global.SPEEDMPHID:
+							case Global.SPEED_MPH_ID:
 								SetSpeed(value);
 								break;
-							case Global.THROTTLEID:
-								SetThrottle(value);
+							case Global.THR_INPUT_ID:
+								SetInputThrottle(value);
+								break;
+							case Global.THR_ACTUAL_ID:
+								SetActualThrottle(value);
 								break;
 							case Global.TEMP1ID:
 								SetTemperature(value, 1);
@@ -101,6 +106,20 @@ public class BTDataParser extends Thread {
 								break;
 							case Global.TEMP3ID:
 								SetTemperature(value, 3);
+								break;
+							case Global.LAUNCH_MODE_ID:
+								MainActivity.MainActivityHandler.post(new Runnable() {
+									public void run() {
+										if (Global.Longitude == 0 && Global.Latitude == 0) {
+											MainActivity.showMessage(MainActivity.getAppContext(), "Location not ready - please try again in 5 seconds", Toast.LENGTH_LONG);
+										} else {
+											Location loc = new Location("");
+											loc.setLongitude(Global.Longitude);
+											loc.setLatitude(Global.Latitude);
+											MainActivity.myDrivenLocation.myRaceObserver.ActivateLaunchMode(loc);
+										}
+									}
+								});
 								break;
 
 							default:
@@ -148,13 +167,18 @@ public class BTDataParser extends Thread {
 		});
 	}
 
-	private void SetThrottle(double rawThrottle) {
-		Global.Throttle = rawThrottle; // Apply conversion and offset TODO revisit throttle
+	private void SetInputThrottle(double rawThrottle) {
+		Global.InputThrottle = rawThrottle; // Apply conversion and offset TODO revisit throttle
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
-				Global.ThrottleHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Throttle), true, Global.maxGraphDataPoints);
+				Global.ThrottleHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.InputThrottle), true, Global.maxGraphDataPoints);
 			}
 		});
+	}
+
+	private void SetActualThrottle(double rawThrottle) {
+		Global.ActualThrottle = rawThrottle; // Apply conversion and offset TODO revisit throttle
+		//MainActivity.ThrottleDerate();
 	}
 
 	private void SetSpeed(double rawSpeedMPH) {

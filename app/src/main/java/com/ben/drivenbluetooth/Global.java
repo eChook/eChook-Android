@@ -32,15 +32,16 @@ public final class Global {
 	/**********************/
 	// use the volatile keyword for thread safety
     public static volatile BlockingQueue<byte[]> BTStreamQueue = 	new LinkedBlockingQueue<>();
-	public static volatile Double Volts 	= 	0.0;
-	public static volatile Double Amps 		= 	0.0;
-	public static volatile Double Throttle 	= 	0.0;
-	public static volatile Double MotorRPM 	= 	0.0;
-	public static volatile Double SpeedMPH 	= 	0.0;
-	public static volatile Double SpeedKPH 	= 	0.0;
-	public static volatile Double TempC1 	= 	0.0;
-	public static volatile Double TempC2 	= 	0.0;
-	public static volatile Double TempC3 	= 	0.0;
+	public static volatile Double Volts 			= 	0.0;
+	public static volatile Double Amps 				= 	0.0;
+	public static volatile Double InputThrottle 	= 	0.0;
+	public static volatile Double ActualThrottle 	= 	0.0;
+	public static volatile Double MotorRPM 			= 	0.0;
+	public static volatile Double SpeedMPH 			= 	0.0;
+	public static volatile Double SpeedKPH 			= 	0.0;
+	public static volatile Double TempC1 			= 	0.0;
+	public static volatile Double TempC2 			= 	0.0;
+	public static volatile Double TempC3 			= 	0.0;
 
 	public static 			int							maxGraphDataPoints	=	15 * 1000 / 250;
 	public static 			float 						GraphTimeStamp 		=	0.0f;
@@ -89,14 +90,16 @@ public final class Global {
     public static final int PACKETLENGTH 	= 	5; 	 // { [id] [1] [2] }
                                               	 // 1   2   3   4  5
 
-	public static final byte VOLTID 		= 	118; // v
-	public static final byte AMPID 			= 	105; // i
-	public static final byte MOTORRPMID 	=	109; // m
-	public static final byte THROTTLEID 	=	116; // t
-	public static final byte SPEEDMPHID 	=	115; // s
-	public static final byte TEMP1ID 		= 	97;	 // a
-	public static final byte TEMP2ID 		= 	98;	 // b
-	public static final byte TEMP3ID 		= 	99;  // c
+	public static final byte VOLTS_ID				= 	118;	// v
+	public static final byte AMPS_ID				= 	105;	// i
+	public static final byte MOTOR_RPM_ID			=	109;	// m
+	public static final byte THR_INPUT_ID			=	116;	// t
+	public static final byte THR_ACTUAL_ID			=	100;	// d
+	public static final byte SPEED_MPH_ID			=	115;	// s
+	public static final byte TEMP1ID 				= 	97;		// a
+	public static final byte TEMP2ID 				= 	98;		// b
+	public static final byte TEMP3ID 				= 	99; 	// c
+	public static final byte LAUNCH_MODE_ID			=	76;		// L
 
 	public static final int 	UI_UPDATE_INTERVAL	= 100; // UI update interval in milliseconds
     public static final int 	DATA_SAVE_INTERVAL 	= 250; // save interval in milliseconds

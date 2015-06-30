@@ -11,17 +11,17 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-/**
- * Created by BNAGY4 on 19/06/2015.
- */
-public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
+										GoogleApiClient.OnConnectionFailedListener,
+										LocationListener,
+										RaceObserver.RaceObserverListener
+{
 	public static GoogleApiClient GoogleApi;
 	public Location CurrentLocation;
 	public Location PreviousLocation;
@@ -30,6 +30,7 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks, Goog
 	private LocationRequest mLocationRequest;
 	private ArrayList<Location> InitialRaceDataPoints = new ArrayList<>();
 	public PolylineOptions pathHistory = new PolylineOptions();
+	public RaceObserver myRaceObserver;
 
 	public DrivenLocation() {
 		createLocationRequest();
@@ -144,5 +145,15 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks, Goog
 				stopLocationUpdates();
 				break;
 		}
+	}
+
+	@Override
+	public void onCrossStartFinishLine() {
+
+	}
+
+	@Override
+	public void onRaceStart() {
+
 	}
 }
