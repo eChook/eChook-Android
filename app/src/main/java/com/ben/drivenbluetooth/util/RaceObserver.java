@@ -3,10 +3,9 @@ package com.ben.drivenbluetooth.util;
 import android.location.Location;
 import android.widget.Toast;
 
+import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.threads.RaceStartMonitor;
-import com.google.android.gms.location.FusedLocationProviderApi;
-import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +17,7 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 	private float bearingToStartFinishLine;
 	private float currentBearingToVehicle;
 	private float previousBearingToVehicle;
+	private boolean raceStarted = false;
 
 	private List<RaceObserverListener> _listeners = new ArrayList<>();
 
@@ -26,16 +26,25 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 	public enum ORIENTATION {CLOCKWISE, ANTICLOCKWISE}
 	private ORIENTATION Orientation;
 
+	/*===================*/
+	/* INTERFACE
+	/*===================*/
 	public interface RaceObserverListener {
 		void onCrossStartFinishLine();
 		void onRaceStart();
 	}
 
+	/*===================*/
+	/* RACEOBSERVER
+	/*===================*/
 	public RaceObserver(Location location, ORIENTATION orientation) {
 		myLocation = location;
 		Orientation = orientation;
 	}
 
+	/*===================*/
+	/* MAIN FUNCS
+	/*===================*/
 	public void updateLocation(Location newLocation) {
 		previousBearingToVehicle = currentBearingToVehicle;
 		currentBearingToVehicle = newLocation.getBearing();
@@ -47,35 +56,60 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 			bearingToStartFinishLine = myLocation.bearingTo(startLineLocation);
 			if (!myRaceStartMonitor.isAlive()) {
 				myRaceStartMonitor.start();
-				MainActivity.showMessage(MainActivity.getAppContext(), "Launch Mode Active", Toast.LENGTH_LONG);
+				MainActivity.showMessage("Launch Mode Active", Toast.LENGTH_LONG);
 			} else {
-				MainActivity.showMessage(MainActivity.getAppContext(), "Launch Mode already actived!", Toast.LENGTH_LONG);
+				MainActivity.showMessage("Launch Mode already actived!", Toast.LENGTH_LONG);
 			}
 		} catch (Exception e) {
-			MainActivity.showMessage(MainActivity.getAppContext(), e.getMessage(), Toast.LENGTH_LONG);
+			MainActivity.showError(e);
 		}
 	}
 
 	private void CheckIfCrossStartFinishLine() {
-		switch (Orientation) {
-			case CLOCKWISE:
-				if (previousBearingToVehicle < bearingToStartFinishLine && currentBearingToVehicle > bearingToStartFinishLine) {
-					_fireCrossStartFinishLine();
-				}
-				break;
-			case ANTICLOCKWISE:
-				if (previousBearingToVehicle > bearingToStartFinishLine && currentBearingToVehicle < bearingToStartFinishLine) {
-					_fireCrossStartFinishLine();
-				}
-				break;
-		}
+		if (CheckIfCrossStartFinishLine_Observer()) _fireCrossStartFinishLine();
 	}
 
+	private boolean CheckIfCrossStartFinishLine_Observer() {
+		if (raceStarted) {
+			switch (Orientation) {
+				case CLOCKWISE:
+					if (previousBearingToVehicle <= bearingToStartFinishLine && currentBearingToVehicle >= bearingToStartFinishLine) {
+						return true;
+					}
+					break;
+				case ANTICLOCKWISE:
+					if (previousBearingToVehicle >= bearingToStartFinishLine && currentBearingToVehicle <= bearingToStartFinishLine) {
+						return true;
+					}
+					break;
+			}
+		}
+		return false;
+	}
+
+	private boolean CheckIfCrossStartFinishLine_StartVector(Location location) {
+		if (location.distanceTo(Global.StartFinishLineLocation) <= Global.LAP_TRIGGER_RANGE) {
+			// we are in range! check to see if the bearing adds up
+			if (Global.StartFinishLineLocation.bearingTo(location) <= Global.StartFinishLineBearing + 45
+					&& Global.StartFinishLineLocation.bearingTo(location) >= Global.StartFinishLineBearing - 45) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/*===================*/
+	/* RACESTARTMONITOR IMPLEMENTATION
+	/*===================*/
 	@Override
 	public void onThrottleMax() {
 		_fireRaceStart();
+		raceStarted = true;
 	}
 
+	/*===================*/
+	/* LISTENER REGISTERING/DEREGISTERING
+	/*===================*/
 	public synchronized void addLapObserverListener(RaceObserverListener lol) {
 		_listeners.add(lol);
 	}
@@ -84,15 +118,18 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 		_listeners.remove(lol);
 	}
 
+	/*===================*/
+	/* EVENT RAISERS
+	/*===================*/
 	private synchronized void _fireCrossStartFinishLine() {
-		for (Object _listener : _listeners) {
-			((RaceObserverListener) _listener).onCrossStartFinishLine();
+		for (RaceObserverListener _listener : _listeners) {
+			_listener.onCrossStartFinishLine();
 		}
 	}
 
 	private synchronized void _fireRaceStart() {
-		for (Object _listener : _listeners) {
-			((RaceObserverListener) _listener).onRaceStart();
+		for (RaceObserverListener _listener : _listeners) {
+			_listener.onRaceStart();
 		}
 	}
 }

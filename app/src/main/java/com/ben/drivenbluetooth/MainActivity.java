@@ -5,16 +5,12 @@ import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.PendingIntent;
-import android.app.TimePickerDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.SensorManager;
+import android.location.Location;
 import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -22,14 +18,12 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.Chronometer;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.ben.drivenbluetooth.fragments.FourGraphsBars;
-import com.ben.drivenbluetooth.fragments.GraphViewFragment;
 import com.ben.drivenbluetooth.fragments.MainMapFragment;
 import com.ben.drivenbluetooth.fragments.SettingsFragment;
 import com.ben.drivenbluetooth.fragments.SixGraphsBars;
@@ -43,22 +37,15 @@ import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenLocation;
 
 import java.io.File;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
 public class MainActivity
 		extends 	Activity
-		implements 	GraphViewFragment.OnFragmentInteractionListener,
-					SixGraphsBars.OnFragmentInteractionListener,
-					FourGraphsBars.OnFragmentInteractionListener,
-					MainMapFragment.OnFragmentInteractionListener
+		implements BTDataParser.BTDataParserListener
 {
 
-	/************* UI ELEMENTS ***************/
-	public static TextView myLabel;
 	public static TextView myMode;
 
 	public static TextView myDataFileSize;
@@ -71,26 +58,23 @@ public class MainActivity
 	public static Button startButton;
 	public static Button stopButton;
 	public static Button closeBTButton;
-	public static Button settingsButton;
 
-	private enum UISTATE {SIX_GRAPHS_BARS, FOUR_GRAPHS_BARS}
-	private UISTATE UIState = UISTATE.SIX_GRAPHS_BARS;
+	public static Chronometer LapTimer;
+	public static TextView prevLapTime;
 
 	public static RandomGenerator Gen = new RandomGenerator();
-	public static BTDataParser Parser = new BTDataParser();
+	public BTDataParser Parser = new BTDataParser(this); // can't be static because of (this)
 	public static DataToCsvFile DataSaver = new DataToCsvFile();
 	public static BTStreamReader StreamReader; // initialize below
 
 	private static Timer UIUpdateTimer; // don't initialize because it should be done below
-	private static TimerTask UIUpdateTask; // initialized later on
 
 	public static final Handler MainActivityHandler = new Handler();
 
-	public static DrivenLocation myDrivenLocation;
+	public static DrivenLocation myDrivenLocation; // must be initialized below or else null object ref error
 
 	public static Accelerometer myAccelerometer;
 
-	private static final int RESULT_SETTINGS = 2;
 	private static Context context;
 	public static final BluetoothManager myBluetoothManager = new BluetoothManager();
 
@@ -108,12 +92,8 @@ public class MainActivity
 
 		/************** INITIALIZE UI ELEMENTS ************/
 		InitializeButtons();
-		//InitializeDataFields();
-		//InitializeDataBars();
-		//InitializeGraphs();
 
 		/* OTHERS */
-		myLabel 		= (TextView) findViewById(R.id.label);
 		myMode 			= (TextView) findViewById(R.id.txt_Mode);
 
 		myDataFileName	= (TextView) findViewById(R.id.txtDataFileName);
@@ -122,21 +102,20 @@ public class MainActivity
 		myBTState		= (TextView) findViewById(R.id.txtBTState);
 		myLogging		= (TextView) findViewById(R.id.txtLogging);
 
-		StartUIUpdater(0, Global.UI_UPDATE_INTERVAL);
+		LapTimer		= (Chronometer) findViewById(R.id.LapTimer);
+		prevLapTime		= (TextView) findViewById(R.id.previousLapTime);
+
+		StartUIUpdater(0, Global.SLOW_UI_UPDATE_INTERVAL);
 
 		InitializeGlobalSettings();
 
 		/**************** CONTEXT *************************/
-		MainActivity.context = getApplicationContext();
-
-		/**************** ALARM MANAGER *******************/
-		Global.AlarmManager = (AlarmManager) MainActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
-
-		/********* INITIALIZE LOCATION CLASS **************/
-		myDrivenLocation = new DrivenLocation();
+		context = getApplicationContext();
 
 		/******************* ACCELEROMETER ****************/
 		myAccelerometer = new Accelerometer((SensorManager) getSystemService(Context.SENSOR_SERVICE));
+
+		myDrivenLocation = new DrivenLocation(); // must be initialized here or else null object ref error
 
 		UpdateDataFileInfo();
 
@@ -145,7 +124,6 @@ public class MainActivity
 
 		InitializeFragmentList();
 		CycleView();
-
 		StartDataParser();
 	}
 
@@ -198,6 +176,13 @@ public class MainActivity
 		}
 	}
 
+	private void ActivateLaunchMode() {
+		Location loc = new Location("");
+		loc.setLatitude(Global.Latitude);
+		loc.setLongitude(Global.Longitude);
+		myDrivenLocation.myRaceObserver.ActivateLaunchMode(loc);
+	}
+
 	/**************************************************/
 	/**************** TOASTER          ****************/
 	/**************************************************/
@@ -208,7 +193,7 @@ public class MainActivity
 		msg.show();
 	}
 
-	public static void showMessage(Context context, String string, int length) {
+	public static void showMessage(String string, int length) {
 		final Toast msg = Toast.makeText(context, string, length);
 		msg.show();
 
@@ -219,6 +204,10 @@ public class MainActivity
 				}
 			}, length);
 		}
+	}
+
+	public static void showError(Exception e) {
+		showMessage(e.getMessage(),Toast.LENGTH_LONG);
 	}
 
 	/**************************************************/
@@ -238,7 +227,9 @@ public class MainActivity
 			Global.Unit = Global.UNIT.values()[units];
 
 			int location = Integer.valueOf(prefs.getString("prefLocation", ""));
-			Global.Location = Global.LOCATION.values()[location];
+			Global.LocationStatus = Global.LOCATION.values()[location];
+
+			Global.BTDeviceName = prefs.getString("prefBTDeviceName", "");
 		} catch (Exception e) {
 			showMessage("Could not retrieve settings");
 		}
@@ -250,20 +241,30 @@ public class MainActivity
 
 	public void OpenBT(View v) {
 		try {
+			myDrivenLocation.onRaceStart();
+		} catch (Exception e) {
+			showError(e);
+		}
+		/*try {
 			myBluetoothManager.findBT();
 			myBluetoothManager.openBT();
 			StartStreamReader();
 		} catch (Exception e) {
 			showMessage(e.getMessage());
-		}
+		}*/
 	}
 
 	public void CloseBT(View v) {
 		try {
+			myDrivenLocation.onCrossStartFinishLine();
+		} catch (Exception e) {
+			showError(e);
+		}
+		/*try {
 			myBluetoothManager.closeBT();
 		} catch (Exception e) {
 			showMessage(e.getMessage());
-		}
+		}*/
 	}
 
 	public void Start(View v) {
@@ -283,7 +284,6 @@ public class MainActivity
 			StopRandomGenerator();
 			StopDataSaver();
 
-			myLabel.setText("Stopped logging");
 			MainActivity.myLogging.setText("NO");
 			MainActivity.myLogging.setTextColor(Color.RED);
 
@@ -300,7 +300,6 @@ public class MainActivity
 			StopDataSaver();
 			StopStreamReader();
 
-			myLabel.setText("Stopped logging");
 			MainActivity.myLogging.setText("NO");
 			MainActivity.myLogging.setTextColor(Color.RED);
 
@@ -367,9 +366,9 @@ public class MainActivity
 	private void StartDataParser() {
 		try {
 			if (Parser == null) {
-				Parser = new BTDataParser();
+				Parser = new BTDataParser(this);
 			} else if (!Parser.isAlive() && Parser.getState() != Thread.State.NEW) {
-				Parser = new BTDataParser();
+				Parser = new BTDataParser(this);
 			}
 			Parser.start();
 		} catch (Exception e) {
@@ -391,7 +390,7 @@ public class MainActivity
 	}
 
 	private void StartUIUpdater(int delay, int uiUpdateInterval) {
-		UIUpdateTask = new TimerTask() {
+		TimerTask UIUpdateTask = new TimerTask() {
 			public void run() {
 				MainActivityHandler.post(new UIUpdateRunnable());
 			}
@@ -418,61 +417,6 @@ public class MainActivity
 		}
 	}
 
-	private void StopDataParser() {
-		if (Parser != null && Parser.getState() != Thread.State.TERMINATED) {
-			Parser.cancel();
-		}
-	}
-
-	public class SetTimeDialog implements View.OnClickListener {
-		EditText editText;
-
-		public SetTimeDialog(EditText editText) {
-			this.editText = editText;
-		}
-
-		@Override
-		public void onClick(View v) {
-			Calendar mcurrentTime = Calendar.getInstance();
-			int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-			int minute = mcurrentTime.get(Calendar.MINUTE);
-			TimePickerDialog mTimePicker;
-			mTimePicker = new TimePickerDialog(MainActivity.this, t, hour, minute, true);//true for 24 hour time
-			mTimePicker.setTitle("Select Time");
-			mTimePicker.show();
-		}
-
-		private TimePickerDialog.OnTimeSetListener t = new TimePickerDialog.OnTimeSetListener() {
-			@Override
-			public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-				// %02d sets the string length to 2 and pads with zeros if necessary
-				editText.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
-				Calendar mcurrentTime = Calendar.getInstance();
-				int year = mcurrentTime.get(Calendar.YEAR);
-				int month = mcurrentTime.get(Calendar.MONTH);
-				int day = mcurrentTime.get(Calendar.DAY_OF_MONTH);
-				// Race countdown timer starts 10 seconds before so minute - 1, 50 seconds
-				Global.RaceStartTime = new GregorianCalendar(year, month, day, hourOfDay, minute, 0);
-				setRaceNotifier();
-			}
-		};
-
-		private void setRaceNotifier() {
-			Intent myIntent = new Intent(MainActivity.this, RaceNotifier.class);
-			PendingIntent pendingIntent;
-			pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent, 0);
-			Global.AlarmManager.set(AlarmManager.RTC, Global.RaceStartTime.getTimeInMillis(), pendingIntent);
-		}
-	}
-
-	public static class RaceNotifier extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// Race will start in 10 seconds
-
-		}
-	}
-
 	/**************************************************/
 	/**************** OTHER SHIT          *************/
 	/**************************************************/
@@ -481,15 +425,24 @@ public class MainActivity
 		return MainActivity.context;
 	}
 
-	@Override
-	public void onFragmentInteraction(Uri uri) {
-
-	}
-
 	private static void UpdateDataFileInfo() {
 		File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
 		MediaScannerConnection.scanFile(MainActivity.getAppContext(), new String[]{f.getAbsolutePath()}, null, null);
 		Global.DataFileLength = f.length();
 		myDataFileName.setText(Global.DATA_FILE);
+	}
+
+	/**************************************************/
+	/**************** BTDATAPARSER IMPLEMENTATION *****/
+	/**************************************************/
+
+	@Override
+	public void onCycleViewPacket() {
+		CycleView();
+	}
+
+	@Override
+	public void onActivateLaunchModePacket() {
+		ActivateLaunchMode();
 	}
 }

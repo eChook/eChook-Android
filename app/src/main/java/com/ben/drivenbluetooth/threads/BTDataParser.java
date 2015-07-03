@@ -1,27 +1,43 @@
 package com.ben.drivenbluetooth.threads;
 
-import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.jjoe64.graphview.series.DataPoint;
 
-/**
- * Created by Ben on 09/03/2015.
- */
 public class BTDataParser extends Thread {
-	private static byte[] poppedData;
-	private volatile boolean stopWorker = false;
 	public static Handler mHandler;
+	private static byte[] poppedData;
+	private BTDataParserListener mListener;
 
-	public BTDataParser() {
-		// Nothing special for the constructor
+	/*===================*/
+	/* BTDATAPARSER
+	/*===================*/
+	public BTDataParser(BTDataParserListener listener) {
+		setBTDataParserListener(listener);
 	}
 
+	/*===================*/
+	/* INTERFACE
+	/*===================*/
+	public interface BTDataParserListener {
+		void onCycleViewPacket();
+		void onActivateLaunchModePacket();
+	}
+
+	/*===================*/
+	/* REGISTER LISTENER
+	/*===================*/
+	private synchronized void setBTDataParserListener(BTDataParserListener listener) {
+		mListener = listener;
+	}
+
+	/*===================*/
+	/* MAIN FUNCS
+	/*===================*/
 	@Override
 	public void run() {
 		Looper.prepare();
@@ -107,19 +123,14 @@ public class BTDataParser extends Thread {
 							case Global.TEMP3ID:
 								SetTemperature(value, 3);
 								break;
+							case Global.GEAR_RATIO_ID:
+								SetGearRatio(value);
+								break;
 							case Global.LAUNCH_MODE_ID:
-								MainActivity.MainActivityHandler.post(new Runnable() {
-									public void run() {
-										if (Global.Longitude == 0 && Global.Latitude == 0) {
-											MainActivity.showMessage(MainActivity.getAppContext(), "Location not ready - please try again in 5 seconds", Toast.LENGTH_LONG);
-										} else {
-											Location loc = new Location("");
-											loc.setLongitude(Global.Longitude);
-											loc.setLatitude(Global.Latitude);
-											MainActivity.myDrivenLocation.myRaceObserver.ActivateLaunchMode(loc);
-										}
-									}
-								});
+								_fireActivateLaunchMode();
+								break;
+							case Global.CYCLE_VIEW_ID:
+								_fireCycleView();
 								break;
 
 							default:
@@ -139,16 +150,9 @@ public class BTDataParser extends Thread {
 		Looper.loop();
 	}
 
-	/* DATA INPUT FUNCTIONS
-
-		There is one for each because I presume each data type will need
-		a different scaling factor / offset
-
-		They are private because the class should decide what function to use
-		and no other class needs access to them
-
-	 */
-
+	/*===================*/
+	/* DATA INPUT FUNCS
+	/*===================*/
 	private void SetVoltage(double rawVolts) {
 		Global.Volts = round(rawVolts, 2); // Apply conversion and offset TODO revisit volts
 		MainActivity.MainActivityHandler.post(new Runnable() {
@@ -160,6 +164,7 @@ public class BTDataParser extends Thread {
 
 	private void SetCurrent(double rawAmps) {
 		Global.Amps = round(rawAmps, 2); // Apply conversion and offset TODO revisit amps
+		Global.AverageAmps.add(rawAmps);
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
 				Global.AmpsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Amps), true, Global.maxGraphDataPoints);
@@ -184,6 +189,7 @@ public class BTDataParser extends Thread {
 	private void SetSpeed(double rawSpeedMPH) {
 		Global.SpeedMPH = rawSpeedMPH; // Apply conversion and offset TODO revisit wheelRPM
 		Global.SpeedKPH = round(Global.SpeedMPH * 1.61, 1);
+		Global.AverageSpeedMPH.add(rawSpeedMPH);
 
 		if (Global.Unit == Global.UNIT.MPH) {
 			MainActivity.MainActivityHandler.post(new Runnable() {
@@ -210,8 +216,6 @@ public class BTDataParser extends Thread {
 	}
 
 	private void SetTemperature(double rawTemp, int sensorId) {
-		double tempC = rawTemp;
-
 		switch (sensorId) {
 			case 1:
 				Global.TempC1 = rawTemp;
@@ -227,15 +231,24 @@ public class BTDataParser extends Thread {
 		}
 	}
 
+	private void SetGearRatio(double rawRatio) {
+		Global.GearRatio = rawRatio; // Apply conversion and offset
+	}
+
 	private double round(double number, int decimalPoints) {
 		double value = Math.round(number * Math.pow(10, decimalPoints));
 		value = value / Math.pow(10, decimalPoints);
 		return value;
 	}
 
-	public void cancel() {
-		this.stopWorker = true;
-		Looper.myLooper().quitSafely();
+	/*===================*/
+	/* EVENT RAISERS
+	/*===================*/
+	private synchronized void _fireActivateLaunchMode() {
+		mListener.onActivateLaunchModePacket();
 	}
 
+	private synchronized void _fireCycleView() {
+		mListener.onCycleViewPacket();
+	}
 }

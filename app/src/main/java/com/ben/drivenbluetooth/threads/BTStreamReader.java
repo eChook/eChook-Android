@@ -68,7 +68,7 @@ public class BTStreamReader extends Thread {
 							Global.BTStreamQueue.add(encodedBytes);
 
 							// post message to BTDataParser
-							MainActivity.Parser.mHandler.sendEmptyMessage(0);
+							BTDataParser.mHandler.sendEmptyMessage(0);
 
 							// reset the buffer pointer
 							readBufferPosition = 0;
@@ -110,7 +110,6 @@ public class BTStreamReader extends Thread {
 					MainActivity.MainActivityHandler.post(new Runnable() {
 						public void run() {
 							MainActivity.stopButton.callOnClick();
-							MainActivity.myLabel.setText("Could not reconnect Bluetooth. Please check hardware");
 						}
 					});
 					Global.BTReconnectAttempts = 0;

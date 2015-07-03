@@ -9,9 +9,6 @@ import com.ben.drivenbluetooth.MainActivity;
 import java.io.File;
 import java.io.FileOutputStream;
 
-/**
- * Created by BNAGY4 on 15/04/2015.
- */
 public class DataToCsvFile extends Thread {
 
 	private Double[] ArrayOfVariables;
@@ -43,10 +40,9 @@ public class DataToCsvFile extends Thread {
 					"Motor speed (RPM)",
 					"Speed (mph)",
 					"Temp 1 (C)",
-					"Temp 2 (C)",
-					"Temp 3 (C)",
+					"Gear Ratio",
 
-					/* Location */
+					/* LocationStatus */
 					"Latitude (deg)",
 					"Longitude (deg)",
 					"Altitude (m)",
@@ -54,17 +50,17 @@ public class DataToCsvFile extends Thread {
 					"SpeedGPS (m/s)",
 					"GPSTime",			// milliseconds since epoch (UTC)
 					"Accuracy (m)",		// radius of 68% confidence
-					"DeltaDistance (m)"
+					"Lap"
 			};
 		} catch (Exception e) {
-			MainActivity.showMessage(MainActivity.getAppContext(), e.toString(), Toast.LENGTH_SHORT);
+			MainActivity.showError(e);
 		}
 
 		try {
 			this.f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
 			this.oStream = new FileOutputStream(f, true);
 		} catch (Exception e) {
-			MainActivity.showMessage(MainActivity.getAppContext(), e.toString(), Toast.LENGTH_LONG);
+			MainActivity.showError(e);
 		}
 	}
 
@@ -79,10 +75,9 @@ public class DataToCsvFile extends Thread {
 									Global.MotorRPM,
 									Global.SpeedMPH,
 									Global.TempC1,
-									Global.TempC2,
-									Global.TempC3,
+									Global.GearRatio,
 
-									/* Location */
+									/* LocationStatus */
 									Global.Latitude,
 									Global.Longitude,
 									Global.Altitude,
@@ -90,19 +85,19 @@ public class DataToCsvFile extends Thread {
 									Global.SpeedGPS,
 									Global.GPSTime,
 									Global.Accuracy,
-						(double) 	Global.DeltaDistance
+						(double) 	Global.Lap
 				};
 
 				WriteToFile(GetLatestDataAsString());
 
 			} catch (Exception e) {
-				e.toString();
+				MainActivity.showError(e);
 			}
 
 			try { // for some reason this needs to be in a try/catch block
 				Thread.sleep(Global.DATA_SAVE_INTERVAL);
 			} catch (Exception e) {
-				// ??
+				MainActivity.showError(e);
 			}
 		}
 	}

@@ -17,7 +17,7 @@ public class SMSListener extends BroadcastReceiver {
 		if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
 			for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
 				String messageBody = smsMessage.getMessageBody();
-				MainActivity.showMessage(MainActivity.getAppContext(), messageBody, Toast.LENGTH_LONG);
+				MainActivity.showMessage(messageBody, Toast.LENGTH_LONG);
 			}
 		}
 	}

@@ -5,9 +5,6 @@ import com.ben.drivenbluetooth.MainActivity;
 
 import java.util.Random;
 
-/**
- * Created by Ben on 26/03/2015.
- */
 public class RandomGenerator extends Thread {
 	Random rnd = new Random();
 	private volatile boolean stopWorker = false;
@@ -29,13 +26,13 @@ public class RandomGenerator extends Thread {
 			IDS[5] = Global.SPEED_MPH_ID;
 			IDS[6] = Global.THR_ACTUAL_ID;
 
-			for (int i = 0; i < IDS.length; i++) {
+			for (byte ID : IDS) {
 				// fill with random shit
 				rnd.nextBytes(Message);
 
 				// organise key bytes
 				Message[0] = Global.STARTBYTE;
-				Message[1] = IDS[i];
+				Message[1] = ID;
 				Message[2] = (byte) rnd.nextInt(127);
 				Message[3] = (byte) rnd.nextInt(99);
 				Message[4] = Global.STOPBYTE;
@@ -44,10 +41,11 @@ public class RandomGenerator extends Thread {
 				Global.BTStreamQueue.add(Message);
 
 				// send message to BTDataParser
-				MainActivity.Parser.mHandler.sendEmptyMessage(0);
-				try{
+				BTDataParser.mHandler.sendEmptyMessage(0);
+				try {
 					Thread.sleep(10); // this needs to be here otherwise the queue gets overloaded
-				} catch (Exception ignored) {}
+				} catch (Exception ignored) {
+				}
 			}
 
 			// wait 250 milliseconds

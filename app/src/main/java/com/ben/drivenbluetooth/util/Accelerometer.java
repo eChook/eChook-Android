@@ -33,11 +33,11 @@ public class Accelerometer implements SensorEventListener {
 				mAccelerometer = gravSensors.get(0);
 				supportsAccelerometer = true;
 			} else {
-				MainActivity.showMessage(MainActivity.getAppContext(), "Device does not support accelerometer", Toast.LENGTH_LONG);
+				MainActivity.showMessage("Device does not support accelerometer", Toast.LENGTH_LONG);
 				supportsAccelerometer = false;
 			}
 		} else {
-			MainActivity.showMessage(MainActivity.getAppContext(), "Device does not support accelerometer", Toast.LENGTH_LONG);
+			MainActivity.showMessage("Device does not support accelerometer", Toast.LENGTH_LONG);
 			supportsAccelerometer = false;
 		}
 	}

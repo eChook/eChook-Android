@@ -2,15 +2,14 @@ package com.ben.drivenbluetooth.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.PreferenceFragment;
+import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 
-/**
- * Created by BNAGY4 on 22/06/2015.
- */
 public class SettingsFragment 	extends PreferenceFragment
 								implements SharedPreferences.OnSharedPreferenceChangeListener
 {
@@ -35,7 +34,7 @@ public class SettingsFragment 	extends PreferenceFragment
 					break;
 				case "prefLocation":
 					int location = Integer.valueOf(sharedPreferences.getString("prefLocation", ""));
-					Global.Location = Global.LOCATION.values()[location];
+					Global.LocationStatus = Global.LOCATION.values()[location];
 					MainActivity.myDrivenLocation.update();
 					break;
 				case "prefAccelerometer":
@@ -43,11 +42,16 @@ public class SettingsFragment 	extends PreferenceFragment
 					Global.Accelerometer = Global.ACCELEROMETER.values()[accelerometer];
 					MainActivity.myAccelerometer.update();
 					break;
+				case "prefBTDeviceName":
+					Global.BTDeviceName = sharedPreferences.getString("prefBTDeviceName", "");
+					EditTextPreference pref = (EditTextPreference) findPreference("prefBTDeviceName");
+					pref.setSummary(pref.getText());
+					break;
 				default:
 					break;
 			}
 		} catch (Exception e) {
-			e.toString();
+			MainActivity.showError(e);
 		}
 	}
 

@@ -2,12 +2,12 @@ package com.ben.drivenbluetooth;
 
 import android.app.AlarmManager;
 import android.bluetooth.BluetoothSocket;
-import android.hardware.Sensor;
+import android.location.Location;
 
+import com.ben.drivenbluetooth.util.RunningAverage;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.util.GregorianCalendar;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -42,6 +42,10 @@ public final class Global {
 	public static volatile Double TempC1 			= 	0.0;
 	public static volatile Double TempC2 			= 	0.0;
 	public static volatile Double TempC3 			= 	0.0;
+	public static volatile Double GearRatio			=	0.0;
+
+	public static volatile RunningAverage AverageAmps 		= new RunningAverage();
+	public static volatile RunningAverage AverageSpeedMPH 	= new RunningAverage();
 
 	public static 			int							maxGraphDataPoints	=	15 * 1000 / 250;
 	public static 			float 						GraphTimeStamp 		=	0.0f;
@@ -52,6 +56,9 @@ public final class Global {
 	public static volatile 	LineGraphSeries<DataPoint> 	SpeedHistory		=	new LineGraphSeries<>();
 	public static volatile 	LineGraphSeries<DataPoint> 	TempC1History		=	new LineGraphSeries<>();
 
+	public static volatile Location StartFinishLineLocation;
+	public static volatile Double StartFinishLineBearing;
+
 	public static volatile Double Latitude 		=	0.0;
 	public static volatile Double Longitude		=	0.0;
 	public static volatile Double Altitude		=	0.0;
@@ -61,6 +68,8 @@ public final class Global {
 	public static volatile Double Accuracy		=	0.0;
 	public static volatile float DeltaDistance	=	0;	// difference between current and previous location in meters
 	public static volatile int LocationUpdateCounter = 0;
+
+	public static volatile int Lap	= 0;
 
 	public static volatile float Gx = 0;	// Acceleration minus gravity in the x direction
 	public static volatile float Gy = 0;	// Acceleration minus gravity in the y direction
@@ -79,7 +88,6 @@ public final class Global {
 	/**********************/
 	public static BluetoothSocket BTSocket;
 	public static int MangledDataCount = 0;
-	public static GregorianCalendar RaceStartTime;
 	public static AlarmManager AlarmManager;
 
 	/**********************/
@@ -100,8 +108,11 @@ public final class Global {
 	public static final byte TEMP2ID 				= 	98;		// b
 	public static final byte TEMP3ID 				= 	99; 	// c
 	public static final byte LAUNCH_MODE_ID			=	76;		// L
+	public static final byte GEAR_RATIO_ID			=	114;	// r
+	public static final byte CYCLE_VIEW_ID			=	67;		// C
 
-	public static final int 	UI_UPDATE_INTERVAL	= 100; // UI update interval in milliseconds
+	public static final int 	FAST_UI_UPDATE_INTERVAL = 100; // UI update interval in milliseconds
+	public static final int		SLOW_UI_UPDATE_INTERVAL	= 500;
     public static final int 	DATA_SAVE_INTERVAL 	= 250; // save interval in milliseconds
 	public static final String 	DATA_FILE 			= "arduino.csv";
 
@@ -109,6 +120,8 @@ public final class Global {
 
 	public static final int LOCATION_INTERVAL 		= 10000; 	// Low speed location update interval in ms
 	public static final int LOCATION_FAST_INTERVAL 	= 5000;		// High speed location update interval in ms
+
+	public static final float LAP_TRIGGER_RANGE = 20.0f;  // locus around the start location to trigger a lap
 
 	/**********************/
 	/* SETTINGS VARIABLES */
@@ -120,10 +133,12 @@ public final class Global {
 	public static UNIT Unit;
 
 	public enum LOCATION {DISABLED, ENABLED} // REMINDER: KEEP THESE CONSISTENT WITH ARRAYS.XML!
-	public static LOCATION Location;
+	public static LOCATION LocationStatus;
 
 	public enum ACCELEROMETER {DISABLED, ENABLED}
 	public static ACCELEROMETER Accelerometer;
+
+	public static String BTDeviceName;
 
 	/**********************/
 	/* CONSTRUCTOR        */

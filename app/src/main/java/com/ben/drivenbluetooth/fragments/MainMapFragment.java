@@ -1,10 +1,8 @@
 package com.ben.drivenbluetooth.fragments;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -36,7 +34,6 @@ public class MainMapFragment 	extends Fragment
 											GoogleMap.OnInfoWindowClickListener
 {
 	private GoogleMap map;
-	private OnFragmentInteractionListener mListener;
 
 	private TextView Current;
 	private TextView Voltage;
@@ -45,10 +42,16 @@ public class MainMapFragment 	extends Fragment
 
 	private static Timer FragmentUpdateTimer;
 
+	/*===================*/
+	/* MAINMAPFRAGMENT
+	/*===================*/
 	public MainMapFragment() {
 		// Required empty public constructor
 	}
 
+	/*===================*/
+	/* INITIALIZERS
+	/*===================*/
 	private void InitializeDataFields() {
 		View v = getView();
 		Current 		= (TextView) v.findViewById(R.id.current);
@@ -57,6 +60,9 @@ public class MainMapFragment 	extends Fragment
 		Speed 			= (TextView) v.findViewById(R.id.speed);
 	}
 
+	/*===================*/
+	/* LIFECYCLE
+	/*===================*/
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -76,41 +82,17 @@ public class MainMapFragment 	extends Fragment
 		if (mFragment != null) {
 			mFragment.getMapAsync(this);
 		} else {
-			MainActivity.showMessage(MainActivity.getAppContext(), "Could not find map fragment", Toast.LENGTH_LONG);
+			MainActivity.showMessage("Could not find map fragment", Toast.LENGTH_LONG);
 		}
 		InitializeDataFields();
 
 		StartFragmentUpdater();
 	}
 
-	// TODO: Rename method, update argument and hook method into UI event
-	public void onButtonPressed(Uri uri) {
-		if (mListener != null) {
-			mListener.onFragmentInteraction(uri);
-		}
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			mListener = (OnFragmentInteractionListener) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString()
-					+ " must implement OnFragmentInteractionListener");
-		}
-	}
-
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
 		StopFragmentUpdater();
-	}
-
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		mListener = null;
 	}
 
 	@Override
@@ -129,10 +111,13 @@ public class MainMapFragment 	extends Fragment
 			map.setOnMapClickListener(this);
 			map.setOnInfoWindowClickListener(this);
 		} catch (Exception e) {
-			MainActivity.showMessage(MainActivity.getAppContext(), e.getMessage(), Toast.LENGTH_LONG);
+			MainActivity.showError(e);
 		}
 	}
 
+	/*===================*/
+	/* INTERACTION LISTENERS
+	/*===================*/
 	@Override
 	public void onMapClick(LatLng latLng) {
 		map.clear(); // clear any markers already present
@@ -169,11 +154,9 @@ public class MainMapFragment 	extends Fragment
 		dialog.show();
 	}
 
-	public interface OnFragmentInteractionListener {
-		// TODO: Update argument type and name
-		public void onFragmentInteraction(Uri uri);
-	}
-
+	/*===================*/
+	/* FRAGMENT UPDATING
+	/*===================*/
 	public void UpdateFragmentUI() {
 		UpdateCurrent();
 		UpdateMotorRPM();
@@ -248,7 +231,7 @@ public class MainMapFragment 	extends Fragment
 		};
 		FragmentUpdateTimer = new Timer();
 		FragmentUpdateTimer.schedule(mapUpdateTask, 5000, 5000);
-		FragmentUpdateTimer.schedule(fragmentUpdateTask, 0, Global.UI_UPDATE_INTERVAL);
+		FragmentUpdateTimer.schedule(fragmentUpdateTask, 0, Global.FAST_UI_UPDATE_INTERVAL);
 	}
 
 	private void StopFragmentUpdater() {

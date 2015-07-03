@@ -10,10 +10,16 @@ public class RaceStartMonitor extends Thread {
 		_setThrottleListener(listener);
 	}
 
+	/*===================*/
+	/* INTERFACE
+	/*===================*/
 	public interface ThrottleListener {
 		void onThrottleMax();
 	}
 
+	/*===================*/
+	/* MAIN FUNCS
+	/*===================*/
 	public void run() {
 		while (!stop) {
 			if(Global.InputThrottle == 100.0) {
@@ -26,15 +32,23 @@ public class RaceStartMonitor extends Thread {
 		}
 	}
 
+	public void cancel() {
+		this.stop = true;
+	}
+
+	/*===================*/
+	/* LISTENER REGISTERING
+	/*===================*/
 	private synchronized void _setThrottleListener(ThrottleListener listener) {
 		mListener = listener;
 	}
 
+	/*===================*/
+	/* EVENT RAISER
+	/*===================*/
 	private synchronized void _fireThrottleMaxEvent() {
 		mListener.onThrottleMax();
 	}
 
-	public void cancel() {
-		this.stop = true;
-	}
+
 }

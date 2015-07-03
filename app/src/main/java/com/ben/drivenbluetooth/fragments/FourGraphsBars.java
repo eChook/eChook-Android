@@ -1,7 +1,5 @@
 package com.ben.drivenbluetooth.fragments;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +12,6 @@ import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,14 +34,18 @@ public class FourGraphsBars extends Fragment {
 	private GraphView myMotorRPMGraph;
 	private GraphView mySpeedGraph;
 
-	private OnFragmentInteractionListener mListener;
-
 	private static Timer 		FragmentUpdateTimer;
 
+	/*===================*/
+	/* FOURGRAPHSBARS
+	/*===================*/
 	public FourGraphsBars() {
 		// Required empty public constructor
 	}
 
+	/*===================*/
+	/* INITIALIZERS
+	/*===================*/
 	private void InitializeDataFields() {
 		View v = getView();
 		Current 		= (TextView) v.findViewById(R.id.current);
@@ -94,19 +95,9 @@ public class FourGraphsBars extends Fragment {
 		SpeedBar 		= (DataBar) v.findViewById(R.id.SpeedBar);
 	}
 
-	/** LIFECYCLE **/
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			mListener = (OnFragmentInteractionListener) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString()
-					+ " must implement OnFragmentInteractionListener");
-		}
-	}
-
+	/*===================*/
+	/* LIFECYCLE
+	/*===================*/
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -148,18 +139,15 @@ public class FourGraphsBars extends Fragment {
 		mySpeedGraph		= null;
 	}
 
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		mListener = null;
-	}
-
+	/*===================*/
+	/* FRAGMENT UPDATE
+	/*===================*/
 	public void UpdateFragmentUI() {
 		UpdateVoltage();
 		UpdateCurrent();
 		UpdateSpeed();
 		UpdateMotorRPM();
-		Global.GraphTimeStamp += (float) Global.UI_UPDATE_INTERVAL / 1000.0f;
+		Global.GraphTimeStamp += (float) Global.FAST_UI_UPDATE_INTERVAL / 1000.0f;
 	}
 
 	private void UpdateVoltage() {
@@ -205,23 +193,6 @@ public class FourGraphsBars extends Fragment {
 		}
 	}
 
-	/**
-	 * This interface must be implemented by activities that contain this
-	 * fragment to allow an interaction in this fragment to be communicated
-	 * to the activity and potentially other fragments contained in that
-	 * activity.
-	 * <p/>
-	 * See the Android Training lesson <a href=
-	 * "http://developer.android.com/training/basics/fragments/communicating.html"
-	 * >Communicating with Other Fragments</a> for more information.
-	 */
-	public interface OnFragmentInteractionListener {
-		// TODO: Update argument type and name
-		void onFragmentInteraction(Uri uri);
-	}
-
-	/** FRAGMENT UI UPDATERS **/
-
 	private void StartFragmentUpdater() {
 		TimerTask fragmentUpdateTask = new TimerTask() {
 			public void run() {
@@ -233,7 +204,7 @@ public class FourGraphsBars extends Fragment {
 			}
 		};
 		FragmentUpdateTimer = new Timer();
-		FragmentUpdateTimer.schedule(fragmentUpdateTask, 250, Global.UI_UPDATE_INTERVAL);
+		FragmentUpdateTimer.schedule(fragmentUpdateTask, 250, Global.FAST_UI_UPDATE_INTERVAL);
 	}
 
 	private void StopFragmentUpdater() {

@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -38,7 +39,6 @@ public final class BluetoothManager extends MainActivity {
 
         if(mBluetoothAdapter == null) {
             Log.d(TAG, "Entering BT Adapter == null");
-            myLabel.setText("No bluetooth adapter available");
         }
 
         if(!mBluetoothAdapter.isEnabled()) {
@@ -61,7 +61,7 @@ public final class BluetoothManager extends MainActivity {
 
                 Log.d(TAG, "Checking Name "+ device.getName());
 
-                if(device.getName().equals("PROJECTE")) { //TODO Handle scenario where device is not paired to phone
+                if(device.getName().equals(Global.BTDeviceName)) { //TODO Handle scenario where device is not paired to phone
 
                     Log.d(TAG, "Device Matching Name Found");
                     matchingDeviceFound = true;
@@ -71,17 +71,14 @@ public final class BluetoothManager extends MainActivity {
             }
         }
         Log.d(TAG, "Bluetooth Device Found " + mmDevice.getName());
-        myLabel.setText("Bluetooth Device Found: " + mmDevice.getName());
     }
 
     //_____________________________________________________________________________OPEN BT
     //TODO Set this to open in a separate thread
     public void openBT() throws IOException {
         if(matchingDeviceFound) {
-            Log.d(TAG, "Attempting to open BT Device");
 
             UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard //SerialPortService ID
-            Log.d(TAG, "Connecting Socket Service to device");
             mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
 
 			mBluetoothAdapter.cancelDiscovery();
@@ -90,9 +87,8 @@ public final class BluetoothManager extends MainActivity {
 
             deviceConnected = true;
 			Global.BTState = Global.BTSTATE.CONNECTED;
-            myLabel.setText("Bluetooth Connection Open - Please press 'Start'");
         } else {
-            Log.d(TAG, "No matching device found to open");
+            MainActivity.showMessage("Could not find a matching device", Toast.LENGTH_LONG);
         }
     }
 
@@ -101,7 +97,6 @@ public final class BluetoothManager extends MainActivity {
 		if (deviceConnected) {
             mmSocket.close();
 			Global.BTSocket.close();
-            myLabel.setText("Bluetooth Closed");
             deviceConnected = false;
 			Global.BTState = Global.BTSTATE.DISCONNECTED;
         }

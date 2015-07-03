@@ -1,7 +1,5 @@
 package com.ben.drivenbluetooth.fragments;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -42,14 +40,18 @@ public class SixGraphsBars extends Fragment {
 	private static GraphView mySpeedGraph;
 	private static GraphView myTempC1Graph;
 
-	private OnFragmentInteractionListener mListener;
-
 	private static Timer 		FragmentUpdateTimer;
 
+	/*===================*/
+	/* SIXGRAPHSBARS
+	/*===================*/
 	public SixGraphsBars() {
 		// Required empty public constructor
 	}
 
+	/*===================*/
+	/* INITIALIZERS
+	/*===================*/
 	private void InitializeDataFields() {
 		View v = getView();
 		Throttle 		= (TextView) v.findViewById(R.id.throttle);
@@ -117,6 +119,9 @@ public class SixGraphsBars extends Fragment {
 		SpeedBar 		= (DataBar) v.findViewById(R.id.SpeedBar);
 	}
 
+	/*===================*/
+	/* LIFECYCLE
+	/*===================*/
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -136,23 +141,6 @@ public class SixGraphsBars extends Fragment {
 		InitializeDataFields();
 		InitializeGraphs();
 		StartFragmentUpdater();
-	}
-
-	public void onButtonPressed(Uri uri) {
-		if (mListener != null) {
-			mListener.onFragmentInteraction(uri);
-		}
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			mListener = (OnFragmentInteractionListener) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString()
-					+ " must implement OnFragmentInteractionListener");
-		}
 	}
 
 	@Override
@@ -181,12 +169,9 @@ public class SixGraphsBars extends Fragment {
 		myThrottleGraph		= null;
 	}
 
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		mListener = null;
-	}
-
+	/*===================*/
+	/* FRAGMENT UPDATE
+	/*===================*/
 	public void UpdateFragmentUI() {
 		UpdateVoltage();
 		UpdateCurrent();
@@ -194,7 +179,7 @@ public class SixGraphsBars extends Fragment {
 		UpdateSpeed();
 		UpdateTemp(1);
 		UpdateMotorRPM();
-		Global.GraphTimeStamp += (float) Global.UI_UPDATE_INTERVAL / 1000.0f;
+		Global.GraphTimeStamp += (float) Global.FAST_UI_UPDATE_INTERVAL / 1000.0f;
 	}
 
 	private void UpdateVoltage() {
@@ -282,11 +267,6 @@ public class SixGraphsBars extends Fragment {
 		}
 	}
 
-	public interface OnFragmentInteractionListener {
-		// TODO: Update argument type and name
-		public void onFragmentInteraction(Uri uri);
-	}
-
 	private void StartFragmentUpdater() {
 		TimerTask fragmentUpdateTask = new TimerTask() {
 			public void run() {
@@ -298,7 +278,7 @@ public class SixGraphsBars extends Fragment {
 			}
 		};
 		FragmentUpdateTimer = new Timer();
-		FragmentUpdateTimer.schedule(fragmentUpdateTask, 250, Global.UI_UPDATE_INTERVAL);
+		FragmentUpdateTimer.schedule(fragmentUpdateTask, 250, Global.FAST_UI_UPDATE_INTERVAL);
 	}
 
 	private void StopFragmentUpdater() {

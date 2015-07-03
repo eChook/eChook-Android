@@ -19,6 +19,10 @@
 			android:defaultValue="@string/prefModeDefault"
 			android:summary="%s"
 			/>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="Sensors"
+		android:key="prefKeySensors">
         <ListPreference
             android:key="prefLocation"
 			android:title="Location tracking"
@@ -33,6 +37,15 @@
 			android:entries="@array/prefAccelerometer"
 			android:entryValues="@array/prefAccelerometerValues"
 			android:defaultValue="Disabled"
+			android:summary="%s"
+			/>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="Bluetooth"
+		android:key="prefKeyBluetooth">
+		<EditTextPreference
+			android:key="prefBTDeviceName"
+			android:title="Bluetooth device name"
 			android:summary="%s"
 			/>
     </PreferenceCategory>

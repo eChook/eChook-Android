@@ -10,22 +10,15 @@
 					tools:context="com.ben.drivenbluetooth.MainActivity"
 					android:id="@+id/main">
 
-		<TextView android:text="Label" android:layout_width="wrap_content"
-				  android:layout_height="wrap_content"
-				  android:id="@+id/label"
-				  android:editable="false"
-				  android:layout_alignParentTop="true"
-				  android:layout_alignParentLeft="true"
-				  android:layout_alignParentStart="true"/>
-
 		<Button
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_height="40dp"
 			android:text="Open BT"
 			android:id="@+id/open"
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentStart="true"
-			android:onClick="OpenBT"/>
+			android:onClick="OpenBT"
+			android:layout_alignParentLeft="true"/>
 
 		<Button
 			android:layout_width="wrap_content"
@@ -35,7 +28,9 @@
 			android:layout_alignParentBottom="true"
 			android:layout_toRightOf="@+id/open"
 			android:layout_toEndOf="@+id/open"
-			android:onClick="CloseBT"/>
+			android:onClick="CloseBT"
+			android:layout_alignTop="@+id/open"
+			android:layout_alignBottom="@+id/open"/>
 
 		<Button
 			android:layout_width="wrap_content"
@@ -44,7 +39,10 @@
 			android:id="@+id/btnSettings"
 			android:onClick="LaunchSettings"
 			android:layout_alignParentBottom="true"
-			android:layout_toEndOf="@+id/close"/>
+			android:layout_toEndOf="@+id/close"
+			android:layout_toRightOf="@+id/close"
+			android:layout_alignTop="@+id/close"
+			android:layout_alignBottom="@+id/close"/>
 
 		<Button
 			android:layout_width="wrap_content"
@@ -55,7 +53,8 @@
 			android:layout_alignParentBottom="true"
 			android:layout_toLeftOf="@+id/stop"
 			android:layout_toStartOf="@+id/stop"
-			android:onClick="Start"/>
+			android:onClick="Start"
+			android:layout_alignTop="@+id/stop"/>
 
 		<Button
 			android:layout_width="wrap_content"
@@ -65,7 +64,8 @@
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentRight="true"
 			android:layout_alignParentEnd="true"
-			android:onClick="Stop"/>
+			android:onClick="Stop"
+			android:layout_alignTop="@+id/open"/>
 
 		<Button
 			android:layout_width="wrap_content"
@@ -73,9 +73,10 @@
 			android:text="Cycle"
 			android:id="@+id/cycle"
 			android:layout_alignParentBottom="true"
-			android:layout_toLeftOf="@+id/start"
 			android:onClick="Cycle"
-			android:layout_toEndOf="@+id/btnSettings"/>
+			android:layout_toEndOf="@+id/btnSettings"
+			android:layout_alignBottom="@+id/btnSettings"
+			android:layout_alignTop="@+id/btnSettings"/>
 
 
 
@@ -122,7 +123,6 @@
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:id="@+id/txtDataFileName"
-			android:layout_below="@+id/label"
 			android:layout_alignParentStart="true"
 			android:layout_marginRight="10dp"/>
 
@@ -142,9 +142,9 @@
 			android:text="Bluetooth"
 			android:id="@+id/textView6"
 			android:gravity="right"
-			android:layout_alignBottom="@+id/label"
 			android:layout_marginRight="10dp"
-			android:layout_toRightOf="@+id/btnSettings"/>
+			android:layout_alignParentTop="true"
+			android:layout_alignStart="@+id/btnSettings"/>
 
 		<TextView
 			android:layout_width="wrap_content"
@@ -180,332 +180,29 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:layout_below="@+id/textView8"
+			android:gravity="center"
+			android:id="@+id/CenterView"
 			android:layout_above="@+id/open"
 			android:layout_alignEnd="@+id/txt_Mode"
-			android:gravity="center"
-			android:id="@+id/CenterView">
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentBottom="false" />
 
-			<!--com.jjoe64.graphview.GraphView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/throttleGraph"
-				android:layout_below="@+id/ThrottleBar"
-				android:layout_alignParentStart="true"
-				android:layout_toStartOf="@+id/VoltageBar"
-				/>
+		<Chronometer
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/LapTimer"
+			android:layout_alignParentTop="true"
+			android:layout_alignStart="@+id/start"
+			android:textColor="@color/secondary_text_default_material_light"/>
 
-			<view
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				class="com.jjoe64.graphview.GraphView"
-				android:id="@+id/voltsGraph"
-				android:layout_below="@+id/VoltageBar"
-				android:layout_alignStart="@+id/VoltageBar"
-				android:layout_alignEnd="@+id/VoltageBar"/>
-
-			<view
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				class="com.jjoe64.graphview.GraphView"
-				android:id="@+id/ampsGraph"
-				android:layout_below="@+id/CurrentBar"
-				android:layout_alignStart="@+id/CurrentBar"
-				android:layout_alignBottom="@+id/voltsGraph"
-				android:layout_alignEnd="@+id/CurrentBar"/>
-
-			<view
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				class="com.jjoe64.graphview.GraphView"
-				android:id="@+id/T1Graph"
-				android:layout_below="@+id/T1Bar"
-				android:layout_alignStart="@+id/T1Bar"
-				android:layout_alignBottom="@+id/ampsGraph"
-				android:layout_alignRight="@+id/T1Bar"
-				android:layout_toEndOf="@+id/T1Bar"/>
-
-			<view
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				class="com.jjoe64.graphview.GraphView"
-				android:id="@+id/RPMGraph"
-				android:layout_below="@+id/T1Bar"
-				android:layout_alignStart="@+id/RPMBar"
-				android:layout_toEndOf="@+id/RPMBar"
-				android:layout_alignBottom="@+id/T1Graph"
-				android:layout_alignRight="@+id/RPMBar"/>
-
-			<view
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				class="com.jjoe64.graphview.GraphView"
-				android:id="@+id/SpeedGraph"
-				android:layout_below="@+id/RPMBar"
-				android:layout_toEndOf="@+id/RPMBar"
-				android:layout_alignRight="@+id/SpeedBar"
-				android:layout_alignBottom="@+id/RPMGraph"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:text="InputThrottle"
-				android:onClick="ForceStop"
-				android:id="@+id/textView"
-				android:gravity="center"
-				android:editable="false"
-				android:layout_alignParentTop="true"
-				android:layout_alignEnd="@+id/throttle"
-				android:layout_alignParentStart="true"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="30dp"
-				android:id="@+id/throttle"
-				android:inputType="none"
-				android:width="90dp"
-				android:gravity="center"
-				android:editable="false"
-				android:layout_alignParentLeft="true"
-				android:layout_alignParentTop="false"
-				android:layout_below="@+id/textView"
-				android:textSize="20dp"
-				android:textStyle="bold"
-				/>
-
-			<com.driven.rowan.drivenbluetooth.DataBar
-				android:layout_width="wrap_content"
-				android:layout_height="100dp"
-				android:id="@+id/ThrottleBar"
-				android:layout_alignRight="@+id/throttle"
-				android:layout_below="@+id/current"
-				custom:BarColor="#000000"
-				custom:min="0"
-				custom:max="100"
-				custom:xWidth="@integer/databar_xWidth"
-				android:layout_alignStart="@+id/throttleGraph"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:text="Voltage"
-				android:gravity="center"
-				android:id="@+id/textView2"
-				android:layout_alignTop="@+id/textView"
-				android:layout_alignLeft="@+id/voltage"
-				android:layout_alignRight="@+id/voltage"
-				android:layout_alignBottom="@+id/textView"
-				android:layout_alignEnd="@+id/voltage"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="30dp"
-				android:id="@+id/voltage"
-				android:gravity="center"
-				android:singleLine="false"
-				android:inputType="none"
-				android:width="90dp"
-				android:layout_alignTop="@+id/throttle"
-				android:layout_toRightOf="@+id/throttle"
-				android:textSize="20dp"
-				android:layout_alignBottom="@+id/throttle"
-				android:textStyle="bold"
-				/>
-
-			<com.driven.rowan.drivenbluetooth.DataBar
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				class="com.driven.rowan.drivenbluetooth.DataBar"
-				android:id="@+id/VoltageBar"
-				android:layout_alignLeft="@+id/voltage"
-				android:layout_alignBottom="@+id/ThrottleBar"
-				android:layout_alignRight="@+id/voltage"
-				android:layout_alignParentStart="false"
-				android:layout_alignParentLeft="false"
-				android:layout_alignTop="@+id/ThrottleBar"
-				custom:BarColor="#A3C2FF"
-				custom:min="0"
-				custom:max="28"
-				custom:xWidth="@integer/databar_xWidth"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:text="Current"
-				android:gravity="center"
-				android:id="@+id/textView3"
-				android:layout_alignTop="@+id/textView2"
-				android:layout_alignRight="@+id/current"
-				android:layout_alignEnd="@+id/current"
-				android:layout_alignLeft="@+id/current"
-				android:layout_alignBottom="@+id/textView2"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="30dp"
-				android:id="@+id/current"
-				android:gravity="center"
-				android:singleLine="false"
-				android:inputType="none"
-				android:width="90dp"
-				android:layout_alignTop="@+id/voltage"
-				android:layout_toRightOf="@+id/voltage"
-				android:textSize="20dp"
-				android:layout_alignBottom="@+id/voltage"
-				android:textStyle="bold"
-				/>
-
-			<com.driven.rowan.drivenbluetooth.DataBar
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				class="com.driven.rowan.drivenbluetooth.DataBar"
-				android:id="@+id/CurrentBar"
-				android:layout_alignLeft="@+id/current"
-				android:layout_alignBottom="@+id/ThrottleBar"
-				android:layout_alignRight="@+id/current"
-				android:layout_alignParentStart="false"
-				android:layout_alignParentLeft="false"
-				android:layout_alignTop="@+id/ThrottleBar"
-				custom:BarColor="#ffffea2e"
-				custom:min="0"
-				custom:max="50"
-				custom:xWidth="@integer/databar_xWidth"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:text="Temp 1"
-				android:gravity="center"
-				android:id="@+id/textView4"
-				android:layout_alignBottom="@+id/textView3"
-				android:layout_alignRight="@+id/temp1"
-				android:layout_alignEnd="@+id/temp1"
-				android:layout_alignLeft="@+id/temp1"
-				android:layout_alignTop="@+id/textView3"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="30dp"
-				android:id="@+id/temp1"
-				android:gravity="center"
-				android:singleLine="false"
-				android:inputType="none"
-				android:width="90dp"
-				android:layout_alignTop="@+id/current"
-				android:layout_toRightOf="@+id/current"
-				android:textSize="20dp"
-				android:layout_marginLeft="30dp"
-				android:layout_above="@+id/T1Bar"
-				android:textStyle="bold"
-				/>
-
-			<com.driven.rowan.drivenbluetooth.DataBar
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				class="com.driven.rowan.drivenbluetooth.DataBar"
-				android:id="@+id/T1Bar"
-				android:layout_alignLeft="@+id/temp1"
-				android:layout_alignBottom="@+id/ThrottleBar"
-				android:layout_alignRight="@+id/temp1"
-				android:layout_alignParentStart="false"
-				android:layout_alignParentLeft="false"
-				android:layout_alignTop="@+id/ThrottleBar"
-				custom:BarColor="#ffff5358"
-				custom:min="0"
-				custom:max="85"
-				custom:xWidth="@integer/databar_xWidth"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="30dp"
-				android:id="@+id/rpm"
-				android:gravity="center"
-				android:singleLine="false"
-				android:inputType="none"
-				android:width="90dp"
-				android:layout_toRightOf="@+id/temp1"
-				android:layout_alignTop="@+id/temp1"
-				android:textSize="20dp"
-				android:layout_above="@+id/RPMBar"
-				android:textStyle="bold"
-				/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:text="RPM"
-				android:gravity="center"
-				android:id="@+id/textView5"
-				android:layout_alignTop="@+id/textView4"
-				android:layout_alignLeft="@+id/rpm"
-				android:layout_alignRight="@+id/rpm"
-				android:layout_alignEnd="@+id/rpm"
-				android:layout_alignBottom="@+id/textView4"/>
-
-			<com.driven.rowan.drivenbluetooth.DataBar
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				class="com.driven.rowan.drivenbluetooth.DataBar"
-				android:id="@+id/RPMBar"
-				android:layout_alignLeft="@+id/rpm"
-				android:layout_alignBottom="@+id/ThrottleBar"
-				android:layout_alignRight="@+id/rpm"
-				android:layout_alignParentStart="false"
-				android:layout_alignParentLeft="false"
-				android:layout_alignTop="@+id/ThrottleBar"
-				custom:BarColor="#ffff5358"
-				custom:min="0"
-				custom:max="2500"
-				custom:xWidth="@integer/databar_xWidth"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:text="Speed"
-				android:gravity="center"
-				android:id="@+id/textView7"
-				android:layout_alignParentStart="false"
-				android:layout_toRightOf="@+id/textView5"
-				android:layout_alignBottom="@+id/textView5"
-				android:layout_alignTop="@+id/textView5"
-				android:layout_alignEnd="@+id/speed"/>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="30dp"
-				android:id="@+id/speed"
-				android:gravity="center"
-				android:singleLine="false"
-				android:inputType="none"
-				android:width="90dp"
-				android:layout_toRightOf="@+id/rpm"
-				android:layout_alignTop="@+id/rpm"
-				android:textSize="20dp"
-				android:layout_above="@+id/SpeedBar"
-				android:textStyle="bold"
-				/>
-
-			<com.driven.rowan.drivenbluetooth.DataBar
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				class="com.driven.rowan.drivenbluetooth.DataBar"
-				android:id="@+id/SpeedBar"
-				android:layout_alignLeft="@+id/speed"
-				android:layout_alignBottom="@+id/ThrottleBar"
-				android:layout_alignRight="@+id/speed"
-				android:layout_alignParentStart="false"
-				android:layout_alignParentLeft="false"
-				android:layout_alignTop="@+id/ThrottleBar"
-				custom:BarColor="#ffff5358"
-				custom:min="0"
-				custom:max="50"
-				custom:xWidth="@integer/databar_xWidth"/ -->
-		</RelativeLayout>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:id="@+id/previousLapTime"
+			android:layout_below="@+id/LapTimer"
+			android:layout_alignStart="@+id/LapTimer"/>
 
 	</RelativeLayout>
 

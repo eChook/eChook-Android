@@ -13,8 +13,8 @@ import com.jjoe64.graphview.series.DataPoint;
 
 /* This class should only be used by posting to the UI thread */
 public class UIUpdateRunnable implements Runnable {
-	private volatile boolean stopWorker = false;
 
+	@Override
 	public void run() {
 		UpdateBTStatus();
 		UpdateFileSize();

@@ -2,6 +2,8 @@ package com.ben.drivenbluetooth.util;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -25,16 +27,79 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	public static GoogleApiClient GoogleApi;
 	public Location CurrentLocation;
 	public Location PreviousLocation;
-	public String mLastUpdateTime;
-	public Boolean mRequestingLocationUpdates = true;
-	private LocationRequest mLocationRequest;
-	private ArrayList<Location> InitialRaceDataPoints = new ArrayList<>();
-	public PolylineOptions pathHistory = new PolylineOptions();
-	public RaceObserver myRaceObserver;
 
+	public String mLastUpdateTime;
+	public PolylineOptions pathHistory = new PolylineOptions();		// polyline for drawing paths on the map
+	public RaceObserver myRaceObserver = null;
+	private LocationRequest mLocationRequest;
+	private ArrayList<Location> InitialRaceDataPoints = new ArrayList<>();	// store the first few location points to calculate start position and bearing
+	private boolean storePointsIntoInitialArray = false;	// flag to write locations to the above array or not
+	private Double minLocationAccuracy = 20.0; // minimum location accuracy for calculating initial bearing
+	private boolean CrossStartFinishLineTriggerEnabled = true;	// used for the timeout to make sure we don't get excessive triggers firing if the location is slightly erratic
+
+	/*===================*/
+	/* DRIVENLOCATION
+	/*===================*/
 	public DrivenLocation() {
 		createLocationRequest();
 		buildGoogleApiClient();
+	}
+
+	/*===================*/
+	/* GOOGLE API CLIENT
+	/*===================*/
+	@Override
+	public void onConnected(Bundle connectionHint) {
+		if (Global.LocationStatus == Global.LOCATION.ENABLED) {
+			startLocationUpdates();
+		}
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult result) {
+		// Refer to the javadoc for ConnectionResult to see what error codes might be returned in
+		// onConnectionFailed.
+	}
+
+	@Override
+	public void onConnectionSuspended(int cause) {
+		// The connection to Google Play services was lost for some reason. We call connect() to
+		// attempt to re-establish the connection.
+		//Log.i(TAG, "Connection suspended");
+		GoogleApi.connect();
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		PreviousLocation = CurrentLocation;
+		CurrentLocation = location;
+		if (storePointsIntoInitialArray && InitialRaceDataPoints.size() < 5) {
+			InitialRaceDataPoints.add(location);
+		}
+
+		Global.Latitude = location.getLatitude();
+		Global.Longitude = location.getLongitude();
+		Global.Altitude = location.getAltitude();
+
+		if (location.hasBearing()) {
+			Global.Bearing = (double) location.getBearing();
+		}
+
+		Global.SpeedGPS = (double) location.getSpeed();
+		Global.GPSTime = (double) location.getTime();
+		Global.Accuracy = (double) location.getAccuracy();
+
+		if (CurrentLocation != null && PreviousLocation != null) {
+			Global.DeltaDistance = _calculateDistanceBetween(PreviousLocation, CurrentLocation);
+		}
+
+		mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+		Global.LocationUpdateCounter++;
+
+		_addToPathHistory(location);
+		if (myRaceObserver != null) {
+			myRaceObserver.updateLocation(location);
+		}
 	}
 
 	protected synchronized void buildGoogleApiClient() {
@@ -62,27 +127,9 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		}
 	}
 
-	@Override
-	public void onConnected(Bundle connectionHint) {
-		if (Global.Location == Global.LOCATION.ENABLED) {
-			startLocationUpdates();
-		}
-	}
-
-	@Override
-	public void onConnectionFailed(ConnectionResult result) {
-		// Refer to the javadoc for ConnectionResult to see what error codes might be returned in
-		// onConnectionFailed.
-	}
-
-	@Override
-	public void onConnectionSuspended(int cause) {
-		// The connection to Google Play services was lost for some reason. We call connect() to
-		// attempt to re-establish the connection.
-		//Log.i(TAG, "Connection suspended");
-		GoogleApi.connect();
-	}
-
+	/*===================*/
+	/* OTHER
+	/*===================*/
 	protected void startLocationUpdates() {
 		try {
 			LocationServices.FusedLocationApi.requestLocationUpdates(
@@ -91,32 +138,8 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 			Global.Latitude = CurrentLocation.getLatitude();
 			Global.Longitude = CurrentLocation.getLongitude();
 		} catch (Exception e) {
-			e.toString();
+			MainActivity.showError(e);
 		}
-	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-		PreviousLocation = CurrentLocation;
-		CurrentLocation = location;
-		Global.Latitude = location.getLatitude();
-		Global.Longitude = location.getLongitude();
-		Global.Altitude = location.getAltitude();
-		if (location.hasBearing()) {
-			Global.Bearing = (double) location.getBearing();
-		}
-		Global.SpeedGPS = (double) location.getSpeed();
-		Global.GPSTime = (double) location.getTime();
-		Global.Accuracy = (double) location.getAccuracy();
-
-		if (CurrentLocation != null && PreviousLocation != null) {
-			Global.DeltaDistance = calculateDistanceBetween(PreviousLocation, CurrentLocation);
-		}
-
-		mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-		Global.LocationUpdateCounter++;
-
-		addToPathHistory(location);
 	}
 
 	protected void stopLocationUpdates() {
@@ -124,11 +147,26 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 				GoogleApi, this);
 	}
 
-	protected float calculateDistanceBetween(Location location1, Location location2) {
+	private float _calculateDistanceBetween(Location location1, Location location2) {
 		return location1.distanceTo(location2);
 	}
 
-	private void addToPathHistory(Location loc) {
+	private void _calculateInitialBearing() {
+		Location start = null;
+		// sync not required as this function and onRaceStart() run on the same thread
+		// i.e. they cannot be called at the same time
+		for (Location _location : InitialRaceDataPoints) {
+			if (_location.getAccuracy() <= minLocationAccuracy) {
+				if (start == null) {
+					start = _location;
+				} else {
+					Global.StartFinishLineBearing = (double) start.bearingTo(_location);
+				}
+			}
+		}
+	}
+
+	private void _addToPathHistory(Location loc) {
 		if (pathHistory.getPoints().size() >= 20) {
 			this.pathHistory = null;
 			this.pathHistory = new PolylineOptions();
@@ -137,7 +175,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	}
 
 	public void update() {
-		switch (Global.Location) {
+		switch (Global.LocationStatus) {
 			case ENABLED:
 				startLocationUpdates();
 				break;
@@ -147,13 +185,49 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		}
 	}
 
+	/*===================*/
+	/* RACEOBSERVER IMPLEMENTATION
+	/*===================*/
 	@Override
 	public void onCrossStartFinishLine() {
-
+		if (CrossStartFinishLineTriggerEnabled) {
+			Global.Lap++;
+			CrossStartFinishLineTriggerEnabled = false; // disable crossing detection temporarily
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					CrossStartFinishLineTriggerEnabled = true;
+				}
+			}, 20000);
+			MainActivity.prevLapTime.setText(MainActivity.LapTimer.getText());
+			MainActivity.LapTimer.stop();
+			MainActivity.LapTimer.setBase(SystemClock.elapsedRealtime());
+			MainActivity.LapTimer.start();
+		}
 	}
 
 	@Override
 	public void onRaceStart() {
+		Global.StartFinishLineLocation = CurrentLocation;
+		InitialRaceDataPoints.add(CurrentLocation);
+		storePointsIntoInitialArray = true;
+		CrossStartFinishLineTriggerEnabled = false;	// disable crossing detection temporarily
+		// After 10 seconds of the race we want to calculate the initial direction
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				_calculateInitialBearing();
+				storePointsIntoInitialArray = false;
+				CrossStartFinishLineTriggerEnabled = true;
+			}
+		}, 20000);
+		Global.Lap++; // first lap has begun
 
+		MainActivity.LapTimer.setBase(SystemClock.elapsedRealtime());
+		MainActivity.LapTimer.start();
 	}
+	/*===================*/
+
+
+
 }
