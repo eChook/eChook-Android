@@ -3,7 +3,7 @@ package com.ben.drivenbluetooth.threads;
 import com.ben.drivenbluetooth.Global;
 
 public class RaceStartMonitor extends Thread {
-	private boolean stop = false;
+	private volatile boolean stop = false;
 	private ThrottleListener mListener;
 
 	public RaceStartMonitor(ThrottleListener listener) {
@@ -22,7 +22,7 @@ public class RaceStartMonitor extends Thread {
 	/*===================*/
 	public void run() {
 		while (!stop) {
-			if(Global.InputThrottle == 100.0) {
+			if(Global.InputThrottle >= 20.0) {
 				_fireThrottleMaxEvent();
 				this.cancel();
 			}

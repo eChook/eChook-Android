@@ -1,6 +1,5 @@
 package com.ben.drivenbluetooth;
 
-import android.app.AlarmManager;
 import android.bluetooth.BluetoothSocket;
 import android.location.Location;
 
@@ -67,7 +66,6 @@ public final class Global {
 	public static volatile Double GPSTime		=	0.0;
 	public static volatile Double Accuracy		=	0.0;
 	public static volatile float DeltaDistance	=	0;	// difference between current and previous location in meters
-	public static volatile int LocationUpdateCounter = 0;
 
 	public static volatile int Lap	= 0;
 
@@ -88,7 +86,6 @@ public final class Global {
 	/**********************/
 	public static BluetoothSocket BTSocket;
 	public static int MangledDataCount = 0;
-	public static AlarmManager AlarmManager;
 
 	/**********************/
 	/* CONSTANTS          */
@@ -113,15 +110,15 @@ public final class Global {
 
 	public static final int 	FAST_UI_UPDATE_INTERVAL = 100; // UI update interval in milliseconds
 	public static final int		SLOW_UI_UPDATE_INTERVAL	= 500;
-    public static final int 	DATA_SAVE_INTERVAL 	= 250; // save interval in milliseconds
-	public static final String 	DATA_FILE 			= "arduino.csv";
+    public static final int 	DATA_SAVE_INTERVAL 		= 250; // save interval in milliseconds
+	public static final String 	DATA_FILE 				= "arduino.csv";
 
 	public static final int BT_DATA_TIMEOUT = 2000; // Bluetooth connection timeout in milliseconds
 
 	public static final int LOCATION_INTERVAL 		= 10000; 	// Low speed location update interval in ms
 	public static final int LOCATION_FAST_INTERVAL 	= 5000;		// High speed location update interval in ms
 
-	public static final float LAP_TRIGGER_RANGE = 20.0f;  // locus around the start location to trigger a lap
+	public static final float LAP_TRIGGER_RANGE = 20f;  // locus around the start location to trigger a lap
 
 	/**********************/
 	/* SETTINGS VARIABLES */

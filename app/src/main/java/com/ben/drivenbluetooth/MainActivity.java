@@ -14,6 +14,7 @@ import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.WindowManager;
@@ -54,10 +55,10 @@ public class MainActivity
 	public static TextView myBTState;
 	public static TextView myLogging;
 
-	public static Button openBTButton;
-	public static Button startButton;
 	public static Button stopButton;
-	public static Button closeBTButton;
+
+	public static Button LaunchModeButton;
+	public static Button RaceStartButton;
 
 	public static Chronometer LapTimer;
 	public static TextView prevLapTime;
@@ -89,9 +90,9 @@ public class MainActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
 
 		/************** INITIALIZE UI ELEMENTS ************/
-		InitializeButtons();
 
 		/* OTHERS */
 		myMode 			= (TextView) findViewById(R.id.txt_Mode);
@@ -157,13 +158,6 @@ public class MainActivity
 		FragmentList.add(new FourGraphsBars());
 	}
 
-	private void InitializeButtons() {
-		openBTButton 	= (Button) findViewById(R.id.open);
-		startButton 	= (Button) findViewById(R.id.start);
-		stopButton 		= (Button) findViewById(R.id.stop);
-		closeBTButton	= (Button) findViewById(R.id.close);
-	}
-
 	public void CycleView() {
 		try {
 			FragmentManager fragmentManager = getFragmentManager();
@@ -177,10 +171,11 @@ public class MainActivity
 	}
 
 	private void ActivateLaunchMode() {
-		Location loc = new Location("");
-		loc.setLatitude(Global.Latitude);
-		loc.setLongitude(Global.Longitude);
-		myDrivenLocation.myRaceObserver.ActivateLaunchMode(loc);
+		// reset the lap timer & lap counters
+		Global.Lap = 0;
+		LapTimer.stop();
+		LapTimer.setBase(SystemClock.elapsedRealtime());
+		myDrivenLocation.ActivateLaunchMode();
 	}
 
 	/**************************************************/
@@ -241,30 +236,20 @@ public class MainActivity
 
 	public void OpenBT(View v) {
 		try {
-			myDrivenLocation.onRaceStart();
-		} catch (Exception e) {
-			showError(e);
-		}
-		/*try {
 			myBluetoothManager.findBT();
 			myBluetoothManager.openBT();
 			StartStreamReader();
 		} catch (Exception e) {
 			showMessage(e.getMessage());
-		}*/
+		}
 	}
 
 	public void CloseBT(View v) {
 		try {
-			myDrivenLocation.onCrossStartFinishLine();
-		} catch (Exception e) {
-			showError(e);
-		}
-		/*try {
 			myBluetoothManager.closeBT();
 		} catch (Exception e) {
 			showMessage(e.getMessage());
-		}*/
+		}
 	}
 
 	public void Start(View v) {
@@ -322,6 +307,14 @@ public class MainActivity
 
 	public void Cycle(View v) {
 		CycleView();
+	}
+
+	public void LaunchMode(View v) {
+		ActivateLaunchMode();
+	}
+
+	public void RaceStart(View v) {
+		myDrivenLocation.SimulateRaceStart();
 	}
 
 	/**************************************************/

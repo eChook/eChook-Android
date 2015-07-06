@@ -51,15 +51,20 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 		CheckIfCrossStartFinishLine();
 	}
 
+	public Location getMyLocation() {
+		return myLocation;
+	}
+
 	public void ActivateLaunchMode(Location startLineLocation) {
 		try {
 			bearingToStartFinishLine = myLocation.bearingTo(startLineLocation);
-			if (!myRaceStartMonitor.isAlive()) {
-				myRaceStartMonitor.start();
-				MainActivity.showMessage("Launch Mode Active", Toast.LENGTH_LONG);
-			} else {
-				MainActivity.showMessage("Launch Mode already actived!", Toast.LENGTH_LONG);
+			if (myRaceStartMonitor.isAlive()) {
+				myRaceStartMonitor.cancel();
+				myRaceStartMonitor.join(); // wait for it to finish...
+				myRaceStartMonitor = new RaceStartMonitor(this);
 			}
+			myRaceStartMonitor.start();
+			MainActivity.showMessage("Launch Mode Active", Toast.LENGTH_LONG);
 		} catch (Exception e) {
 			MainActivity.showError(e);
 		}
@@ -70,21 +75,22 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 	}
 
 	private boolean CheckIfCrossStartFinishLine_Observer() {
+		boolean retVal = false;
 		if (raceStarted) {
 			switch (Orientation) {
 				case CLOCKWISE:
 					if (previousBearingToVehicle <= bearingToStartFinishLine && currentBearingToVehicle >= bearingToStartFinishLine) {
-						return true;
+						retVal = true;
 					}
 					break;
 				case ANTICLOCKWISE:
 					if (previousBearingToVehicle >= bearingToStartFinishLine && currentBearingToVehicle <= bearingToStartFinishLine) {
-						return true;
+						retVal = true;
 					}
 					break;
 			}
 		}
-		return false;
+		return retVal;
 	}
 
 	private boolean CheckIfCrossStartFinishLine_StartVector(Location location) {

@@ -32,7 +32,7 @@
 			android:layout_alignTop="@+id/open"
 			android:layout_alignBottom="@+id/open"/>
 
-		<Button
+		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Settings"
@@ -42,21 +42,23 @@
 			android:layout_toEndOf="@+id/close"
 			android:layout_toRightOf="@+id/close"
 			android:layout_alignTop="@+id/close"
-			android:layout_alignBottom="@+id/close"/>
+			android:layout_alignBottom="@+id/close"
+			android:src="@drawable/mr_ic_settings_light"/>
 
-		<Button
+		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Start"
+			android:text="Log"
 			android:id="@+id/start"
 			android:textStyle="bold"
 			android:layout_alignParentBottom="true"
 			android:layout_toLeftOf="@+id/stop"
 			android:layout_toStartOf="@+id/stop"
 			android:onClick="Start"
-			android:layout_alignTop="@+id/stop"/>
+			android:layout_alignTop="@+id/stop"
+			android:src="@drawable/mr_ic_play_light"/>
 
-		<Button
+		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Stop"
@@ -65,10 +67,11 @@
 			android:layout_alignParentRight="true"
 			android:layout_alignParentEnd="true"
 			android:onClick="Stop"
-			android:layout_alignTop="@+id/open"/>
+			android:layout_alignTop="@+id/open"
+			android:src="@drawable/mr_ic_pause_light"/>
 
 		<Button
-			android:layout_width="wrap_content"
+			android:layout_width="70dp"
 			android:layout_height="wrap_content"
 			android:text="Cycle"
 			android:id="@+id/cycle"
@@ -76,7 +79,8 @@
 			android:onClick="Cycle"
 			android:layout_toEndOf="@+id/btnSettings"
 			android:layout_alignBottom="@+id/btnSettings"
-			android:layout_alignTop="@+id/btnSettings"/>
+			android:layout_alignTop="@+id/btnSettings"
+			android:src="@drawable/mr_ic_media_route_mono_light"/>
 
 
 
@@ -179,14 +183,11 @@
 		<RelativeLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:layout_below="@+id/textView8"
 			android:gravity="center"
 			android:id="@+id/CenterView"
+			android:layout_alignParentStart="true"
 			android:layout_above="@+id/open"
-			android:layout_alignEnd="@+id/txt_Mode"
-			android:layout_alignParentLeft="true"
-			android:layout_alignParentRight="true"
-			android:layout_alignParentBottom="false" />
+			android:layout_below="@+id/textView8"/>
 
 		<Chronometer
 			android:layout_width="wrap_content"
@@ -203,6 +204,27 @@
 			android:id="@+id/previousLapTime"
 			android:layout_below="@+id/LapTimer"
 			android:layout_alignStart="@+id/LapTimer"/>
+
+		<Button
+			style="?android:attr/buttonStyleSmall"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="LM"
+			android:id="@+id/btnLaunchMode"
+			android:layout_alignParentBottom="true"
+			android:layout_toEndOf="@+id/cycle"
+			android:layout_alignTop="@+id/cycle"
+			android:onClick="LaunchMode"/>
+
+		<Button
+			style="?android:attr/buttonStyleSmall"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="RS"
+			android:id="@+id/btnRaceStart"
+			android:layout_alignTop="@+id/btnLaunchMode"
+			android:layout_toEndOf="@+id/btnLaunchMode"
+			android:onClick="RaceStart"/>
 
 	</RelativeLayout>
 

@@ -96,23 +96,14 @@ public class BTStreamReader extends Thread {
 				 *
 				 */
 
-				if (true) {
-					Global.BTState = Global.BTSTATE.DISCONNECTED;
-					DisconnectedBTRoutine();
-					latestMillis = System.currentTimeMillis();
-					try {
-						// the input stream needs to be reset
-						this.mmInStream = Global.BTSocket.getInputStream();
-					} catch (Exception e) {
-						// do nothing
-					}
-				} else {
-					MainActivity.MainActivityHandler.post(new Runnable() {
-						public void run() {
-							MainActivity.stopButton.callOnClick();
-						}
-					});
-					Global.BTReconnectAttempts = 0;
+				Global.BTState = Global.BTSTATE.DISCONNECTED;
+				DisconnectedBTRoutine();
+				latestMillis = System.currentTimeMillis();
+				try {
+					// the input stream needs to be reset
+					this.mmInStream = Global.BTSocket.getInputStream();
+				} catch (Exception e) {
+					// do nothing
 				}
 			}
 	    }

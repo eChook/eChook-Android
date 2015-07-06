@@ -1,5 +1,6 @@
 package com.ben.drivenbluetooth.util;
 
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +13,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DateFormat;
@@ -28,9 +32,9 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	public Location CurrentLocation;
 	public Location PreviousLocation;
 
-	public String mLastUpdateTime;
 	public PolylineOptions pathHistory = new PolylineOptions();		// polyline for drawing paths on the map
-	public RaceObserver myRaceObserver = null;
+	public CircleOptions ObserverLocation = new CircleOptions();		// circle for showing the observer location
+	private RaceObserver myRaceObserver = null;
 	private LocationRequest mLocationRequest;
 	private ArrayList<Location> InitialRaceDataPoints = new ArrayList<>();	// store the first few location points to calculate start position and bearing
 	private boolean storePointsIntoInitialArray = false;	// flag to write locations to the above array or not
@@ -93,9 +97,6 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 			Global.DeltaDistance = _calculateDistanceBetween(PreviousLocation, CurrentLocation);
 		}
 
-		mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-		Global.LocationUpdateCounter++;
-
 		_addToPathHistory(location);
 		if (myRaceObserver != null) {
 			myRaceObserver.updateLocation(location);
@@ -128,8 +129,16 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	}
 
 	/*===================*/
-	/* OTHER
+	/* MAIN FUNCS
 	/*===================*/
+	public void setMyRaceObserverLocation(Location loc, RaceObserver.ORIENTATION ori) {
+		myRaceObserver = new RaceObserver(loc, ori);
+		ObserverLocation = new CircleOptions()
+				.center(new LatLng(loc.getLatitude(), loc.getLongitude()))
+				.radius(5)
+				.fillColor(Color.RED);
+	}
+
 	protected void startLocationUpdates() {
 		try {
 			LocationServices.FusedLocationApi.requestLocationUpdates(
@@ -185,6 +194,15 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		}
 	}
 
+	public void ActivateLaunchMode() {
+		Global.StartFinishLineLocation = CurrentLocation;
+		myRaceObserver.ActivateLaunchMode(Global.StartFinishLineLocation);
+	}
+
+	public void SimulateRaceStart() {
+		myRaceObserver.onThrottleMax();
+	}
+
 	/*===================*/
 	/* RACEOBSERVER IMPLEMENTATION
 	/*===================*/
@@ -207,8 +225,8 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	}
 
 	@Override
+	/* This function is fired when the car is in Launch Mode and the Throttle is pushed to 100% */
 	public void onRaceStart() {
-		Global.StartFinishLineLocation = CurrentLocation;
 		InitialRaceDataPoints.add(CurrentLocation);
 		storePointsIntoInitialArray = true;
 		CrossStartFinishLineTriggerEnabled = false;	// disable crossing detection temporarily

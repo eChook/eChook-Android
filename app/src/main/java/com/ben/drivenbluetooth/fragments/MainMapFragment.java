@@ -2,6 +2,7 @@ package com.ben.drivenbluetooth.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -20,10 +21,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,6 +44,9 @@ public class MainMapFragment 	extends Fragment
 	private TextView Voltage;
 	private TextView RPM;
 	private TextView Speed;
+
+	private Polyline pathHistory;
+	private Circle ObserverLocation;
 
 	private static Timer FragmentUpdateTimer;
 
@@ -102,14 +110,28 @@ public class MainMapFragment 	extends Fragment
 			map = googleMap;
 			map.setMyLocationEnabled(true);
 			CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(new LatLng(Global.Latitude, Global.Longitude))      // Sets the center of the map to Mountain View
-					.zoom(17)                   // Sets the zoom
-					.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
+					.target(new LatLng(Global.Latitude, Global.Longitude))
+					.zoom(16)                   // Sets the zoom
+					.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to the bearing of the car
 					.tilt(30)                   // Sets the tilt of the camera to 30 degrees
 					.build();
 			map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 			map.setOnMapClickListener(this);
 			map.setOnInfoWindowClickListener(this);
+			map.getUiSettings().setMapToolbarEnabled(false);
+			pathHistory = map.addPolyline(MainActivity.myDrivenLocation.pathHistory);
+			if (ObserverLocation != null) {
+				try {
+					ObserverLocation = map.addCircle(MainActivity.myDrivenLocation.ObserverLocation);
+				} catch (NullPointerException ignored) {}
+			}
+
+			if (Global.StartFinishLineLocation != null) {
+				map.addCircle(new CircleOptions()
+						.center(new LatLng(Global.StartFinishLineLocation.getLatitude(), Global.StartFinishLineLocation.getLongitude()))
+						.radius(5)
+						.fillColor(Color.WHITE));
+			}
 		} catch (Exception e) {
 			MainActivity.showError(e);
 		}
@@ -137,17 +159,22 @@ public class MainMapFragment 	extends Fragment
 		builder.setMessage("Track orientation");
 		builder.setPositiveButton("Clockwise", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				MainActivity.myDrivenLocation.myRaceObserver = new RaceObserver(loc, RaceObserver.ORIENTATION.CLOCKWISE);
+				MainActivity.myDrivenLocation.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.CLOCKWISE);
+				map.clear();
+				ObserverLocation = map.addCircle(MainActivity.myDrivenLocation.ObserverLocation);
 			}
 		});
 		builder.setNegativeButton("Anticlockwise", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				MainActivity.myDrivenLocation.myRaceObserver = new RaceObserver(loc, RaceObserver.ORIENTATION.ANTICLOCKWISE);
+				MainActivity.myDrivenLocation.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.ANTICLOCKWISE);
+				map.clear();
+				ObserverLocation = map.addCircle(MainActivity.myDrivenLocation.ObserverLocation);
 			}
 		});
 		builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				// do nothing
+				map.clear();
+				ObserverLocation = map.addCircle(MainActivity.myDrivenLocation.ObserverLocation);
 			}
 		});
 		AlertDialog dialog = builder.create();
@@ -165,9 +192,24 @@ public class MainMapFragment 	extends Fragment
 	}
 
 	public void UpdateMap() {
-		CameraUpdate herp = CameraUpdateFactory.newLatLngZoom(new LatLng(Global.Latitude, Global.Longitude), 17);
-		map.animateCamera(herp);
-		map.addPolyline(MainActivity.myDrivenLocation.pathHistory);
+		CameraPosition cameraPosition = new CameraPosition.Builder()
+				.target(new LatLng(Global.Latitude, Global.Longitude))      // Sets the center of the map to Mountain View
+				.zoom(16)                   // Sets the zoom
+				.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
+				.tilt(30)                   // Sets the tilt of the camera to 30 degrees
+				.build();
+		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+		pathHistory.setPoints(MainActivity.myDrivenLocation.pathHistory.getPoints());
+		try {
+			ObserverLocation.setCenter(MainActivity.myDrivenLocation.ObserverLocation.getCenter());
+		} catch (NullPointerException ignored) {}			// Observerlocation has not been initialized yet so do nothing
+
+		if (Global.StartFinishLineLocation != null) {
+			map.addCircle(new CircleOptions()
+					.center(new LatLng(Global.StartFinishLineLocation.getLatitude(), Global.StartFinishLineLocation.getLongitude()))
+					.radius(5)
+					.fillColor(Color.WHITE));
+		}
 	}
 
 	private void UpdateVoltage() {

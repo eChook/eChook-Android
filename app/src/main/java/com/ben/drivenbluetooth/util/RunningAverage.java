@@ -24,4 +24,9 @@ public class RunningAverage {
 	public Double add(Double num) {
 		return average += (num - average) / ++count;
 	}
+
+	public void reset() {
+		count = 0;
+		average = 0d;
+	}
 }
