@@ -10,7 +10,7 @@
 					tools:context="com.ben.drivenbluetooth.MainActivity"
 					android:id="@+id/main">
 
-		<Button
+		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="40dp"
 			android:text="Open BT"
@@ -18,9 +18,10 @@
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentStart="true"
 			android:onClick="OpenBT"
-			android:layout_alignParentLeft="true"/>
+			android:layout_alignParentLeft="true"
+			android:src="@drawable/ic_bluetooth_connected_black_24dp"/>
 
-		<Button
+		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Close BT"
@@ -30,7 +31,8 @@
 			android:layout_toEndOf="@+id/open"
 			android:onClick="CloseBT"
 			android:layout_alignTop="@+id/open"
-			android:layout_alignBottom="@+id/open"/>
+			android:layout_alignBottom="@+id/open"
+			android:src="@drawable/ic_bluetooth_disabled_black_24dp"/>
 
 		<ImageButton
 			android:layout_width="wrap_content"
@@ -128,7 +130,8 @@
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:id="@+id/txtDataFileName"
 			android:layout_alignParentStart="true"
-			android:layout_marginRight="10dp"/>
+			android:layout_marginRight="10dp"
+			android:text="arduino.csv"/>
 
 		<TextView
 			android:layout_width="wrap_content"
@@ -137,7 +140,7 @@
 			android:id="@+id/txtDataFileSize"
 			android:layout_alignBottom="@+id/txtDataFileName"
 			android:layout_toRightOf="@+id/txtDataFileName"
-			/>
+			android:text="##kb"/>
 
 		<TextView
 			android:layout_width="wrap_content"
@@ -148,7 +151,8 @@
 			android:gravity="right"
 			android:layout_marginRight="10dp"
 			android:layout_alignParentTop="true"
-			android:layout_alignStart="@+id/btnSettings"/>
+			android:layout_alignParentStart="true"
+			android:layout_marginLeft="150dp"/>
 
 		<TextView
 			android:layout_width="wrap_content"
@@ -169,7 +173,8 @@
 			android:layout_alignTop="@+id/textView6"
 			android:layout_toRightOf="@+id/textView6"
 			android:gravity="left"
-			android:textStyle="bold"/>
+			android:textStyle="bold"
+			android:text="DISCONNECTED"/>
 
 		<TextView
 			android:layout_width="wrap_content"
@@ -178,7 +183,8 @@
 			android:id="@+id/txtLogging"
 			android:textStyle="bold"
 			android:layout_toRightOf="@+id/textView8"
-			android:layout_alignTop="@+id/textView8"/>
+			android:layout_alignTop="@+id/textView8"
+			android:text="LOGGING"/>
 
 		<RelativeLayout
 			android:layout_width="match_parent"
@@ -194,8 +200,11 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/LapTimer"
 			android:layout_alignParentTop="true"
-			android:layout_alignStart="@+id/start"
-			android:textColor="@color/secondary_text_default_material_light"/>
+			android:textColor="@color/secondary_text_default_material_light"
+			android:typeface="monospace"
+			android:textStyle="bold"
+			android:gravity="right"
+			android:layout_toLeftOf="@+id/start"/>
 
 		<TextView
 			android:layout_width="wrap_content"
@@ -203,7 +212,9 @@
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:id="@+id/previousLapTime"
 			android:layout_below="@+id/LapTimer"
-			android:layout_alignStart="@+id/LapTimer"/>
+			android:gravity="right"
+			android:layout_alignRight="@+id/LapTimer"
+			android:typeface="monospace"/>
 
 		<Button
 			style="?android:attr/buttonStyleSmall"
@@ -225,6 +236,27 @@
 			android:layout_alignTop="@+id/btnLaunchMode"
 			android:layout_toEndOf="@+id/btnLaunchMode"
 			android:onClick="RaceStart"/>
+
+		<Button
+			style="?android:attr/buttonStyleSmall"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="FL"
+			android:id="@+id/btnFinishLine"
+			android:layout_alignParentBottom="true"
+			android:layout_toEndOf="@+id/btnRaceStart"
+			android:layout_alignTop="@+id/start"
+			android:onClick="CrossFinishLine"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="##"
+			android:id="@+id/lap"
+			android:layout_alignParentTop="true"
+			android:layout_toEndOf="@+id/LapTimer"
+			android:layout_marginLeft="10dp"/>
 
 	</RelativeLayout>
 

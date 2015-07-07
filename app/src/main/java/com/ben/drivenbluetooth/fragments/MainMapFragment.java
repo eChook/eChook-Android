@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ public class MainMapFragment 	extends Fragment
 											GoogleMap.OnInfoWindowClickListener
 {
 	private GoogleMap map;
+	private MapFragment mFragment;
 
 	private TextView Current;
 	private TextView Voltage;
@@ -86,14 +88,9 @@ public class MainMapFragment 	extends Fragment
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		MapFragment mFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-		if (mFragment != null) {
-			mFragment.getMapAsync(this);
-		} else {
-			MainActivity.showMessage("Could not find map fragment", Toast.LENGTH_LONG);
-		}
+		mFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+		mFragment.getMapAsync(this);
 		InitializeDataFields();
-
 		StartFragmentUpdater();
 	}
 
@@ -106,14 +103,13 @@ public class MainMapFragment 	extends Fragment
 	@Override
 	public void onMapReady(GoogleMap googleMap) {
 		try {
-			LatLng curLoc = new LatLng(Global.Latitude, Global.Longitude);
 			map = googleMap;
 			map.setMyLocationEnabled(true);
 			CameraPosition cameraPosition = new CameraPosition.Builder()
 					.target(new LatLng(Global.Latitude, Global.Longitude))
 					.zoom(16)                   // Sets the zoom
 					.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to the bearing of the car
-					.tilt(30)                   // Sets the tilt of the camera to 30 degrees
+					//.tilt(30)                   // Sets the tilt of the camera to 30 degrees
 					.build();
 			map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 			map.setOnMapClickListener(this);
@@ -196,7 +192,7 @@ public class MainMapFragment 	extends Fragment
 				.target(new LatLng(Global.Latitude, Global.Longitude))      // Sets the center of the map to Mountain View
 				.zoom(16)                   // Sets the zoom
 				.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
-				.tilt(30)                   // Sets the tilt of the camera to 30 degrees
+				//.tilt(30)                   // Sets the tilt of the camera to 30 degrees
 				.build();
 		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 		pathHistory.setPoints(MainActivity.myDrivenLocation.pathHistory.getPoints());
@@ -272,7 +268,7 @@ public class MainMapFragment 	extends Fragment
 			}
 		};
 		FragmentUpdateTimer = new Timer();
-		FragmentUpdateTimer.schedule(mapUpdateTask, 5000, 5000);
+		FragmentUpdateTimer.schedule(mapUpdateTask, Global.MAP_UPDATE_INTERVAL, Global.MAP_UPDATE_INTERVAL);
 		FragmentUpdateTimer.schedule(fragmentUpdateTask, 0, Global.FAST_UI_UPDATE_INTERVAL);
 	}
 

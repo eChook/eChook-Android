@@ -37,6 +37,8 @@ import com.ben.drivenbluetooth.util.BluetoothManager;
 import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenLocation;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -62,6 +64,7 @@ public class MainActivity
 
 	public static Chronometer LapTimer;
 	public static TextView prevLapTime;
+	public static TextView LapNumber;
 
 	public static RandomGenerator Gen = new RandomGenerator();
 	public BTDataParser Parser = new BTDataParser(this); // can't be static because of (this)
@@ -105,6 +108,7 @@ public class MainActivity
 
 		LapTimer		= (Chronometer) findViewById(R.id.LapTimer);
 		prevLapTime		= (TextView) findViewById(R.id.previousLapTime);
+		LapNumber		= (TextView) findViewById(R.id.lap);
 
 		StartUIUpdater(0, Global.SLOW_UI_UPDATE_INTERVAL);
 
@@ -143,13 +147,11 @@ public class MainActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		myAccelerometer.update();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		myAccelerometer.stopAccelerometerData();
 	}
 
 	private void InitializeFragmentList() {
@@ -176,6 +178,7 @@ public class MainActivity
 		LapTimer.stop();
 		LapTimer.setBase(SystemClock.elapsedRealtime());
 		myDrivenLocation.ActivateLaunchMode();
+		showMessage("Launch Mode Activated - waiting for throttle input (minimum 20% required)", Toast.LENGTH_LONG);
 	}
 
 	/**************************************************/
@@ -189,16 +192,8 @@ public class MainActivity
 	}
 
 	public static void showMessage(String string, int length) {
-		final Toast msg = Toast.makeText(context, string, length);
+		final Toast msg = Toast.makeText(context, string, Toast.LENGTH_LONG);
 		msg.show();
-
-		if (length < 2000) {
-			MainActivityHandler.postDelayed(new Runnable() {
-				public void run() {
-					msg.cancel();
-				}
-			}, length);
-		}
 	}
 
 	public static void showError(Exception e) {
@@ -246,6 +241,7 @@ public class MainActivity
 
 	public void CloseBT(View v) {
 		try {
+			StopStreamReader();
 			myBluetoothManager.closeBT();
 		} catch (Exception e) {
 			showMessage(e.getMessage());
@@ -315,6 +311,10 @@ public class MainActivity
 
 	public void RaceStart(View v) {
 		myDrivenLocation.SimulateRaceStart();
+	}
+
+	public void CrossFinishLine(View v) {
+		myDrivenLocation.SimulateCrossStartFinishLine();
 	}
 
 	/**************************************************/

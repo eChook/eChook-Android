@@ -46,7 +46,7 @@ public final class Global {
 	public static volatile RunningAverage AverageAmps 		= new RunningAverage();
 	public static volatile RunningAverage AverageSpeedMPH 	= new RunningAverage();
 
-	public static 			int							maxGraphDataPoints	=	15 * 1000 / 250;
+	public static 			int							maxGraphDataPoints	=	30 * 1000 / 250;
 	public static 			float 						GraphTimeStamp 		=	0.0f;
 	public static volatile 	LineGraphSeries<DataPoint> 	ThrottleHistory		=	new LineGraphSeries<>();
 	public static volatile 	LineGraphSeries<DataPoint> 	AmpsHistory			=	new LineGraphSeries<>();
@@ -115,10 +115,12 @@ public final class Global {
 
 	public static final int BT_DATA_TIMEOUT = 2000; // Bluetooth connection timeout in milliseconds
 
-	public static final int LOCATION_INTERVAL 		= 10000; 	// Low speed location update interval in ms
-	public static final int LOCATION_FAST_INTERVAL 	= 5000;		// High speed location update interval in ms
+	public static final int LOCATION_INTERVAL 		= 2000; 	// Low speed location update interval in ms
+	public static final int LOCATION_FAST_INTERVAL 	= 1000;		// High speed location update interval in ms
 
 	public static final float LAP_TRIGGER_RANGE = 20f;  // locus around the start location to trigger a lap
+
+	public static final int MAP_UPDATE_INTERVAL = 5000;
 
 	/**********************/
 	/* SETTINGS VARIABLES */

@@ -165,9 +165,6 @@ public class DataToCsvFile extends Thread {
 		// This function holds the references to each value which needs to be reset when they are
 		// written to file, e.g. accelerometer, delta distances
 		Global.DeltaDistance = 0;
-		Global.Gx = 0;
-		Global.Gy = 0;
-		Global.Gz = 0;
 	}
 
 	public void cancel() {

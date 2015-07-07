@@ -64,10 +64,24 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 				myRaceStartMonitor = new RaceStartMonitor(this);
 			}
 			myRaceStartMonitor.start();
-			MainActivity.showMessage("Launch Mode Active", Toast.LENGTH_LONG);
+			MainActivity.showMessage("Launch Mode Active - waiting for throttle input (minimum 20%)", Toast.LENGTH_LONG);
 		} catch (Exception e) {
 			MainActivity.showError(e);
 		}
+	}
+
+	public void SimulateCrossStartFinishLine() {
+		switch (Orientation) {
+			case CLOCKWISE:
+				previousBearingToVehicle = bearingToStartFinishLine - 1;
+				currentBearingToVehicle = bearingToStartFinishLine + 1;
+				break;
+			case ANTICLOCKWISE:
+				previousBearingToVehicle = bearingToStartFinishLine + 1;
+				currentBearingToVehicle = bearingToStartFinishLine - 1;
+				break;
+		}
+		CheckIfCrossStartFinishLine();
 	}
 
 	private void CheckIfCrossStartFinishLine() {
@@ -76,19 +90,13 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 
 	private boolean CheckIfCrossStartFinishLine_Observer() {
 		boolean retVal = false;
-		if (raceStarted) {
-			switch (Orientation) {
-				case CLOCKWISE:
-					if (previousBearingToVehicle <= bearingToStartFinishLine && currentBearingToVehicle >= bearingToStartFinishLine) {
-						retVal = true;
-					}
-					break;
-				case ANTICLOCKWISE:
-					if (previousBearingToVehicle >= bearingToStartFinishLine && currentBearingToVehicle <= bearingToStartFinishLine) {
-						retVal = true;
-					}
-					break;
-			}
+		if (raceStarted) switch (Orientation) {
+			case CLOCKWISE:
+				retVal = previousBearingToVehicle <= bearingToStartFinishLine && currentBearingToVehicle >= bearingToStartFinishLine;
+				break;
+			case ANTICLOCKWISE:
+				retVal = previousBearingToVehicle >= bearingToStartFinishLine && currentBearingToVehicle <= bearingToStartFinishLine;
+				break;
 		}
 		return retVal;
 	}
@@ -111,16 +119,17 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 	public void onThrottleMax() {
 		_fireRaceStart();
 		raceStarted = true;
+		MainActivity.showMessage("Race start detected - lap timing has begun", Toast.LENGTH_LONG);
 	}
 
 	/*===================*/
 	/* LISTENER REGISTERING/DEREGISTERING
 	/*===================*/
-	public synchronized void addLapObserverListener(RaceObserverListener lol) {
+	public synchronized void addRaceObserverListener(RaceObserverListener lol) {
 		_listeners.add(lol);
 	}
 
-	public synchronized void removeLapObserverListener(RaceObserverListener lol) {
+	public synchronized void removeRaceObserverListener(RaceObserverListener lol) {
 		_listeners.remove(lol);
 	}
 

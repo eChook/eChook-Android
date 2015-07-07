@@ -18,6 +18,11 @@ public class UIUpdateRunnable implements Runnable {
 	public void run() {
 		UpdateBTStatus();
 		UpdateFileSize();
+		UpdateLap();
+	}
+
+	private void UpdateLap() {
+		MainActivity.LapNumber.setText("L" + Global.Lap);
 	}
 
 	private void UpdateBTStatus() {

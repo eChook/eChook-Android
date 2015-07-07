@@ -133,6 +133,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	/*===================*/
 	public void setMyRaceObserverLocation(Location loc, RaceObserver.ORIENTATION ori) {
 		myRaceObserver = new RaceObserver(loc, ori);
+		myRaceObserver.addRaceObserverListener(this);
 		ObserverLocation = new CircleOptions()
 				.center(new LatLng(loc.getLatitude(), loc.getLongitude()))
 				.radius(5)
@@ -203,24 +204,28 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		myRaceObserver.onThrottleMax();
 	}
 
+	public void SimulateCrossStartFinishLine() {
+		myRaceObserver.SimulateCrossStartFinishLine();
+	}
+
 	/*===================*/
 	/* RACEOBSERVER IMPLEMENTATION
 	/*===================*/
 	@Override
 	public void onCrossStartFinishLine() {
 		if (CrossStartFinishLineTriggerEnabled) {
-			Global.Lap++;
 			CrossStartFinishLineTriggerEnabled = false; // disable crossing detection temporarily
+			MainActivity.prevLapTime.setText(MainActivity.LapTimer.getText());
+			Global.Lap++;
+			MainActivity.LapTimer.stop();
+			MainActivity.LapTimer.setBase(SystemClock.elapsedRealtime());
+			MainActivity.LapTimer.start();
 			new Handler().postDelayed(new Runnable() {
 				@Override
 				public void run() {
 					CrossStartFinishLineTriggerEnabled = true;
 				}
 			}, 20000);
-			MainActivity.prevLapTime.setText(MainActivity.LapTimer.getText());
-			MainActivity.LapTimer.stop();
-			MainActivity.LapTimer.setBase(SystemClock.elapsedRealtime());
-			MainActivity.LapTimer.start();
 		}
 	}
 
