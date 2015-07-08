@@ -178,7 +178,6 @@ public class MainActivity
 		LapTimer.stop();
 		LapTimer.setBase(SystemClock.elapsedRealtime());
 		myDrivenLocation.ActivateLaunchMode();
-		showMessage("Launch Mode Activated - waiting for throttle input (minimum 20% required)", Toast.LENGTH_LONG);
 	}
 
 	/**************************************************/

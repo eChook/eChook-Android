@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.ben.drivenbluetooth.util.ColorHelper;
 import com.ben.drivenbluetooth.util.DataBar;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -153,6 +154,7 @@ public class FourGraphsBars extends Fragment {
 	private void UpdateVoltage() {
 		try {
 			this.Voltage.setText(String.format("%.2f", Global.Volts));
+			this.Voltage.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
 			this.VoltageBar.setValue(Global.Volts);
 		} catch (Exception e) {
 			e.getMessage();
@@ -162,6 +164,7 @@ public class FourGraphsBars extends Fragment {
 	private void UpdateCurrent() {
 		try {
 			this.Current.setText(String.format("%.1f", Global.Amps));
+			this.Current.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
 			this.CurrentBar.setValue(Global.Amps);
 		} catch (Exception e) {
 			e.getMessage();
@@ -187,6 +190,7 @@ public class FourGraphsBars extends Fragment {
 	private void UpdateMotorRPM() {
 		try {
 			this.RPM.setText(String.format("%.0f", Global.MotorRPM));
+			this.RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
 			this.RPMBar.setValue(Global.MotorRPM);
 		} catch (Exception e) {
 			e.getMessage();

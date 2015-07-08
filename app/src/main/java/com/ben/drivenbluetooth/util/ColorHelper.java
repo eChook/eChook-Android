@@ -1,28 +1,61 @@
 package com.ben.drivenbluetooth.util;
 
-/**
- * Created by bnagy4 on 07/07/2015.
- */
+import android.graphics.Color;
+
 public final class ColorHelper {
-	private static final Double AMPS_LOWER = 30d;
-	private static final Double AMPS_UPPER = 40d;
+	private static final int AMPS_LOW 		= 10;
+	private static final int AMPS_ECO 		= 25;
+	private static final int AMPS_HIGH 		= 30;
 
-	private static final Double VOLTAGE_UPPER = 26d;
-	private static final Double VOLTAGE_LOWER = 15d;
+	private static final int VOLTAGE_UPPER 	= 24;
+	private static final int VOLTAGE_LOWER 	= 15;
 
-	private static final Double RPM_LOW = 1400d;
-	private static final Double RPM_ECO = 1800d;
-	private static final Double RPM_HIGH = 3000d;
+	private static final int RPM_LOW 		= 1400;
+	private static final int RPM_ECO 		= 1800;
+	private static final int RPM_HIGH 		= 3000;
 
-	public static void GetAmpsColor(Double amps) {
+	private static final float GOOD 		= 120; 	// 120 deg of Hue = Green
+	private static final float BAD 			= 0; 	// 0 deg of Hue = Red
+	private static final float VALUE 		= 0.7f; // slightly dark
+	private static final float SATURATION	= 0.5f; // somewhat washed-out
 
+	public static int GetAmpsColor(Double amps) {
+		float hue;
+		if (amps >= AMPS_HIGH || amps <= AMPS_LOW) {
+			hue = BAD;
+		} else if (amps == AMPS_ECO) {
+			hue = GOOD;
+		} else if (amps < AMPS_ECO) {
+			hue = (amps.floatValue() - AMPS_LOW) / (AMPS_ECO - AMPS_LOW) * (GOOD - BAD) + BAD;
+		} else {
+			hue = (amps.floatValue() - AMPS_ECO) / (AMPS_HIGH - AMPS_ECO) * (GOOD - BAD) + BAD;
+		}
+		return Color.HSVToColor(new float[]{hue, SATURATION, VALUE});
 	}
 
-	public static void GetVoltsColor(Double volts) {
-
+	public static int GetVoltsColor(Double volts) {
+		float hue;
+		if (volts >= VOLTAGE_UPPER) {
+			hue = BAD;
+		} else if (volts <= VOLTAGE_LOWER) {
+			hue = GOOD;
+		} else {
+			hue = (volts.floatValue() - VOLTAGE_LOWER) / (VOLTAGE_UPPER - VOLTAGE_LOWER) * (GOOD - BAD) + BAD;
+		}
+		return Color.HSVToColor(new float[]{hue, SATURATION, VALUE});
 	}
 
-	public static void GetRPMColor(Double rpm) {
-
+	public static int GetRPMColor(Double rpm) {
+		float hue;
+		if (rpm >= RPM_HIGH || rpm <= RPM_LOW) {
+			hue = BAD;
+		} else if (rpm == RPM_ECO) {
+			hue = GOOD;
+		} else if (rpm < RPM_ECO) {
+			hue = (rpm.floatValue() - RPM_LOW) / (RPM_ECO - RPM_LOW) * (GOOD - BAD) + BAD;
+		} else {
+			hue = (rpm.floatValue() - RPM_ECO) / (RPM_HIGH - RPM_ECO) * (GOOD - BAD) + BAD;
+		}
+		return Color.HSVToColor(new float[]{hue, SATURATION, VALUE});
 	}
 }

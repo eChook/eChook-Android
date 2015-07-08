@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
+import com.ben.drivenbluetooth.util.ColorHelper;
 import com.ben.drivenbluetooth.util.DataBar;
 import com.jjoe64.graphview.GraphView;
 
@@ -185,6 +186,7 @@ public class SixGraphsBars extends Fragment {
 	private void UpdateVoltage() {
 		try {
 			Voltage.setText(String.format("%.2f", Global.Volts));
+			Voltage.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
 			VoltageBar.setValue(Global.Volts);
 		} catch (Exception e) {
 			e.toString();
@@ -194,6 +196,7 @@ public class SixGraphsBars extends Fragment {
 	private void UpdateCurrent() {
 		try {
 			Current.setText(String.format("%.1f", Global.Amps));
+			Current.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
 			CurrentBar.setValue(Global.Amps);
 		} catch (Exception e) {
 			e.toString();
@@ -261,6 +264,7 @@ public class SixGraphsBars extends Fragment {
 	private void UpdateMotorRPM() {
 		try {
 			RPM.setText(String.format("%.0f", Global.MotorRPM));
+			RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
 			RPMBar.setValue(Global.MotorRPM);
 		} catch (Exception e) {
 			e.toString();

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ben.drivenbluetooth.drivenbluetooth" >
-
-    <uses-sdk android:minSdkVersion="17" />
+<manifest   xmlns:android="http://schemas.android.com/apk/res/android"
+            package="com.ben.drivenbluetooth.drivenbluetooth">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -19,10 +17,6 @@
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
-
-    <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyA1dSQ-7A4Q27qiqg95maFncNgNv9h5R4I" />
 
     <application
         android:allowBackup="true"
@@ -54,8 +48,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/google_maps_key" />
-
+            android:value="AIzaSyBpcKddfAxD9ESmg4lLPLOmbzguagX5_pY" />
     </application>
 
 </manifest>
