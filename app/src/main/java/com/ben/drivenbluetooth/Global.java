@@ -3,10 +3,12 @@ package com.ben.drivenbluetooth;
 import android.bluetooth.BluetoothSocket;
 import android.location.Location;
 
+import com.ben.drivenbluetooth.util.LapData;
 import com.ben.drivenbluetooth.util.RunningAverage;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -43,8 +45,10 @@ public final class Global {
 	public static volatile Double TempC3 			= 	0.0;
 	public static volatile Double GearRatio			=	0.0;
 
-	public static volatile RunningAverage AverageAmps 		= new RunningAverage();
-	public static volatile RunningAverage AverageSpeedMPH 	= new RunningAverage();
+	public static volatile ArrayList<LapData> LapDataList = new ArrayList<>();
+
+	public static volatile RunningAverage AverageAmps 		= new RunningAverage(2);
+	public static volatile RunningAverage AverageSpeedMPH 	= new RunningAverage(1);
 
 	public static 			int							maxGraphDataPoints	=	30 * 1000 / 250;
 	public static 			float 						GraphTimeStamp 		=	0.0f;

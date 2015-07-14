@@ -3,10 +3,12 @@ package com.ben.drivenbluetooth.util;
 public class RunningAverage {
 	private long count;
 	private Double average;
+	private int acc;
 
-	public RunningAverage() {
+	public RunningAverage(int accuracy) {
 		count = 0;
 		average = 0.0;
+		acc = accuracy;
 	}
 
 	public Double add(int num) {
@@ -28,5 +30,14 @@ public class RunningAverage {
 	public void reset() {
 		count = 0;
 		average = 0d;
+	}
+
+	public Double getAverage() {
+		return average;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%." + acc + "f", average);
 	}
 }

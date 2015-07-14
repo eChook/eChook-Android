@@ -17,7 +17,7 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 	private float bearingToStartFinishLine;
 	private float currentBearingToVehicle;
 	private float previousBearingToVehicle;
-	private boolean raceStarted = false;
+	private volatile boolean raceStarted = false;
 
 	private List<RaceObserverListener> _listeners = new ArrayList<>();
 
@@ -110,6 +110,14 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 			}
 		}
 		return false;
+	}
+
+	public float getCurrentBearingToVehicle() {
+		return currentBearingToVehicle;
+	}
+
+	public float getBearingToStartFinishLine() {
+		return bearingToStartFinishLine;
 	}
 
 	/*===================*/

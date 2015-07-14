@@ -84,38 +84,6 @@
 			android:layout_alignTop="@+id/btnSettings"
 			android:src="@drawable/mr_ic_media_route_mono_light"/>
 
-
-
-
-
-		<!-- **************************	-->
-		<!--		 THROTTLE			-->
-		<!-- **************************	-->
-
-		<!-- **************************	-->
-		<!--		 VOLTAGE			-->
-		<!-- **************************	-->
-
-		<!-- **************************	-->
-		<!--		 CURRENT			-->
-		<!-- **************************	-->
-
-		<!-- **************************	-->
-		<!--		 TEMP 1				-->
-		<!-- **************************	-->
-
-		<!-- **************************	-->
-		<!--		 RPM				-->
-		<!-- **************************	-->
-
-		<!-- **************************	-->
-		<!--		 SPEED				-->
-		<!-- **************************	-->
-
-		<!-- **************************	-->
-		<!--		 something				-->
-		<!-- **************************	-->
-
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -204,7 +172,8 @@
 			android:typeface="monospace"
 			android:textStyle="bold"
 			android:gravity="right"
-			android:layout_toLeftOf="@+id/start"/>
+			android:layout_toLeftOf="@+id/start"
+			/>
 
 		<TextView
 			android:layout_width="wrap_content"
@@ -257,6 +226,16 @@
 			android:layout_alignParentTop="true"
 			android:layout_toEndOf="@+id/LapTimer"
 			android:layout_marginLeft="10dp"/>
+
+		<TextClock
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/textClock"
+			android:layout_alignParentTop="true"
+			android:layout_toEndOf="@+id/txtBTState"
+			android:layout_marginLeft="20dp"
+			android:textStyle="bold"
+			android:textSize="20dp"/>
 
 	</RelativeLayout>
 

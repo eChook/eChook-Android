@@ -4,12 +4,20 @@ android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
 
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.outputFile = new File(
+                    output.outputFile.parent,
+                    output.outputFile.name.replace(".apk", "-${variant.versionName}.apk"))
+        }
+    }
+
     defaultConfig {
         applicationId "com.ben.drivenbluetooth"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.12"
     }
     buildTypes {
         release {
@@ -18,6 +26,7 @@ android {
         }
 
         debug {
+            versionNameSuffix "dev"
             debuggable true
         }
     }

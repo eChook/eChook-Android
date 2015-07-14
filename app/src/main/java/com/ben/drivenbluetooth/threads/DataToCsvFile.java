@@ -16,17 +16,6 @@ public class DataToCsvFile extends Thread {
 	private File f;
 	private FileOutputStream oStream;
 
-	/********* SAVING DATA TO FILE **********/
-
-	/** NEW PROCESS **/
-	/**
-	 * All of the variables are now stored as a global Double which is updated by the parser
-	 *
-	 * Every save interval the logger will write each variable to a common file. The save interval
-	 * generates the timestamp, it is NOT generated when the data is received. There may be a delay
-	 * between the actual values though it is negligible
-	 */
-
 	private volatile boolean stopWorker = false;
 
 	public DataToCsvFile() {

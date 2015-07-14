@@ -197,15 +197,25 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 
 	public void ActivateLaunchMode() {
 		Global.StartFinishLineLocation = CurrentLocation;
-		myRaceObserver.ActivateLaunchMode(Global.StartFinishLineLocation);
-	}
-
-	public void SimulateRaceStart() {
-		myRaceObserver.onThrottleMax();
+		if (myRaceObserver != null) {
+			myRaceObserver.ActivateLaunchMode(Global.StartFinishLineLocation);
+		} else {
+			MainActivity.showMessage("Warning: Observer not defined - cannot activate launch mode!");
+		}
 	}
 
 	public void SimulateCrossStartFinishLine() {
 		myRaceObserver.SimulateCrossStartFinishLine();
+	}
+
+	public float GetRaceObserverBearing_Current() {
+		if (myRaceObserver != null) return myRaceObserver.getCurrentBearingToVehicle();
+		return 0f;
+	}
+
+	public float GetRaceObserverBearing_SFL() {
+		if (myRaceObserver != null) return myRaceObserver.getBearingToStartFinishLine();
+		return 0f;
 	}
 
 	/*===================*/
@@ -216,6 +226,8 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		if (CrossStartFinishLineTriggerEnabled) {
 			CrossStartFinishLineTriggerEnabled = false; // disable crossing detection temporarily
 			MainActivity.prevLapTime.setText(MainActivity.LapTimer.getText());
+			Global.LapDataList.add(new LapData());
+			Global.LapDataList.get(Global.LapDataList.size() - 2).lapTime = MainActivity.LapTimer.getText().toString(); // set previous lap time
 			Global.Lap++;
 			MainActivity.LapTimer.stop();
 			MainActivity.LapTimer.setBase(SystemClock.elapsedRealtime());
@@ -244,6 +256,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 				CrossStartFinishLineTriggerEnabled = true;
 			}
 		}, 20000);
+		Global.LapDataList.add(new LapData());
 		Global.Lap++; // first lap has begun
 
 		MainActivity.LapTimer.setBase(SystemClock.elapsedRealtime());

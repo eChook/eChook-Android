@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,85 +15,88 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * Created by Rowan on 06/03/2015.
- */
-public final class BluetoothManager extends MainActivity {
+public final class BluetoothManager {
 
     private static BluetoothAdapter mBluetoothAdapter;
     private static BluetoothSocket mmSocket;
     private static BluetoothDevice mmDevice;
 
+	private static BluetoothEvents mListener;
+
 	private boolean deviceConnected = false;
     private boolean matchingDeviceFound = false;
 
-    String TAG = "DBDebug - BtManager";
+	public interface BluetoothEvents {
+		void onBluetoothConnected(BluetoothSocket BTSocket);
+		void onFailConnection();
+		void onBluetoothDisabled();
+	}
 
-    //_____________________________________________________________________________FIND BT
+	public void setBluetoothEventsListener(BluetoothEvents BE) {
+		mListener = BE;
+	}
+
     public void findBT() {
-
-		Log.d(TAG, "Entering FindBT");
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        Log.d(TAG, "FindBT before If");
-
-        mBluetoothAdapter.cancelDiscovery();
-
-        if(mBluetoothAdapter == null) {
-            Log.d(TAG, "Entering BT Adapter == null");
-        }
+		mBluetoothAdapter.cancelDiscovery();
 
         if(!mBluetoothAdapter.isEnabled()) {
+            mListener.onBluetoothDisabled();
+			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-            Log.d(TAG, "Attempting to enable BT Adapter");
-            Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBluetooth, 0);
+			if(!mBluetoothAdapter.isEnabled()) {
+				MainActivity.showMessage("Bluetooth adapter not enabled");
+				return;
+			}
         }
-
-        Log.d(TAG, "Attempting to get bonded devices");
 
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 
-        Log.d(TAG, "Got bonded devices");
-
-        Log.d(TAG, "Returned " + pairedDevices.size() + " Devices");
-
         if(pairedDevices.size() > 0) {
             for(BluetoothDevice device : pairedDevices) {
-
-                Log.d(TAG, "Checking Name "+ device.getName());
-
-                if(device.getName().equals(Global.BTDeviceName)) { //TODO Handle scenario where device is not paired to phone
-
-                    Log.d(TAG, "Device Matching Name Found");
+                if(device.getName().equals(Global.BTDeviceName)) {
                     matchingDeviceFound = true;
                     mmDevice = device;
-                    break;
+                    return;
                 }
             }
         }
-        Log.d(TAG, "Bluetooth Device Found " + mmDevice.getName());
+
+		// if we have reached this point then we could not find a device
+		MainActivity.showMessage(Global.BTDeviceName + " is not paired with this phone. Please open Settings and pair the device first");
     }
 
-    //_____________________________________________________________________________OPEN BT
-    //TODO Set this to open in a separate thread
-    public void openBT() throws IOException {
-        if(matchingDeviceFound) {
+    public void openBT() {
+		if (matchingDeviceFound) {
+			Global.BTState = Global.BTSTATE.CONNECTING;
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard //SerialPortService ID
+					try {
+						mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 
-            UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard //SerialPortService ID
-            mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+					mBluetoothAdapter.cancelDiscovery();
 
-			mBluetoothAdapter.cancelDiscovery();
-			Global.BTSocket = mmSocket;
-			Global.BTSocket.connect();
+					try {
+						mmSocket.connect();
 
-            deviceConnected = true;
-			Global.BTState = Global.BTSTATE.CONNECTED;
-        } else {
-            MainActivity.showMessage("Could not find a matching device", Toast.LENGTH_LONG);
-        }
+						// if we have reached here then the connection was successful
+						mListener.onBluetoothConnected(mmSocket);
+					} catch (IOException e) {
+						try {
+							mmSocket.close();
+						} catch (IOException ignored) {}
+						mListener.onFailConnection();
+					}
+				}
+			}).start();
+		}
     }
 
-    //_____________________________________________________________________________CLOSE BT
     public void closeBT() throws IOException {
 		if (deviceConnected) {
             mmSocket.close();

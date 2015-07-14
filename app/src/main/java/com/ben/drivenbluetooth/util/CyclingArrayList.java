@@ -3,9 +3,6 @@ package com.ben.drivenbluetooth.util;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * Created by BNAGY4 on 24/06/2015.
- */
 public class CyclingArrayList<E> extends ArrayList<E> {
 
 	private int selectedItem = -1;
@@ -23,12 +20,17 @@ public class CyclingArrayList<E> extends ArrayList<E> {
 	}
 
 	public E cycle() {
-		if (++selectedItem < size()) {
-			return get(selectedItem);
-		} else {
+		if (++selectedItem >= size()) {
 			selectedItem = 0;
-			return get(selectedItem);
 		}
+		return get(selectedItem);
+	}
+
+	public E reverseCycle() {
+		if (--selectedItem < 0) {
+			selectedItem = size() - 1;
+		}
+		return get(selectedItem);
 	}
 
 	public E getActiveElement() {

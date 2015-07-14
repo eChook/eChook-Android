@@ -1,31 +1,33 @@
 package com.ben.drivenbluetooth;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.SensorManager;
-import android.location.Location;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.ben.drivenbluetooth.fragments.FourGraphsBars;
-import com.ben.drivenbluetooth.fragments.MainMapFragment;
+import com.ben.drivenbluetooth.fragments.LapHistoryFragment;
+import com.ben.drivenbluetooth.fragments.RaceMapFragment;
 import com.ben.drivenbluetooth.fragments.SettingsFragment;
 import com.ben.drivenbluetooth.fragments.SixGraphsBars;
 import com.ben.drivenbluetooth.threads.BTDataParser;
@@ -36,8 +38,7 @@ import com.ben.drivenbluetooth.util.Accelerometer;
 import com.ben.drivenbluetooth.util.BluetoothManager;
 import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenLocation;
-
-import org.w3c.dom.Text;
+import com.ben.drivenbluetooth.util.UIUpdateRunnable;
 
 import java.io.File;
 import java.util.Timer;
@@ -46,8 +47,8 @@ import java.util.TimerTask;
 
 public class MainActivity
 		extends 	Activity
-		implements BTDataParser.BTDataParserListener
-{
+		implements	BTDataParser.BTDataParserListener,
+					BluetoothManager.BluetoothEvents {
 
 	public static TextView myMode;
 
@@ -56,11 +57,6 @@ public class MainActivity
 
 	public static TextView myBTState;
 	public static TextView myLogging;
-
-	public static Button stopButton;
-
-	public static Button LaunchModeButton;
-	public static Button RaceStartButton;
 
 	public static Chronometer LapTimer;
 	public static TextView prevLapTime;
@@ -86,7 +82,9 @@ public class MainActivity
 
 	/**************************************************/
 	/**************** MAINACTIVITY ONCREATE ***********/
-	/**************************************************/
+	/**
+	 * **********************************************
+	 */
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -98,19 +96,19 @@ public class MainActivity
 		/************** INITIALIZE UI ELEMENTS ************/
 
 		/* OTHERS */
-		myMode 			= (TextView) findViewById(R.id.txt_Mode);
+		myMode = (TextView) findViewById(R.id.txt_Mode);
 
-		myDataFileName	= (TextView) findViewById(R.id.txtDataFileName);
-		myDataFileSize	= (TextView) findViewById(R.id.txtDataFileSize);
+		myDataFileName = (TextView) findViewById(R.id.txtDataFileName);
+		myDataFileSize = (TextView) findViewById(R.id.txtDataFileSize);
 
-		myBTState		= (TextView) findViewById(R.id.txtBTState);
-		myLogging		= (TextView) findViewById(R.id.txtLogging);
+		myBTState = (TextView) findViewById(R.id.txtBTState);
+		myLogging = (TextView) findViewById(R.id.txtLogging);
 
-		LapTimer		= (Chronometer) findViewById(R.id.LapTimer);
-		prevLapTime		= (TextView) findViewById(R.id.previousLapTime);
-		LapNumber		= (TextView) findViewById(R.id.lap);
+		LapTimer = (Chronometer) findViewById(R.id.LapTimer);
+		prevLapTime = (TextView) findViewById(R.id.previousLapTime);
+		LapNumber = (TextView) findViewById(R.id.lap);
 
-		StartUIUpdater(0, Global.SLOW_UI_UPDATE_INTERVAL);
+		StartUIUpdater();
 
 		InitializeGlobalSettings();
 
@@ -130,6 +128,8 @@ public class MainActivity
 		InitializeFragmentList();
 		CycleView();
 		StartDataParser();
+
+		myBluetoothManager.setBluetoothEventsListener(this);
 	}
 
 	@Override
@@ -154,10 +154,25 @@ public class MainActivity
 		super.onPause();
 	}
 
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		if (hasFocus) {
+			this.getWindow().getDecorView().setSystemUiVisibility(
+					View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+							| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+							| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+							| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+							| View.SYSTEM_UI_FLAG_FULLSCREEN
+							| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+		}
+	}
+
 	private void InitializeFragmentList() {
-		FragmentList.add(new MainMapFragment());
+		FragmentList.add(new RaceMapFragment());
 		FragmentList.add(new SixGraphsBars());
 		FragmentList.add(new FourGraphsBars());
+		FragmentList.add(new LapHistoryFragment());
 	}
 
 	public void CycleView() {
@@ -165,6 +180,18 @@ public class MainActivity
 			FragmentManager fragmentManager = getFragmentManager();
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			Fragment fragment = FragmentList.cycle();
+			fragmentTransaction.replace(R.id.CenterView, fragment);
+			fragmentTransaction.commit();
+		} catch (Exception e) {
+			e.getMessage();
+		}
+	}
+
+	public void CycleViewReverse() {
+		try {
+			FragmentManager fragmentManager = getFragmentManager();
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			Fragment fragment = FragmentList.reverseCycle();
 			fragmentTransaction.replace(R.id.CenterView, fragment);
 			fragmentTransaction.commit();
 		} catch (Exception e) {
@@ -182,11 +209,12 @@ public class MainActivity
 
 	/**************************************************/
 	/**************** TOASTER          ****************/
-	/**************************************************/
+	/**
+	 * **********************************************
+	 */
 
-	public void showMessage(String theMsg) {
-		Toast msg = Toast.makeText(getBaseContext(),
-				theMsg, (Toast.LENGTH_LONG));
+	public static void showMessage(String theMsg) {
+		Toast msg = Toast.makeText(context, theMsg, (Toast.LENGTH_LONG));
 		msg.show();
 	}
 
@@ -196,12 +224,14 @@ public class MainActivity
 	}
 
 	public static void showError(Exception e) {
-		showMessage(e.getMessage(),Toast.LENGTH_LONG);
+		showMessage(e.getMessage(), Toast.LENGTH_LONG);
 	}
 
 	/**************************************************/
 	/**************** SETTINGS         ****************/
-	/**************************************************/
+	/**
+	 * **********************************************
+	 */
 
 	private void InitializeGlobalSettings() {
 		// Initialize the settings variables
@@ -226,7 +256,9 @@ public class MainActivity
 
 	/**************************************************/
 	/**************** BUTTON LISTENERS ****************/
-	/**************************************************/
+	/**
+	 * **********************************************
+	 */
 
 	public void OpenBT(View v) {
 		try {
@@ -301,24 +333,55 @@ public class MainActivity
 	}
 
 	public void Cycle(View v) {
-		CycleView();
+		byte[] cyclepacket = new byte[5];
+		cyclepacket[0] = Global.STARTBYTE;
+		cyclepacket[1] = Global.CYCLE_VIEW_ID;
+		cyclepacket[2] = 0;
+		cyclepacket[3] = 0;
+		cyclepacket[4] = Global.STOPBYTE;
+		Global.BTStreamQueue.add(cyclepacket);
+		BTDataParser.mHandler.sendEmptyMessage(0);
 	}
 
 	public void LaunchMode(View v) {
-		ActivateLaunchMode();
+		byte[] cyclepacket = new byte[5];
+		cyclepacket[0] = Global.STARTBYTE;
+		cyclepacket[1] = Global.LAUNCH_MODE_ID;
+		cyclepacket[2] = 0;
+		cyclepacket[3] = 0;
+		cyclepacket[4] = Global.STOPBYTE;
+		Global.BTStreamQueue.add(cyclepacket);
+		BTDataParser.mHandler.sendEmptyMessage(0);
 	}
 
 	public void RaceStart(View v) {
-		myDrivenLocation.SimulateRaceStart();
+		Global.InputThrottle = 100d;
 	}
 
 	public void CrossFinishLine(View v) {
 		myDrivenLocation.SimulateCrossStartFinishLine();
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (event.getKeyCode()) {
+			case KeyEvent.KEYCODE_VOLUME_UP:
+				CycleView();
+				return true;
+			case KeyEvent.KEYCODE_VOLUME_DOWN:
+				CycleViewReverse();
+				return true;
+
+			default:
+				return super.onKeyDown(keyCode, event);
+		}
+	}
+
 	/**************************************************/
 	/**************** THREADS          ****************/
-	/**************************************************/
+	/**
+	 * **********************************************
+	 */
 
 	private void StartRaceMode() {
 		StartStreamReader();
@@ -381,14 +444,14 @@ public class MainActivity
 		}
 	}
 
-	private void StartUIUpdater(int delay, int uiUpdateInterval) {
+	private void StartUIUpdater() {
 		TimerTask UIUpdateTask = new TimerTask() {
 			public void run() {
 				MainActivityHandler.post(new UIUpdateRunnable());
 			}
 		};
 		UIUpdateTimer = new Timer();
-		UIUpdateTimer.schedule(UIUpdateTask, delay, uiUpdateInterval);
+		UIUpdateTimer.schedule(UIUpdateTask, 0, Global.SLOW_UI_UPDATE_INTERVAL);
 	}
 
 	private void StopDataSaver() {
@@ -411,7 +474,9 @@ public class MainActivity
 
 	/**************************************************/
 	/**************** OTHER SHIT          *************/
-	/**************************************************/
+	/**
+	 * **********************************************
+	 */
 
 	public static Context getAppContext() {
 		return MainActivity.context;
@@ -426,15 +491,62 @@ public class MainActivity
 
 	/**************************************************/
 	/**************** BTDATAPARSER IMPLEMENTATION *****/
-	/**************************************************/
+	/**
+	 * **********************************************
+	 */
 
 	@Override
 	public void onCycleViewPacket() {
-		CycleView();
+		MainActivityHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				CycleView();
+			}
+		});
 	}
 
 	@Override
 	public void onActivateLaunchModePacket() {
-		ActivateLaunchMode();
+		MainActivityHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				ActivateLaunchMode();
+			}
+		});
+	}
+
+	/**************************************************/
+	/************ BLUETOOTHMANAGER IMPLEMENTATION *****/
+	/**
+	 * **********************************************
+	 */
+
+	@Override
+	public void onBluetoothConnected(final BluetoothSocket BTSocket) {
+		MainActivityHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				Global.BTSocket = BTSocket;
+				showMessage(Global.BTDeviceName + " successfully connected");
+				Global.BTState = Global.BTSTATE.CONNECTED;
+			}
+		});
+	}
+
+	@Override
+	public void onFailConnection() {
+		MainActivityHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				showMessage("Could not connect to " + Global.BTDeviceName + ". Please try again");
+				Global.BTState = Global.BTSTATE.DISCONNECTED;
+			}
+		});
+	}
+
+	@Override
+	public void onBluetoothDisabled() {
+		Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+		startActivityForResult(enableBluetooth, 0);
 	}
 }

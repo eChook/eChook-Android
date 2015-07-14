@@ -31,10 +31,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
+import org.w3c.dom.Text;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainMapFragment 	extends Fragment
+public class RaceMapFragment extends Fragment
 								implements 	OnMapReadyCallback,
 											GoogleMap.OnMapClickListener,
 											GoogleMap.OnInfoWindowClickListener
@@ -47,6 +49,9 @@ public class MainMapFragment 	extends Fragment
 	private TextView RPM;
 	private TextView Speed;
 
+	private TextView CurBearing;
+	private TextView SFLBearing;
+
 	private Polyline pathHistory;
 	private Circle ObserverLocation;
 
@@ -55,7 +60,7 @@ public class MainMapFragment 	extends Fragment
 	/*===================*/
 	/* MAINMAPFRAGMENT
 	/*===================*/
-	public MainMapFragment() {
+	public RaceMapFragment() {
 		// Required empty public constructor
 	}
 
@@ -68,15 +73,13 @@ public class MainMapFragment 	extends Fragment
 		Voltage 		= (TextView) v.findViewById(R.id.voltage);
 		RPM 			= (TextView) v.findViewById(R.id.rpm);
 		Speed 			= (TextView) v.findViewById(R.id.speed);
+		CurBearing		= (TextView) v.findViewById(R.id.txtCurBearing);
+		SFLBearing		= (TextView) v.findViewById(R.id.txtSFLBearing);
 	}
 
 	/*===================*/
 	/* LIFECYCLE
 	/*===================*/
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,6 +101,15 @@ public class MainMapFragment 	extends Fragment
 	public void onDestroyView() {
 		super.onDestroyView();
 		StopFragmentUpdater();
+
+		Current		= null;
+		Voltage		= null;
+		RPM			= null;
+		Speed		= null;
+		CurBearing 	= null;
+		SFLBearing 	= null;
+		map 		= null;
+		mFragment	= null;
 	}
 
 	@Override
@@ -206,6 +218,8 @@ public class MainMapFragment 	extends Fragment
 					.radius(5)
 					.fillColor(Color.WHITE));
 		}
+
+		UpdateBearings();
 	}
 
 	private void UpdateVoltage() {
@@ -244,6 +258,11 @@ public class MainMapFragment 	extends Fragment
 		} catch (Exception e) {
 			e.getMessage();
 		}
+	}
+
+	private void UpdateBearings() {
+		CurBearing.setText(String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_Current()));
+		SFLBearing.setText(String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_SFL()));
 	}
 
 	private void StartFragmentUpdater() {

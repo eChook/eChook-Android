@@ -155,6 +155,9 @@ public class BTDataParser extends Thread {
 	/*===================*/
 	private void SetVoltage(double rawVolts) {
 		Global.Volts = round(rawVolts, 2); // Apply conversion and offset TODO revisit volts
+		if (Global.Lap > 0) {
+			Global.LapDataList.get(Global.Lap - 1).AddVolts(rawVolts);
+		}
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
 				Global.VoltsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Volts), true, Global.maxGraphDataPoints);
@@ -165,6 +168,9 @@ public class BTDataParser extends Thread {
 	private void SetCurrent(double rawAmps) {
 		Global.Amps = round(rawAmps, 2); // Apply conversion and offset TODO revisit amps
 		Global.AverageAmps.add(rawAmps);
+		if (Global.Lap > 0) {
+			Global.LapDataList.get(Global.Lap - 1).AddAmps(rawAmps);
+		}
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
 				Global.AmpsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Amps), true, Global.maxGraphDataPoints);
@@ -191,6 +197,10 @@ public class BTDataParser extends Thread {
 		Global.SpeedKPH = round(Global.SpeedMPH * 1.61, 1);
 		Global.AverageSpeedMPH.add(rawSpeedMPH);
 
+		if (Global.Lap > 0) {
+			Global.LapDataList.get(Global.Lap - 1).AddSpeed(rawSpeedMPH);
+		}
+
 		if (Global.Unit == Global.UNIT.MPH) {
 			MainActivity.MainActivityHandler.post(new Runnable() {
 				public void run() {
@@ -208,6 +218,9 @@ public class BTDataParser extends Thread {
 
 	private void SetMotorRPM(double rawMotorRPM) {
 		Global.MotorRPM = rawMotorRPM; // Apply conversion and offset TODO revisit motorRPM
+		if (Global.Lap > 0) {
+			Global.LapDataList.get(Global.Lap - 1).AddRPM(rawMotorRPM);
+		}
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
 				Global.MotorRPMHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.MotorRPM), true, Global.maxGraphDataPoints);
