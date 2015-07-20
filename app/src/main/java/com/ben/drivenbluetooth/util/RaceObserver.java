@@ -47,7 +47,7 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 	/*===================*/
 	public void updateLocation(Location newLocation) {
 		previousBearingToVehicle = currentBearingToVehicle;
-		currentBearingToVehicle = newLocation.getBearing();
+		currentBearingToVehicle = myLocation.bearingTo(newLocation);
 		CheckIfCrossStartFinishLine();
 	}
 

@@ -204,7 +204,8 @@
 			android:id="@+id/btnRaceStart"
 			android:layout_alignTop="@+id/btnLaunchMode"
 			android:layout_toEndOf="@+id/btnLaunchMode"
-			android:onClick="RaceStart"/>
+			android:onClick="RaceStart"
+			android:enabled="false"/>
 
 		<Button
 			style="?android:attr/buttonStyleSmall"
@@ -215,7 +216,8 @@
 			android:layout_alignParentBottom="true"
 			android:layout_toEndOf="@+id/btnRaceStart"
 			android:layout_alignTop="@+id/start"
-			android:onClick="CrossFinishLine"/>
+			android:onClick="CrossFinishLine"
+			android:enabled="true"/>
 
 		<TextView
 			android:layout_width="wrap_content"
