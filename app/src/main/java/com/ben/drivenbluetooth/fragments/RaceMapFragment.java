@@ -1,28 +1,24 @@
 package com.ben.drivenbluetooth.fragments;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.ben.drivenbluetooth.util.RaceObserver;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -30,8 +26,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-
-import org.w3c.dom.Text;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -51,6 +45,7 @@ public class RaceMapFragment extends Fragment
 
 	private TextView CurBearing;
 	private TextView SFLBearing;
+	private TextView Accuracy;
 
 	private Polyline pathHistory;
 	private Circle ObserverLocation;
@@ -75,6 +70,7 @@ public class RaceMapFragment extends Fragment
 		Speed 			= (TextView) v.findViewById(R.id.speed);
 		CurBearing		= (TextView) v.findViewById(R.id.txtCurBearing);
 		SFLBearing		= (TextView) v.findViewById(R.id.txtSFLBearing);
+		Accuracy		= (TextView) v.findViewById(R.id.txtAccuracy);
 	}
 
 	/*===================*/
@@ -219,7 +215,7 @@ public class RaceMapFragment extends Fragment
 					.fillColor(Color.WHITE));
 		}
 
-		UpdateBearings();
+		UpdateMapText();
 	}
 
 	private void UpdateVoltage() {
@@ -260,9 +256,10 @@ public class RaceMapFragment extends Fragment
 		}
 	}
 
-	private void UpdateBearings() {
-		CurBearing.setText(String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_Current()));
-		SFLBearing.setText(String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_SFL()));
+	private void UpdateMapText() {
+		CurBearing.setText("car: " + String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_Current()));
+		SFLBearing.setText("sfl: " + String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_SFL()));
+		Accuracy.setText("acc: " + String.format("%.1f", Global.Accuracy));
 	}
 
 	private void StartFragmentUpdater() {

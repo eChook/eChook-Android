@@ -47,7 +47,7 @@ public final class Global {
 
 	public static volatile ArrayList<LapData> LapDataList = new ArrayList<>();
 
-	public static volatile RunningAverage AverageAmps 		= new RunningAverage(2);
+	public static volatile RunningAverage AverageAmps 		= new RunningAverage(2); // 2 = number of decimal places
 	public static volatile RunningAverage AverageSpeedMPH 	= new RunningAverage(1);
 
 	public static 			int							maxGraphDataPoints	=	30 * 1000 / 250;
