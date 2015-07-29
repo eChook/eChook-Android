@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Path;
+import android.graphics.PathMeasure;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,7 +28,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -139,6 +144,8 @@ public class RaceMapFragment extends Fragment
 		} catch (Exception e) {
 			MainActivity.showError(e);
 		}
+
+		DemoSmoothedLine();
 	}
 
 	/*===================*/
@@ -203,6 +210,7 @@ public class RaceMapFragment extends Fragment
 				//.tilt(30)                   // Sets the tilt of the camera to 30 degrees
 				.build();
 		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
 		pathHistory.setPoints(MainActivity.myDrivenLocation.pathHistory.getPoints());
 		try {
 			ObserverLocation.setCenter(MainActivity.myDrivenLocation.ObserverLocation.getCenter());
@@ -216,6 +224,50 @@ public class RaceMapFragment extends Fragment
 		}
 
 		UpdateMapText();
+	}
+
+	private void DemoSmoothedLine() {
+		PolylineOptions UK = new PolylineOptions();
+		UK.add(new LatLng(51.507351, -0.127758)); 	// Charing Cross, London
+		UK.add(new LatLng(52.486243, -1.890401));	// Aston University, Birmingham
+		UK.add(new LatLng(54.978252, -1.61778));	// Haymarket, Newcastle upon Tyne
+		UK.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
+		UK.add(new LatLng(55.864237, -4.251806));	// Royal Concert Hall, Glasgow
+
+		PolylineOptions someshit = new PolylineOptions();
+		someshit.add(new LatLng(51.507351, -0.127758)); 	// Charing Cross, London
+		someshit.add(new LatLng(52.486243, -1.890401));	// Aston University, Birmingham
+		someshit.add(new LatLng(54.978252, -1.61778));	// Haymarket, Newcastle upon Tyne
+		someshit.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
+		someshit.color(Color.RED);
+
+		Polyline herp = map.addPolyline(UK);
+		Polyline smoothedherp = map.addPolyline(someshit);
+		smoothedherp.setPoints(SmoothPath(UK));
+	}
+
+	private List<LatLng> SmoothPath(PolylineOptions PLO) {
+		List<LatLng> listLatLng = PLO.getPoints();
+		Path path = new Path();
+		path.moveTo((float)listLatLng.get(0).latitude, (float)listLatLng.get(0).longitude);
+		for(int i = 1; i < listLatLng.size(); i+=2) {
+			if (i < listLatLng.size()) {
+				LatLng controlPoint = listLatLng.get(i-1);
+				LatLng endPoint = listLatLng.get(i);
+				path.quadTo((float)controlPoint.latitude, (float)controlPoint.longitude, (float)endPoint.latitude, (float)endPoint.longitude);
+			}
+		}
+
+		PathMeasure pm = new PathMeasure(path, false);
+		float length = pm.getLength();
+		List<LatLng> smoothedLine = new ArrayList<>();
+		for (float f = 0f; f <= length; f+=0.1f) {
+			float[] latlng = new float[2];
+			pm.getPosTan(f, latlng, null);
+			smoothedLine.add(new LatLng(latlng[0], latlng[1]));
+		}
+
+		return smoothedLine;
 	}
 
 	private void UpdateVoltage() {
@@ -284,7 +336,7 @@ public class RaceMapFragment extends Fragment
 			}
 		};
 		FragmentUpdateTimer = new Timer();
-		FragmentUpdateTimer.schedule(mapUpdateTask, Global.MAP_UPDATE_INTERVAL, Global.MAP_UPDATE_INTERVAL);
+		//FragmentUpdateTimer.schedule(mapUpdateTask, Global.MAP_UPDATE_INTERVAL, Global.MAP_UPDATE_INTERVAL); //TODO: UNCOMMENT THIS!!!
 		FragmentUpdateTimer.schedule(fragmentUpdateTask, 0, Global.FAST_UI_UPDATE_INTERVAL);
 	}
 
