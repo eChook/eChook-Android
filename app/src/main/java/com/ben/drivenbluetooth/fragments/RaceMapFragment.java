@@ -211,7 +211,7 @@ public class RaceMapFragment extends Fragment
 				.build();
 		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-		pathHistory.setPoints(MainActivity.myDrivenLocation.pathHistory.getPoints());
+		pathHistory.setPoints(SmoothPath(MainActivity.myDrivenLocation.pathHistory));
 		try {
 			ObserverLocation.setCenter(MainActivity.myDrivenLocation.ObserverLocation.getCenter());
 		} catch (NullPointerException ignored) {}			// Observerlocation has not been initialized yet so do nothing
@@ -250,7 +250,7 @@ public class RaceMapFragment extends Fragment
 		List<LatLng> listLatLng = PLO.getPoints();
 		Path path = new Path();
 		path.moveTo((float)listLatLng.get(0).latitude, (float)listLatLng.get(0).longitude);
-		for(int i = 1; i < listLatLng.size(); i+=2) {
+		for(int i = 2; i < listLatLng.size(); i+=2) {
 			if (i < listLatLng.size()) {
 				LatLng controlPoint = listLatLng.get(i-1);
 				LatLng endPoint = listLatLng.get(i);
@@ -261,7 +261,7 @@ public class RaceMapFragment extends Fragment
 		PathMeasure pm = new PathMeasure(path, false);
 		float length = pm.getLength();
 		List<LatLng> smoothedLine = new ArrayList<>();
-		for (float f = 0f; f <= length; f+=0.1f) {
+		for (float f = 0f; f <= length; f+=0.01f) {
 			float[] latlng = new float[2];
 			pm.getPosTan(f, latlng, null);
 			smoothedLine.add(new LatLng(latlng[0], latlng[1]));
