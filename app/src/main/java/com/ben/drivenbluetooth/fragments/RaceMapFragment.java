@@ -145,8 +145,6 @@ public class RaceMapFragment extends Fragment
 		} catch (Exception e) {
 			MainActivity.showError(e);
 		}
-
-		DemoSmoothedLine();
 	}
 
 	/*===================*/
@@ -212,7 +210,7 @@ public class RaceMapFragment extends Fragment
 				.build();
 		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-		pathHistory.setPoints(SmoothPath(MainActivity.myDrivenLocation.pathHistory, 0.1f));
+		pathHistory.setPoints(SmoothPath(MainActivity.myDrivenLocation.pathHistory, 0.01f));
 		try {
 			ObserverLocation.setCenter(MainActivity.myDrivenLocation.ObserverLocation.getCenter());
 		} catch (NullPointerException ignored) {}			// Observerlocation has not been initialized yet so do nothing
@@ -223,7 +221,6 @@ public class RaceMapFragment extends Fragment
 					.radius(5)
 					.fillColor(Color.WHITE));
 		}
-
 		UpdateMapText();
 	}
 
@@ -258,13 +255,13 @@ public class RaceMapFragment extends Fragment
 
 		Polyline herp = map.addPolyline(UK);
 		Polyline smoothedherp = map.addPolyline(someshit);
-		smoothedherp.setPoints(SmoothPath(UK, 0.001f));
+		smoothedherp.setPoints(SmoothPath(UK, 0.01f));
 
-		Polyline smoothedherp2 = map.addPolyline(someshit);
-		smoothedherp2.setPoints(SmoothPath(UK, 0.01f));
+		Polyline smoothedherp2 = map.addPolyline(someshit2);
+		smoothedherp2.setPoints(SmoothPath(UK, 0.1f));
 
-		Polyline smoothedherp3 = map.addPolyline(someshit);
-		smoothedherp3.setPoints(SmoothPath(UK, 0.1f));
+		Polyline smoothedherp3 = map.addPolyline(someshit3);
+		smoothedherp3.setPoints(SmoothPath(UK, 1f));
 	}
 
 	private List<LatLng> SmoothPath(PolylineOptions PLO, float scale) {
@@ -274,10 +271,12 @@ public class RaceMapFragment extends Fragment
 		PathMeasure pm = new PathMeasure(path, false);
 		float length = pm.getLength();
 		List<LatLng> smoothedLine = new ArrayList<>();
-		for (float f = 0f; f <= length; f+=0.01f) {
-			float[] latlng = new float[2];
-			pm.getPosTan(f, latlng, null);
-			smoothedLine.add(new LatLng(latlng[0], latlng[1]));
+		if (length > 1e-4) {
+			for (double f = 0.0; f <= length; f += (double) length / (double) (2 * listLatLng.size())) {
+				float[] latlng = new float[2];
+				pm.getPosTan((float) f, latlng, null);
+				smoothedLine.add(new LatLng(latlng[0], latlng[1]));
+			}
 		}
 		return smoothedLine;
 	}
@@ -348,7 +347,7 @@ public class RaceMapFragment extends Fragment
 			}
 		};
 		FragmentUpdateTimer = new Timer();
-		//FragmentUpdateTimer.schedule(mapUpdateTask, Global.MAP_UPDATE_INTERVAL, Global.MAP_UPDATE_INTERVAL); //TODO: UNCOMMENT THIS!!!
+		FragmentUpdateTimer.schedule(mapUpdateTask, Global.MAP_UPDATE_INTERVAL, Global.MAP_UPDATE_INTERVAL); //TODO: UNCOMMENT THIS!!!
 		FragmentUpdateTimer.schedule(fragmentUpdateTask, 0, Global.FAST_UI_UPDATE_INTERVAL);
 	}
 

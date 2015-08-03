@@ -11,50 +11,55 @@ import java.util.List;
 public final class Bezier {
 	private Bezier() {}
 
+	@Nullable
 	public static Path GetBezierPath(List<LatLng> LatLngs, float scale) {
 		Path BezierPath = new Path();
 
-		// 1. calculate number of curves required
-		int n_curves = LatLngs.size() - 1;
+		if (LatLngs.size() > 2) {
+			// 1. calculate number of curves required
+			int n_curves = LatLngs.size() - 1;
 
-		// 2. calculate control points
-		List<LatLng> ControlPoints = GetControlPoints(LatLngs, scale);
+			// 2. calculate control points
+			List<LatLng> ControlPoints = GetControlPoints(LatLngs, scale);
 
-		if (ControlPoints != null) {
-			for (int i = 0; i < n_curves - 1; i++) {
-				if (i == 0) { // for first curve is quadTo
-					BezierPath.moveTo((float) LatLngs.get(0).latitude, (float) LatLngs.get(0).longitude);
-					BezierPath.quadTo(
-							(float) ControlPoints.get(0).latitude,
-							(float) ControlPoints.get(0).longitude,
+			if (ControlPoints != null) {
+				for (int i = 0; i < n_curves; i++) {
+					if (i == 0) { // for first curve is quadTo
+						BezierPath.moveTo((float) LatLngs.get(0).latitude, (float) LatLngs.get(0).longitude);
+						BezierPath.quadTo(
+								(float) ControlPoints.get(0).latitude,
+								(float) ControlPoints.get(0).longitude,
 
-							(float) LatLngs.get(1).latitude,
-							(float) LatLngs.get(1).longitude
-					);
-				} else if (i <  - n_curves - 1) { // remember zero-start arrays
-					BezierPath.cubicTo(
-							(float) ControlPoints.get(2 * i - 1).latitude,
-							(float) ControlPoints.get(2 * i - 1).longitude,
+								(float) LatLngs.get(1).latitude,
+								(float) LatLngs.get(1).longitude
+						);
+					} else if (i < n_curves - 1) { // remember zero-start arrays
+						BezierPath.cubicTo(
+								(float) ControlPoints.get(2 * i - 1).latitude,
+								(float) ControlPoints.get(2 * i - 1).longitude,
 
-							(float) ControlPoints.get(2 * i).latitude,
-							(float) ControlPoints.get(2 * i).longitude,
+								(float) ControlPoints.get(2 * i).latitude,
+								(float) ControlPoints.get(2 * i).longitude,
 
-							(float) LatLngs.get(i + 1).latitude,
-							(float) LatLngs.get(i + 1).longitude
-					);
-				} else {
-					// last point
-					BezierPath.quadTo(
-							(float) ControlPoints.get(2 * i - 1).latitude,
-							(float) ControlPoints.get(2 * i - 1).longitude,
+								(float) LatLngs.get(i + 1).latitude,
+								(float) LatLngs.get(i + 1).longitude
+						);
+					} else {
+						// last point
+						BezierPath.quadTo(
+								(float) ControlPoints.get(2 * i - 1).latitude,
+								(float) ControlPoints.get(2 * i - 1).longitude,
 
-							(float) LatLngs.get(i + 1).latitude,
-							(float) LatLngs.get(i + 1).longitude
-					);
+								(float) LatLngs.get(i + 1).latitude,
+								(float) LatLngs.get(i + 1).longitude
+						);
+					}
 				}
 			}
+			return BezierPath;
+		} else {
+			return null;
 		}
-		return BezierPath;
 	}
 
 	@Nullable

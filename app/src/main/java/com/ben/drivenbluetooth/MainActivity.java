@@ -214,8 +214,10 @@ public class MainActivity
 	 */
 
 	public static void showMessage(String theMsg) {
-		Toast msg = Toast.makeText(context, theMsg, (Toast.LENGTH_LONG));
-		msg.show();
+		if (context != null) {
+			Toast msg = Toast.makeText(context, theMsg, (Toast.LENGTH_LONG));
+			msg.show();
+		}
 	}
 
 	public static void showMessage(String string, int length) {

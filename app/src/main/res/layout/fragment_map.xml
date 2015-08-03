@@ -95,6 +95,6 @@
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:id="@+id/txtAccuracy"
 		android:layout_above="@+id/txtCurBearing"
-		android:layout_toEndOf="@+id/txtCurBearing"/>
+		android:layout_alignLeft="@+id/txtSFLBearing"/>
 
 </RelativeLayout>
