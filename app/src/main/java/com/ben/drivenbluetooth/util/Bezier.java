@@ -11,30 +11,56 @@ import java.util.List;
 public final class Bezier {
 	private Bezier() {}
 
-	public static Path GetBezierPath(List<LatLng> LatLngs) {
+	public static Path GetBezierPath(List<LatLng> LatLngs, float scale) {
 		Path BezierPath = new Path();
+
 		// 1. calculate number of curves required
 		int n_curves = LatLngs.size() - 1;
 
 		// 2. calculate control points
-		List<LatLng> ControlPoints = GetControlPoints(LatLngs, 0.5f);
+		List<LatLng> ControlPoints = GetControlPoints(LatLngs, scale);
 
 		if (ControlPoints != null) {
-			for (int i = 0; i <= n_curves; i++) {
+			for (int i = 0; i < n_curves - 1; i++) {
 				if (i == 0) { // for first curve is quadTo
 					BezierPath.moveTo((float) LatLngs.get(0).latitude, (float) LatLngs.get(0).longitude);
-					BezierPath.quadTo(	(float) ControlPoints.get(0).latitude,
+					BezierPath.quadTo(
+							(float) ControlPoints.get(0).latitude,
 							(float) ControlPoints.get(0).longitude,
+
 							(float) LatLngs.get(1).latitude,
-							(float) LatLngs.get(1).longitude );
+							(float) LatLngs.get(1).longitude
+					);
+				} else if (i <  - n_curves - 1) { // remember zero-start arrays
+					BezierPath.cubicTo(
+							(float) ControlPoints.get(2 * i - 1).latitude,
+							(float) ControlPoints.get(2 * i - 1).longitude,
+
+							(float) ControlPoints.get(2 * i).latitude,
+							(float) ControlPoints.get(2 * i).longitude,
+
+							(float) LatLngs.get(i + 1).latitude,
+							(float) LatLngs.get(i + 1).longitude
+					);
+				} else {
+					// last point
+					BezierPath.quadTo(
+							(float) ControlPoints.get(2 * i - 1).latitude,
+							(float) ControlPoints.get(2 * i - 1).longitude,
+
+							(float) LatLngs.get(i + 1).latitude,
+							(float) LatLngs.get(i + 1).longitude
+					);
 				}
 			}
 		}
+		return BezierPath;
 	}
 
 	@Nullable
 	public static List<LatLng> GetControlPoints(List<LatLng> LatLngs, float scale) {
-		List<LatLng> ControlPoints = new ArrayList<LatLng>();
+		List<LatLng> ControlPoints = new ArrayList<>();
+
 		if (LatLngs.size() > 2) { // can't make a curve with less than 3 points
 			// get control points until penultimate point
 			for (int i = 0; i < LatLngs.size() - 2; i++) {
@@ -71,23 +97,6 @@ public final class Bezier {
 		return ControlPoints;
 	}
 
-	public static float[] GetNormalizedTangent(float[] p0, float[] p1) {
-		// calculate vector between the two points
-		float[] vector = {
-				p1[0] - p0[0],
-				p1[1] - p0[1]
-		};
-
-		// calculate magnitude of vector
-		float mag = (float) Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
-
-		// calculate normalized vector
-		vector[0] /= mag;
-		vector[1] /= mag;
-
-		return vector;
-	}
-
 	public static float[][] GetControlPoints(float[] p0, float[] p1, float[] p2, float scale) {
 		// first get normalized tangent
 		float[] tanN = GetNormalizedTangent(p0, p2);
@@ -107,5 +116,22 @@ public final class Bezier {
 		float[][] q0q1 = {q0, q1};
 
 		return q0q1;
+	}
+
+	public static float[] GetNormalizedTangent(float[] p0, float[] p1) {
+		// calculate vector between the two points
+		float[] vector = {
+				p1[0] - p0[0],
+				p1[1] - p0[1]
+		};
+
+		// calculate magnitude of vector
+		float mag = (float) Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
+
+		// calculate normalized vector
+		vector[0] /= mag;
+		vector[1] /= mag;
+
+		return vector;
 	}
 }

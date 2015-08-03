@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
+import com.ben.drivenbluetooth.util.Bezier;
 import com.ben.drivenbluetooth.util.RaceObserver;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -211,7 +212,7 @@ public class RaceMapFragment extends Fragment
 				.build();
 		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-		pathHistory.setPoints(SmoothPath(MainActivity.myDrivenLocation.pathHistory));
+		pathHistory.setPoints(SmoothPath(MainActivity.myDrivenLocation.pathHistory, 0.1f));
 		try {
 			ObserverLocation.setCenter(MainActivity.myDrivenLocation.ObserverLocation.getCenter());
 		} catch (NullPointerException ignored) {}			// Observerlocation has not been initialized yet so do nothing
@@ -241,22 +242,34 @@ public class RaceMapFragment extends Fragment
 		someshit.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
 		someshit.color(Color.RED);
 
+		PolylineOptions someshit2 = new PolylineOptions();
+		someshit2.add(new LatLng(51.507351, -0.127758)); 	// Charing Cross, London
+		someshit2.add(new LatLng(52.486243, -1.890401));	// Aston University, Birmingham
+		someshit2.add(new LatLng(54.978252, -1.61778));	// Haymarket, Newcastle upon Tyne
+		someshit2.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
+		someshit2.color(Color.BLUE);
+
+		PolylineOptions someshit3 = new PolylineOptions();
+		someshit3.add(new LatLng(51.507351, -0.127758)); 	// Charing Cross, London
+		someshit3.add(new LatLng(52.486243, -1.890401));	// Aston University, Birmingham
+		someshit3.add(new LatLng(54.978252, -1.61778));	// Haymarket, Newcastle upon Tyne
+		someshit3.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
+		someshit3.color(Color.GREEN);
+
 		Polyline herp = map.addPolyline(UK);
 		Polyline smoothedherp = map.addPolyline(someshit);
-		smoothedherp.setPoints(SmoothPath(UK));
+		smoothedherp.setPoints(SmoothPath(UK, 0.001f));
+
+		Polyline smoothedherp2 = map.addPolyline(someshit);
+		smoothedherp2.setPoints(SmoothPath(UK, 0.01f));
+
+		Polyline smoothedherp3 = map.addPolyline(someshit);
+		smoothedherp3.setPoints(SmoothPath(UK, 0.1f));
 	}
 
-	private List<LatLng> SmoothPath(PolylineOptions PLO) {
+	private List<LatLng> SmoothPath(PolylineOptions PLO, float scale) {
 		List<LatLng> listLatLng = PLO.getPoints();
-		Path path = new Path();
-		path.moveTo((float)listLatLng.get(0).latitude, (float)listLatLng.get(0).longitude);
-		for(int i = 2; i < listLatLng.size(); i+=2) {
-			if (i < listLatLng.size()) {
-				LatLng controlPoint = listLatLng.get(i-1);
-				LatLng endPoint = listLatLng.get(i);
-				path.quadTo((float)controlPoint.latitude, (float)controlPoint.longitude, (float)endPoint.latitude, (float)endPoint.longitude);
-			}
-		}
+		Path path = Bezier.GetBezierPath(listLatLng, scale);
 
 		PathMeasure pm = new PathMeasure(path, false);
 		float length = pm.getLength();
@@ -266,7 +279,6 @@ public class RaceMapFragment extends Fragment
 			pm.getPosTan(f, latlng, null);
 			smoothedLine.add(new LatLng(latlng[0], latlng[1]));
 		}
-
 		return smoothedLine;
 	}
 
