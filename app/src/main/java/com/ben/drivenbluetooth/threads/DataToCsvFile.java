@@ -1,7 +1,6 @@
 package com.ben.drivenbluetooth.threads;
 
 import android.os.Environment;
-import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -11,7 +10,7 @@ import java.io.FileOutputStream;
 
 public class DataToCsvFile extends Thread {
 
-	private Double[] ArrayOfVariables;
+	private String[] ArrayOfVariables;
 	private String[] variable_identifiers;
 	private File f;
 	private FileOutputStream oStream;
@@ -39,7 +38,8 @@ public class DataToCsvFile extends Thread {
 					"SpeedGPS (m/s)",
 					"GPSTime",			// milliseconds since epoch (UTC)
 					"Accuracy (m)",		// radius of 68% confidence
-					"Lap"
+					"Lap",
+					"Vehicle"
 			};
 		} catch (Exception e) {
 			MainActivity.showError(e);
@@ -56,25 +56,26 @@ public class DataToCsvFile extends Thread {
 	public void run() {
 		while (!this.stopWorker) {
 			try {
-				this.ArrayOfVariables = new Double[] {
-									Global.InputThrottle,
-									Global.ActualThrottle,
-									Global.Volts,
-									Global.Amps,
-									Global.MotorRPM,
-									Global.SpeedMPH,
-									Global.TempC1,
-									Global.GearRatio,
+				this.ArrayOfVariables = new String[] {
+								String.format("%.0f",Global.InputThrottle),
+								String.format("%.0f",Global.ActualThrottle),
+								String.format("%.2f",Global.Volts),
+								String.format("%.2f",Global.Amps),
+								String.format("%.0f",Global.MotorRPM),
+								String.format("%.1f",Global.SpeedMPH),
+								String.format("%.1f",Global.TempC1),
+								String.format("%.3f",Global.GearRatio),
 
 									/* LocationStatus */
-									Global.Latitude,
-									Global.Longitude,
-									Global.Altitude,
-									Global.Bearing,
-									Global.SpeedGPS,
-									Global.GPSTime,
-									Global.Accuracy,
-						(double) 	Global.Lap
+								String.format("%.6f", Global.Latitude),
+								String.format("%.6f", Global.Longitude),
+								String.format("%.1f", Global.Altitude),
+								String.format("%.1f", Global.Bearing),
+								String.format("%.1f", Global.SpeedGPS),
+								String.format("%.1f", Global.GPSTime),
+								String.format("%.1f", Global.Accuracy),
+							 	String.format("%d", Global.Lap),
+								Global.CarName
 				};
 
 				WriteToFile(GetLatestDataAsString());
@@ -99,8 +100,8 @@ public class DataToCsvFile extends Thread {
 	private String GetLatestDataAsString() {
 		String data_string = String.valueOf(System.currentTimeMillis()) + ",";
 
-		for (Double value : this.ArrayOfVariables) {
-			data_string += String.valueOf(value) + ",";
+		for (String value : this.ArrayOfVariables) {
+			data_string += value + ",";
 		}
 
 		//remove last comma

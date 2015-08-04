@@ -13,15 +13,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 										GoogleApiClient.OnConnectionFailedListener,
@@ -177,11 +173,18 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	}
 
 	private void _addToPathHistory(Location loc) {
-		if (pathHistory.getPoints().size() >= 20) {
-			this.pathHistory = null;
-			this.pathHistory = new PolylineOptions();
-		}
 		this.pathHistory.add(new LatLng(loc.getLatitude(), loc.getLongitude()));
+	}
+
+	private void _resetPathHistory() {
+		this.pathHistory = null;
+		this.pathHistory = new PolylineOptions();
+	}
+
+	private void _resetLapTimer() {
+		MainActivity.LapTimer.stop();
+		MainActivity.LapTimer.setBase(SystemClock.elapsedRealtime());
+		MainActivity.LapTimer.start();
 	}
 
 	public void update() {
@@ -229,16 +232,16 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 			Global.LapDataList.add(new LapData());
 			Global.LapDataList.get(Global.LapDataList.size() - 2).lapTime = MainActivity.LapTimer.getText().toString(); // set previous lap time
 			Global.Lap++;
-			MainActivity.LapTimer.stop();
-			MainActivity.LapTimer.setBase(SystemClock.elapsedRealtime());
-			MainActivity.LapTimer.start();
+			_resetLapTimer();
 			new Handler().postDelayed(new Runnable() {
 				@Override
 				public void run() {
 					CrossStartFinishLineTriggerEnabled = true;
 				}
-			}, 20000);
+			}, 20000); // enable crossing detection after 20 seconds
 		}
+
+		_resetPathHistory();
 	}
 
 	@Override

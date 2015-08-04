@@ -73,6 +73,8 @@ public final class Global {
 
 	public static volatile int Lap	= 0;
 
+	public static String CarName = "";
+
 	public static volatile float Gx = 0;	// Acceleration minus gravity in the x direction
 	public static volatile float Gy = 0;	// Acceleration minus gravity in the y direction
 	public static volatile float Gz = 0;	// Acceleration minus gravity in the z direction

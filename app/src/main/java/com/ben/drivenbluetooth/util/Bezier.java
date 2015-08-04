@@ -12,7 +12,7 @@ public final class Bezier {
 	private Bezier() {}
 
 	@Nullable
-	public static Path GetBezierPath(List<LatLng> LatLngs, float scale) {
+	public static Path GetBezierPath(List<LatLng> LatLngs, float k) {
 		Path BezierPath = new Path();
 
 		if (LatLngs.size() > 2) {
@@ -20,7 +20,7 @@ public final class Bezier {
 			int n_curves = LatLngs.size() - 1;
 
 			// 2. calculate control points
-			List<LatLng> ControlPoints = GetControlPoints(LatLngs, scale);
+			List<LatLng> ControlPoints = GetControlPoints(LatLngs, k);
 
 			if (ControlPoints != null) {
 				for (int i = 0; i < n_curves; i++) {
@@ -63,30 +63,65 @@ public final class Bezier {
 	}
 
 	@Nullable
-	public static List<LatLng> GetControlPoints(List<LatLng> LatLngs, float scale) {
+	private static List<LatLng> GetControlPoints(List<LatLng> LatLngs, float k) {
 		List<LatLng> ControlPoints = new ArrayList<>();
 
-		if (LatLngs.size() > 2) { // can't make a curve with less than 3 points
-			// get control points until penultimate point
+		/* This algorithm is taken from
+		http://www.antigrain.com/research/bezier_interpolation/
+
+		 */
+
+		/* Step 1. Calculate midpoints between each node */
+		List<LatLng> MidPoints = GetMidPoints(LatLngs);
+
+		/* Step 2. Calculate points Bi */
+		if (MidPoints != null && LatLngs.size() > 2) { // can't make a curve with less than 3 points
 			for (int i = 0; i < LatLngs.size() - 2; i++) {
-				float[] p0 = {
-						(float) LatLngs.get(i).latitude,
-						(float) LatLngs.get(i).longitude
+				// a) get distance between consecutive points
+				float L1 = GetDistance(LatLngs.get(i), LatLngs.get(i + 1));
+				float L2 = GetDistance(LatLngs.get(i + 1), LatLngs.get(i + 2));
+
+				// b) get distance between consecutive midpoints
+				float Dm = GetDistance(MidPoints.get(i), MidPoints.get(i + 1));
+
+				// c) get lengths d1 and d2
+				float d1 = k * Dm * L1 / (L1 + L2);
+				float d2 = k * Dm * L2 / (L1 + L2);
+
+				// d) Get normalized vector between consecutive midpoints
+				float[] m0 = {
+						(float) MidPoints.get(i).latitude,
+						(float) MidPoints.get(i).longitude
 				};
 
-				float[] p1 = {
-						(float) LatLngs.get(i + 1).latitude,
-						(float) LatLngs.get(i + 1).longitude
+				float[] m1 = {
+						(float) MidPoints.get(i + 1).latitude,
+						(float) MidPoints.get(i + 1).longitude
 				};
 
-				float[] p2 = {
-						(float) LatLngs.get(i + 2).latitude,
-						(float) LatLngs.get(i + 2).longitude
+				float[] d1d2_n = GetNormalizedTangent(m0, m1);
+
+				// e) get actual vectors d1 and d2
+				float[] d1_v = {
+						- d1d2_n[0] * d1,
+						- d1d2_n[1] * d1
 				};
 
-				float[][] q0q1 = GetControlPoints(p0, p1, p2, scale);
-				float[] q0 = q0q1[0];
-				float[] q1 = q0q1[1];
+				float[] d2_v = {
+						d1d2_n[0] * d2,
+						d1d2_n[1] * d2
+				};
+
+				// f) Calculate control points
+				float[] q0 = {
+						(float) LatLngs.get(i + 1).latitude + d1_v[0],
+						(float) LatLngs.get(i + 1).longitude + d1_v[1]
+				};
+
+				float[] q1 = {
+						(float) LatLngs.get(i + 1).latitude + d2_v[0],
+						(float) LatLngs.get(i + 1).longitude + d2_v[1]
+				};
 
 				ControlPoints.add(new LatLng((double) q0[0], (double) q0[1]));
 				ControlPoints.add(new LatLng((double) q1[0], (double) q1[1]));
@@ -102,28 +137,57 @@ public final class Bezier {
 		return ControlPoints;
 	}
 
-	public static float[][] GetControlPoints(float[] p0, float[] p1, float[] p2, float scale) {
-		// first get normalized tangent
-		float[] tanN = GetNormalizedTangent(p0, p2);
-
-		// Get control points
-		float[] q0 = {
-				p1[0] - tanN[0] * scale,
-				p1[1] - tanN[1] * scale
-		};
-
-		float[] q1 = {
-				p1[0] + tanN[0] * scale,
-				p1[1] + tanN[1] * scale
-		};
-
-		// combine
-		float[][] q0q1 = {q0, q1};
-
-		return q0q1;
+	public static Path GetBezierPath(List<LatLng> LatLngs) {
+		return GetBezierPath(LatLngs, 1f);
 	}
 
-	public static float[] GetNormalizedTangent(float[] p0, float[] p1) {
+	@Nullable
+	private static List<LatLng> GetControlPoints(List<LatLng> LatLngs) {
+		return GetControlPoints(LatLngs, 1f);
+	}
+
+	private static float GetDistance(LatLng latLng0, LatLng latLng1) {
+		float[] vector = {
+				(float) latLng1.latitude - (float) latLng0.latitude,
+				(float) latLng1.longitude - (float) latLng0.longitude
+		};
+
+		return (float) Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
+	}
+
+	private static List<LatLng> GetMidPoints(List<LatLng> LatLngs) {
+		if (LatLngs.size() >= 2) {
+			List<LatLng> MidPoints = new ArrayList<>(); // return value
+
+			for (int i = 0; i < LatLngs.size() - 1; i++) {
+				float[] p0 = {
+						(float) LatLngs.get(i).latitude,
+						(float) LatLngs.get(i).longitude
+				};
+
+				float[] p1 = {
+						(float) LatLngs.get(i + 1).latitude,
+						(float) LatLngs.get(i + 1).longitude
+				};
+
+				/* 	midpoint calc:
+					m0 = p0 + 0.5(p1 - p0)
+					m0 = p0 + 0.5p1 - 0.5p0
+					m0 = 0.5(p0 + p1);
+				 */
+				float[] m0 = {
+						0.5f * (p0[0] + p1[0]),
+						0.5f * (p0[1] + p1[1])
+				};
+				MidPoints.add(new LatLng(m0[0], m0[1]));
+			}
+			return MidPoints;
+		} else {
+			return null;
+		}
+	}
+
+	private static float[] GetNormalizedTangent(float[] p0, float[] p1) {
 		// calculate vector between the two points
 		float[] vector = {
 				p1[0] - p0[0],

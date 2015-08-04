@@ -59,7 +59,7 @@ public class RaceMapFragment extends Fragment
 	private static Timer FragmentUpdateTimer;
 
 	/*===================*/
-	/* MAINMAPFRAGMENT
+	/* RACEMAPFRAGMENT
 	/*===================*/
 	public RaceMapFragment() {
 		// Required empty public constructor
@@ -77,6 +77,21 @@ public class RaceMapFragment extends Fragment
 		CurBearing		= (TextView) v.findViewById(R.id.txtCurBearing);
 		SFLBearing		= (TextView) v.findViewById(R.id.txtSFLBearing);
 		Accuracy		= (TextView) v.findViewById(R.id.txtAccuracy);
+	}
+
+	private void InitializeMap(GoogleMap googleMap) {
+		map = googleMap;
+		map.setMyLocationEnabled(true);
+		CameraPosition cameraPosition = new CameraPosition.Builder()
+				.target(new LatLng(Global.Latitude, Global.Longitude))
+				.zoom(16)                   // Sets the zoom
+				.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to the bearing of the car
+						//.tilt(30)                   // Sets the tilt of the camera to 30 degrees
+				.build();
+		map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+		map.setOnMapClickListener(this);
+		map.setOnInfoWindowClickListener(this);
+		map.getUiSettings().setMapToolbarEnabled(false);
 	}
 
 	/*===================*/
@@ -117,33 +132,37 @@ public class RaceMapFragment extends Fragment
 	@Override
 	public void onMapReady(GoogleMap googleMap) {
 		try {
-			map = googleMap;
-			map.setMyLocationEnabled(true);
-			CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(new LatLng(Global.Latitude, Global.Longitude))
-					.zoom(16)                   // Sets the zoom
-					.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to the bearing of the car
-					//.tilt(30)                   // Sets the tilt of the camera to 30 degrees
-					.build();
-			map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-			map.setOnMapClickListener(this);
-			map.setOnInfoWindowClickListener(this);
-			map.getUiSettings().setMapToolbarEnabled(false);
-			pathHistory = map.addPolyline(MainActivity.myDrivenLocation.pathHistory);
-			if (ObserverLocation != null) {
-				try {
-					ObserverLocation = map.addCircle(MainActivity.myDrivenLocation.ObserverLocation);
-				} catch (NullPointerException ignored) {}
-			}
 
-			if (Global.StartFinishLineLocation != null) {
-				map.addCircle(new CircleOptions()
-						.center(new LatLng(Global.StartFinishLineLocation.getLatitude(), Global.StartFinishLineLocation.getLongitude()))
-						.radius(5)
-						.fillColor(Color.WHITE));
-			}
+			InitializeMap(googleMap);
+
+			pathHistory = map.addPolyline(MainActivity.myDrivenLocation.pathHistory);
+
+			GetObserver();
+			GetStartFinishLineMarker();
+
 		} catch (Exception e) {
 			MainActivity.showError(e);
+		}
+	}
+
+	/*===================*/
+	/* MAIN FUNCTIONS
+	/*===================*/
+
+	private void GetStartFinishLineMarker() {
+		if (Global.StartFinishLineLocation != null) {
+			map.addCircle(new CircleOptions()
+					.center(new LatLng(Global.StartFinishLineLocation.getLatitude(), Global.StartFinishLineLocation.getLongitude()))
+					.radius(5)
+					.fillColor(Color.WHITE));
+		}
+	}
+
+	private void GetObserver() {
+		if (ObserverLocation != null) {
+			try {
+				ObserverLocation = map.addCircle(MainActivity.myDrivenLocation.ObserverLocation);
+			} catch (NullPointerException ignored) {}
 		}
 	}
 
@@ -192,6 +211,89 @@ public class RaceMapFragment extends Fragment
 	}
 
 	/*===================*/
+	/* PATH SMOOTHING
+	/*===================*/
+
+	private void DemoSmoothedLine() {
+		PolylineOptions UK = new PolylineOptions();
+		UK.add(new LatLng(51.507351, -0.127758)); 	// Charing Cross, London
+		UK.add(new LatLng(52.486243, -1.890401));	// Aston University, Birmingham
+		UK.add(new LatLng(54.978252, -1.61778));		// Haymarket, Newcastle upon Tyne
+		UK.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
+		UK.add(new LatLng(55.953252, -4.188267));
+		UK.add(new LatLng(50.953252, -5.188267));
+		UK.add(new LatLng(48.953252, 3.188267));
+
+		PolylineOptions someshit = new PolylineOptions();
+		someshit.add(new LatLng(51.507351, -0.127758)); 	// Charing Cross, London
+		someshit.add(new LatLng(52.486243, -1.890401));	// Aston University, Birmingham
+		someshit.add(new LatLng(54.978252, -1.61778));	// Haymarket, Newcastle upon Tyne
+		someshit.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
+		someshit.color(Color.RED);
+
+		PolylineOptions someshit2 = new PolylineOptions();
+		someshit2.add(new LatLng(51.507351, -0.127758)); 	// Charing Cross, London
+		someshit2.add(new LatLng(52.486243, -1.890401));	// Aston University, Birmingham
+		someshit2.add(new LatLng(54.978252, -1.61778));	// Haymarket, Newcastle upon Tyne
+		someshit2.add(new LatLng(55.953252, -3.188267));
+		someshit2.add(new LatLng(55.953252, -4.188267));
+		someshit2.add(new LatLng(50.953252, -5.188267));
+		someshit2.add(new LatLng(48.953252, 3.188267));// Edinburgh Waverley, Edinburgh
+		someshit2.color(Color.BLUE);
+
+		PolylineOptions someshit3 = new PolylineOptions();
+		someshit3.add(new LatLng(51.507351, -0.127758)); 	// Charing Cross, London
+		someshit3.add(new LatLng(52.486243, -1.890401));	// Aston University, Birmingham
+		someshit3.add(new LatLng(54.978252, -1.61778));	// Haymarket, Newcastle upon Tyne
+		someshit3.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
+		someshit3.color(Color.GREEN);
+
+		Polyline herp = map.addPolyline(UK);
+		Polyline smoothedherp = map.addPolyline(someshit);
+		smoothedherp.setPoints(SmoothPath(UK));
+
+		Polyline smoothedherp2 = map.addPolyline(someshit2);
+		smoothedherp2.setPoints(SmoothPath(UK, 0.5f));
+
+		//Polyline smoothedherp3 = map.addPolyline(someshit3);
+		//smoothedherp3.setPoints(SmoothPath(UK, 1f));
+	}
+
+	private List<LatLng> SmoothPath(PolylineOptions PLO, float scale) {
+		List<LatLng> listLatLng = PLO.getPoints();
+		Path path = Bezier.GetBezierPath(listLatLng, scale);
+
+		PathMeasure pm = new PathMeasure(path, false);
+		float length = pm.getLength();
+		List<LatLng> smoothedLine = new ArrayList<>();
+		if (length > 1e-4) {
+			for (double f = 0.0; f <= length; f += (double) length / (double) (5 * listLatLng.size())) {
+				float[] latlng = new float[2];
+				pm.getPosTan((float) f, latlng, null);
+				smoothedLine.add(new LatLng(latlng[0], latlng[1]));
+			}
+		}
+		return smoothedLine;
+	}
+
+	private List<LatLng> SmoothPath(PolylineOptions PLO) {
+		List<LatLng> listLatLng = PLO.getPoints();
+		Path path = Bezier.GetBezierPath(listLatLng);
+
+		PathMeasure pm = new PathMeasure(path, false);
+		float length = pm.getLength();
+		List<LatLng> smoothedLine = new ArrayList<>();
+		if (length > 1e-4) {
+			for (double f = 0.0; f <= length; f += (double) length / (double) (5 * listLatLng.size())) {
+				float[] latlng = new float[2];
+				pm.getPosTan((float) f, latlng, null);
+				smoothedLine.add(new LatLng(latlng[0], latlng[1]));
+			}
+		}
+		return smoothedLine;
+	}
+
+	/*===================*/
 	/* FRAGMENT UPDATING
 	/*===================*/
 	public void UpdateFragmentUI() {
@@ -206,14 +308,15 @@ public class RaceMapFragment extends Fragment
 				.target(new LatLng(Global.Latitude, Global.Longitude))      // Sets the center of the map to Mountain View
 				.zoom(16)                   // Sets the zoom
 				.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
-				//.tilt(30)                   // Sets the tilt of the camera to 30 degrees
+						//.tilt(30)                   // Sets the tilt of the camera to 30 degrees
 				.build();
 		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
 		pathHistory.setPoints(SmoothPath(MainActivity.myDrivenLocation.pathHistory, 0.01f));
 		try {
 			ObserverLocation.setCenter(MainActivity.myDrivenLocation.ObserverLocation.getCenter());
-		} catch (NullPointerException ignored) {}			// Observerlocation has not been initialized yet so do nothing
+		} catch (NullPointerException ignored) {
+		}            // Observerlocation has not been initialized yet so do nothing
 
 		if (Global.StartFinishLineLocation != null) {
 			map.addCircle(new CircleOptions()
@@ -222,63 +325,6 @@ public class RaceMapFragment extends Fragment
 					.fillColor(Color.WHITE));
 		}
 		UpdateMapText();
-	}
-
-	private void DemoSmoothedLine() {
-		PolylineOptions UK = new PolylineOptions();
-		UK.add(new LatLng(51.507351, -0.127758)); 	// Charing Cross, London
-		UK.add(new LatLng(52.486243, -1.890401));	// Aston University, Birmingham
-		UK.add(new LatLng(54.978252, -1.61778));	// Haymarket, Newcastle upon Tyne
-		UK.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
-		UK.add(new LatLng(55.864237, -4.251806));	// Royal Concert Hall, Glasgow
-
-		PolylineOptions someshit = new PolylineOptions();
-		someshit.add(new LatLng(51.507351, -0.127758)); 	// Charing Cross, London
-		someshit.add(new LatLng(52.486243, -1.890401));	// Aston University, Birmingham
-		someshit.add(new LatLng(54.978252, -1.61778));	// Haymarket, Newcastle upon Tyne
-		someshit.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
-		someshit.color(Color.RED);
-
-		PolylineOptions someshit2 = new PolylineOptions();
-		someshit2.add(new LatLng(51.507351, -0.127758)); 	// Charing Cross, London
-		someshit2.add(new LatLng(52.486243, -1.890401));	// Aston University, Birmingham
-		someshit2.add(new LatLng(54.978252, -1.61778));	// Haymarket, Newcastle upon Tyne
-		someshit2.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
-		someshit2.color(Color.BLUE);
-
-		PolylineOptions someshit3 = new PolylineOptions();
-		someshit3.add(new LatLng(51.507351, -0.127758)); 	// Charing Cross, London
-		someshit3.add(new LatLng(52.486243, -1.890401));	// Aston University, Birmingham
-		someshit3.add(new LatLng(54.978252, -1.61778));	// Haymarket, Newcastle upon Tyne
-		someshit3.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
-		someshit3.color(Color.GREEN);
-
-		Polyline herp = map.addPolyline(UK);
-		Polyline smoothedherp = map.addPolyline(someshit);
-		smoothedherp.setPoints(SmoothPath(UK, 0.01f));
-
-		Polyline smoothedherp2 = map.addPolyline(someshit2);
-		smoothedherp2.setPoints(SmoothPath(UK, 0.1f));
-
-		Polyline smoothedherp3 = map.addPolyline(someshit3);
-		smoothedherp3.setPoints(SmoothPath(UK, 1f));
-	}
-
-	private List<LatLng> SmoothPath(PolylineOptions PLO, float scale) {
-		List<LatLng> listLatLng = PLO.getPoints();
-		Path path = Bezier.GetBezierPath(listLatLng, scale);
-
-		PathMeasure pm = new PathMeasure(path, false);
-		float length = pm.getLength();
-		List<LatLng> smoothedLine = new ArrayList<>();
-		if (length > 1e-4) {
-			for (double f = 0.0; f <= length; f += (double) length / (double) (2 * listLatLng.size())) {
-				float[] latlng = new float[2];
-				pm.getPosTan((float) f, latlng, null);
-				smoothedLine.add(new LatLng(latlng[0], latlng[1]));
-			}
-		}
-		return smoothedLine;
 	}
 
 	private void UpdateVoltage() {

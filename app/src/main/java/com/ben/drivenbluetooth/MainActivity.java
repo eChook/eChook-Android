@@ -251,6 +251,8 @@ public class MainActivity
 			Global.LocationStatus = Global.LOCATION.values()[location];
 
 			Global.BTDeviceName = prefs.getString("prefBTDeviceName", "");
+
+			Global.CarName = prefs.getString("prefCarName", "");
 		} catch (Exception e) {
 			showMessage("Could not retrieve settings");
 		}

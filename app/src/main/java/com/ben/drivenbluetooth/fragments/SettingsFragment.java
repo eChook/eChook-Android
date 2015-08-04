@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceFragment;
-import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -47,6 +46,10 @@ public class SettingsFragment 	extends PreferenceFragment
 					EditTextPreference pref = (EditTextPreference) findPreference("prefBTDeviceName");
 					pref.setSummary(pref.getText());
 					break;
+				case "prefCarName":
+					Global.CarName = sharedPreferences.getString("prefCarName","");
+					EditTextPreference pref1 = (EditTextPreference) findPreference("prefCarName");
+					pref1.setSummary(pref1.getText());
 				default:
 					break;
 			}
