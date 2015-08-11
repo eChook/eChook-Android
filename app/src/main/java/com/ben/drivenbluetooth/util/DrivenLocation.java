@@ -203,12 +203,16 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		if (myRaceObserver != null) {
 			myRaceObserver.ActivateLaunchMode(Global.StartFinishLineLocation);
 		} else {
-			MainActivity.showMessage("Warning: Observer not defined - cannot activate launch mode!");
+			MainActivity.showMessage("Observer not defined - cannot activate launch mode!");
 		}
 	}
 
 	public void SimulateCrossStartFinishLine() {
-		myRaceObserver.SimulateCrossStartFinishLine();
+		if (myRaceObserver != null) {
+			myRaceObserver.SimulateCrossStartFinishLine();
+		} else {
+			MainActivity.showMessage("Observer is not yet defined!");
+		}
 	}
 
 	public float GetRaceObserverBearing_Current() {

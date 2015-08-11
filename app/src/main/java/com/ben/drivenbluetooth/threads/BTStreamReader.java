@@ -24,8 +24,7 @@ public class BTStreamReader extends Thread {
             this.mmInStream = Global.BTSocket.getInputStream();
 
         } catch (IOException e) {
-            // We need to warn that we couldn't connect to the bluetooth device
-			// TODO: figure out how to warn about failed bluetooth connection
+            MainActivity.showMessage("Bluetooth is not connected!");
         }
     }
 
