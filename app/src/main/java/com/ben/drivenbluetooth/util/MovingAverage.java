@@ -30,4 +30,8 @@ public class MovingAverage {
 		average -= average / window;
 		return average += num / window;
 	}
+
+	public double get() {
+		return average;
+	}
 }

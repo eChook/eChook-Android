@@ -368,7 +368,7 @@ public class RaceMapFragment extends Fragment
 	private void UpdateMapText() {
 		CurBearing.setText("car: " + String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_Current()));
 		SFLBearing.setText("sfl: " + String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_SFL()));
-		Accuracy.setText("acc: " + String.format("%.1f", Global.Accuracy));
+		Accuracy.setText("acc: " + String.format("%.1f", Global.GPSAccuracy));
 	}
 
 	private void StartFragmentUpdater() {

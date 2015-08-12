@@ -21,10 +21,11 @@ public class DataToCsvFile extends Thread {
 		try {
 			this.variable_identifiers = new String[]{
 					// these should match ArrayOfVariables
-					"InputThrottle (%)",
-					"ActualThrottle (%)",
+					"Input throttle (%)",
+					"Actual throttle (%)",
 					"Volts (V)",
 					"Amps (A)",
+					"Amp hours (Ah)",
 					"Motor speed (RPM)",
 					"Speed (mph)",
 					"Temp 1 (C)",
@@ -37,7 +38,7 @@ public class DataToCsvFile extends Thread {
 					"Bearing (deg)",
 					"SpeedGPS (m/s)",
 					"GPSTime",			// milliseconds since epoch (UTC)
-					"Accuracy (m)",		// radius of 68% confidence
+					"GPSAccuracy (m)",		// radius of 68% confidence
 					"Lap",
 					"Vehicle"
 			};
@@ -61,6 +62,7 @@ public class DataToCsvFile extends Thread {
 								String.format("%.0f",Global.ActualThrottle),
 								String.format("%.2f",Global.Volts),
 								String.format("%.2f",Global.Amps),
+								String.format("%.2f",Global.AmpHours),
 								String.format("%.0f",Global.MotorRPM),
 								String.format("%.1f",Global.SpeedMPH),
 								String.format("%.1f",Global.TempC1),
@@ -73,7 +75,7 @@ public class DataToCsvFile extends Thread {
 								String.format("%.1f", Global.Bearing),
 								String.format("%.1f", Global.SpeedGPS),
 								String.format("%.1f", Global.GPSTime),
-								String.format("%.1f", Global.Accuracy),
+								String.format("%.1f", Global.GPSAccuracy),
 							 	String.format("%d", Global.Lap),
 								Global.CarName
 				};

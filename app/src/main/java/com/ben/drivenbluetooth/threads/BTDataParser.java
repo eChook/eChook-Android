@@ -13,6 +13,10 @@ public class BTDataParser extends Thread {
 	private static byte[] poppedData;
 	private BTDataParserListener mListener;
 
+	/* == Amp Hour Variables ==*/
+	private static double prevAmps = 0.0;
+	private static long prevAmpTime = 0;
+
 	/*===================*/
 	/* BTDATAPARSER
 	/*===================*/
@@ -166,6 +170,7 @@ public class BTDataParser extends Thread {
 	}
 
 	private void SetCurrent(double rawAmps) {
+		IncrementAmpHours(rawAmps); // amp hours first!
 		Global.Amps = round(rawAmps, 2); // Apply conversion and offset TODO revisit amps
 		Global.AverageAmps.add(rawAmps);
 		if (Global.Lap > 0) {
@@ -252,6 +257,16 @@ public class BTDataParser extends Thread {
 		double value = Math.round(number * Math.pow(10, decimalPoints));
 		value = value / Math.pow(10, decimalPoints);
 		return value;
+	}
+
+	private void IncrementAmpHours(double amps) {
+		long millis = System.currentTimeMillis();
+		if (prevAmpTime != 0) {
+			Global.AmpHours += 0.5 * (amps + prevAmps) * (millis - prevAmpTime) /* Amp-milliseconds */
+							/ 1000 / 60 / 60; /* Amp-hours */
+		}
+		prevAmpTime = millis;
+		prevAmps = amps;
 	}
 
 	/*===================*/

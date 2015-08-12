@@ -33,17 +33,18 @@ public final class Global {
 	/**********************/
 	// use the volatile keyword for thread safety
     public static volatile BlockingQueue<byte[]> BTStreamQueue = 	new LinkedBlockingQueue<>();
-	public static volatile Double Volts 			= 	0.0;
-	public static volatile Double Amps 				= 	0.0;
-	public static volatile Double InputThrottle 	= 	0.0;
-	public static volatile Double ActualThrottle 	= 	0.0;
-	public static volatile Double MotorRPM 			= 	0.0;
-	public static volatile Double SpeedMPH 			= 	0.0;
-	public static volatile Double SpeedKPH 			= 	0.0;
-	public static volatile Double TempC1 			= 	0.0;
-	public static volatile Double TempC2 			= 	0.0;
-	public static volatile Double TempC3 			= 	0.0;
-	public static volatile Double GearRatio			=	0.0;
+	public static volatile Double Volts 			= 0.0;
+	public static volatile Double Amps 				= 0.0;
+	public static volatile Double InputThrottle 	= 0.0;
+	public static volatile Double ActualThrottle 	= 0.0;
+	public static volatile Double MotorRPM 			= 0.0;
+	public static volatile Double SpeedMPH 			= 0.0;
+	public static volatile Double SpeedKPH 			= 0.0;
+	public static volatile Double TempC1 			= 0.0;
+	public static volatile Double TempC2 			= 0.0;
+	public static volatile Double TempC3 			= 0.0;
+	public static volatile Double GearRatio			= 0.0;
+	public static volatile Double AmpHours 			= 0.0;
 
 	public static volatile ArrayList<LapData> LapDataList = new ArrayList<>();
 
@@ -68,7 +69,8 @@ public final class Global {
 	public static volatile Double Bearing		=	0.0;
 	public static volatile Double SpeedGPS		=	0.0;
 	public static volatile Double GPSTime		=	0.0;
-	public static volatile Double Accuracy		=	0.0;
+	public static volatile Double GPSAccuracy 	=	0.0;
+	public static		   float MinGPSAccuracy	=	20.0f;
 	public static volatile float DeltaDistance	=	0;	// difference between current and previous location in meters
 
 	public static volatile int Lap	= 0;
@@ -144,6 +146,8 @@ public final class Global {
 	public static ACCELEROMETER Accelerometer;
 
 	public static String BTDeviceName;
+
+	public static Double BatteryCapacityAh;
 
 	/**********************/
 	/* CONSTRUCTOR        */

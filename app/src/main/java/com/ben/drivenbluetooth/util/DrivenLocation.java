@@ -34,7 +34,6 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	private LocationRequest mLocationRequest;
 	private ArrayList<Location> InitialRaceDataPoints = new ArrayList<>();	// store the first few location points to calculate start position and bearing
 	private boolean storePointsIntoInitialArray = false;	// flag to write locations to the above array or not
-	private Double minLocationAccuracy = 20.0; // minimum location accuracy for calculating initial bearing
 	private boolean CrossStartFinishLineTriggerEnabled = true;	// used for the timeout to make sure we don't get excessive triggers firing if the location is slightly erratic
 
 	/*===================*/
@@ -77,17 +76,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 			InitialRaceDataPoints.add(location);
 		}
 
-		Global.Latitude = location.getLatitude();
-		Global.Longitude = location.getLongitude();
-		Global.Altitude = location.getAltitude();
-
-		if (location.hasBearing()) {
-			Global.Bearing = (double) location.getBearing();
-		}
-
-		Global.SpeedGPS = (double) location.getSpeed();
-		Global.GPSTime = (double) location.getTime();
-		Global.Accuracy = (double) location.getAccuracy();
+		_updateLocations(location);
 
 		if (CurrentLocation != null && PreviousLocation != null) {
 			Global.DeltaDistance = _calculateDistanceBetween(PreviousLocation, CurrentLocation);
@@ -96,6 +85,18 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		_addToPathHistory(location);
 		if (myRaceObserver != null) {
 			myRaceObserver.updateLocation(location);
+		}
+	}
+
+	private void _updateLocations(Location location) {
+		if (location.getAccuracy() <= Global.MinGPSAccuracy) {
+			Global.Latitude = location.getLatitude();
+			Global.Longitude = location.getLongitude();
+			Global.Altitude = location.getAltitude();
+			if (location.hasBearing()) { Global.Bearing = (double) location.getBearing(); }
+			Global.SpeedGPS = (double) location.getSpeed();
+			Global.GPSTime = (double) location.getTime();
+			Global.GPSAccuracy = (double) location.getAccuracy();
 		}
 	}
 
@@ -162,7 +163,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		// sync not required as this function and onRaceStart() run on the same thread
 		// i.e. they cannot be called at the same time
 		for (Location _location : InitialRaceDataPoints) {
-			if (_location.getAccuracy() <= minLocationAccuracy) {
+			if (_location.getAccuracy() <= Global.MinGPSAccuracy) {
 				if (start == null) {
 					start = _location;
 				} else {
