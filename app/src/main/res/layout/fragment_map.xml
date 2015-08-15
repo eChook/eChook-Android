@@ -16,7 +16,7 @@
 			  android:layout_above="@+id/rpm"/>
 
 	<TextView
-		android:layout_width="wrap_content"
+		android:layout_width="@dimen/five_view_field_width"
 		android:layout_height="30dp"
 		android:id="@+id/rpm"
 		android:gravity="center"
@@ -30,7 +30,7 @@
 		android:layout_alignBottom="@+id/current"/>
 
 	<TextView
-		android:layout_width="wrap_content"
+		android:layout_width="@dimen/five_view_field_width"
 		android:layout_height="30dp"
 		android:id="@+id/voltage"
 		android:gravity="center"
@@ -44,7 +44,7 @@
 		android:layout_alignParentStart="true"/>
 
 	<TextView
-		android:layout_width="wrap_content"
+		android:layout_width="@dimen/five_view_field_width"
 		android:layout_height="30dp"
 		android:id="@+id/current"
 		android:gravity="center"
@@ -59,7 +59,7 @@
 		android:layout_alignTop="@+id/voltage"/>
 
 	<TextView
-		android:layout_width="wrap_content"
+		android:layout_width="@dimen/five_view_field_width"
 		android:layout_height="30dp"
 		android:id="@+id/speed"
 		android:gravity="center"
@@ -96,5 +96,20 @@
 		android:id="@+id/txtAccuracy"
 		android:layout_above="@+id/txtCurBearing"
 		android:layout_alignLeft="@+id/txtSFLBearing"/>
+
+	<TextView
+		android:layout_width="@dimen/five_view_field_width"
+		android:layout_height="30dp"
+		android:id="@+id/ampHours"
+		android:gravity="center"
+		android:singleLine="false"
+		android:inputType="none"
+		android:width="150dp"
+		android:textSize="20sp"
+		android:textStyle="bold"
+		android:layout_alignParentBottom="true"
+		android:layout_toRightOf="@+id/speed"
+		android:layout_alignBottom="@+id/speed"
+		android:layout_alignTop="@+id/speed"/>
 
 </RelativeLayout>

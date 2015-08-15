@@ -29,6 +29,7 @@ public class LapHistoryFragment extends Fragment {
 	private TextView Voltage;
 	private TextView RPM;
 	private TextView Speed;
+	private TextView AmpHours;
 
 	public LapHistoryFragment() {
 		// Required empty public constructor
@@ -40,6 +41,7 @@ public class LapHistoryFragment extends Fragment {
 		Voltage 		= (TextView) v.findViewById(R.id.voltage);
 		RPM 			= (TextView) v.findViewById(R.id.rpm);
 		Speed 			= (TextView) v.findViewById(R.id.speed);
+		AmpHours		= (TextView) v.findViewById(R.id.ampHours);
 	}
 
 	/*===================*/
@@ -81,20 +83,13 @@ public class LapHistoryFragment extends Fragment {
 		textViewParams.setMargins(20, 10, 20, 10);
 
 		for (int i = 0; i < Global.LapDataList.size(); i++) {
-			Double[] values = new Double[]{
-					(double) i + 1,
-					Global.LapDataList.get(i).getAmps(),
-					Global.LapDataList.get(i).getVolts(),
-					Global.LapDataList.get(i).getSpeedMPH(),
-					Global.LapDataList.get(i).getRPM()
-			};
-
-			String[] formats = new String[] {
-					"%.0f",
-					"%.1f",
-					"%.1f",
-					"%.1f",
-					"%.0f"
+			String[] values = new String[] {
+					String.format("%d", i + 1),
+					String.format("%.0f", Global.LapDataList.get(i).getAmps()),
+					String.format("%.1f", Global.LapDataList.get(i).getVolts()),
+					String.format("%.1f", Global.LapDataList.get(i).getSpeedMPH()),
+					String.format("%.2f", Global.LapDataList.get(i).getAmpHours()),
+					String.format("%.0f", Global.LapDataList.get(i).getRPM())
 			};
 
 			TableRow tr = new TableRow(ctx);
@@ -102,7 +97,7 @@ public class LapHistoryFragment extends Fragment {
 
 			for (int j = 0; j < values.length; j++) {
 				TextView hv = new TextView(ctx);
-				hv.setText(String.format(formats[j], values[j]));
+				hv.setText(values[j]);
 				hv.setGravity(Gravity.CENTER);
 				hv.setLayoutParams(textViewParams);
 				tr.addView(hv);
@@ -119,6 +114,7 @@ public class LapHistoryFragment extends Fragment {
 	public void UpdateFragmentUI() {
 		UpdateVoltage();
 		UpdateCurrent();
+		UpdateAmpHours();
 		UpdateSpeed();
 		UpdateMotorRPM();
 	}
@@ -136,6 +132,14 @@ public class LapHistoryFragment extends Fragment {
 			this.Current.setText(String.format("%.1f", Global.Amps) + " A");
 		} catch (Exception e) {
 			e.getMessage();
+		}
+	}
+
+	private void UpdateAmpHours() {
+		try {
+			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
+		} catch (Exception e) {
+			e.toString();
 		}
 	}
 
@@ -173,6 +177,7 @@ public class LapHistoryFragment extends Fragment {
 				"Avg Volts (V)",
 				"Avg Spd (mph)",
 				"Avg RPM",
+				"Amp hours (Ah)",
 				"Lap time"
 		};
 

@@ -1,17 +1,17 @@
 package com.ben.drivenbluetooth.fragments;
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.ben.drivenbluetooth.util.ColorHelper;
-import com.ben.drivenbluetooth.util.DataBar;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
+import com.ben.drivenbluetooth.util.ColorHelper;
+import com.ben.drivenbluetooth.util.DataBar;
 import com.jjoe64.graphview.GraphView;
 
 import java.util.Timer;
@@ -20,20 +20,22 @@ import java.util.TimerTask;
 
 public class FourGraphsBars extends Fragment {
 
-	private TextView Current;
-	private TextView Voltage;
-	private TextView RPM;
-	private TextView Speed;
+	private static TextView Current;
+	private static TextView Voltage;
+	private static TextView RPM;
+	private static TextView Speed;
 
-	private DataBar CurrentBar;
-	private DataBar VoltageBar;
-	private DataBar RPMBar;
-	private DataBar SpeedBar;
+	private static DataBar CurrentBar;
+	private static DataBar VoltageBar;
+	private static DataBar RPMBar;
+	private static DataBar SpeedBar;
 
-	private GraphView myVoltsGraph;
-	private GraphView myAmpsGraph;
-	private GraphView myMotorRPMGraph;
-	private GraphView mySpeedGraph;
+	private static GraphView myVoltsGraph;
+	private static GraphView myAmpsGraph;
+	private static GraphView myMotorRPMGraph;
+	private static GraphView mySpeedGraph;
+
+	private static TextView AmpHours;
 
 	private static Timer 		FragmentUpdateTimer;
 
@@ -53,6 +55,7 @@ public class FourGraphsBars extends Fragment {
 		Voltage 		= (TextView) v.findViewById(R.id.voltage);
 		RPM 			= (TextView) v.findViewById(R.id.rpm);
 		Speed 			= (TextView) v.findViewById(R.id.speed);
+		AmpHours		= (TextView) v.findViewById(R.id.ampHours);
 	}
 
 	private void InitializeGraphs() {
@@ -133,6 +136,8 @@ public class FourGraphsBars extends Fragment {
 		myAmpsGraph			= null;
 		myMotorRPMGraph		= null;
 		mySpeedGraph		= null;
+
+		AmpHours			= null;
 	}
 
 	/*===================*/
@@ -141,6 +146,7 @@ public class FourGraphsBars extends Fragment {
 	public void UpdateFragmentUI() {
 		UpdateVoltage();
 		UpdateCurrent();
+		UpdateAmpHours();
 		UpdateSpeed();
 		UpdateMotorRPM();
 		Global.GraphTimeStamp += (float) Global.FAST_UI_UPDATE_INTERVAL / 1000.0f;
@@ -148,9 +154,9 @@ public class FourGraphsBars extends Fragment {
 
 	private void UpdateVoltage() {
 		try {
-			this.Voltage.setText(String.format("%.2f", Global.Volts));
-			this.Voltage.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
-			this.VoltageBar.setValue(Global.Volts);
+			Voltage.setText(String.format("%.2f", Global.Volts));
+			Voltage.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
+			VoltageBar.setValue(Global.Volts);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -158,11 +164,19 @@ public class FourGraphsBars extends Fragment {
 
 	private void UpdateCurrent() {
 		try {
-			this.Current.setText(String.format("%.1f", Global.Amps));
-			this.Current.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
-			this.CurrentBar.setValue(Global.Amps);
+			Current.setText(String.format("%.1f", Global.Amps));
+			Current.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
+			CurrentBar.setValue(Global.Amps);
 		} catch (Exception e) {
 			e.getMessage();
+		}
+	}
+
+	private void UpdateAmpHours() {
+		try {
+			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
+		} catch (Exception e) {
+			e.toString();
 		}
 	}
 
@@ -170,11 +184,11 @@ public class FourGraphsBars extends Fragment {
 		try {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
-				this.Speed.setText(String.format("%.1f", Global.SpeedMPH) + " mph");
-				this.SpeedBar.setValue(Global.SpeedMPH);
+				Speed.setText(String.format("%.1f", Global.SpeedMPH) + " mph");
+				SpeedBar.setValue(Global.SpeedMPH);
 			} else if (Global.Unit == Global.UNIT.KPH) {
-				this.Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
-				this.SpeedBar.setValue(Global.SpeedKPH);
+				Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
+				SpeedBar.setValue(Global.SpeedKPH);
 			}
 
 		} catch (Exception e) {
@@ -184,9 +198,9 @@ public class FourGraphsBars extends Fragment {
 
 	private void UpdateMotorRPM() {
 		try {
-			this.RPM.setText(String.format("%.0f", Global.MotorRPM));
-			this.RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
-			this.RPMBar.setValue(Global.MotorRPM);
+			RPM.setText(String.format("%.0f", Global.MotorRPM));
+			RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
+			RPMBar.setValue(Global.MotorRPM);
 		} catch (Exception e) {
 			e.getMessage();
 		}

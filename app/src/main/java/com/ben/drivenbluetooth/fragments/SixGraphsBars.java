@@ -1,7 +1,7 @@
 package com.ben.drivenbluetooth.fragments;
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +41,8 @@ public class SixGraphsBars extends Fragment {
 	private static GraphView mySpeedGraph;
 	private static GraphView myTempC1Graph;
 
+	private static TextView AmpHours;
+
 	private static Timer 		FragmentUpdateTimer;
 
 	/*===================*/
@@ -61,6 +63,7 @@ public class SixGraphsBars extends Fragment {
 		Temp1 			= (TextView) v.findViewById(R.id.temp1);
 		RPM 			= (TextView) v.findViewById(R.id.rpm);
 		Speed 			= (TextView) v.findViewById(R.id.speed);
+		AmpHours		= (TextView) v.findViewById(R.id.ampHours);
 	}
 
 	private void InitializeGraphs() {
@@ -163,6 +166,7 @@ public class SixGraphsBars extends Fragment {
 		mySpeedGraph		= null;
 		myTempC1Graph		= null;
 		myThrottleGraph		= null;
+		AmpHours			= null;
 	}
 
 	/*===================*/
@@ -175,6 +179,7 @@ public class SixGraphsBars extends Fragment {
 		UpdateSpeed();
 		UpdateTemp(1);
 		UpdateMotorRPM();
+		UpdateAmpHours();
 		Global.GraphTimeStamp += (float) Global.FAST_UI_UPDATE_INTERVAL / 1000.0f;
 	}
 
@@ -193,6 +198,14 @@ public class SixGraphsBars extends Fragment {
 			Current.setText(String.format("%.1f", Global.Amps));
 			Current.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
 			CurrentBar.setValue(Global.Amps);
+		} catch (Exception e) {
+			e.toString();
+		}
+	}
+
+	private void UpdateAmpHours() {
+		try {
+			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
 		} catch (Exception e) {
 			e.toString();
 		}

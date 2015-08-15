@@ -3,11 +3,16 @@ package com.ben.drivenbluetooth.fragments;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
+
+import java.util.Map;
 
 public class SettingsFragment 	extends PreferenceFragment
 								implements SharedPreferences.OnSharedPreferenceChangeListener
@@ -16,10 +21,34 @@ public class SettingsFragment 	extends PreferenceFragment
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.user_settings);
+		updateAllPreferenceSummary();
+	}
+
+	private void updatePreferenceSummary(String key) {
+		Preference pref = findPreference(key);
+		if (pref instanceof ListPreference) {
+			ListPreference listPref = (ListPreference) pref;
+			pref.setSummary(listPref.getEntry());
+		} else if (pref instanceof EditTextPreference) {
+			EditTextPreference editTextPref = (EditTextPreference) pref;
+			pref.setSummary(editTextPref.getText());
+		}
+	}
+
+	private void updateAllPreferenceSummary() {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
+		Map<String,?> keys = sharedPreferences.getAll();
+
+		for (Map.Entry<String, ?> entry : keys.entrySet()) {
+			updatePreferenceSummary(entry.getKey());
+		}
 	}
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		// update the preference summaries
+		updatePreferenceSummary(key);
+
 		try {
 			switch (key) {
 				case "prefMode":
@@ -43,13 +72,9 @@ public class SettingsFragment 	extends PreferenceFragment
 					break;
 				case "prefBTDeviceName":
 					Global.BTDeviceName = sharedPreferences.getString("prefBTDeviceName", "");
-					EditTextPreference pref = (EditTextPreference) findPreference("prefBTDeviceName");
-					pref.setSummary(pref.getText());
 					break;
 				case "prefCarName":
 					Global.CarName = sharedPreferences.getString("prefCarName","");
-					EditTextPreference pref1 = (EditTextPreference) findPreference("prefCarName");
-					pref1.setSummary(pref1.getText());
 				default:
 					break;
 			}

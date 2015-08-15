@@ -55,6 +55,8 @@ public class MainActivity
 	public static TextView myDataFileSize;
 	public static TextView myDataFileName;
 
+	public static TextView myBTCarName;
+
 	public static TextView myBTState;
 	public static TextView myLogging;
 
@@ -95,11 +97,13 @@ public class MainActivity
 
 		/************** INITIALIZE UI ELEMENTS ************/
 
-		/* OTHERS */
+	/* OTHERS */
 		myMode = (TextView) findViewById(R.id.txt_Mode);
 
 		myDataFileName = (TextView) findViewById(R.id.txtDataFileName);
 		myDataFileSize = (TextView) findViewById(R.id.txtDataFileSize);
+
+		myBTCarName = (TextView) findViewById(R.id.txtBTCarName);
 
 		myBTState = (TextView) findViewById(R.id.txtBTState);
 		myLogging = (TextView) findViewById(R.id.txtLogging);

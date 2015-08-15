@@ -19,7 +19,7 @@
 		android:layout_below="@+id/VoltageBar"
 		android:layout_alignLeft="@+id/VoltageBar"
 		android:layout_alignRight="@+id/VoltageBar"
-		android:layout_alignParentBottom="true"/>
+		android:layout_above="@+id/ampHours"/>
 
 	<view
 		android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
 		android:layout_height="wrap_content"
 		class="com.jjoe64.graphview.GraphView"
 		android:id="@+id/SpeedGraph"
-		android:layout_alignParentBottom="true"
+		android:layout_alignParentBottom="false"
 		android:layout_alignEnd="@+id/textView7"
 		android:layout_toEndOf="@+id/RPMGraph"
 		android:layout_alignTop="@+id/RPMGraph"
@@ -230,4 +230,16 @@
 		custom:xWidth="@integer/databar_xWidth"
 		android:layout_below="@+id/current"
 		android:layout_alignBottom="@+id/RPMBar"/>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/ampHours"
+		android:textStyle="bold"
+		android:textIsSelectable="false"
+		android:textSize="20sp"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentStart="true"
+		android:layout_alignParentEnd="true"
+		android:gravity="center"/>
 </RelativeLayout>

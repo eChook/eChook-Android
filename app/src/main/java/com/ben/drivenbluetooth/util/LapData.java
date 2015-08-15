@@ -5,6 +5,9 @@ public class LapData {
 	private RunningAverage VoltsAvg;
 	private RunningAverage RPMAvg;
 	private RunningAverage SpeedAvg;
+
+	private Double AmpHours;
+
 	public String lapTime;
 
 	public LapData() {
@@ -12,6 +15,7 @@ public class LapData {
 		VoltsAvg 	= new RunningAverage(1);
 		RPMAvg 		= new RunningAverage(0);
 		SpeedAvg 	= new RunningAverage(1);
+		AmpHours	= 0.0;
 		lapTime		= "";
 	}
 
@@ -30,6 +34,8 @@ public class LapData {
 	public void AddSpeed(Double speed) {
 		SpeedAvg.add(speed);
 	}
+
+	public void AddAmpHours(Double ah) { AmpHours += ah; }
 
 	public Double getAmps() {
 		return AmpsAvg.getAverage();
@@ -50,4 +56,6 @@ public class LapData {
 	public Double getSpeedKPH() {
 		return SpeedAvg.getAverage() * 1.61;
 	}
+
+	public Double getAmpHours() { return AmpHours; }
 }

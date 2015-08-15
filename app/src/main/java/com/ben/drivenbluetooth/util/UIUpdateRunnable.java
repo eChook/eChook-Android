@@ -1,11 +1,9 @@
 package com.ben.drivenbluetooth.util;
 
 import android.graphics.Color;
-import android.widget.TextView;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
-import com.jjoe64.graphview.series.DataPoint;
 
 /* This class should only be used by posting to the UI thread */
 public class UIUpdateRunnable implements Runnable {
@@ -15,6 +13,11 @@ public class UIUpdateRunnable implements Runnable {
 		UpdateBTStatus();
 		UpdateFileSize();
 		UpdateLap();
+		UpdateBTCarName();
+	}
+
+	private void UpdateBTCarName() {
+		MainActivity.myBTCarName.setText(Global.BTDeviceName + " :: " + Global.CarName);
 	}
 
 	private void UpdateLap() {

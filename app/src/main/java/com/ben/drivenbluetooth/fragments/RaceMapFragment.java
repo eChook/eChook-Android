@@ -48,6 +48,7 @@ public class RaceMapFragment extends Fragment
 	private TextView Voltage;
 	private TextView RPM;
 	private TextView Speed;
+	private TextView AmpHours;
 
 	private TextView CurBearing;
 	private TextView SFLBearing;
@@ -74,6 +75,8 @@ public class RaceMapFragment extends Fragment
 		Voltage 		= (TextView) v.findViewById(R.id.voltage);
 		RPM 			= (TextView) v.findViewById(R.id.rpm);
 		Speed 			= (TextView) v.findViewById(R.id.speed);
+		AmpHours		= (TextView) v.findViewById(R.id.ampHours);
+
 		CurBearing		= (TextView) v.findViewById(R.id.txtCurBearing);
 		SFLBearing		= (TextView) v.findViewById(R.id.txtSFLBearing);
 		Accuracy		= (TextView) v.findViewById(R.id.txtAccuracy);
@@ -123,6 +126,8 @@ public class RaceMapFragment extends Fragment
 		Voltage		= null;
 		RPM			= null;
 		Speed		= null;
+		AmpHours	= null;
+
 		CurBearing 	= null;
 		SFLBearing 	= null;
 		map 		= null;
@@ -203,7 +208,6 @@ public class RaceMapFragment extends Fragment
 		builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				map.clear();
-				ObserverLocation = map.addCircle(MainActivity.myDrivenLocation.ObserverLocation);
 			}
 		});
 		AlertDialog dialog = builder.create();
@@ -267,30 +271,21 @@ public class RaceMapFragment extends Fragment
 		float length = pm.getLength();
 		List<LatLng> smoothedLine = new ArrayList<>();
 		if (length > 1e-4) {
-			for (double f = 0.0; f <= length; f += (double) length / (double) (5 * listLatLng.size())) {
+			for (double f = 0.0; f <= length; f += (double) length / (double) (4 * listLatLng.size())) {
 				float[] latlng = new float[2];
 				pm.getPosTan((float) f, latlng, null);
 				smoothedLine.add(new LatLng(latlng[0], latlng[1]));
 			}
+			// sometimes the last point is not added, so force it
+			float[] latlng = new float[2];
+			pm.getPosTan(1, latlng, null);
+			smoothedLine.add(new LatLng(latlng[0], latlng[1]));
 		}
 		return smoothedLine;
 	}
 
 	private List<LatLng> SmoothPath(PolylineOptions PLO) {
-		List<LatLng> listLatLng = PLO.getPoints();
-		Path path = Bezier.GetBezierPath(listLatLng);
-
-		PathMeasure pm = new PathMeasure(path, false);
-		float length = pm.getLength();
-		List<LatLng> smoothedLine = new ArrayList<>();
-		if (length > 1e-4) {
-			for (double f = 0.0; f <= length; f += (double) length / (double) (5 * listLatLng.size())) {
-				float[] latlng = new float[2];
-				pm.getPosTan((float) f, latlng, null);
-				smoothedLine.add(new LatLng(latlng[0], latlng[1]));
-			}
-		}
-		return smoothedLine;
+		return SmoothPath(PLO, 1f);
 	}
 
 	/*===================*/
@@ -298,6 +293,7 @@ public class RaceMapFragment extends Fragment
 	/*===================*/
 	public void UpdateFragmentUI() {
 		UpdateCurrent();
+		UpdateAmpHours();
 		UpdateMotorRPM();
 		UpdateVoltage();
 		UpdateSpeed();
@@ -312,7 +308,7 @@ public class RaceMapFragment extends Fragment
 				.build();
 		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-		pathHistory.setPoints(SmoothPath(MainActivity.myDrivenLocation.pathHistory, 0.01f));
+		pathHistory.setPoints(MainActivity.myDrivenLocation.pathHistory.getPoints());
 		try {
 			ObserverLocation.setCenter(MainActivity.myDrivenLocation.ObserverLocation.getCenter());
 		} catch (NullPointerException ignored) {
@@ -340,6 +336,14 @@ public class RaceMapFragment extends Fragment
 			this.Current.setText(String.format("%.1f", Global.Amps) + " A");
 		} catch (Exception e) {
 			e.getMessage();
+		}
+	}
+
+	private void UpdateAmpHours() {
+		try {
+			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
+		} catch (Exception e) {
+			e.toString();
 		}
 	}
 
