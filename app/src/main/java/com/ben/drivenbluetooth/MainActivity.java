@@ -272,7 +272,6 @@ public class MainActivity
 		try {
 			myBluetoothManager.findBT();
 			myBluetoothManager.openBT();
-			StartStreamReader();
 		} catch (Exception e) {
 			showMessage(e.getMessage());
 		}
@@ -537,6 +536,7 @@ public class MainActivity
 				Global.BTSocket = BTSocket;
 				showMessage(Global.BTDeviceName + " successfully connected");
 				Global.BTState = Global.BTSTATE.CONNECTED;
+				StartStreamReader();
 			}
 		});
 	}
