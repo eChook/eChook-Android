@@ -392,14 +392,14 @@ public class MainActivity
 
 	private void StartRaceMode() {
 		StartStreamReader();
-		StartDataSaver();
+		StartDataLogger();
 	}
 
 	private void StartDemoMode() {
 		StartRandomGenerator();
 	}
 
-	private void StartDataSaver() {
+	private void StartDataLogger() {
 		try {
 			if (!DataSaver.isAlive() && DataSaver.getState() != Thread.State.NEW) {
 				DataSaver = new DataToCsvFile();
@@ -421,6 +421,7 @@ public class MainActivity
 			}
 			StreamReader.start();
 		} catch (Exception e) {
+			showMessage("Warning: not connected to Bluetooth! Logger will run, but won't give any worthwhile data");
 			showMessage(e.getMessage());
 		}
 	}

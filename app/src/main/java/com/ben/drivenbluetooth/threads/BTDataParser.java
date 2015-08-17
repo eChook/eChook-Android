@@ -164,7 +164,7 @@ public class BTDataParser extends Thread {
 		}
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
-				Global.VoltsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Volts), false, Global.maxGraphDataPoints);
+				Global.VoltsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Volts), true, Global.maxGraphDataPoints);
 			}
 		});
 	}
@@ -178,7 +178,7 @@ public class BTDataParser extends Thread {
 		}
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
-				Global.AmpsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Amps), false, Global.maxGraphDataPoints);
+				Global.AmpsHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.Amps), true, Global.maxGraphDataPoints);
 			}
 		});
 	}
@@ -187,7 +187,7 @@ public class BTDataParser extends Thread {
 		Global.InputThrottle = rawThrottle; // Apply conversion and offset TODO revisit throttle
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
-				Global.ThrottleHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.InputThrottle), false, Global.maxGraphDataPoints);
+				Global.ThrottleHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.InputThrottle), true, Global.maxGraphDataPoints);
 			}
 		});
 	}
@@ -209,13 +209,13 @@ public class BTDataParser extends Thread {
 		if (Global.Unit == Global.UNIT.MPH) {
 			MainActivity.MainActivityHandler.post(new Runnable() {
 				public void run() {
-					Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedMPH), false, Global.maxGraphDataPoints);
+					Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedMPH), true, Global.maxGraphDataPoints);
 				}
 			});
 		} else if (Global.Unit == Global.UNIT.KPH) {
 			MainActivity.MainActivityHandler.post(new Runnable() {
 				public void run() {
-					Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedKPH), false, Global.maxGraphDataPoints);
+					Global.SpeedHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.SpeedKPH), true, Global.maxGraphDataPoints);
 				}
 			});
 		}
@@ -228,7 +228,7 @@ public class BTDataParser extends Thread {
 		}
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
-				Global.MotorRPMHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.MotorRPM), false, Global.maxGraphDataPoints);
+				Global.MotorRPMHistory.appendData(new DataPoint(Global.GraphTimeStamp, Global.MotorRPM), true, Global.maxGraphDataPoints);
 			}
 		});
 	}
