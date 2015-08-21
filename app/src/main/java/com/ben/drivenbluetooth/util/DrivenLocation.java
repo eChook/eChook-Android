@@ -200,11 +200,19 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	}
 
 	public void ActivateLaunchMode() {
-		Global.StartFinishLineLocation = CurrentLocation;
-		if (myRaceObserver != null) {
-			myRaceObserver.ActivateLaunchMode(Global.StartFinishLineLocation);
+		if (Global.LocationStatus == Global.LOCATION.ENABLED) {
+			if (CurrentLocation != null) {
+				Global.StartFinishLineLocation = CurrentLocation;
+				if (myRaceObserver != null) {
+					myRaceObserver.ActivateLaunchMode(Global.StartFinishLineLocation);
+				} else {
+					MainActivity.showMessage("Observer not defined - cannot activate launch mode!");
+				}
+			} else {
+				MainActivity.showMessage("Could not obtain your location. Please try again");
+			}
 		} else {
-			MainActivity.showMessage("Observer not defined - cannot activate launch mode!");
+			MainActivity.showMessage("Location updates are not enabled on your device. Please go to settings and enable it!");
 		}
 	}
 

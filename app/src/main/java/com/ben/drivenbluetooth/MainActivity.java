@@ -159,6 +159,28 @@ public class MainActivity
 	}
 
 	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		ForceStop(myDataFileName);
+		myMode			= null;
+		myDataFileName	= null;
+		myDataFileSize	= null;
+		myBTCarName		= null;
+		myBTState		= null;
+		myLogging		= null;
+		LapTimer		= null;
+		prevLapTime		= null;
+		LapNumber		= null;
+
+
+		myAccelerometer = null;
+		myDrivenLocation = null;
+		myBluetoothManager.unregisterListeners();
+
+		FragmentList.clear();
+	}
+
+	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		if (hasFocus) {
@@ -351,13 +373,13 @@ public class MainActivity
 	}
 
 	public void LaunchMode(View v) {
-		byte[] cyclepacket = new byte[5];
-		cyclepacket[0] = Global.STARTBYTE;
-		cyclepacket[1] = Global.LAUNCH_MODE_ID;
-		cyclepacket[2] = 0;
-		cyclepacket[3] = 0;
-		cyclepacket[4] = Global.STOPBYTE;
-		Global.BTStreamQueue.add(cyclepacket);
+		byte[] launchpacket = new byte[5];
+		launchpacket[0] = Global.STARTBYTE;
+		launchpacket[1] = Global.LAUNCH_MODE_ID;
+		launchpacket[2] = 0;
+		launchpacket[3] = 0;
+		launchpacket[4] = Global.STOPBYTE;
+		Global.BTStreamQueue.add(launchpacket);
 		BTDataParser.mHandler.sendEmptyMessage(0);
 	}
 

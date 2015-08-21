@@ -3,10 +3,6 @@ package com.ben.drivenbluetooth.util;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -34,6 +30,10 @@ public final class BluetoothManager {
 
 	public void setBluetoothEventsListener(BluetoothEvents BE) {
 		mListener = BE;
+	}
+
+	public void unregisterListeners() {
+		mListener = null;
 	}
 
     public void findBT() {

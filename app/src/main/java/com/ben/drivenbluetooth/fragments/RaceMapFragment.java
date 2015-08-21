@@ -300,27 +300,29 @@ public class RaceMapFragment extends Fragment
 	}
 
 	public void UpdateMap() {
-		CameraPosition cameraPosition = new CameraPosition.Builder()
-				.target(new LatLng(Global.Latitude, Global.Longitude))      // Sets the center of the map to Mountain View
-				.zoom(16)                   // Sets the zoom
-				.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
-						//.tilt(30)                   // Sets the tilt of the camera to 30 degrees
-				.build();
-		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+		if (map != null) {
+			CameraPosition cameraPosition = new CameraPosition.Builder()
+					.target(new LatLng(Global.Latitude, Global.Longitude))      // Sets the center of the map to Mountain View
+					.zoom(16)                   // Sets the zoom
+					.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
+							//.tilt(30)                   // Sets the tilt of the camera to 30 degrees
+					.build();
+			map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-		pathHistory.setPoints(MainActivity.myDrivenLocation.pathHistory.getPoints());
-		try {
-			ObserverLocation.setCenter(MainActivity.myDrivenLocation.ObserverLocation.getCenter());
-		} catch (NullPointerException ignored) {
-		}            // Observerlocation has not been initialized yet so do nothing
+			pathHistory.setPoints(MainActivity.myDrivenLocation.pathHistory.getPoints());
+			try {
+				ObserverLocation.setCenter(MainActivity.myDrivenLocation.ObserverLocation.getCenter());
+			} catch (NullPointerException ignored) {
+			}            // Observerlocation has not been initialized yet so do nothing
 
-		if (Global.StartFinishLineLocation != null) {
-			map.addCircle(new CircleOptions()
-					.center(new LatLng(Global.StartFinishLineLocation.getLatitude(), Global.StartFinishLineLocation.getLongitude()))
-					.radius(5)
-					.fillColor(Color.WHITE));
+			if (Global.StartFinishLineLocation != null) {
+				map.addCircle(new CircleOptions()
+						.center(new LatLng(Global.StartFinishLineLocation.getLatitude(), Global.StartFinishLineLocation.getLongitude()))
+						.radius(5)
+						.fillColor(Color.WHITE));
+			}
+			UpdateMapText();
 		}
-		UpdateMapText();
 	}
 
 	private void UpdateVoltage() {

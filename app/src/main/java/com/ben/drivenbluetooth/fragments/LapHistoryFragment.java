@@ -75,39 +75,41 @@ public class LapHistoryFragment extends Fragment {
 	}
 
 	public void UpdateLapTable() {
-		LapTable.removeAllViews();
-		_createHeaders();
+		if (LapTable != null) {
+			LapTable.removeAllViews();
+			_createHeaders();
 
-		Context ctx = getActivity();
-		TableRow.LayoutParams textViewParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-		textViewParams.setMargins(20, 10, 20, 10);
+			Context ctx = getActivity();
+			TableRow.LayoutParams textViewParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+			textViewParams.setMargins(20, 10, 20, 10);
 
-		for (int i = 0; i < Global.LapDataList.size(); i++) {
-			String[] values = new String[] {
-					String.format("%d", i + 1),
-					String.format("%.0f", Global.LapDataList.get(i).getAmps()),
-					String.format("%.1f", Global.LapDataList.get(i).getVolts()),
-					String.format("%.1f", Global.LapDataList.get(i).getSpeedMPH()),
-					String.format("%.2f", Global.LapDataList.get(i).getAmpHours()),
-					String.format("%.0f", Global.LapDataList.get(i).getRPM())
-			};
+			for (int i = 0; i < Global.LapDataList.size(); i++) {
+				String[] values = new String[]{
+						String.format("%d", i + 1),
+						String.format("%.0f", Global.LapDataList.get(i).getAmps()),
+						String.format("%.1f", Global.LapDataList.get(i).getVolts()),
+						String.format("%.1f", Global.LapDataList.get(i).getSpeedMPH()),
+						String.format("%.2f", Global.LapDataList.get(i).getAmpHours()),
+						String.format("%.0f", Global.LapDataList.get(i).getRPM())
+				};
 
-			TableRow tr = new TableRow(ctx);
-			tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+				TableRow tr = new TableRow(ctx);
+				tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
-			for (int j = 0; j < values.length; j++) {
-				TextView hv = new TextView(ctx);
-				hv.setText(values[j]);
-				hv.setGravity(Gravity.CENTER);
-				hv.setLayoutParams(textViewParams);
-				tr.addView(hv);
+				for (int j = 0; j < values.length; j++) {
+					TextView hv = new TextView(ctx);
+					hv.setText(values[j]);
+					hv.setGravity(Gravity.CENTER);
+					hv.setLayoutParams(textViewParams);
+					tr.addView(hv);
+				}
+				TextView laptime = new TextView(ctx);
+				laptime.setText(Global.LapDataList.get(i).lapTime);
+				laptime.setGravity(Gravity.CENTER);
+				laptime.setLayoutParams(textViewParams);
+				tr.addView(laptime);
+				LapTable.addView(tr);
 			}
-			TextView laptime = new TextView(ctx);
-			laptime.setText(Global.LapDataList.get(i).lapTime);
-			laptime.setGravity(Gravity.CENTER);
-			laptime.setLayoutParams(textViewParams);
-			tr.addView(laptime);
-			LapTable.addView(tr);
 		}
 	}
 
