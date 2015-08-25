@@ -22,6 +22,8 @@ public final class BluetoothManager {
 	private boolean deviceConnected = false;
     private boolean matchingDeviceFound = false;
 
+	private static volatile boolean isConnecting = false;
+
 	public interface BluetoothEvents {
 		void onBluetoothConnected(BluetoothSocket BTSocket);
 		void onFailConnection();
@@ -67,11 +69,12 @@ public final class BluetoothManager {
     }
 
     public void openBT() {
-		if (matchingDeviceFound) {
+		if (matchingDeviceFound && !isConnecting && Global.BTState != Global.BTSTATE.CONNECTED) {
 			Global.BTState = Global.BTSTATE.CONNECTING;
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
+					isConnecting = true;
 					UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard //SerialPortService ID
 					try {
 						mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
@@ -87,18 +90,19 @@ public final class BluetoothManager {
 						// if we have reached here then the connection was successful
 						mListener.onBluetoothConnected(mmSocket);
 					} catch (IOException e) {
-						try {
-							mmSocket.close();
-						} catch (IOException ignored) {}
-						mListener.onFailConnection();
+						if (mmSocket != null) {
+							mmSocket = null;
+							mListener.onFailConnection();
+						}
 					}
+					isConnecting = false;
 				}
 			}).start();
 		}
     }
 
     public void closeBT() throws IOException {
-		if (deviceConnected) {
+		if (Global.BTState != Global.BTSTATE.DISCONNECTED) {
             mmSocket.close();
 			Global.BTSocket.close();
             deviceConnected = false;
@@ -107,14 +111,25 @@ public final class BluetoothManager {
     }
 
 	public boolean reconnectBT() {
-		try {
-			this.openBT();
+		if (Global.BTState == Global.BTSTATE.DISCONNECTED) {
+			try {
+				try {
+					Global.BTSocket.close();
+				} catch (Exception ignored) {}
+				try {
+					mmSocket.close();
+				} catch (Exception ignored) {}
 
-			// if the above succeeds, return true
-			return true;
-		} catch (Exception e) {
-			e.getMessage();
-			return false;
+				this.openBT();
+
+				// if the above succeeds, return true
+				return true;
+			} catch (Exception e) {
+				e.getMessage();
+				return false;
+			}
+		} else {
+			return true; // bluetooth is already connected!
 		}
 	}
 }

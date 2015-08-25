@@ -247,7 +247,7 @@ public class MainActivity
 
 	public static void showMessage(String theMsg) {
 		if (context != null) {
-			Toast msg = Toast.makeText(context, theMsg, (Toast.LENGTH_LONG));
+			Toast msg = Toast.makeText(context, theMsg, (Toast.LENGTH_SHORT));
 			msg.show();
 		}
 	}
@@ -258,7 +258,7 @@ public class MainActivity
 	}
 
 	public static void showError(Exception e) {
-		showMessage(e.getMessage(), Toast.LENGTH_LONG);
+		showMessage(e.getMessage(), Toast.LENGTH_SHORT);
 	}
 
 	/**************************************************/
@@ -313,9 +313,8 @@ public class MainActivity
 			LineDataSet set = new LineDataSet(null, legends[i]);
 			set.setAxisDependency(YAxis.AxisDependency.LEFT);
 			set.setColor(ColorTemplate.getHoloBlue());
-			set.setCircleColor(Color.WHITE);
 			set.setDrawCircles(false);
-			set.setLineWidth(2f);
+			set.setLineWidth(4f);
 			set.setFillAlpha(65);
 			set.setFillColor(ColorTemplate.getHoloBlue());
 			set.setHighLightColor(Color.rgb(244, 117, 117));

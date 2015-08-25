@@ -32,15 +32,15 @@ public class UIUpdateRunnable implements Runnable {
 				break;
 			case CONNECTING:
 				MainActivity.myBTState.setText("CONNECTING");
-				MainActivity.myBTState.setTextColor(Color.YELLOW);
+				MainActivity.myBTState.setTextColor(Color.argb(255, 227, 158, 9));
 				break;
 			case CONNECTED:
 				MainActivity.myBTState.setText("CONNECTED");
-				MainActivity.myBTState.setTextColor(Color.GREEN);
+				MainActivity.myBTState.setTextColor(Color.argb(255, 32, 179, 61));
 				break;
 			case RECONNECTING:
 				MainActivity.myBTState.setText("RECONNECTING... [" + Global.BTReconnectAttempts + "]");
-				MainActivity.myBTState.setTextColor(Color.YELLOW);
+				MainActivity.myBTState.setTextColor(Color.argb(255, 227, 158, 9));
 				break;
 		}
 	}

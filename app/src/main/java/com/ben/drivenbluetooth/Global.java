@@ -124,7 +124,7 @@ public final class Global {
     public static final int 	DATA_SAVE_INTERVAL 		= 250; // save interval in milliseconds
 	public static final String 	DATA_FILE 				= "arduino.csv";
 
-	public static final int BT_DATA_TIMEOUT = 2000; // Bluetooth connection timeout in milliseconds
+	public static final int BT_DATA_TIMEOUT = 5000; // Bluetooth connection timeout in milliseconds
 
 	public static final int LOCATION_INTERVAL 		= 2000; 	// Low speed location update interval in ms
 	public static final int LOCATION_FAST_INTERVAL 	= 1000;		// High speed location update interval in ms

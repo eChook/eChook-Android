@@ -32,7 +32,7 @@ public class BTStreamReader extends Thread {
     public void run() {
 		byte[] buffer = new byte[1024];
 	    int bytes;
-		long latestMillis = 0;
+		long latestMillis = System.currentTimeMillis();
 
 	    this.stopWorker = false;
 	    int readBufferPosition = 0;
@@ -110,8 +110,6 @@ public class BTStreamReader extends Thread {
 
 	private void DisconnectedBTRoutine() {
 		try {
-			Global.BTSocket = null;
-			Global.BTState = Global.BTSTATE.RECONNECTING;
 			MainActivity.myBluetoothManager.reconnectBT();
 		} catch (Exception e) {
 			e.toString();
