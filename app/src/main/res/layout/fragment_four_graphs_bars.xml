@@ -12,7 +12,7 @@
 	<view
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		class="com.jjoe64.graphview.GraphView"
+		class="com.github.mikephil.charting.charts.LineChart"
 		android:id="@+id/voltsGraph"
 		android:layout_alignStart="@+id/VoltageBar"
 		android:layout_alignEnd="@+id/VoltageBar"
@@ -24,7 +24,7 @@
 	<view
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		class="com.jjoe64.graphview.GraphView"
+		class="com.github.mikephil.charting.charts.LineChart"
 		android:id="@+id/ampsGraph"
 		android:layout_alignStart="@+id/CurrentBar"
 		android:layout_alignBottom="@+id/voltsGraph"
@@ -36,7 +36,7 @@
 	<view
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		class="com.jjoe64.graphview.GraphView"
+		class="com.github.mikephil.charting.charts.LineChart"
 		android:id="@+id/RPMGraph"
 		android:layout_alignStart="@+id/RPMBar"
 		android:layout_toEndOf="@+id/RPMBar"
@@ -48,7 +48,7 @@
 	<view
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		class="com.jjoe64.graphview.GraphView"
+		class="com.github.mikephil.charting.charts.LineChart"
 		android:id="@+id/SpeedGraph"
 		android:layout_alignParentBottom="false"
 		android:layout_alignEnd="@+id/textView7"

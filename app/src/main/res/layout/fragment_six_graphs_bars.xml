@@ -9,7 +9,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:custom="http://schemas.android.com/apk/res-auto">
 
-	<com.jjoe64.graphview.GraphView
+	<com.github.mikephil.charting.charts.LineChart
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/throttleGraph"
@@ -21,7 +21,7 @@
 	<view
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		class="com.jjoe64.graphview.GraphView"
+		class="com.github.mikephil.charting.charts.LineChart"
 		android:id="@+id/voltsGraph"
 		android:layout_below="@+id/VoltageBar"
 		android:layout_alignStart="@+id/VoltageBar"
@@ -31,7 +31,7 @@
 	<view
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		class="com.jjoe64.graphview.GraphView"
+		class="com.github.mikephil.charting.charts.LineChart"
 		android:id="@+id/ampsGraph"
 		android:layout_below="@+id/CurrentBar"
 		android:layout_alignStart="@+id/CurrentBar"
@@ -41,7 +41,7 @@
 	<view
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		class="com.jjoe64.graphview.GraphView"
+		class="com.github.mikephil.charting.charts.LineChart"
 		android:id="@+id/T1Graph"
 		android:layout_below="@+id/T1Bar"
 		android:layout_alignStart="@+id/T1Bar"
@@ -53,7 +53,7 @@
 	<view
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		class="com.jjoe64.graphview.GraphView"
+		class="com.github.mikephil.charting.charts.LineChart"
 		android:id="@+id/RPMGraph"
 		android:layout_below="@+id/T1Bar"
 		android:layout_alignStart="@+id/RPMBar"
@@ -65,7 +65,7 @@
 	<view
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		class="com.jjoe64.graphview.GraphView"
+		class="com.github.mikephil.charting.charts.LineChart"
 		android:id="@+id/SpeedGraph"
 		android:layout_below="@+id/RPMBar"
 		android:layout_toEndOf="@+id/RPMBar"
@@ -337,4 +337,5 @@
 		android:gravity="center"
 		android:textStyle="bold"
 		android:textSize="20sp"/>
+
 </RelativeLayout>

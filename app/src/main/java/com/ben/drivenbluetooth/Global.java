@@ -5,6 +5,10 @@ import android.location.Location;
 
 import com.ben.drivenbluetooth.util.LapData;
 import com.ben.drivenbluetooth.util.RunningAverage;
+import com.github.mikephil.charting.data.DataSet;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -51,14 +55,13 @@ public final class Global {
 	public static volatile RunningAverage AverageAmps 		= new RunningAverage(2); // 2 = number of decimal places
 	public static volatile RunningAverage AverageSpeedMPH 	= new RunningAverage(1);
 
-	public static 			int							maxGraphDataPoints	=	30 * 1000 / 250;
-	public static 			float 						GraphTimeStamp 		=	0.0f;
-	public static volatile 	LineGraphSeries<DataPoint> 	ThrottleHistory		=	new LineGraphSeries<>();
-	public static volatile 	LineGraphSeries<DataPoint> 	AmpsHistory			=	new LineGraphSeries<>();
-	public static volatile 	LineGraphSeries<DataPoint> 	VoltsHistory		=	new LineGraphSeries<>();
-	public static volatile 	LineGraphSeries<DataPoint> 	MotorRPMHistory		=	new LineGraphSeries<>();
-	public static volatile 	LineGraphSeries<DataPoint> 	SpeedHistory		=	new LineGraphSeries<>();
-	public static volatile 	LineGraphSeries<DataPoint> 	TempC1History		=	new LineGraphSeries<>();
+	public static 			int		maxGraphDataPoints	=	120;
+	public static volatile 	LineData ThrottleHistory	=	new LineData();
+	public static volatile 	LineData AmpsHistory		=	new LineData();
+	public static volatile 	LineData VoltsHistory		=	new LineData();
+	public static volatile 	LineData MotorRPMHistory	=	new LineData();
+	public static volatile 	LineData SpeedHistory		=	new LineData();
+	public static volatile 	LineData TempC1History		=	new LineData();
 
 	public static volatile Location StartFinishLineLocation;
 	public static volatile Double StartFinishLineBearing;

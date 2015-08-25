@@ -16,8 +16,8 @@ android {
         applicationId "com.ben.drivenbluetooth"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 7
-        versionName "1.5"
+        versionCode 8
+        versionName "1.6"
     }
     buildTypes {
         release {
@@ -32,10 +32,15 @@ android {
     }
 }
 
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.jjoe64:graphview:4.0.1'
     compile 'ch.acra:acra:4.6.2'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.1.3'
 }

@@ -39,6 +39,10 @@ import com.ben.drivenbluetooth.util.BluetoothManager;
 import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenLocation;
 import com.ben.drivenbluetooth.util.UIUpdateRunnable;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.io.File;
 import java.util.Timer;
@@ -134,6 +138,8 @@ public class MainActivity
 		StartDataParser();
 
 		myBluetoothManager.setBluetoothEventsListener(this);
+
+		InitializeGraphDataSets();
 	}
 
 	@Override
@@ -281,6 +287,42 @@ public class MainActivity
 			Global.CarName = prefs.getString("prefCarName", "");
 		} catch (Exception e) {
 			showMessage("Could not retrieve settings");
+		}
+	}
+
+	private void InitializeGraphDataSets() {
+		LineData dataSets[] = new LineData[] {
+				Global.ThrottleHistory,
+				Global.VoltsHistory,
+				Global.AmpsHistory,
+				Global.MotorRPMHistory,
+				Global.SpeedHistory,
+				Global.TempC1History
+		};
+
+		String legends[] = new String[] {
+				"Throttle",
+				"Volts",
+				"Amps",
+				"RPM",
+				"Speed",
+				"Temp"
+		};
+
+		for (int i = 0; i < dataSets.length; i++) {
+			LineDataSet set = new LineDataSet(null, legends[i]);
+			set.setAxisDependency(YAxis.AxisDependency.LEFT);
+			set.setColor(ColorTemplate.getHoloBlue());
+			set.setCircleColor(Color.WHITE);
+			set.setDrawCircles(false);
+			set.setLineWidth(2f);
+			set.setFillAlpha(65);
+			set.setFillColor(ColorTemplate.getHoloBlue());
+			set.setHighLightColor(Color.rgb(244, 117, 117));
+			set.setValueTextColor(Color.WHITE);
+			set.setValueTextSize(9f);
+			set.setDrawValues(false);
+			dataSets[i].addDataSet(set);
 		}
 	}
 

@@ -11,8 +11,16 @@ import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.ben.drivenbluetooth.util.ColorHelper;
+import com.ben.drivenbluetooth.util.CustomLabelFormatter;
 import com.ben.drivenbluetooth.util.DataBar;
-import com.jjoe64.graphview.GraphView;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.LargeValueFormatter;
+import com.github.mikephil.charting.utils.ValueFormatter;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,12 +42,12 @@ public class SixGraphsBars extends Fragment {
 	private static DataBar RPMBar;
 	private static DataBar SpeedBar;
 
-	private static GraphView myThrottleGraph;
-	private static GraphView myVoltsGraph;
-	private static GraphView myAmpsGraph;
-	private static GraphView myMotorRPMGraph;
-	private static GraphView mySpeedGraph;
-	private static GraphView myTempC1Graph;
+	private static LineChart myThrottleGraph;
+	private static LineChart myVoltsGraph;
+	private static LineChart myAmpsGraph;
+	private static LineChart myMotorRPMGraph;
+	private static LineChart mySpeedGraph;
+	private static LineChart myTempC1Graph;
 
 	private static TextView AmpHours;
 
@@ -68,49 +76,69 @@ public class SixGraphsBars extends Fragment {
 
 	private void InitializeGraphs() {
 		View v = getView();
-		myThrottleGraph = (GraphView) v.findViewById(R.id.throttleGraph);
-		myThrottleGraph.addSeries(Global.ThrottleHistory);
-		myThrottleGraph.getViewport().setYAxisBoundsManual(true);
-		myThrottleGraph.getViewport().setMinY(0.0);
-		myThrottleGraph.getViewport().setMaxY(100.0);
-		myThrottleGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+		myThrottleGraph = (LineChart) v.findViewById(R.id.throttleGraph);
+		myVoltsGraph 	= (LineChart) v.findViewById(R.id.voltsGraph);
+		myAmpsGraph 	= (LineChart) v.findViewById(R.id.ampsGraph);
+		myTempC1Graph 	= (LineChart) v.findViewById(R.id.T1Graph);
+		myMotorRPMGraph = (LineChart) v.findViewById(R.id.RPMGraph);
+		mySpeedGraph 	= (LineChart) v.findViewById(R.id.SpeedGraph);
 
-		myVoltsGraph = (GraphView) v.findViewById(R.id.voltsGraph);
-		myVoltsGraph.addSeries(Global.VoltsHistory);
-		myVoltsGraph.getViewport().setYAxisBoundsManual(true);
-		myVoltsGraph.getViewport().setMinY(0.0);
-		myVoltsGraph.getViewport().setMaxY(28.0);
-		myVoltsGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+		LineChart graphs[] = new LineChart[] {
+				myThrottleGraph,
+				myVoltsGraph,
+				myAmpsGraph,
+				myTempC1Graph,
+				myMotorRPMGraph,
+				mySpeedGraph
+		};
 
-		myAmpsGraph = (GraphView) v.findViewById(R.id.ampsGraph);
-		myAmpsGraph.addSeries(Global.AmpsHistory);
-		myAmpsGraph.getViewport().setYAxisBoundsManual(true);
-		myAmpsGraph.getViewport().setMinY(0.0);
-		myAmpsGraph.getViewport().setMaxY(40.0);
-		myAmpsGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+		LineData data[] = new LineData[] {
+				Global.ThrottleHistory,
+				Global.VoltsHistory,
+				Global.AmpsHistory,
+				Global.TempC1History,
+				Global.MotorRPMHistory,
+				Global.SpeedHistory
+		};
 
-		myTempC1Graph = (GraphView) v.findViewById(R.id.T1Graph);
-		myTempC1Graph.addSeries(Global.TempC1History);
-		myTempC1Graph.getViewport().setYAxisBoundsManual(true);
-		myTempC1Graph.getViewport().setMinY(0.0);
-		myTempC1Graph.getViewport().setMaxY(100.0);
-		myTempC1Graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+		ValueFormatter labelFormats[] = new ValueFormatter[] {
+				new CustomLabelFormatter("", "0", "%"),
+				new CustomLabelFormatter("", "0", "V"),
+				new CustomLabelFormatter("", "0", "A"),
+				new CustomLabelFormatter("", "0", "C"),
+				new LargeValueFormatter(),
+				new CustomLabelFormatter("", "0", Global.Unit == Global.UNIT.MPH ? "mph" : "kph")
+		};
 
-		myMotorRPMGraph = (GraphView) v.findViewById(R.id.RPMGraph);
-		myMotorRPMGraph.addSeries(Global.MotorRPMHistory);
-		myMotorRPMGraph.getViewport().setYAxisBoundsManual(true);
-		myMotorRPMGraph.getViewport().setMinY(0.0);
-		myMotorRPMGraph.getViewport().setMaxY(2500);
-		myMotorRPMGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+		float minMax[][] = new float[][] {
+				new float[] {0, 100},	// throttle
+				new float[] {0, 26},	// volts
+				new float[] {0, 50},	// amps
+				new float[] {0, 50},	// temp
+				new float[] {0, 2000},	// motor rpm
+				new float[] {0, Global.Unit == Global.UNIT.MPH ? 50 : 70}	// speed
+		};
 
+		for (int i = 0; i < graphs.length; i++) {
+			graphs[i].setData(data[i]);
+			graphs[i].setDescription("");
+			graphs[i].setVisibleXRangeMaximum(Global.maxGraphDataPoints);
 
-		mySpeedGraph = (GraphView) v.findViewById(R.id.SpeedGraph);
-		mySpeedGraph.addSeries(Global.SpeedHistory);
-		mySpeedGraph.getViewport().setYAxisBoundsManual(true);
-		mySpeedGraph.getViewport().setMinY(0.0);
-		if (Global.Unit == Global.UNIT.MPH) { mySpeedGraph.getViewport().setMaxY(50.0); }
-		if (Global.Unit == Global.UNIT.KPH) { mySpeedGraph.getViewport().setMaxY(80.0); }
-		mySpeedGraph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+			YAxis leftAxis = graphs[i].getAxisLeft();
+			leftAxis.setAxisMinValue(minMax[i][0]);
+			leftAxis.setAxisMaxValue(minMax[i][1]);
+			leftAxis.setLabelCount(3, true);
+			leftAxis.setValueFormatter(labelFormats[i]);
+
+			YAxis rightAxis = graphs[i].getAxisRight();
+			rightAxis.setEnabled(false);
+
+			Legend l = graphs[i].getLegend();
+			l.setEnabled(false);
+
+			XAxis bottomAxis = graphs[i].getXAxis();
+			bottomAxis.setEnabled(false);
+		}
 	}
 
 	private void InitializeDataBars() {
@@ -180,7 +208,7 @@ public class SixGraphsBars extends Fragment {
 		UpdateTemp(1);
 		UpdateMotorRPM();
 		UpdateAmpHours();
-		Global.GraphTimeStamp += (float) Global.FAST_UI_UPDATE_INTERVAL / 1000.0f;
+		UpdateGraphs();
 	}
 
 	private void UpdateVoltage() {
@@ -296,5 +324,39 @@ public class SixGraphsBars extends Fragment {
 	private void StopFragmentUpdater() {
 		FragmentUpdateTimer.cancel();
 		FragmentUpdateTimer.purge();
+	}
+
+	private void UpdateGraphs() {
+		try {
+			myThrottleGraph.notifyDataSetChanged();
+			myThrottleGraph.invalidate();
+			myThrottleGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			myThrottleGraph.moveViewToX(myThrottleGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+
+			myVoltsGraph.notifyDataSetChanged();
+			myVoltsGraph.invalidate();
+			myVoltsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			myVoltsGraph.moveViewToX(myVoltsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+
+			myAmpsGraph.notifyDataSetChanged();
+			myAmpsGraph.invalidate();
+			myAmpsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			myAmpsGraph.moveViewToX(myAmpsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+
+			myMotorRPMGraph.notifyDataSetChanged();
+			myMotorRPMGraph.invalidate();
+			myMotorRPMGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			myMotorRPMGraph.moveViewToX(myMotorRPMGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+
+			mySpeedGraph.notifyDataSetChanged();
+			mySpeedGraph.invalidate();
+			mySpeedGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			mySpeedGraph.moveViewToX(mySpeedGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+
+			myTempC1Graph.notifyDataSetChanged();
+			myTempC1Graph.invalidate();
+			myTempC1Graph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			myTempC1Graph.moveViewToX(myTempC1Graph.getXValCount() - Global.maxGraphDataPoints - 1);
+		} catch (Exception ignored) {}
 	}
 }
