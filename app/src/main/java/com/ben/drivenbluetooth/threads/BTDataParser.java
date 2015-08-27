@@ -5,9 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.ben.drivenbluetooth.Global;
-import com.ben.drivenbluetooth.MainActivity;
 import com.github.mikephil.charting.data.Entry;
-import com.jjoe64.graphview.series.DataPoint;
 
 public class BTDataParser extends Thread {
 	public static Handler mHandler;
@@ -159,49 +157,37 @@ public class BTDataParser extends Thread {
 	/* DATA INPUT FUNCS
 	/*===================*/
 	private void SetVoltage(final double rawVolts) {
-		Global.Volts = round(rawVolts, 2); // Apply conversion and offset TODO revisit volts
+		Global.Volts = round(rawVolts, 2); // Apply conversion and offset
 		if (Global.Lap > 0) {
 			Global.LapDataList.get(Global.Lap - 1).AddVolts(rawVolts);
 		}
-		MainActivity.MainActivityHandler.post(new Runnable() {
-			public void run() {
-				Global.VoltsHistory.addXValue(String.format("%d", Global.VoltsHistory.getXValCount()));
-				Global.VoltsHistory.addEntry(new Entry((float) rawVolts, Global.VoltsHistory.getXValCount() - 1), 0);
-			}
-		});
+		Global.VoltsHistory.addXValue(String.format("%d", Global.VoltsHistory.getXValCount()));
+		Global.VoltsHistory.addEntry(new Entry((float) rawVolts, Global.VoltsHistory.getXValCount() - 1), 0);
 	}
 
 	private void SetCurrent(final double rawAmps) {
 		IncrementAmpHours(rawAmps); // amp hours first!
-		Global.Amps = round(rawAmps, 2); // Apply conversion and offset TODO revisit amps
+		Global.Amps = round(rawAmps, 2); // Apply conversion and offset
 		Global.AverageAmps.add(rawAmps);
 		if (Global.Lap > 0) {
 			Global.LapDataList.get(Global.Lap - 1).AddAmps(rawAmps);
 		}
-		MainActivity.MainActivityHandler.post(new Runnable() {
-			public void run() {
-				Global.AmpsHistory.addXValue(String.format("%d", Global.AmpsHistory.getXValCount()));
-				Global.AmpsHistory.addEntry(new Entry((float) rawAmps, Global.AmpsHistory.getXValCount() - 1), 0);
-			}
-		});
+		Global.AmpsHistory.addXValue(String.format("%d", Global.AmpsHistory.getXValCount()));
+		Global.AmpsHistory.addEntry(new Entry((float) rawAmps, Global.AmpsHistory.getXValCount() - 1), 0);
 	}
 
 	private void SetInputThrottle(final double rawThrottle) {
-		Global.InputThrottle = rawThrottle; // Apply conversion and offset TODO revisit throttle
-		MainActivity.MainActivityHandler.post(new Runnable() {
-			public void run() {
-				Global.ThrottleHistory.addXValue(String.format("%d", Global.ThrottleHistory.getXValCount()));
-				Global.ThrottleHistory.addEntry(new Entry((float) rawThrottle, Global.ThrottleHistory.getXValCount() - 1), 0);
-			}
-		});
+		Global.InputThrottle = rawThrottle; // Apply conversion and offset
+		Global.ThrottleHistory.addXValue(String.format("%d", Global.ThrottleHistory.getXValCount()));
+		Global.ThrottleHistory.addEntry(new Entry((float) rawThrottle, Global.ThrottleHistory.getXValCount() - 1), 0);
 	}
 
 	private void SetActualThrottle(double rawThrottle) {
-		Global.ActualThrottle = rawThrottle; // Apply conversion and offset TODO revisit throttle
+		Global.ActualThrottle = rawThrottle; // Apply conversion and offset
 	}
 
 	private void SetSpeed(final double rawSpeedMPH) {
-		Global.SpeedMPH = rawSpeedMPH; // Apply conversion and offset TODO revisit wheelRPM
+		Global.SpeedMPH = rawSpeedMPH; // Apply conversion and offset
 		Global.SpeedKPH = round(Global.SpeedMPH * 1.61, 1);
 		Global.AverageSpeedMPH.add(rawSpeedMPH);
 
@@ -210,39 +196,29 @@ public class BTDataParser extends Thread {
 		}
 
 		if (Global.Unit == Global.UNIT.MPH) {
-			MainActivity.MainActivityHandler.post(new Runnable() {
-				public void run() {
-					Global.SpeedHistory.addXValue(String.format("%d", Global.SpeedHistory.getXValCount()));
-					Global.SpeedHistory.addEntry(new Entry((float) rawSpeedMPH, Global.SpeedHistory.getXValCount() - 1), 0);
-				}
-			});
+			Global.SpeedHistory.addXValue(String.format("%d", Global.SpeedHistory.getXValCount()));
+			Global.SpeedHistory.addEntry(new Entry((float) rawSpeedMPH, Global.SpeedHistory.getXValCount() - 1), 0);
 		} else if (Global.Unit == Global.UNIT.KPH) {
-			MainActivity.MainActivityHandler.post(new Runnable() {
-				public void run() {
-					Global.SpeedHistory.addXValue(String.format("%d", Global.SpeedHistory.getXValCount()));
-					Global.SpeedHistory.addEntry(new Entry(Global.SpeedKPH.floatValue(), Global.SpeedHistory.getXValCount() - 1), 0);
-				}
-			});
+			Global.SpeedHistory.addXValue(String.format("%d", Global.SpeedHistory.getXValCount()));
+			Global.SpeedHistory.addEntry(new Entry(Global.SpeedKPH.floatValue(), Global.SpeedHistory.getXValCount() - 1), 0);
 		}
 	}
 
 	private void SetMotorRPM(final double rawMotorRPM) {
-		Global.MotorRPM = rawMotorRPM; // Apply conversion and offset TODO revisit motorRPM
+		Global.MotorRPM = rawMotorRPM; // Apply conversion and offset
 		if (Global.Lap > 0) {
 			Global.LapDataList.get(Global.Lap - 1).AddRPM(rawMotorRPM);
 		}
-		MainActivity.MainActivityHandler.post(new Runnable() {
-			public void run() {
-				Global.MotorRPMHistory.addXValue(String.format("%d", Global.MotorRPMHistory.getXValCount()));
-				Global.MotorRPMHistory.addEntry(new Entry((float) rawMotorRPM, Global.MotorRPMHistory.getXValCount() - 1), 0);
-			}
-		});
+		Global.MotorRPMHistory.addXValue(String.format("%d", Global.MotorRPMHistory.getXValCount()));
+		Global.MotorRPMHistory.addEntry(new Entry((float) rawMotorRPM, Global.MotorRPMHistory.getXValCount() - 1), 0);
 	}
 
 	private void SetTemperature(double rawTemp, int sensorId) {
 		switch (sensorId) {
 			case 1:
 				Global.TempC1 = rawTemp;
+				Global.TempC1History.addXValue(String.format("%d", Global.TempC1History.getXValCount()));
+				Global.TempC1History.addEntry(new Entry((float) rawTemp, Global.TempC1History.getXValCount() - 1), 0);
 				break;
 			case 2:
 				Global.TempC2 = rawTemp;

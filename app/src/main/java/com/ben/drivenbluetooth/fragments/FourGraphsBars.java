@@ -90,7 +90,7 @@ public class FourGraphsBars extends Fragment {
 				new CustomLabelFormatter("", "0", "V"),
 				new CustomLabelFormatter("", "0", "A"),
 				new LargeValueFormatter(),
-				new CustomLabelFormatter("", "0", Global.Unit == Global.UNIT.MPH ? "mph" : "kph")
+				new CustomLabelFormatter("", "0", "")
 		};
 
 		float minMax[][] = new float[][] {
@@ -104,6 +104,7 @@ public class FourGraphsBars extends Fragment {
 			graphs[i].setData(data[i]);
 			graphs[i].setDescription("");
 			graphs[i].setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			graphs[i].setNoDataText("");
 
 			YAxis leftAxis = graphs[i].getAxisLeft();
 			leftAxis.setAxisMinValue(minMax[i][0]);

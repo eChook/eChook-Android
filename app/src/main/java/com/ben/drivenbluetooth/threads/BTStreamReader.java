@@ -96,8 +96,8 @@ public class BTStreamReader extends Thread {
 				 */
 
 				Global.BTState = Global.BTSTATE.DISCONNECTED;
-				DisconnectedBTRoutine();
-				latestMillis = System.currentTimeMillis();
+				DisconnectedBTRoutine(); // this function will block until the connection attempt finishes
+				latestMillis = System.currentTimeMillis(); // some more grace time
 				try {
 					// the input stream needs to be reset
 					this.mmInStream = Global.BTSocket.getInputStream();

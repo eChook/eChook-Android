@@ -68,10 +68,10 @@ public final class BluetoothManager {
 		MainActivity.showMessage(Global.BTDeviceName + " is not paired with this phone. Please open Settings and pair the device first");
     }
 
-    public void openBT() {
-		if (matchingDeviceFound && !isConnecting && Global.BTState != Global.BTSTATE.CONNECTED) {
+    public void openBT(boolean wait) {
+		if (matchingDeviceFound && !isConnecting) {
 			Global.BTState = Global.BTSTATE.CONNECTING;
-			new Thread(new Runnable() {
+			Thread connectToBTDevice = new Thread(new Runnable() {
 				@Override
 				public void run() {
 					isConnecting = true;
@@ -97,7 +97,17 @@ public final class BluetoothManager {
 					}
 					isConnecting = false;
 				}
-			}).start();
+			});
+
+			connectToBTDevice.start();
+
+			if (wait) {
+				try {
+					connectToBTDevice.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
     }
 
@@ -110,7 +120,7 @@ public final class BluetoothManager {
         }
     }
 
-	public boolean reconnectBT() {
+	public void reconnectBT() {
 		if (Global.BTState == Global.BTSTATE.DISCONNECTED) {
 			try {
 				try {
@@ -119,17 +129,10 @@ public final class BluetoothManager {
 				try {
 					mmSocket.close();
 				} catch (Exception ignored) {}
-
-				this.openBT();
-
-				// if the above succeeds, return true
-				return true;
+				this.openBT(true); // true waits for openBT to finish before returning
 			} catch (Exception e) {
 				e.getMessage();
-				return false;
 			}
-		} else {
-			return true; // bluetooth is already connected!
 		}
 	}
 }

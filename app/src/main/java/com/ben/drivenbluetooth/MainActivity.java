@@ -314,12 +314,7 @@ public class MainActivity
 			set.setAxisDependency(YAxis.AxisDependency.LEFT);
 			set.setColor(ColorTemplate.getHoloBlue());
 			set.setDrawCircles(false);
-			set.setLineWidth(4f);
-			set.setFillAlpha(65);
-			set.setFillColor(ColorTemplate.getHoloBlue());
-			set.setHighLightColor(Color.rgb(244, 117, 117));
-			set.setValueTextColor(Color.WHITE);
-			set.setValueTextSize(9f);
+			set.setLineWidth(2f);
 			set.setDrawValues(false);
 			dataSets[i].addDataSet(set);
 		}
@@ -334,7 +329,7 @@ public class MainActivity
 	public void OpenBT(View v) {
 		try {
 			myBluetoothManager.findBT();
-			myBluetoothManager.openBT();
+			myBluetoothManager.openBT(false);
 		} catch (Exception e) {
 			showMessage(e.getMessage());
 		}
@@ -463,42 +458,43 @@ public class MainActivity
 	}
 
 	private void StartDataLogger() {
-		try {
-			if (!DataSaver.isAlive() && DataSaver.getState() != Thread.State.NEW) {
-				DataSaver = new DataToCsvFile();
+		if (!DataSaver.isAlive()) {
+			try {
+				if (DataSaver.getState() != Thread.State.NEW) {
+					DataSaver = new DataToCsvFile();
+				}
+				DataSaver.start();
+				MainActivity.myLogging.setText("LOGGING");
+				MainActivity.myLogging.setTextColor(Color.GREEN);
+			} catch (Exception e) {
+				showMessage(e.getMessage());
 			}
-			DataSaver.start();
-			MainActivity.myLogging.setText("LOGGING");
-			MainActivity.myLogging.setTextColor(Color.GREEN);
-		} catch (Exception e) {
-			showMessage(e.getMessage());
 		}
 	}
 
 	private void StartStreamReader() {
-		try {
-			if (StreamReader == null) {
-				StreamReader = new BTStreamReader();
-			} else if (!StreamReader.isAlive() && StreamReader.getState() != Thread.State.NEW) {
-				StreamReader = new BTStreamReader();
+		if (!StreamReader.isAlive()) {
+			try {
+				if (StreamReader.getState() != Thread.State.NEW) {
+					StreamReader = new BTStreamReader();
+				}
+				StreamReader.start();
+			} catch (Exception e) {
+				showMessage(e.getMessage());
 			}
-			StreamReader.start();
-		} catch (Exception e) {
-			showMessage("Warning: not connected to Bluetooth! Logger will run, but won't give any worthwhile data");
-			showMessage(e.getMessage());
 		}
 	}
 
 	private void StartDataParser() {
-		try {
-			if (Parser == null) {
-				Parser = new BTDataParser(this);
-			} else if (!Parser.isAlive() && Parser.getState() != Thread.State.NEW) {
-				Parser = new BTDataParser(this);
+		if (!Parser.isAlive()) {
+			try {
+				if (Parser.getState() != Thread.State.NEW) {
+					Parser = new BTDataParser(this);
+				}
+				Parser.start();
+			} catch (Exception e) {
+				showMessage(e.getMessage());
 			}
-			Parser.start();
-		} catch (Exception e) {
-			showMessage(e.getMessage());
 		}
 	}
 
@@ -594,12 +590,13 @@ public class MainActivity
 
 	@Override
 	public void onBluetoothConnected(final BluetoothSocket BTSocket) {
+		Global.BTSocket = BTSocket;
+		Global.BTState = Global.BTSTATE.CONNECTED;
+
 		MainActivityHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				Global.BTSocket = BTSocket;
 				showMessage(Global.BTDeviceName + " successfully connected");
-				Global.BTState = Global.BTSTATE.CONNECTED;
 				StartStreamReader();
 			}
 		});

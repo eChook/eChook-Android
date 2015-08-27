@@ -5,12 +5,7 @@ import android.location.Location;
 
 import com.ben.drivenbluetooth.util.LapData;
 import com.ben.drivenbluetooth.util.RunningAverage;
-import com.github.mikephil.charting.data.DataSet;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -95,7 +90,7 @@ public final class Global {
 	/**********************/
 	/* VARIABLES          */
 	/**********************/
-	public static BluetoothSocket BTSocket;
+	public static volatile BluetoothSocket BTSocket;
 	public static int MangledDataCount = 0;
 
 	/**********************/

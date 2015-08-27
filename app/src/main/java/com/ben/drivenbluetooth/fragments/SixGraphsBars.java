@@ -18,7 +18,6 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.LargeValueFormatter;
 import com.github.mikephil.charting.utils.ValueFormatter;
 
@@ -107,7 +106,7 @@ public class SixGraphsBars extends Fragment {
 				new CustomLabelFormatter("", "0", "A"),
 				new CustomLabelFormatter("", "0", "C"),
 				new LargeValueFormatter(),
-				new CustomLabelFormatter("", "0", Global.Unit == Global.UNIT.MPH ? "mph" : "kph")
+				new CustomLabelFormatter("", "0", "")
 		};
 
 		float minMax[][] = new float[][] {
@@ -123,6 +122,7 @@ public class SixGraphsBars extends Fragment {
 			graphs[i].setData(data[i]);
 			graphs[i].setDescription("");
 			graphs[i].setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			graphs[i].setNoDataText("");
 
 			YAxis leftAxis = graphs[i].getAxisLeft();
 			leftAxis.setAxisMinValue(minMax[i][0]);
