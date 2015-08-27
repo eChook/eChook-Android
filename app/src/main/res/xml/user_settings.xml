@@ -36,14 +36,6 @@
 			android:defaultValue="Disabled"
 			android:summary="%s"
 			/>
-		<!--ListPreference
-			android:key="prefAccelerometer"
-			android:title="Accelerometer"
-			android:entries="@array/prefAccelerometer"
-			android:entryValues="@array/prefAccelerometerValues"
-			android:defaultValue="Disabled"
-			android:summary="%s"
-			/-->
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:title="Bluetooth"

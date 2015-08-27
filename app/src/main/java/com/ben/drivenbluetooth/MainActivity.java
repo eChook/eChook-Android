@@ -8,7 +8,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.media.MediaScannerConnection;
@@ -16,7 +15,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,6 +36,7 @@ import com.ben.drivenbluetooth.util.Accelerometer;
 import com.ben.drivenbluetooth.util.BluetoothManager;
 import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenLocation;
+import com.ben.drivenbluetooth.util.DrivenSettings;
 import com.ben.drivenbluetooth.util.UIUpdateRunnable;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
@@ -45,6 +44,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -95,6 +95,9 @@ public class MainActivity
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		/**************** CONTEXT *************************/
+		context = getApplicationContext();
+
 		setContentView(R.layout.activity_main);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
@@ -118,10 +121,7 @@ public class MainActivity
 
 		StartUIUpdater();
 
-		InitializeGlobalSettings();
-
-		/**************** CONTEXT *************************/
-		context = getApplicationContext();
+		DrivenSettings.InitializeSettings();
 
 		/******************* ACCELEROMETER ****************/
 		myAccelerometer = new Accelerometer((SensorManager) getSystemService(Context.SENSOR_SERVICE));
@@ -261,35 +261,6 @@ public class MainActivity
 		showMessage(e.getMessage(), Toast.LENGTH_SHORT);
 	}
 
-	/**************************************************/
-	/**************** SETTINGS         ****************/
-	/**
-	 * **********************************************
-	 */
-
-	private void InitializeGlobalSettings() {
-		// Initialize the settings variables
-		PreferenceManager.setDefaultValues(this, R.xml.user_settings, false);
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		try {
-			int mode = Integer.valueOf(prefs.getString("prefMode", ""));
-			Global.Mode = Global.MODE.values()[mode];
-			myMode.setText(Global.MODE.values()[mode].name());
-
-			int units = Integer.valueOf(prefs.getString("prefSpeedUnits", ""));
-			Global.Unit = Global.UNIT.values()[units];
-
-			int location = Integer.valueOf(prefs.getString("prefLocation", ""));
-			Global.LocationStatus = Global.LOCATION.values()[location];
-
-			Global.BTDeviceName = prefs.getString("prefBTDeviceName", "");
-
-			Global.CarName = prefs.getString("prefCarName", "");
-		} catch (Exception e) {
-			showMessage("Could not retrieve settings");
-		}
-	}
-
 	private void InitializeGraphDataSets() {
 		LineData dataSets[] = new LineData[] {
 				Global.ThrottleHistory,
@@ -327,11 +298,15 @@ public class MainActivity
 	 */
 
 	public void OpenBT(View v) {
-		try {
-			myBluetoothManager.findBT();
-			myBluetoothManager.openBT(false);
-		} catch (Exception e) {
-			showMessage(e.getMessage());
+		if (!Objects.equals(Global.BTDeviceName, "")) { // fucking Java string comparators...
+			try {
+				myBluetoothManager.findBT();
+				myBluetoothManager.openBT(false);
+			} catch (Exception e) {
+				showMessage(e.getMessage());
+			}
+		} else {
+			showMessage("Error: Bluetooth device name not given in Settings. Please go to Settings and enter the device name");
 		}
 	}
 
@@ -458,43 +433,52 @@ public class MainActivity
 	}
 
 	private void StartDataLogger() {
-		if (!DataSaver.isAlive()) {
-			try {
+		try {
+			if (DataSaver == null) {
+				DataSaver = new DataToCsvFile();
+				DataSaver.start();
+			} else if (!DataSaver.isAlive()) {
 				if (DataSaver.getState() != Thread.State.NEW) {
 					DataSaver = new DataToCsvFile();
 				}
 				DataSaver.start();
 				MainActivity.myLogging.setText("LOGGING");
 				MainActivity.myLogging.setTextColor(Color.GREEN);
-			} catch (Exception e) {
-				showMessage(e.getMessage());
 			}
+		} catch (Exception e) {
+			showMessage(e.getMessage());
 		}
 	}
 
 	private void StartStreamReader() {
-		if (!StreamReader.isAlive()) {
-			try {
+		try {
+			if (StreamReader == null) {
+				StreamReader = new BTStreamReader();
+				StreamReader.start();
+			} else if (!StreamReader.isAlive()) {
 				if (StreamReader.getState() != Thread.State.NEW) {
 					StreamReader = new BTStreamReader();
 				}
 				StreamReader.start();
-			} catch (Exception e) {
-				showMessage(e.getMessage());
 			}
+		} catch (Exception e) {
+			showMessage(e.getMessage());
 		}
 	}
 
 	private void StartDataParser() {
-		if (!Parser.isAlive()) {
-			try {
+		try {
+			if (Parser == null) {
+				Parser = new BTDataParser(this);
+				Parser.start();
+			} else if (!Parser.isAlive()) {
 				if (Parser.getState() != Thread.State.NEW) {
 					Parser = new BTDataParser(this);
 				}
 				Parser.start();
-			} catch (Exception e) {
-				showMessage(e.getMessage());
 			}
+		} catch (Exception e) {
+			showMessage(e.getMessage());
 		}
 	}
 
