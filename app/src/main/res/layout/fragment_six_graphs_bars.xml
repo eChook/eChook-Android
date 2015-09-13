@@ -78,7 +78,6 @@
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:text="Throttle"
-		android:onClick="ForceStop"
 		android:id="@+id/textView"
 		android:gravity="center"
 		android:editable="false"

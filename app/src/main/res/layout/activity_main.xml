@@ -58,6 +58,7 @@
 			android:layout_toLeftOf="@+id/stop"
 			android:layout_toStartOf="@+id/stop"
 			android:onClick="Start"
+			android:longClickable="true"
 			android:layout_alignTop="@+id/stop"
 			android:src="@drawable/mr_ic_play_light"/>
 
@@ -90,6 +91,7 @@
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:id="@+id/txt_Mode"
+			android:onClick="QuickChangeMode"
 			android:layout_alignParentTop="true"
 			android:layout_alignParentEnd="true"/>
 

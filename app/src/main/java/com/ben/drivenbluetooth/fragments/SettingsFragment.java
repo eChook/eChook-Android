@@ -20,6 +20,8 @@ public class SettingsFragment 	extends PreferenceFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
+		prefs.edit().remove("prefMode").commit();
 		addPreferencesFromResource(R.xml.user_settings);
 		updateAllPreferenceSummary();
 	}

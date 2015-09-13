@@ -19,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Chronometer;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -140,6 +141,8 @@ public class MainActivity
 		myBluetoothManager.setBluetoothEventsListener(this);
 
 		InitializeGraphDataSets();
+
+		InitializeLongClickStart();
 	}
 
 	@Override
@@ -205,6 +208,18 @@ public class MainActivity
 		FragmentList.add(new SixGraphsBars());
 		FragmentList.add(new FourGraphsBars());
 		FragmentList.add(new LapHistoryFragment());
+	}
+
+	private void InitializeLongClickStart() {
+		// We can't do this in XML so must do it programatically
+		ImageButton startButton = (ImageButton) findViewById(R.id.start);
+		startButton.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				StartWithForcedLogging(v);
+				return true;
+			}
+		});
 	}
 
 	public void CycleView() {
@@ -346,6 +361,19 @@ public class MainActivity
 		}
 	}
 
+	public void StartWithForcedLogging(View v) {
+		try {
+			if (Global.Mode == Global.MODE.DEMO) {
+				StartDataLogger();
+				StartDemoMode();
+			} else if (Global.Mode == Global.MODE.RACE) {
+				StartRaceMode();
+			}
+		} catch (Exception e) {
+			showMessage(e.getMessage());
+		}
+	}
+
 	public void ForceStop(View v) {
 		try {
 			StopRandomGenerator();
@@ -394,12 +422,18 @@ public class MainActivity
 		BTDataParser.mHandler.sendEmptyMessage(0);
 	}
 
+	@Deprecated
 	public void RaceStart(View v) {
 		Global.InputThrottle = 100d;
 	}
 
+	@Deprecated
 	public void CrossFinishLine(View v) {
 		myDrivenLocation.SimulateCrossStartFinishLine();
+	}
+
+	public static void QuickChangeMode(View v) {
+		DrivenSettings.QuickChangeMode();
 	}
 
 	@Override

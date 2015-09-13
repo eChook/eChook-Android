@@ -24,6 +24,18 @@ public final class DrivenSettings {
 		CarName(prefs);
 	}
 
+	public static void QuickChangeMode() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
+		int mode = Integer.valueOf(prefs.getString("prefMode", ""));
+
+		mode = mode == 0 ? 1 : 0; // magic trick!
+
+		prefs.edit().putString("prefMode", mode == 0 ? "Demo" : "Race").apply();
+
+		Global.Mode = Global.MODE.values()[mode];
+		MainActivity.myMode.setText(Global.MODE.values()[mode].name());
+	}
+
 	private static void Mode(SharedPreferences prefs) {
 		try {
 			int mode = Integer.valueOf(prefs.getString("prefMode", ""));
