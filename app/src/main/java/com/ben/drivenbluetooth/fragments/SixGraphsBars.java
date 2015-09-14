@@ -123,6 +123,7 @@ public class SixGraphsBars extends Fragment {
 			graphs[i].setDescription("");
 			graphs[i].setVisibleXRangeMaximum(Global.maxGraphDataPoints);
 			graphs[i].setNoDataText("");
+			graphs[i].setHardwareAccelerationEnabled(true);
 
 			YAxis leftAxis = graphs[i].getAxisLeft();
 			leftAxis.setAxisMinValue(minMax[i][0]);
@@ -166,7 +167,9 @@ public class SixGraphsBars extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		InitializeDataBars();
 		InitializeDataFields();
-		InitializeGraphs();
+		if (Global.EnableGraphs) {
+			InitializeGraphs();
+		}
 		StartFragmentUpdater();
 	}
 
@@ -208,7 +211,10 @@ public class SixGraphsBars extends Fragment {
 		UpdateTemp(1);
 		UpdateMotorRPM();
 		UpdateAmpHours();
-		UpdateGraphs();
+
+		if (Global.EnableGraphs) {
+			UpdateGraphs();
+		}
 	}
 
 	private void UpdateVoltage() {
@@ -217,7 +223,7 @@ public class SixGraphsBars extends Fragment {
 			Voltage.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
 			VoltageBar.setValue(Global.Volts);
 		} catch (Exception e) {
-			e.toString();
+			e.printStackTrace();
 		}
 	}
 
@@ -227,7 +233,7 @@ public class SixGraphsBars extends Fragment {
 			Current.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
 			CurrentBar.setValue(Global.Amps);
 		} catch (Exception e) {
-			e.toString();
+			e.printStackTrace();
 		}
 	}
 
@@ -235,7 +241,7 @@ public class SixGraphsBars extends Fragment {
 		try {
 			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
 		} catch (Exception e) {
-			e.toString();
+			e.printStackTrace();
 		}
 	}
 
@@ -248,7 +254,7 @@ public class SixGraphsBars extends Fragment {
 			}
 			ThrottleBar.setValue(Global.InputThrottle);
 		} catch (Exception e) {
-			e.toString();
+			e.printStackTrace();
 		}
 	}
 
@@ -264,7 +270,7 @@ public class SixGraphsBars extends Fragment {
 			}
 
 		} catch (Exception e) {
-			e.toString();
+			e.printStackTrace();
 		}
 	}
 
@@ -292,7 +298,7 @@ public class SixGraphsBars extends Fragment {
 				TempBar.setValue(TempValue);
 				//Global.TempC1History.appendData(new DataPoint(Global.GraphTimeStamp, TempValue), true, Global.maxGraphDataPoints);
 			} catch (Exception e) {
-				e.toString();
+				e.printStackTrace();
 			}
 		}
 	}
@@ -303,7 +309,7 @@ public class SixGraphsBars extends Fragment {
 			RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
 			RPMBar.setValue(Global.MotorRPM);
 		} catch (Exception e) {
-			e.toString();
+			e.printStackTrace();
 		}
 	}
 
@@ -324,6 +330,7 @@ public class SixGraphsBars extends Fragment {
 	private void StopFragmentUpdater() {
 		FragmentUpdateTimer.cancel();
 		FragmentUpdateTimer.purge();
+		FragmentUpdateTimer = null;
 	}
 
 	private void UpdateGraphs() {

@@ -22,23 +22,30 @@ public final class DrivenSettings {
 		Units(prefs);
 		BTDevice(prefs);
 		CarName(prefs);
+		Graphs(prefs);
 	}
 
 	public static void QuickChangeMode() {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
-		int mode = Integer.valueOf(prefs.getString("prefMode", ""));
+		try {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
+			int mode = Integer.parseInt(prefs.getString("prefMode", "0"));
 
-		mode = mode == 0 ? 1 : 0; // magic trick!
+			mode = mode == 0 ? 1 : 0; // flip it
 
-		prefs.edit().putString("prefMode", mode == 0 ? "Demo" : "Race").apply();
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putString("prefMode", Integer.toString(mode));
+			editor.apply();
 
-		Global.Mode = Global.MODE.values()[mode];
-		MainActivity.myMode.setText(Global.MODE.values()[mode].name());
+			Global.Mode = Global.MODE.values()[mode];
+			MainActivity.myMode.setText(Global.MODE.values()[mode].name());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static void Mode(SharedPreferences prefs) {
 		try {
-			int mode = Integer.valueOf(prefs.getString("prefMode", ""));
+			int mode = Integer.valueOf(prefs.getString("prefMode", "0"));
 			Global.Mode = Global.MODE.values()[mode];
 			MainActivity.myMode.setText(Global.MODE.values()[mode].name());
 		} catch (Exception e) {
@@ -49,7 +56,7 @@ public final class DrivenSettings {
 
 	private static void Units(SharedPreferences prefs) {
 		try {
-			int units = Integer.valueOf(prefs.getString("prefSpeedUnits", ""));
+			int units = Integer.valueOf(prefs.getString("prefSpeedUnits", "0"));
 			Global.Unit = Global.UNIT.values()[units];
 		} catch (Exception e) {
 			Global.Unit = Global.UNIT.MPH;
@@ -58,7 +65,7 @@ public final class DrivenSettings {
 
 	private static void Location(SharedPreferences prefs) {
 		try {
-			int location = Integer.valueOf(prefs.getString("prefLocation", ""));
+			int location = Integer.valueOf(prefs.getString("prefLocation", "0"));
 			Global.LocationStatus = Global.LOCATION.values()[location];
 		} catch (Exception e) {
 			Global.LocationStatus = Global.LOCATION.DISABLED;
@@ -76,6 +83,14 @@ public final class DrivenSettings {
 	private static void CarName(SharedPreferences prefs) {
 		try {
 			Global.CarName = prefs.getString("prefCarName", "");
+		} catch (Exception e) {
+			// probably not needed
+		}
+	}
+
+	private static void Graphs(SharedPreferences prefs) {
+		try {
+			Global.EnableGraphs = Integer.valueOf(prefs.getString("prefGraphs", "")) != 0;
 		} catch (Exception e) {
 			// probably not needed
 		}

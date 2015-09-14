@@ -146,7 +146,11 @@ public class FourGraphsBars extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		InitializeDataBars();
 		InitializeDataFields();
-		InitializeGraphs();
+
+		if (Global.EnableGraphs) {
+			InitializeGraphs();
+		}
+
 		StartFragmentUpdater();
 	}
 
@@ -181,7 +185,10 @@ public class FourGraphsBars extends Fragment {
 		UpdateAmpHours();
 		UpdateSpeed();
 		UpdateMotorRPM();
-		UpdateGraphs();
+
+		if (Global.EnableGraphs) {
+			UpdateGraphs();
+		}
 	}
 
 	private void UpdateVoltage() {
@@ -190,7 +197,7 @@ public class FourGraphsBars extends Fragment {
 			Voltage.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
 			VoltageBar.setValue(Global.Volts);
 		} catch (Exception e) {
-			e.getMessage();
+			e.printStackTrace();
 		}
 	}
 
@@ -200,7 +207,7 @@ public class FourGraphsBars extends Fragment {
 			Current.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
 			CurrentBar.setValue(Global.Amps);
 		} catch (Exception e) {
-			e.getMessage();
+			e.printStackTrace();
 		}
 	}
 
@@ -208,7 +215,7 @@ public class FourGraphsBars extends Fragment {
 		try {
 			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
 		} catch (Exception e) {
-			e.toString();
+			e.printStackTrace();
 		}
 	}
 
@@ -224,7 +231,7 @@ public class FourGraphsBars extends Fragment {
 			}
 
 		} catch (Exception e) {
-			e.getMessage();
+			e.printStackTrace();
 		}
 	}
 
@@ -234,7 +241,7 @@ public class FourGraphsBars extends Fragment {
 			RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
 			RPMBar.setValue(Global.MotorRPM);
 		} catch (Exception e) {
-			e.getMessage();
+			e.printStackTrace();
 		}
 	}
 
@@ -279,5 +286,6 @@ public class FourGraphsBars extends Fragment {
 	private void StopFragmentUpdater() {
 		FragmentUpdateTimer.cancel();
 		FragmentUpdateTimer.purge();
+		FragmentUpdateTimer = null;
 	}
 }

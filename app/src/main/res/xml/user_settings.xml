@@ -8,7 +8,7 @@
             android:title="Speed unit"
             android:entries="@array/prefSpeedUnit"
             android:entryValues="@array/prefSpeedUnitValues"
-            android:defaultValue="@string/prefSpeedUnitDefault"
+            android:defaultValue="0"
 			android:summary="%s"
             />
 		<ListPreference
@@ -16,7 +16,15 @@
 			android:title="Mode"
 			android:entries="@array/prefMode"
 			android:entryValues="@array/prefModeValues"
-			android:defaultValue="@string/prefModeDefault"
+			android:defaultValue="0"
+			android:summary="%s"
+			/>
+		<ListPreference
+			android:key="prefGraphs"
+			android:title="Enable graphs (warning: causes memory leaks)"
+			android:entries="@array/prefGraphs"
+			android:entryValues="@array/prefGraphsValues"
+			android:defaultValue="1"
 			android:summary="%s"
 			/>
 		<EditTextPreference
@@ -33,7 +41,7 @@
 			android:title="Location tracking"
 			android:entries="@array/prefLocation"
 			android:entryValues="@array/prefLocationValues"
-			android:defaultValue="Disabled"
+			android:defaultValue="0"
 			android:summary="%s"
 			/>
 	</PreferenceCategory>

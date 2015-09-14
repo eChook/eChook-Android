@@ -145,6 +145,8 @@ public final class Global {
 
 	public static String BTDeviceName;
 
+	public static boolean EnableGraphs = true;
+
 	public static Double BatteryCapacityAh;
 
 	/**********************/

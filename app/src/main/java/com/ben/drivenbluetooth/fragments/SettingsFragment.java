@@ -21,7 +21,6 @@ public class SettingsFragment 	extends PreferenceFragment
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
-		prefs.edit().remove("prefMode").commit();
 		addPreferencesFromResource(R.xml.user_settings);
 		updateAllPreferenceSummary();
 	}
@@ -77,6 +76,9 @@ public class SettingsFragment 	extends PreferenceFragment
 					break;
 				case "prefCarName":
 					Global.CarName = sharedPreferences.getString("prefCarName","");
+					break;
+				case "prefGraphs":
+					Global.EnableGraphs = Integer.valueOf(sharedPreferences.getString("prefGraphs", "")) != 0;
 				default:
 					break;
 			}
