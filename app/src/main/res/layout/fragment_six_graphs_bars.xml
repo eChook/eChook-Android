@@ -104,7 +104,7 @@
 		android:layout_height="100dp"
 		android:id="@+id/ThrottleBar"
 		android:layout_below="@+id/current"
-		custom:BarColor="#000000"
+		custom:BarColor="@color/throttle"
 		custom:min="0"
 		custom:max="100"
 		custom:xWidth="@integer/databar_xWidth"
@@ -150,7 +150,7 @@
 		android:layout_alignParentStart="false"
 		android:layout_alignParentLeft="false"
 		android:layout_alignTop="@+id/ThrottleBar"
-		custom:BarColor="#A3C2FF"
+		custom:BarColor="@color/volts"
 		custom:min="0"
 		custom:max="28"
 		custom:xWidth="@integer/databar_xWidth"/>
@@ -194,7 +194,7 @@
 		android:layout_alignParentStart="false"
 		android:layout_alignParentLeft="false"
 		android:layout_alignTop="@+id/ThrottleBar"
-		custom:BarColor="#ffffea2e"
+		custom:BarColor="@color/amps"
 		custom:min="0"
 		custom:max="50"
 		custom:xWidth="@integer/databar_xWidth"/>
@@ -236,7 +236,7 @@
 		android:layout_alignParentStart="false"
 		android:layout_alignParentLeft="false"
 		android:layout_alignTop="@+id/ThrottleBar"
-		custom:BarColor="#ffff5358"
+		custom:BarColor="@color/temperature"
 		custom:min="0"
 		custom:max="85"
 		custom:xWidth="@integer/databar_xWidth"/>
@@ -278,7 +278,7 @@
 		android:layout_alignParentStart="false"
 		android:layout_alignParentLeft="false"
 		android:layout_alignTop="@+id/ThrottleBar"
-		custom:BarColor="#ffff5358"
+		custom:BarColor="@color/rpm"
 		custom:min="0"
 		custom:max="2500"
 		custom:xWidth="@integer/databar_xWidth"/>
@@ -321,7 +321,7 @@
 		android:layout_alignParentStart="false"
 		android:layout_alignParentLeft="false"
 		android:layout_alignTop="@+id/ThrottleBar"
-		custom:BarColor="#ffff5358"
+		custom:BarColor="@color/speed"
 		custom:min="0"
 		custom:max="50"
 		custom:xWidth="@integer/databar_xWidth"/>

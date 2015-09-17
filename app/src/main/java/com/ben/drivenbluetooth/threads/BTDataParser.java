@@ -5,7 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.ben.drivenbluetooth.Global;
-import com.github.mikephil.charting.data.Entry;
+import com.ben.drivenbluetooth.util.GraphData;
 
 public class BTDataParser extends Thread {
 	public static Handler mHandler;
@@ -100,10 +100,10 @@ public class BTDataParser extends Thread {
 						// Check the ID
 						switch (poppedData[1]) {
 							case Global.VOLTS_ID:
-								SetVoltage(value);
+								SetVolts(value);
 								break;
 							case Global.AMPS_ID:
-								SetCurrent(value);
+								SetAmps(value);
 								break;
 							case Global.MOTOR_RPM_ID:
 								SetMotorRPM(value);
@@ -156,30 +156,27 @@ public class BTDataParser extends Thread {
 	/*===================*/
 	/* DATA INPUT FUNCS
 	/*===================*/
-	private void SetVoltage(final double rawVolts) {
+	private void SetVolts(final double rawVolts) {
 		Global.Volts = round(rawVolts, 2); // Apply conversion and offset
 		if (Global.Lap > 0) {
 			Global.LapDataList.get(Global.Lap - 1).AddVolts(rawVolts);
 		}
-		Global.VoltsHistory.addXValue(String.format("%d", Global.VoltsHistory.getXValCount()));
-		Global.VoltsHistory.addEntry(new Entry((float) rawVolts, Global.VoltsHistory.getXValCount() - 1), 0);
+		GraphData.AddVolts(rawVolts);
 	}
 
-	private void SetCurrent(final double rawAmps) {
+	private void SetAmps(final double rawAmps) {
 		IncrementAmpHours(rawAmps); // amp hours first!
 		Global.Amps = round(rawAmps, 2); // Apply conversion and offset
 		Global.AverageAmps.add(rawAmps);
 		if (Global.Lap > 0) {
 			Global.LapDataList.get(Global.Lap - 1).AddAmps(rawAmps);
 		}
-		Global.AmpsHistory.addXValue(String.format("%d", Global.AmpsHistory.getXValCount()));
-		Global.AmpsHistory.addEntry(new Entry((float) rawAmps, Global.AmpsHistory.getXValCount() - 1), 0);
+		GraphData.AddAmps(rawAmps);
 	}
 
 	private void SetInputThrottle(final double rawThrottle) {
 		Global.InputThrottle = rawThrottle; // Apply conversion and offset
-		Global.ThrottleHistory.addXValue(String.format("%d", Global.ThrottleHistory.getXValCount()));
-		Global.ThrottleHistory.addEntry(new Entry((float) rawThrottle, Global.ThrottleHistory.getXValCount() - 1), 0);
+		GraphData.AddInputThrottle(rawThrottle);
 	}
 
 	private void SetActualThrottle(double rawThrottle) {
@@ -195,13 +192,7 @@ public class BTDataParser extends Thread {
 			Global.LapDataList.get(Global.Lap - 1).AddSpeed(rawSpeedMPH);
 		}
 
-		if (Global.Unit == Global.UNIT.MPH) {
-			Global.SpeedHistory.addXValue(String.format("%d", Global.SpeedHistory.getXValCount()));
-			Global.SpeedHistory.addEntry(new Entry((float) rawSpeedMPH, Global.SpeedHistory.getXValCount() - 1), 0);
-		} else if (Global.Unit == Global.UNIT.KPH) {
-			Global.SpeedHistory.addXValue(String.format("%d", Global.SpeedHistory.getXValCount()));
-			Global.SpeedHistory.addEntry(new Entry(Global.SpeedKPH.floatValue(), Global.SpeedHistory.getXValCount() - 1), 0);
-		}
+		GraphData.AddSpeed(rawSpeedMPH);
 	}
 
 	private void SetMotorRPM(final double rawMotorRPM) {
@@ -209,16 +200,14 @@ public class BTDataParser extends Thread {
 		if (Global.Lap > 0) {
 			Global.LapDataList.get(Global.Lap - 1).AddRPM(rawMotorRPM);
 		}
-		Global.MotorRPMHistory.addXValue(String.format("%d", Global.MotorRPMHistory.getXValCount()));
-		Global.MotorRPMHistory.addEntry(new Entry((float) rawMotorRPM, Global.MotorRPMHistory.getXValCount() - 1), 0);
+		GraphData.AddMotorRPM(rawMotorRPM);
 	}
 
 	private void SetTemperature(double rawTemp, int sensorId) {
 		switch (sensorId) {
 			case 1:
 				Global.TempC1 = rawTemp;
-				Global.TempC1History.addXValue(String.format("%d", Global.TempC1History.getXValCount()));
-				Global.TempC1History.addEntry(new Entry((float) rawTemp, Global.TempC1History.getXValCount() - 1), 0);
+				GraphData.AddTemperature(rawTemp, sensorId);
 				break;
 			case 2:
 				Global.TempC2 = rawTemp;

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="throttle">#000000</color>
+	<color name="volts">#33b5e5</color>
+	<color name="amps">#F5D76E</color>
+	<color name="rpm">#96281b</color>
+	<color name="speed">#674172</color>
+	<color name="temperature">#1e824c</color>
+</resources>

@@ -94,7 +94,7 @@ public class FourGraphsBars extends Fragment {
 		};
 
 		float minMax[][] = new float[][] {
-				new float[] {0, 26},	// volts
+				new float[] {0, 30},	// volts
 				new float[] {0, 50},	// amps
 				new float[] {0, 2000},	// motor rpm
 				new float[] {0, Global.Unit == Global.UNIT.MPH ? 50 : 70}	// speed
@@ -105,6 +105,7 @@ public class FourGraphsBars extends Fragment {
 			graphs[i].setDescription("");
 			graphs[i].setVisibleXRangeMaximum(Global.maxGraphDataPoints);
 			graphs[i].setNoDataText("");
+			graphs[i].setNoDataTextDescription("");
 
 			YAxis leftAxis = graphs[i].getAxisLeft();
 			leftAxis.setAxisMinValue(minMax[i][0]);

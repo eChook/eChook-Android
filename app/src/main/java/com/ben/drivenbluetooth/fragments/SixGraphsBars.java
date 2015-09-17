@@ -111,7 +111,7 @@ public class SixGraphsBars extends Fragment {
 
 		float minMax[][] = new float[][] {
 				new float[] {0, 100},	// throttle
-				new float[] {0, 26},	// volts
+				new float[] {0, 30},	// volts
 				new float[] {0, 50},	// amps
 				new float[] {0, 50},	// temp
 				new float[] {0, 2000},	// motor rpm
@@ -123,6 +123,7 @@ public class SixGraphsBars extends Fragment {
 			graphs[i].setDescription("");
 			graphs[i].setVisibleXRangeMaximum(Global.maxGraphDataPoints);
 			graphs[i].setNoDataText("");
+			graphs[i].setNoDataTextDescription("");
 			graphs[i].setHardwareAccelerationEnabled(true);
 
 			YAxis leftAxis = graphs[i].getAxisLeft();
@@ -336,32 +337,26 @@ public class SixGraphsBars extends Fragment {
 	private void UpdateGraphs() {
 		try {
 			myThrottleGraph.notifyDataSetChanged();
-			myThrottleGraph.invalidate();
 			myThrottleGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
 			myThrottleGraph.moveViewToX(myThrottleGraph.getXValCount() - Global.maxGraphDataPoints - 1);
 
 			myVoltsGraph.notifyDataSetChanged();
-			myVoltsGraph.invalidate();
 			myVoltsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
 			myVoltsGraph.moveViewToX(myVoltsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
 
 			myAmpsGraph.notifyDataSetChanged();
-			myAmpsGraph.invalidate();
 			myAmpsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
 			myAmpsGraph.moveViewToX(myAmpsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
 
 			myMotorRPMGraph.notifyDataSetChanged();
-			myMotorRPMGraph.invalidate();
 			myMotorRPMGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
 			myMotorRPMGraph.moveViewToX(myMotorRPMGraph.getXValCount() - Global.maxGraphDataPoints - 1);
 
 			mySpeedGraph.notifyDataSetChanged();
-			mySpeedGraph.invalidate();
 			mySpeedGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
 			mySpeedGraph.moveViewToX(mySpeedGraph.getXValCount() - Global.maxGraphDataPoints - 1);
 
 			myTempC1Graph.notifyDataSetChanged();
-			myTempC1Graph.invalidate();
 			myTempC1Graph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
 			myTempC1Graph.moveViewToX(myTempC1Graph.getXValCount() - Global.maxGraphDataPoints - 1);
 		} catch (Exception ignored) {}

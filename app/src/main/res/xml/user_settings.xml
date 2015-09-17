@@ -21,7 +21,7 @@
 			/>
 		<ListPreference
 			android:key="prefGraphs"
-			android:title="Enable graphs (warning: causes memory leaks)"
+			android:title="Enable graphs (reduces performance if enabled)"
 			android:entries="@array/prefGraphs"
 			android:entryValues="@array/prefGraphsValues"
 			android:defaultValue="1"

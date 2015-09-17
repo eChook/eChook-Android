@@ -50,7 +50,7 @@ public final class Global {
 	public static volatile RunningAverage AverageAmps 		= new RunningAverage(2); // 2 = number of decimal places
 	public static volatile RunningAverage AverageSpeedMPH 	= new RunningAverage(1);
 
-	public static 			int		maxGraphDataPoints	=	120;
+	public static 			int		maxGraphDataPoints	=	4 * 20; // 20 seconds of history on graphs
 	public static volatile 	LineData ThrottleHistory	=	new LineData();
 	public static volatile 	LineData AmpsHistory		=	new LineData();
 	public static volatile 	LineData VoltsHistory		=	new LineData();

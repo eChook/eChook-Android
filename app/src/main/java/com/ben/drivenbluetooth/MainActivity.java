@@ -42,7 +42,6 @@ import com.ben.drivenbluetooth.util.UIUpdateRunnable;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.io.File;
 import java.util.Objects;
@@ -169,7 +168,7 @@ public class MainActivity
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
+		StopUIUpdater();
 		ForceStop(myDataFileName);
 		myMode			= null;
 		myDataFileName	= null;
@@ -187,6 +186,8 @@ public class MainActivity
 		myBluetoothManager.unregisterListeners();
 
 		FragmentList.clear();
+
+		super.onDestroy();
 	}
 
 	@Override
@@ -286,7 +287,7 @@ public class MainActivity
 				Global.TempC1History
 		};
 
-		String legends[] = new String[] {
+		String legends[] = new String[]{
 				"Throttle",
 				"Volts",
 				"Amps",
@@ -295,13 +296,22 @@ public class MainActivity
 				"Temp"
 		};
 
+		int colors[] = new int[] {
+				getResources().getColor(R.color.throttle),
+				getResources().getColor(R.color.volts),
+				getResources().getColor(R.color.amps),
+				getResources().getColor(R.color.rpm),
+				getResources().getColor(R.color.speed),
+				getResources().getColor(R.color.temperature)
+		};
+
 		for (int i = 0; i < dataSets.length; i++) {
 			LineDataSet set = new LineDataSet(null, legends[i]);
 			set.setAxisDependency(YAxis.AxisDependency.LEFT);
-			set.setColor(ColorTemplate.getHoloBlue());
 			set.setDrawCircles(false);
-			set.setLineWidth(2f);
+			set.setLineWidth(5);
 			set.setDrawValues(false);
+			set.setColor(colors[i]);
 			dataSets[i].addDataSet(set);
 		}
 	}
@@ -318,7 +328,7 @@ public class MainActivity
 				myBluetoothManager.findBT();
 				myBluetoothManager.openBT(false);
 			} catch (Exception e) {
-				showMessage(e.getMessage());
+				e.printStackTrace();
 			}
 		} else {
 			showMessage("Error: Bluetooth device name not given in Settings. Please go to Settings and enter the device name");
@@ -330,7 +340,7 @@ public class MainActivity
 			StopStreamReader();
 			myBluetoothManager.closeBT();
 		} catch (Exception e) {
-			showMessage(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -342,7 +352,7 @@ public class MainActivity
 				StartRaceMode();
 			}
 		} catch (Exception e) {
-			showMessage(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -357,7 +367,7 @@ public class MainActivity
 			UpdateDataFileInfo();
 
 		} catch (Exception e) {
-			showMessage(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -370,7 +380,7 @@ public class MainActivity
 				StartRaceMode();
 			}
 		} catch (Exception e) {
-			showMessage(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -388,7 +398,7 @@ public class MainActivity
 			UIUpdateTimer.purge();
 
 		} catch (Exception e) {
-			showMessage(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -480,7 +490,7 @@ public class MainActivity
 				MainActivity.myLogging.setTextColor(Color.GREEN);
 			}
 		} catch (Exception e) {
-			showMessage(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -496,7 +506,7 @@ public class MainActivity
 				StreamReader.start();
 			}
 		} catch (Exception e) {
-			showMessage(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -512,7 +522,7 @@ public class MainActivity
 				Parser.start();
 			}
 		} catch (Exception e) {
-			showMessage(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -520,12 +530,15 @@ public class MainActivity
 		try {
 			if (Gen == null) {
 				Gen = new RandomGenerator();
-			} else if (!Gen.isAlive() && Gen.getState() != Thread.State.NEW) {
-				Gen = new RandomGenerator();
+				Gen.start();
+			} else if (!Gen.isAlive()) {
+				if (Gen.getState() != Thread.State.NEW) {
+					Gen = new RandomGenerator();
+				}
+				Gen.start();
 			}
-			Gen.start();
 		} catch (Exception e) {
-			showMessage(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -537,6 +550,11 @@ public class MainActivity
 		};
 		UIUpdateTimer = new Timer();
 		UIUpdateTimer.schedule(UIUpdateTask, 0, Global.SLOW_UI_UPDATE_INTERVAL);
+	}
+
+	private void StopUIUpdater() {
+		UIUpdateTimer.cancel();
+		UIUpdateTimer.purge();
 	}
 
 	private void StopDataSaver() {
