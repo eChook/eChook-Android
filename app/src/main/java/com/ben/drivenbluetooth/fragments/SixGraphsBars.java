@@ -18,8 +18,8 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.utils.LargeValueFormatter;
-import com.github.mikephil.charting.utils.ValueFormatter;
+import com.github.mikephil.charting.formatter.LargeValueFormatter;
+import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -100,7 +100,7 @@ public class SixGraphsBars extends Fragment {
 				Global.SpeedHistory
 		};
 
-		ValueFormatter labelFormats[] = new ValueFormatter[] {
+		YAxisValueFormatter labelFormats[] = new YAxisValueFormatter[] {
 				new CustomLabelFormatter("", "0", "%"),
 				new CustomLabelFormatter("", "0", "V"),
 				new CustomLabelFormatter("", "0", "A"),

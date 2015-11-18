@@ -7,6 +7,9 @@ import android.os.Message;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.util.GraphData;
 
+import java.io.OutputStream;
+import java.net.Socket;
+
 public class BTDataParser extends Thread {
 	public static Handler mHandler;
 	private static byte[] poppedData;
@@ -15,6 +18,11 @@ public class BTDataParser extends Thread {
 	/* == Amp Hour Variables ==*/
 	private static double prevAmps = 0.0;
 	private static long prevAmpTime = 0;
+
+	private static Socket mSocket;
+	private static OutputStream mSocketOS;
+	private static boolean mSocketValid = false;
+	private static int socketCounter = 0;
 
 	/*===================*/
 	/* BTDATAPARSER
@@ -44,6 +52,9 @@ public class BTDataParser extends Thread {
 	@Override
 	public void run() {
 		Looper.prepare();
+
+		OpenNodeJSSocket();
+
 		mHandler = new Handler(new Handler.Callback() {
 			@Override
 			public boolean handleMessage(Message msg) {
@@ -68,6 +79,7 @@ public class BTDataParser extends Thread {
 						// a byte in Java is -128 to 127 so we must convert to an int by doing & 0xff
 
 					/* Explanation :
+					 * We have defined 255 (0xFF) to be zero because we can't send null bytes over Bluetooth
 					 * & is a bitwise AND operation
 					 * (byte) 1111111 is interpreted by Java as -128
 					 * 11111111 & 0xff converts the value to an integer, which is then interpreted as
@@ -140,6 +152,18 @@ public class BTDataParser extends Thread {
 								Global.MangledDataCount++;
 								return false;
 						}
+
+						if (mSocketValid && socketCounter > 9) {
+							try {
+								mSocketOS.write(poppedData);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							socketCounter = 0;
+						}
+
+						socketCounter++;
+
 						return true;
 					} else {
 						// data is bad
@@ -151,6 +175,17 @@ public class BTDataParser extends Thread {
 			}
 		});
 		Looper.loop();
+	}
+
+	private static void OpenNodeJSSocket() {
+		try {
+			mSocket = new Socket(Global.SOCKETADDRESS, Global.SOCKETPORT);
+			mSocketOS = mSocket.getOutputStream();
+			mSocketValid = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			mSocketValid = false;
+		}
 	}
 
 	/*===================*/

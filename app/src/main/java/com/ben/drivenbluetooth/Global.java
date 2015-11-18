@@ -50,7 +50,7 @@ public final class Global {
 	public static volatile RunningAverage AverageAmps 		= new RunningAverage(2); // 2 = number of decimal places
 	public static volatile RunningAverage AverageSpeedMPH 	= new RunningAverage(1);
 
-	public static 			int		maxGraphDataPoints	=	4 * 20; // 20 seconds of history on graphs
+	public static 			int		maxGraphDataPoints	=	4 * 20; // 20 seconds of history on graphs assuming Arduino spews every 250ms
 	public static volatile 	LineData ThrottleHistory	=	new LineData();
 	public static volatile 	LineData AmpsHistory		=	new LineData();
 	public static volatile 	LineData VoltsHistory		=	new LineData();
@@ -68,7 +68,7 @@ public final class Global {
 	public static volatile Double SpeedGPS		=	0.0;
 	public static volatile Double GPSTime		=	0.0;
 	public static volatile Double GPSAccuracy 	=	0.0;
-	public static		   float MinGPSAccuracy	=	20.0f;
+	public static		   float MinGPSAccuracy	=	50.0f;
 	public static volatile float DeltaDistance	=	0;	// difference between current and previous location in meters
 
 	public static volatile int Lap	= 0;
@@ -96,6 +96,8 @@ public final class Global {
 	/**********************/
 	/* CONSTANTS          */
 	/**********************/
+	/* SEE https://docs.google.com/a/jaguarlandrover.com/spreadsheets/d/1894rswb_CalcgParDVzyCzok7YSILqCtenP4maTdhaY/edit?usp=sharing */
+
 	public static final byte STARTBYTE 		= 	123; // ASCII Code for '{'
     public static final byte STOPBYTE 		= 	125; // ASCII code for '}'
     public static final int PACKETLENGTH 	= 	5; 	 // { [id] [1] [2] }
@@ -114,8 +116,8 @@ public final class Global {
 	public static final byte GEAR_RATIO_ID			=	114;	// r
 	public static final byte CYCLE_VIEW_ID			=	67;		// C
 
-	public static final int 	FAST_UI_UPDATE_INTERVAL = 100; // UI update interval in milliseconds
-	public static final int		SLOW_UI_UPDATE_INTERVAL	= 500;
+	public static final int 	FAST_UI_UPDATE_INTERVAL = 100; // fast UI update interval in milliseconds
+	public static final int		SLOW_UI_UPDATE_INTERVAL	= 500; // slow UI update interval in milliseconds
     public static final int 	DATA_SAVE_INTERVAL 		= 250; // save interval in milliseconds
 	public static final String 	DATA_FILE 				= "arduino.csv";
 
@@ -127,6 +129,9 @@ public final class Global {
 	public static final float LAP_TRIGGER_RANGE = 20f;  // locus around the start location to trigger a lap
 
 	public static final int MAP_UPDATE_INTERVAL = 5000;
+
+	public static final String 	SOCKETADDRESS = "exantas.homenet.org";
+	public static final int		SOCKETPORT = 8081;
 
 	/**********************/
 	/* SETTINGS VARIABLES */

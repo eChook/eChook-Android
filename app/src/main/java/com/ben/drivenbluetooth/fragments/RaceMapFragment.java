@@ -185,10 +185,12 @@ public class RaceMapFragment extends Fragment
 
 	@Override
 	public void onInfoWindowClick(Marker marker) {
+		// User confirmed the observer location; we must now ask the track orientation
 		final Location loc = new Location("");
 		loc.setLatitude(marker.getPosition().latitude);
 		loc.setLongitude(marker.getPosition().longitude);
 
+		// Custom alert to decide track orientation
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setMessage("Track orientation");
 		builder.setPositiveButton("Clockwise", new DialogInterface.OnClickListener() {
@@ -215,7 +217,7 @@ public class RaceMapFragment extends Fragment
 	}
 
 	/*===================*/
-	/* PATH SMOOTHING
+	/* PATH SMOOTHING - NOT USED
 	/*===================*/
 
 	private void DemoSmoothedLine() {

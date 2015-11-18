@@ -1,10 +1,11 @@
 package com.ben.drivenbluetooth.util;
 
-import com.github.mikephil.charting.utils.ValueFormatter;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 
 import java.text.DecimalFormat;
 
-public class CustomLabelFormatter implements ValueFormatter {
+public class CustomLabelFormatter implements YAxisValueFormatter {
 	private DecimalFormat mFormat;
 	private String _prefix;
 	private String _suffix;
@@ -16,7 +17,7 @@ public class CustomLabelFormatter implements ValueFormatter {
 	}
 
 	@Override
-	public String getFormattedValue(float value) {
+	public String getFormattedValue(float value, YAxis yAxis) {
 		return _prefix + mFormat.format(value) + _suffix;
 	}
 }
