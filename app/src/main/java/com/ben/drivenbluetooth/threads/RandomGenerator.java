@@ -1,7 +1,8 @@
 package com.ben.drivenbluetooth.threads;
 
 import com.ben.drivenbluetooth.Global;
-import com.ben.drivenbluetooth.MainActivity;
+
+import org.acra.ACRA;
 
 import java.util.Random;
 
@@ -41,7 +42,13 @@ public class RandomGenerator extends Thread {
 				Global.BTStreamQueue.add(Message);
 
 				// send message to BTDataParser
-				BTDataParser.mHandler.sendEmptyMessage(0);
+				try {
+					BTDataParser.mHandler.sendEmptyMessage(0);
+				} catch (Exception e) {
+					e.printStackTrace();
+					ACRA.getErrorReporter().handleException(e);
+				}
+
 				try {
 					Thread.sleep(10); // this needs to be here otherwise the queue gets overloaded
 				} catch (Exception ignored) {

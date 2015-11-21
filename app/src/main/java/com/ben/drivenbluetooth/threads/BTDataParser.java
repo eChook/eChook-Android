@@ -7,7 +7,12 @@ import android.os.Message;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.util.GraphData;
 
+import org.acra.ACRA;
+
 import java.io.OutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class BTDataParser extends Thread {
@@ -19,9 +24,13 @@ public class BTDataParser extends Thread {
 	private static double prevAmps = 0.0;
 	private static long prevAmpTime = 0;
 
-	private static Socket mSocket;
-	private static OutputStream mSocketOS;
-	private static boolean mSocketValid = false;
+	private static Socket mTCPSocket;
+	private static OutputStream mTCPSocketOS;
+	private static boolean mTCPSocketValid = false;
+
+	private static DatagramSocket mUDPSocket;
+	private static InetAddress IPAddress;
+	private static boolean mUDPSocketValid = false;
 	private static int socketCounter = 0;
 
 	/*===================*/
@@ -53,7 +62,7 @@ public class BTDataParser extends Thread {
 	public void run() {
 		Looper.prepare();
 
-		OpenNodeJSSocket();
+		OpenUDPSocket();
 
 		mHandler = new Handler(new Handler.Callback() {
 			@Override
@@ -153,14 +162,25 @@ public class BTDataParser extends Thread {
 								return false;
 						}
 
-						if (mSocketValid && socketCounter > 9) {
+						/* if (mTCPSocketValid && socketCounter > 3) {
 							try {
-								mSocketOS.write(poppedData);
+								mTCPSocketOS.write(poppedData);
 							} catch (Exception e) {
 								e.printStackTrace();
+								ACRA.getErrorReporter().handleException(e);
+							}
+							socketCounter = 0;
+						} */
+						if (mUDPSocketValid && socketCounter > 3) {
+							try {
+								mUDPSocket.send(new DatagramPacket(poppedData, 5, IPAddress, Global.SOCKETPORT));
+							} catch (Exception e) {
+								e.printStackTrace();
+								ACRA.getErrorReporter().handleException(e);
 							}
 							socketCounter = 0;
 						}
+
 
 						socketCounter++;
 
@@ -177,14 +197,25 @@ public class BTDataParser extends Thread {
 		Looper.loop();
 	}
 
-	private static void OpenNodeJSSocket() {
+	private static void OpenTCPSocket() {
 		try {
-			mSocket = new Socket(Global.SOCKETADDRESS, Global.SOCKETPORT);
-			mSocketOS = mSocket.getOutputStream();
-			mSocketValid = true;
+			mTCPSocket = new Socket(Global.SOCKETADDRESS, Global.SOCKETPORT);
+			mTCPSocketOS = mTCPSocket.getOutputStream();
+			mTCPSocketValid = true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			mSocketValid = false;
+			mTCPSocketValid = false;
+		}
+	}
+
+	private static void OpenUDPSocket() {
+		try {
+			IPAddress = InetAddress.getByName(Global.SOCKETADDRESS);
+			mUDPSocket = new DatagramSocket(Global.SOCKETPORT);
+			mUDPSocketValid = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			mUDPSocketValid = false;
 		}
 	}
 
