@@ -3,8 +3,10 @@ package com.ben.drivenbluetooth.threads;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
+import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.util.GraphData;
 
 import org.acra.ACRA;
@@ -14,6 +16,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class BTDataParser extends Thread {
 	public static Handler mHandler;
@@ -162,7 +165,11 @@ public class BTDataParser extends Thread {
 								return false;
 						}
 
-						/* if (mTCPSocketValid && socketCounter > 3) {
+						Message packet = Message.obtain();
+						packet.obj = poppedData;
+						MainActivity.NodeJS.mHandler.sendMessage(packet);
+
+						if (mTCPSocketValid && socketCounter > 3) {
 							try {
 								mTCPSocketOS.write(poppedData);
 							} catch (Exception e) {
@@ -170,13 +177,13 @@ public class BTDataParser extends Thread {
 								ACRA.getErrorReporter().handleException(e);
 							}
 							socketCounter = 0;
-						} */
+						}
 						if (mUDPSocketValid && socketCounter > 3) {
 							try {
 								mUDPSocket.send(new DatagramPacket(poppedData, 5, IPAddress, Global.SOCKETPORT));
-							} catch (Exception e) {
-								e.printStackTrace();
-								ACRA.getErrorReporter().handleException(e);
+							} catch (SocketException e) {
+								// TODO: SocketException for sendto failed: ENETUNREACH (Network is unreachable)
+							} catch (Exception ignored) {
 							}
 							socketCounter = 0;
 						}
@@ -210,10 +217,13 @@ public class BTDataParser extends Thread {
 
 	private static void OpenUDPSocket() {
 		try {
+			MainActivity.showMessage("Connecting to node.js server...");
 			IPAddress = InetAddress.getByName(Global.SOCKETADDRESS);
 			mUDPSocket = new DatagramSocket(Global.SOCKETPORT);
 			mUDPSocketValid = true;
+			MainActivity.showMessage("Successfully connected node.js server");
 		} catch (Exception e) {
+			MainActivity.showMessage("Could not connect to node.js server", Toast.LENGTH_LONG);
 			e.printStackTrace();
 			mUDPSocketValid = false;
 		}

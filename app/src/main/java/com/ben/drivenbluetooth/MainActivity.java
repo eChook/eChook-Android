@@ -38,6 +38,7 @@ import com.ben.drivenbluetooth.util.BluetoothManager;
 import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenLocation;
 import com.ben.drivenbluetooth.util.DrivenSettings;
+import com.ben.drivenbluetooth.util.UDPSender;
 import com.ben.drivenbluetooth.util.UIUpdateRunnable;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
@@ -72,6 +73,7 @@ public class MainActivity
 	public BTDataParser Parser = new BTDataParser(this); // can't be static because of (this)
 	public static DataToCsvFile DataSaver = new DataToCsvFile();
 	public static BTStreamReader StreamReader; // initialize below
+	public static UDPSender NodeJS; // initialize below
 
 	private static Timer UIUpdateTimer; // don't initialize because it should be done below
 
@@ -127,6 +129,7 @@ public class MainActivity
 		myAccelerometer = new Accelerometer((SensorManager) getSystemService(Context.SENSOR_SERVICE));
 
 		myDrivenLocation = new DrivenLocation(); // must be initialized here or else null object ref error
+		NodeJS = new UDPSender();
 
 		UpdateDataFileInfo();
 

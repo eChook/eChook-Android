@@ -1,8 +1,5 @@
 package com.ben.drivenbluetooth.util;
 
-/**
- * Created by BNAGY4 on 02/07/2015.
- */
 public class MovingAverage {
 	private int window;
 	private Double average;
