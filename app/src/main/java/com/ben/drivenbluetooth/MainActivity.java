@@ -38,7 +38,7 @@ import com.ben.drivenbluetooth.util.BluetoothManager;
 import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenLocation;
 import com.ben.drivenbluetooth.util.DrivenSettings;
-import com.ben.drivenbluetooth.util.UDPSender;
+import com.ben.drivenbluetooth.threads.UDPSender;
 import com.ben.drivenbluetooth.util.UIUpdateRunnable;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
@@ -139,6 +139,7 @@ public class MainActivity
 		InitializeFragmentList();
 		CycleView();
 		StartDataParser();
+        StartUDPSender();
 
 		myBluetoothManager.setBluetoothEventsListener(this);
 
@@ -265,6 +266,7 @@ public class MainActivity
 	 */
 
 	public static void showMessage(String theMsg) {
+
 		if (context != null) {
 			Toast msg = Toast.makeText(context, theMsg, (Toast.LENGTH_SHORT));
 			msg.show();
@@ -528,6 +530,22 @@ public class MainActivity
 			e.printStackTrace();
 		}
 	}
+
+    private void StartUDPSender() {
+        try {
+            if (NodeJS == null) {
+                NodeJS = new UDPSender();
+                NodeJS.start();
+            } else if (!NodeJS.isAlive()) {
+                if (NodeJS.getState() != Thread.State.NEW) {
+                    NodeJS = new UDPSender();
+                }
+                NodeJS.start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 	private void StartRandomGenerator() {
 		try {

@@ -5,15 +5,21 @@ import android.graphics.Color;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 
+import org.acra.ACRA;
+
 /* This class should only be used by posting to the UI thread */
 public class UIUpdateRunnable implements Runnable {
 
 	@Override
 	public void run() {
-		UpdateBTStatus();
-		UpdateFileSize();
-		UpdateLap();
-		UpdateBTCarName();
+        try {
+            UpdateBTStatus();
+            UpdateFileSize();
+            UpdateLap();
+            UpdateBTCarName();
+        } catch (Exception e) {
+            ACRA.getErrorReporter().handleException(e);
+        }
 	}
 
 	private void UpdateBTCarName() {

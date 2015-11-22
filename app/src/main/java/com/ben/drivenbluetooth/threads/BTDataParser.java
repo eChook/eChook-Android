@@ -65,8 +65,6 @@ public class BTDataParser extends Thread {
 	public void run() {
 		Looper.prepare();
 
-		OpenUDPSocket();
-
 		mHandler = new Handler(new Handler.Callback() {
 			@Override
 			public boolean handleMessage(Message msg) {
@@ -165,31 +163,11 @@ public class BTDataParser extends Thread {
 								return false;
 						}
 
-						Message packet = Message.obtain();
-						packet.obj = poppedData;
-						MainActivity.NodeJS.mHandler.sendMessage(packet);
-
-						if (mTCPSocketValid && socketCounter > 3) {
-							try {
-								mTCPSocketOS.write(poppedData);
-							} catch (Exception e) {
-								e.printStackTrace();
-								ACRA.getErrorReporter().handleException(e);
-							}
-							socketCounter = 0;
-						}
-						if (mUDPSocketValid && socketCounter > 3) {
-							try {
-								mUDPSocket.send(new DatagramPacket(poppedData, 5, IPAddress, Global.SOCKETPORT));
-							} catch (SocketException e) {
-								// TODO: SocketException for sendto failed: ENETUNREACH (Network is unreachable)
-							} catch (Exception ignored) {
-							}
-							socketCounter = 0;
-						}
-
-
-						socketCounter++;
+                        if (MainActivity.NodeJS != null) {
+                            Message packet = Message.obtain();
+                            packet.obj = poppedData;
+                            MainActivity.NodeJS.mHandler.sendMessage(packet);
+                        }
 
 						return true;
 					} else {
@@ -202,31 +180,6 @@ public class BTDataParser extends Thread {
 			}
 		});
 		Looper.loop();
-	}
-
-	private static void OpenTCPSocket() {
-		try {
-			mTCPSocket = new Socket(Global.SOCKETADDRESS, Global.SOCKETPORT);
-			mTCPSocketOS = mTCPSocket.getOutputStream();
-			mTCPSocketValid = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			mTCPSocketValid = false;
-		}
-	}
-
-	private static void OpenUDPSocket() {
-		try {
-			MainActivity.showMessage("Connecting to node.js server...");
-			IPAddress = InetAddress.getByName(Global.SOCKETADDRESS);
-			mUDPSocket = new DatagramSocket(Global.SOCKETPORT);
-			mUDPSocketValid = true;
-			MainActivity.showMessage("Successfully connected node.js server");
-		} catch (Exception e) {
-			MainActivity.showMessage("Could not connect to node.js server", Toast.LENGTH_LONG);
-			e.printStackTrace();
-			mUDPSocketValid = false;
-		}
 	}
 
 	/*===================*/
