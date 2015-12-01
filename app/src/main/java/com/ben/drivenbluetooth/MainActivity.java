@@ -24,9 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ben.drivenbluetooth.drivenbluetooth.R;
-import com.ben.drivenbluetooth.fragments.FourGraphsBars;
-import com.ben.drivenbluetooth.fragments.LapHistoryFragment;
-import com.ben.drivenbluetooth.fragments.RaceMapFragment;
 import com.ben.drivenbluetooth.fragments.SettingsFragment;
 import com.ben.drivenbluetooth.fragments.SixGraphsBars;
 import com.ben.drivenbluetooth.threads.BTDataParser;
@@ -42,6 +39,7 @@ import com.ben.drivenbluetooth.util.DrivenSettings;
 import com.ben.drivenbluetooth.util.GraphData;
 import com.ben.drivenbluetooth.util.NetworkMonitor;
 import com.ben.drivenbluetooth.util.UIUpdateRunnable;
+import com.ben.drivenbluetooth.util.UpdateFragment;
 
 import java.io.File;
 import java.util.Objects;
@@ -86,25 +84,18 @@ public class MainActivity
 	private static Context context;
 	public static final BluetoothManager myBluetoothManager = new BluetoothManager();
 
-	private static final CyclingArrayList<Fragment> FragmentList = new CyclingArrayList<>();
-
-	/**************************************************/
-	/**************** MAINACTIVITY ONCREATE ***********/
-	/**
-	 * **********************************************
-	 */
+	private static final CyclingArrayList<UpdateFragment> FragmentList = new CyclingArrayList<>();
+	public static UpdateFragment currentFragment;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		/**************** CONTEXT *************************/
+
 		context = getApplicationContext();
 
 		setContentView(R.layout.activity_main);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-
-		/************** INITIALIZE PERMANENT UI ELEMENTS ************/
 
 		myMode = (TextView) findViewById(R.id.txt_Mode);
 
@@ -208,10 +199,10 @@ public class MainActivity
 	}
 
 	private void InitializeFragmentList() {
-		FragmentList.add(new RaceMapFragment());
+		//FragmentList.add(new RaceMapFragment());
 		FragmentList.add(new SixGraphsBars());
-		FragmentList.add(new FourGraphsBars());
-		FragmentList.add(new LapHistoryFragment());
+		//FragmentList.add(new FourGraphsBars());
+		//FragmentList.add(new LapHistoryFragment());
 	}
 
 	private void InitializeLongClickStart() {
@@ -230,8 +221,8 @@ public class MainActivity
 		try {
 			FragmentManager fragmentManager = getFragmentManager();
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-			Fragment fragment = FragmentList.cycle();
-			fragmentTransaction.replace(R.id.CenterView, fragment);
+			currentFragment = FragmentList.cycle();
+			fragmentTransaction.replace(R.id.CenterView, currentFragment);
 			fragmentTransaction.commit();
 		} catch (Exception e) {
 			e.getMessage();

@@ -3,25 +3,19 @@ package com.ben.drivenbluetooth.threads;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.SystemClock;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.util.GraphData;
 
-import java.io.OutputStream;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.Socket;
-
 public class BTDataParser extends Thread {
     public static Handler mHandler;
-    private static byte[] poppedData;
+    private byte[] poppedData;
     private BTDataParserListener mListener;
 
     /* == Amp Hour Variables ==*/
-    private static double prevAmps = 0.0;
-    private static long prevAmpTime = 0;
+    private double prevAmps = 0.0;
+    private long prevAmpTime = 0;
 
     /*===================*/
 	/* BTDATAPARSER
@@ -181,6 +175,11 @@ public class BTDataParser extends Thread {
             Global.LapDataList.get(Global.Lap - 1).AddVolts(rawVolts);
         }
         GraphData.AddVolts(rawVolts);
+        MainActivity.MainActivityHandler.post(new Runnable() {
+			public void run() {
+				MainActivity.currentFragment.UpdateVolts();
+			}
+		});
     }
 
     private synchronized void SetAmps(final double rawAmps) {
@@ -191,11 +190,23 @@ public class BTDataParser extends Thread {
             Global.LapDataList.get(Global.Lap - 1).AddAmps(rawAmps);
         }
         GraphData.AddAmps(rawAmps);
+
+		MainActivity.MainActivityHandler.post(new Runnable() {
+			public void run() {
+				MainActivity.currentFragment.UpdateAmps();
+			}
+		});
     }
 
     private synchronized void SetInputThrottle(final double rawThrottle) {
         Global.InputThrottle = rawThrottle; // Apply conversion and offset
         GraphData.AddInputThrottle(rawThrottle);
+
+		MainActivity.MainActivityHandler.post(new Runnable() {
+			public void run() {
+				MainActivity.currentFragment.UpdateThrottle();
+			}
+		});
     }
 
     private synchronized void SetActualThrottle(double rawThrottle) {
@@ -208,10 +219,16 @@ public class BTDataParser extends Thread {
         Global.AverageSpeedMPH.add(Global.SpeedMPH);
 
         if (Global.Lap > 0) {
-            Global.LapDataList.get(Global.Lap - 1).AddSpeed(rawSpeedMPS);
+            Global.LapDataList.get(Global.Lap - 1).AddSpeed(Global.SpeedMPH);
         }
 
-        GraphData.AddSpeed(rawSpeedMPS);
+        GraphData.AddSpeed(Global.Unit == Global.UNIT.MPH ? Global.SpeedMPH : Global.SpeedKPH);
+
+		MainActivity.MainActivityHandler.post(new Runnable() {
+			public void run() {
+				MainActivity.currentFragment.UpdateSpeed();
+			}
+		});
     }
 
     private synchronized void SetMotorRPM(final double rawMotorRPM) {
@@ -220,9 +237,15 @@ public class BTDataParser extends Thread {
             Global.LapDataList.get(Global.Lap - 1).AddRPM(rawMotorRPM);
         }
         GraphData.AddMotorRPM(rawMotorRPM);
+
+		MainActivity.MainActivityHandler.post(new Runnable() {
+			public void run() {
+				MainActivity.currentFragment.UpdateMotorRPM();
+			}
+		});
     }
 
-    private synchronized void SetTemperature(double rawTemp, int sensorId) {
+    private synchronized void SetTemperature(double rawTemp, final int sensorId) {
         switch (sensorId) {
             case 1:
                 Global.TempC1 = rawTemp;
@@ -237,6 +260,12 @@ public class BTDataParser extends Thread {
             default:
                 break;
         }
+
+		MainActivity.MainActivityHandler.post(new Runnable() {
+			public void run() {
+				MainActivity.currentFragment.UpdateTemp(sensorId);
+			}
+		});
     }
 
     private synchronized void SetGearRatio(double rawRatio) {
@@ -263,6 +292,12 @@ public class BTDataParser extends Thread {
         }
         prevAmpTime = millis;
         prevAmps = amps;
+
+		MainActivity.MainActivityHandler.post(new Runnable() {
+			public void run() {
+				MainActivity.currentFragment.UpdateAmpHours();
+			}
+		});
     }
 
     /*===================*/

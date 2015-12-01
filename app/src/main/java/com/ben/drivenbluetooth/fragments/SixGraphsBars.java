@@ -1,6 +1,5 @@
 package com.ben.drivenbluetooth.fragments;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +12,7 @@ import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.ben.drivenbluetooth.util.ColorHelper;
 import com.ben.drivenbluetooth.util.CustomLabelFormatter;
 import com.ben.drivenbluetooth.util.DataBar;
+import com.ben.drivenbluetooth.util.UpdateFragment;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -25,7 +25,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class SixGraphsBars extends Fragment {
+public class SixGraphsBars extends UpdateFragment {
 
 	private static TextView Throttle;
 	private static TextView Current;
@@ -50,7 +50,7 @@ public class SixGraphsBars extends Fragment {
 
 	private static TextView AmpHours;
 
-	private static Timer 		FragmentUpdateTimer;
+	private static Timer FragmentUpdateTimer;
 
 	/*===================*/
 	/* SIXGRAPHSBARS
@@ -171,7 +171,7 @@ public class SixGraphsBars extends Fragment {
 		if (Global.EnableGraphs) {
 			InitializeGraphs();
 		}
-		StartFragmentUpdater();
+		//StartFragmentUpdater();
 	}
 
 	@Override
@@ -205,8 +205,8 @@ public class SixGraphsBars extends Fragment {
 	/* FRAGMENT UPDATE
 	/*===================*/
 	public void UpdateFragmentUI() {
-		UpdateVoltage();
-		UpdateCurrent();
+		UpdateVolts();
+		UpdateAmps();
 		UpdateThrottle();
 		UpdateSpeed();
 		UpdateTemp(1);
@@ -218,27 +218,35 @@ public class SixGraphsBars extends Fragment {
 		}
 	}
 
-	private void UpdateVoltage() {
+	public void UpdateVolts() {
 		try {
 			Voltage.setText(String.format("%.2f", Global.Volts));
 			Voltage.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
 			VoltageBar.setValue(Global.Volts);
+
+			myVoltsGraph.notifyDataSetChanged();
+			myVoltsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			myVoltsGraph.moveViewToX(myVoltsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void UpdateCurrent() {
+	public void UpdateAmps() {
 		try {
 			Current.setText(String.format("%.1f", Global.Amps));
 			Current.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
 			CurrentBar.setValue(Global.Amps);
+
+			myAmpsGraph.notifyDataSetChanged();
+			myAmpsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			myAmpsGraph.moveViewToX(myAmpsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void UpdateAmpHours() {
+	public void UpdateAmpHours() {
 		try {
 			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
 		} catch (Exception e) {
@@ -246,7 +254,7 @@ public class SixGraphsBars extends Fragment {
 		}
 	}
 
-	private void UpdateThrottle() {
+	public void UpdateThrottle() {
 		try {
 			if (Global.ActualThrottle < Global.InputThrottle) {
 				Throttle.setText(String.format("%.0f", Global.InputThrottle) + " (" + String.format("%.0f", Global.ActualThrottle) + ")");
@@ -254,12 +262,16 @@ public class SixGraphsBars extends Fragment {
 				Throttle.setText(String.format("%.0f", Global.InputThrottle));
 			}
 			ThrottleBar.setValue(Global.InputThrottle);
+
+			myThrottleGraph.notifyDataSetChanged();
+			myThrottleGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			myThrottleGraph.moveViewToX(myThrottleGraph.getXValCount() - Global.maxGraphDataPoints - 1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void UpdateSpeed() {
+	public void UpdateSpeed() {
 		try {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
@@ -270,12 +282,16 @@ public class SixGraphsBars extends Fragment {
 				SpeedBar.setValue(Global.SpeedKPH);
 			}
 
+			mySpeedGraph.notifyDataSetChanged();
+			mySpeedGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			mySpeedGraph.moveViewToX(mySpeedGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void UpdateTemp(int sensorIndex) {
+	public void UpdateTemp(int sensorIndex) {
 		Double TempValue;
 		TextView TempText;
 		DataBar TempBar;
@@ -297,18 +313,26 @@ public class SixGraphsBars extends Fragment {
 			try {
 				TempText.setText(String.format("%.1f", TempValue) + " C");
 				TempBar.setValue(TempValue);
-				//Global.TempC1History.appendData(new DataPoint(Global.GraphTimeStamp, TempValue), true, Global.maxGraphDataPoints);
+
+				myTempC1Graph.notifyDataSetChanged();
+				myTempC1Graph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+				myTempC1Graph.moveViewToX(myTempC1Graph.getXValCount() - Global.maxGraphDataPoints - 1);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	private void UpdateMotorRPM() {
+	public void UpdateMotorRPM() {
 		try {
 			RPM.setText(String.format("%.0f", Global.MotorRPM));
 			RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
 			RPMBar.setValue(Global.MotorRPM);
+
+			myMotorRPMGraph.notifyDataSetChanged();
+			myMotorRPMGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			myMotorRPMGraph.moveViewToX(myMotorRPMGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -329,9 +353,13 @@ public class SixGraphsBars extends Fragment {
 	}
 
 	private void StopFragmentUpdater() {
-		FragmentUpdateTimer.cancel();
-		FragmentUpdateTimer.purge();
-		FragmentUpdateTimer = null;
+		try {
+			FragmentUpdateTimer.cancel();
+			FragmentUpdateTimer.purge();
+			FragmentUpdateTimer = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void UpdateGraphs() {
