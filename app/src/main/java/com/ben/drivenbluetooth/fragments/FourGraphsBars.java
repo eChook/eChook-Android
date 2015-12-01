@@ -20,8 +20,6 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 
-import java.util.Timer;
-
 
 public class FourGraphsBars extends UpdateFragment {
 
@@ -41,8 +39,6 @@ public class FourGraphsBars extends UpdateFragment {
 	private static LineChart mySpeedGraph;
 
 	private static TextView AmpHours;
-
-	private static Timer 		FragmentUpdateTimer;
 
 	/*===================*/
 	/* FOURGRAPHSBARS

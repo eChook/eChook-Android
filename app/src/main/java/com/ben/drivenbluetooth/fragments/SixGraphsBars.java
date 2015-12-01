@@ -20,8 +20,6 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 
-import java.util.Timer;
-
 
 public class SixGraphsBars extends UpdateFragment {
 
@@ -47,8 +45,6 @@ public class SixGraphsBars extends UpdateFragment {
 	private static LineChart myTempC1Graph;
 
 	private static TextView AmpHours;
-
-	private static Timer FragmentUpdateTimer;
 
 	/*===================*/
 	/* SIXGRAPHSBARS
