@@ -8,7 +8,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
@@ -90,6 +89,10 @@ public class MainActivity
 	private static final CyclingArrayList<UpdateFragment> FragmentList = new CyclingArrayList<>();
 	public static UpdateFragment currentFragment;
 
+	/* ========= */
+	/* LIFECYCLE */
+    /* ========= */
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -127,7 +130,7 @@ public class MainActivity
 		UpdateDataFileInfo();
 
 		MainActivity.myLogging.setText("NO");
-		MainActivity.myLogging.setTextColor(Color.RED);
+		MainActivity.myLogging.setTextColor(getResources().getColor(R.color.negative));
 
 		InitializeFragmentList();
 		CycleView();
@@ -201,6 +204,10 @@ public class MainActivity
 		}
 	}
 
+	/* ============ */
+	/* INITIALIZERS */
+    /* ============ */
+
 	private void InitializeFragmentList() {
 		FragmentList.add(new RaceMapFragment());
 		FragmentList.add(new SixGraphsBars());
@@ -220,43 +227,9 @@ public class MainActivity
 		});
 	}
 
-	public void CycleView() {
-		try {
-			FragmentManager fragmentManager = getFragmentManager();
-			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-			currentFragment = FragmentList.cycle();
-			fragmentTransaction.replace(R.id.CenterView, currentFragment);
-			fragmentTransaction.commit();
-		} catch (Exception e) {
-			e.getMessage();
-		}
-	}
-
-	public void CycleViewReverse() {
-		try {
-			FragmentManager fragmentManager = getFragmentManager();
-			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-			Fragment fragment = FragmentList.reverseCycle();
-			fragmentTransaction.replace(R.id.CenterView, fragment);
-			fragmentTransaction.commit();
-		} catch (Exception e) {
-			e.getMessage();
-		}
-	}
-
-	private void ActivateLaunchMode() {
-		// reset the lap timer & lap counters
-		Global.Lap = 0;
-		LapTimer.stop();
-		LapTimer.setBase(SystemClock.elapsedRealtime());
-		myDrivenLocation.ActivateLaunchMode();
-	}
-
-	/**************************************************/
-	/**************** TOASTER          ****************/
-	/**
-	 * **********************************************
-	 */
+	/* ======= */
+	/* TOASTER */
+    /* ======= */
 
 	public static void showMessage(String theMsg) {
 
@@ -275,11 +248,9 @@ public class MainActivity
 		showMessage(e.getMessage(), Toast.LENGTH_SHORT);
 	}
 
-	/**************************************************/
-	/**************** BUTTON LISTENERS ****************/
-	/**
-	 * **********************************************
-	 */
+	/* ================ */
+	/* BUTTON LISTENERS */
+    /* ================ */
 
 	public void OpenBT(View v) {
 		if (!Objects.equals(Global.BTDeviceName, "")) { // fucking Java string comparators...
@@ -320,9 +291,6 @@ public class MainActivity
 			StopRandomGenerator();
 			StopDataLogger();
 
-			MainActivity.myLogging.setText("NO");
-			MainActivity.myLogging.setTextColor(Color.RED);
-
 			UpdateDataFileInfo();
 
 		} catch (Exception e) {
@@ -349,9 +317,6 @@ public class MainActivity
 			StopRandomGenerator();
 			StopDataLogger();
 			StopStreamReader();
-
-			MainActivity.myLogging.setText("NO");
-			MainActivity.myLogging.setTextColor(Color.RED);
 
 			UpdateDataFileInfo();
 
@@ -454,7 +419,7 @@ public class MainActivity
 				}
 				mDataToCSVFile.start();
 				MainActivity.myLogging.setText("LOGGING");
-				MainActivity.myLogging.setTextColor(Color.GREEN);
+				MainActivity.myLogging.setTextColor(getResources().getColor(R.color.positive));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -550,6 +515,7 @@ public class MainActivity
 	private void StopDataLogger() {
 		if (mDataToCSVFile != null && mDataToCSVFile.getState() != Thread.State.TERMINATED) {
 			mDataToCSVFile.cancel();
+			MainActivity.myLogging.setTextColor(getResources().getColor(R.color.negative));
 		}
 	}
 
@@ -570,6 +536,38 @@ public class MainActivity
     /* ========== */
 	/* OTHER SHIT */
     /* ========== */
+
+	public void CycleView() {
+		try {
+			FragmentManager fragmentManager = getFragmentManager();
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			currentFragment = FragmentList.cycle();
+			fragmentTransaction.replace(R.id.CenterView, currentFragment);
+			fragmentTransaction.commit();
+		} catch (Exception e) {
+			e.getMessage();
+		}
+	}
+
+	public void CycleViewReverse() {
+		try {
+			FragmentManager fragmentManager = getFragmentManager();
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			Fragment fragment = FragmentList.reverseCycle();
+			fragmentTransaction.replace(R.id.CenterView, fragment);
+			fragmentTransaction.commit();
+		} catch (Exception e) {
+			e.getMessage();
+		}
+	}
+
+	private void ActivateLaunchMode() {
+		// reset the lap timer & lap counters
+		Global.Lap = 0;
+		LapTimer.stop();
+		LapTimer.setBase(SystemClock.elapsedRealtime());
+		myDrivenLocation.ActivateLaunchMode();
+	}
 
     /** Returns the AppContext from a static context
      *

@@ -217,7 +217,8 @@
 			android:layout_toEndOf="@+id/txtBTState"
 			android:layout_marginLeft="20dp"
 			android:textStyle="bold"
-			android:textSize="20dp"/>
+			android:textSize="20dp"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 		<TextView
 			android:layout_width="wrap_content"
