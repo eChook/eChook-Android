@@ -1,7 +1,6 @@
 package com.ben.drivenbluetooth.fragments;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Path;
@@ -18,6 +17,7 @@ import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.ben.drivenbluetooth.util.Bezier;
 import com.ben.drivenbluetooth.util.RaceObserver;
+import com.ben.drivenbluetooth.util.UpdateFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class RaceMapFragment extends Fragment
+public class RaceMapFragment extends UpdateFragment
 								implements 	OnMapReadyCallback,
 											GoogleMap.OnMapClickListener,
 											GoogleMap.OnInfoWindowClickListener
@@ -294,10 +294,10 @@ public class RaceMapFragment extends Fragment
 	/* FRAGMENT UPDATING
 	/*===================*/
 	public void UpdateFragmentUI() {
-		UpdateCurrent();
+		UpdateAmps();
 		UpdateAmpHours();
 		UpdateMotorRPM();
-		UpdateVoltage();
+		UpdateVolts();
 		UpdateSpeed();
 	}
 
@@ -327,7 +327,7 @@ public class RaceMapFragment extends Fragment
 		}
 	}
 
-	private void UpdateVoltage() {
+	public void UpdateVolts() {
 		try {
 			this.Voltage.setText(String.format("%.2f", Global.Volts) + " V");
 		} catch (Exception e) {
@@ -335,7 +335,7 @@ public class RaceMapFragment extends Fragment
 		}
 	}
 
-	private void UpdateCurrent() {
+	public void UpdateAmps() {
 		try {
 			this.Current.setText(String.format("%.1f", Global.Amps) + " A");
 		} catch (Exception e) {
@@ -343,7 +343,7 @@ public class RaceMapFragment extends Fragment
 		}
 	}
 
-	private void UpdateAmpHours() {
+	public void UpdateAmpHours() {
 		try {
 			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
 		} catch (Exception e) {
@@ -351,7 +351,7 @@ public class RaceMapFragment extends Fragment
 		}
 	}
 
-	private void UpdateSpeed() {
+	public void UpdateSpeed() {
 		try {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
@@ -365,7 +365,7 @@ public class RaceMapFragment extends Fragment
 		}
 	}
 
-	private void UpdateMotorRPM() {
+	public void UpdateMotorRPM() {
 		try {
 			this.RPM.setText(String.format("%.0f", Global.MotorRPM) + " RPM");
 		} catch (Exception e) {
@@ -373,23 +373,13 @@ public class RaceMapFragment extends Fragment
 		}
 	}
 
-	private void UpdateMapText() {
+	public void UpdateMapText() {
 		CurBearing.setText("car: " + String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_Current()));
 		SFLBearing.setText("sfl: " + String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_SFL()));
 		Accuracy.setText("acc: " + String.format("%.1f", Global.GPSAccuracy));
 	}
 
-	private void StartFragmentUpdater() {
-		TimerTask fragmentUpdateTask = new TimerTask() {
-			public void run() {
-				MainActivity.MainActivityHandler.post(new Runnable() {
-					public void run() {
-						UpdateFragmentUI();
-					}
-				});
-			}
-		};
-
+	public void StartFragmentUpdater() {
 		TimerTask mapUpdateTask = new TimerTask() {
 			public void run() {
 				MainActivity.MainActivityHandler.post(new Runnable() {
@@ -401,14 +391,19 @@ public class RaceMapFragment extends Fragment
 			}
 		};
 		FragmentUpdateTimer = new Timer();
-		FragmentUpdateTimer.schedule(mapUpdateTask, Global.MAP_UPDATE_INTERVAL, Global.MAP_UPDATE_INTERVAL); //TODO: UNCOMMENT THIS!!!
-		FragmentUpdateTimer.schedule(fragmentUpdateTask, 0, Global.FAST_UI_UPDATE_INTERVAL);
+		FragmentUpdateTimer.schedule(mapUpdateTask, Global.MAP_UPDATE_INTERVAL, Global.MAP_UPDATE_INTERVAL);
 	}
 
-	private void StopFragmentUpdater() {
+	public void StopFragmentUpdater() {
 		try {
 			FragmentUpdateTimer.cancel();
 			FragmentUpdateTimer.purge();
 		} catch (Exception ignored) {}
 	}
+
+	@Override
+	public void UpdateTemp(int ignored) {}	// required as per UpdateFragment contract
+
+	@Override
+	public void UpdateThrottle() {}	// required as per UpdateFragment contract
 }
