@@ -70,13 +70,13 @@ public class BTDataParser extends Thread {
                         // A side-effect of this is that we can't send the value "255"
                         // a byte in Java is -128 to 127 so we must convert to an int by doing & 0xff
 
-					/* Explanation :
-					 * We have defined 255 (0xFF) to be zero because we can't send null bytes over Bluetooth
-					 * & is a bitwise AND operation
-					 * (byte) 1111111 is interpreted by Java as -128
-					 * 11111111 & 0xff converts the value to an integer, which is then interpreted as
-					 * (int) 255, thus enabling the proper comparison
-					 */
+						/* Explanation :
+						 * We have defined 255 (0xFF) to be zero because we can't send null bytes over Bluetooth
+						 * & is a bitwise AND operation
+						 * (byte) 1111111 is interpreted by Java as -128
+						 * 11111111 & 0xff converts the value to an integer, which is then interpreted as
+						 * (int) 255, thus enabling the proper comparison
+						 */
 
                         if ((poppedData[2] & 0xff) == 255) {
                             poppedData[2] = 0;
@@ -85,12 +85,12 @@ public class BTDataParser extends Thread {
                             poppedData[3] = 0;
                         }
 
-					/* if the first byte is greater than 127 then the value is treated as an INTEGER
-					 * value = [first byte] * 100 + [second byte]
-					 *
-					 * if the first byte is less than 128 then the value is treated as a FLOAT
-					 * value = [first byte] + [second byte] / 100
-					 */
+						/* if the first byte is greater than 127 then the value is treated as an INTEGER
+						 * value = [first byte] * 100 + [second byte]
+						 *
+						 * if the first byte is less than 128 then the value is treated as a FLOAT
+						 * value = [first byte] + [second byte] / 100
+						 */
 
                         if ((poppedData[2] & 0xff) < 128) {
                             // FLOAT

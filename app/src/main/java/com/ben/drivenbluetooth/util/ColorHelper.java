@@ -54,7 +54,7 @@ public final class ColorHelper {
 		} else if (rpm < RPM_ECO) {
 			hue = (rpm.floatValue() - RPM_LOW) / (RPM_ECO - RPM_LOW) * (GOOD - BAD) + BAD;
 		} else {
-			hue = (rpm.floatValue() - RPM_ECO) / (RPM_HIGH - RPM_ECO) * (GOOD - BAD) + BAD;
+			hue = GOOD - (rpm.floatValue() - RPM_ECO) / (RPM_HIGH - RPM_ECO) * (GOOD - BAD) + BAD;
 		}
 		return Color.HSVToColor(new float[]{hue, SATURATION, VALUE});
 	}
