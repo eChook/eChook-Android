@@ -1,6 +1,5 @@
 package com.ben.drivenbluetooth.fragments;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -15,11 +14,12 @@ import android.widget.TextView;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
+import com.ben.drivenbluetooth.util.UpdateFragment;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LapHistoryFragment extends Fragment {
+public class LapHistoryFragment extends UpdateFragment {
 
 	private TableLayout LapTable;
 
@@ -114,14 +114,14 @@ public class LapHistoryFragment extends Fragment {
 	}
 
 	public void UpdateFragmentUI() {
-		UpdateVoltage();
-		UpdateCurrent();
+		UpdateVolts();
+		UpdateAmps();
 		UpdateAmpHours();
 		UpdateSpeed();
 		UpdateMotorRPM();
 	}
 
-	private void UpdateVoltage() {
+	public void UpdateVolts() {
 		try {
 			this.Voltage.setText(String.format("%.2f", Global.Volts) + " V");
 		} catch (Exception e) {
@@ -129,7 +129,7 @@ public class LapHistoryFragment extends Fragment {
 		}
 	}
 
-	private void UpdateCurrent() {
+	public void UpdateAmps() {
 		try {
 			this.Current.setText(String.format("%.1f", Global.Amps) + " A");
 		} catch (Exception e) {
@@ -137,7 +137,7 @@ public class LapHistoryFragment extends Fragment {
 		}
 	}
 
-	private void UpdateAmpHours() {
+	public void UpdateAmpHours() {
 		try {
 			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
 		} catch (Exception e) {
@@ -145,7 +145,7 @@ public class LapHistoryFragment extends Fragment {
 		}
 	}
 
-	private void UpdateSpeed() {
+	public void UpdateSpeed() {
 		try {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
@@ -159,7 +159,7 @@ public class LapHistoryFragment extends Fragment {
 		}
 	}
 
-	private void UpdateMotorRPM() {
+	public void UpdateMotorRPM() {
 		try {
 			this.RPM.setText(String.format("%.0f", Global.MotorRPM) + " RPM");
 		} catch (Exception e) {
@@ -207,19 +207,9 @@ public class LapHistoryFragment extends Fragment {
 				});
 			}
 		};
-		TimerTask fragmentUpdateTask = new TimerTask() {
-			public void run() {
-				MainActivity.MainActivityHandler.post(new Runnable() {
-					public void run() {
-						UpdateFragmentUI();
-					}
-				});
-			}
-		};
 
 		FragmentUpdateTimer = new Timer();
 		FragmentUpdateTimer.schedule(tableUpdateTask, 0, 2000);
-		FragmentUpdateTimer.schedule(fragmentUpdateTask, 0, Global.FAST_UI_UPDATE_INTERVAL);
 	}
 
 	private void StopFragmentUpdater() {
@@ -228,4 +218,10 @@ public class LapHistoryFragment extends Fragment {
 			FragmentUpdateTimer.purge();
 		} catch (Exception ignored) {}
 	}
+
+	@Deprecated
+	public void UpdateTemp(int ignored) {}	// required as per UpdateFragment contract
+
+	@Deprecated
+	public void UpdateThrottle() {}	// required as per UpdateFragment contract
 }
