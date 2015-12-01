@@ -19,7 +19,6 @@ public final class BluetoothManager {
 
 	private static BluetoothEvents mListener;
 
-	private boolean deviceConnected = false;
     private boolean matchingDeviceFound = false;
 
 	private static volatile boolean isConnecting = false;
@@ -30,14 +29,20 @@ public final class BluetoothManager {
 		void onBluetoothDisabled();
 	}
 
+    /** Registers the listener for BluetoothEvents
+     *
+     * @param BE    The BluetoothEvents interface listener
+     */
 	public void setBluetoothEventsListener(BluetoothEvents BE) {
 		mListener = BE;
 	}
 
+    /** Unregisters any registered BluetoothEvents listeners */
 	public void unregisterListeners() {
 		mListener = null;
 	}
 
+    /** Attempts to find the Bluetooth device with the name specified in settings */
     public void findBT() {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		mBluetoothAdapter.cancelDiscovery();
@@ -68,6 +73,10 @@ public final class BluetoothManager {
 		MainActivity.showMessage(Global.BTDeviceName + " is not paired with this phone. Please open Settings and pair the device first");
     }
 
+    /** Attempts to open a connection to the Bluetooth device by using a background thread.
+     *
+     * @param wait  If set to true, this function will block until the background thread finishes. This is used for the Bluetooth reconnect routine if the connection fails during a race
+     */
     public void openBT(boolean wait) {
 		if (matchingDeviceFound && !isConnecting) {
 			Global.BTState = Global.BTSTATE.CONNECTING;
@@ -111,15 +120,19 @@ public final class BluetoothManager {
 		}
     }
 
+    /** Closes the Bluetooth connection if open
+     *
+     * @throws IOException
+     */
     public void closeBT() throws IOException {
 		if (Global.BTState != Global.BTSTATE.DISCONNECTED) {
             mmSocket.close();
 			Global.BTSocket.close();
-            deviceConnected = false;
 			Global.BTState = Global.BTSTATE.DISCONNECTED;
         }
     }
 
+    /** The routine to reconnect to Bluetooth if it has become unresponsive or disconnected during a race */
 	public void reconnectBT() {
 		if (Global.BTState == Global.BTSTATE.DISCONNECTED) {
 			try {

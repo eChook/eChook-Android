@@ -1,14 +1,18 @@
 package com.ben.drivenbluetooth.util;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
+import com.ben.drivenbluetooth.drivenbluetooth.R;
 
 import org.acra.ACRA;
 
 /* This class should only be used by posting to the UI thread */
 public class UIUpdateRunnable implements Runnable {
+
+    Resources r = MainActivity.getAppContext().getResources();
 
 	@Override
 	public void run() {
@@ -34,19 +38,19 @@ public class UIUpdateRunnable implements Runnable {
 		switch (Global.BTState) {
 			case DISCONNECTED:
 				MainActivity.myBTState.setText("DISCONNECTED");
-				MainActivity.myBTState.setTextColor(Color.RED);
+				MainActivity.myBTState.setTextColor(r.getColor(R.color.negative));
 				break;
 			case CONNECTING:
 				MainActivity.myBTState.setText("CONNECTING");
-				MainActivity.myBTState.setTextColor(Color.argb(255, 227, 158, 9));
+				MainActivity.myBTState.setTextColor(r.getColor(R.color.neutral));
 				break;
 			case CONNECTED:
 				MainActivity.myBTState.setText("CONNECTED");
-				MainActivity.myBTState.setTextColor(Color.argb(255, 32, 179, 61));
+				MainActivity.myBTState.setTextColor(r.getColor(R.color.positive));
 				break;
 			case RECONNECTING:
 				MainActivity.myBTState.setText("RECONNECTING... [" + Global.BTReconnectAttempts + "]");
-				MainActivity.myBTState.setTextColor(Color.argb(255, 227, 158, 9));
+				MainActivity.myBTState.setTextColor(r.getColor(R.color.neutral));
 				break;
 		}
 	}

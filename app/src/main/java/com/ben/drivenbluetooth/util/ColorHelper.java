@@ -3,12 +3,12 @@ package com.ben.drivenbluetooth.util;
 import android.graphics.Color;
 
 public final class ColorHelper {
-	private static final int AMPS_LOW 		= 10;
-	private static final int AMPS_ECO 		= 25;
-	private static final int AMPS_HIGH 		= 30;
+	private static final float AMPS_LOW 		= 10f;
+	private static final float AMPS_ECO 		= 25f;
+	private static final float AMPS_HIGH 		= 30f;
 
-	private static final int VOLTAGE_UPPER 	= 24;
-	private static final int VOLTAGE_LOWER 	= 15;
+	private static final float VOLTAGE_UPPER 	= 26f;
+	private static final float VOLTAGE_LOWER 	= 15f;
 
 	private static final int RPM_LOW 		= 1400;
 	private static final int RPM_ECO 		= 1800;
@@ -28,7 +28,7 @@ public final class ColorHelper {
 		} else if (amps < AMPS_ECO) {
 			hue = (amps.floatValue() - AMPS_LOW) / (AMPS_ECO - AMPS_LOW) * (GOOD - BAD) + BAD;
 		} else {
-			hue = (amps.floatValue() - AMPS_ECO) / (AMPS_HIGH - AMPS_ECO) * (GOOD - BAD) + BAD;
+			hue = GOOD - (amps.floatValue() - AMPS_ECO) / (AMPS_HIGH - AMPS_ECO) * (GOOD - BAD) + BAD;
 		}
 		return Color.HSVToColor(new float[]{hue, SATURATION, VALUE});
 	}
@@ -36,9 +36,9 @@ public final class ColorHelper {
 	public static int GetVoltsColor(Double volts) {
 		float hue;
 		if (volts >= VOLTAGE_UPPER) {
-			hue = BAD;
-		} else if (volts <= VOLTAGE_LOWER) {
 			hue = GOOD;
+		} else if (volts <= VOLTAGE_LOWER) {
+			hue = BAD;
 		} else {
 			hue = (volts.floatValue() - VOLTAGE_LOWER) / (VOLTAGE_UPPER - VOLTAGE_LOWER) * (GOOD - BAD) + BAD;
 		}

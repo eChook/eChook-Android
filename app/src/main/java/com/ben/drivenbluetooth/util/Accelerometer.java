@@ -11,9 +11,6 @@ import com.ben.drivenbluetooth.MainActivity;
 
 import java.util.List;
 
-/**
- * Created by BNAGY4 on 19/06/2015.
- */
 public class Accelerometer implements SensorEventListener {
 
 	private SensorManager mSensorManager;

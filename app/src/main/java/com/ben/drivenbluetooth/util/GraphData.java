@@ -1,7 +1,13 @@
 package com.ben.drivenbluetooth.util;
 
+import android.content.Context;
+
 import com.ben.drivenbluetooth.Global;
+import com.ben.drivenbluetooth.MainActivity;
+import com.ben.drivenbluetooth.drivenbluetooth.R;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 /**
@@ -13,7 +19,47 @@ public final class GraphData {
 		// empty constructor
 	}
 
-	public static void AddVolts(final double rawVolts) {
+    public static void InitializeGraphDataSets() {
+        Context context = MainActivity.getAppContext();
+        LineData dataSets[] = new LineData[] {
+                Global.ThrottleHistory,
+                Global.VoltsHistory,
+                Global.AmpsHistory,
+                Global.MotorRPMHistory,
+                Global.SpeedHistory,
+                Global.TempC1History
+        };
+
+        String legends[] = new String[]{
+                "Throttle",
+                "Volts",
+                "Amps",
+                "RPM",
+                "Speed",
+                "Temp"
+        };
+
+        int colors[] = new int[] {
+                context.getResources().getColor(R.color.throttle),
+                context.getResources().getColor(R.color.volts),
+                context.getResources().getColor(R.color.amps),
+                context.getResources().getColor(R.color.rpm),
+                context.getResources().getColor(R.color.speed),
+                context.getResources().getColor(R.color.temperature)
+        };
+
+        for (int i = 0; i < dataSets.length; i++) {
+            LineDataSet set = new LineDataSet(null, legends[i]);
+            set.setAxisDependency(YAxis.AxisDependency.LEFT);
+            set.setDrawCircles(false);
+            set.setLineWidth(5);
+            set.setDrawValues(false);
+            set.setColor(colors[i]);
+            dataSets[i].addDataSet(set);
+        }
+    }
+
+	public synchronized static void AddVolts(final double rawVolts) {
 		Global.VoltsHistory.addXValue(String.format("%d", Global.VoltsHistory.getXValCount()));
 		Global.VoltsHistory.addEntry(new Entry((float) rawVolts, Global.VoltsHistory.getXValCount() - 1), 0);
 
@@ -28,7 +74,7 @@ public final class GraphData {
 		}
 	}
 
-	public static void AddAmps(final double rawAmps) {
+	public synchronized static void AddAmps(final double rawAmps) {
 		Global.AmpsHistory.addXValue("0");
 		Global.AmpsHistory.addEntry(new Entry((float) rawAmps, Global.AmpsHistory.getXValCount() - 1), 0);
 
@@ -43,7 +89,7 @@ public final class GraphData {
 		}
 	}
 
-	public static void AddInputThrottle(final double rawThrottle) {
+	public synchronized static void AddInputThrottle(final double rawThrottle) {
 		/* WIP new method
 
 		int curIndex = -1;
@@ -78,7 +124,7 @@ public final class GraphData {
 		}
 	}
 
-	public static void AddSpeed(final double rawSpeedMPH) {
+	public synchronized static void AddSpeed(final double rawSpeedMPH) {
 		if (Global.Unit == Global.UNIT.MPH) {
 			Global.SpeedHistory.addXValue("0");
 			Global.SpeedHistory.addEntry(new Entry((float) rawSpeedMPH, Global.SpeedHistory.getXValCount() - 1), 0);
@@ -98,7 +144,7 @@ public final class GraphData {
 		}
 	}
 
-	public static void AddMotorRPM(final double rawMotorRPM) {
+	public synchronized static void AddMotorRPM(final double rawMotorRPM) {
 		Global.MotorRPMHistory.addXValue("0");
 		Global.MotorRPMHistory.addEntry(new Entry((float) rawMotorRPM, Global.MotorRPMHistory.getXValCount() - 1), 0);
 
@@ -113,7 +159,7 @@ public final class GraphData {
 		}
 	}
 
-	public static void AddTemperature(double rawTemp, int sensorId) {
+	public synchronized static void AddTemperature(double rawTemp, int sensorId) {
 		switch (sensorId) {
 			case 1:
 				Global.TempC1History.addXValue("0");

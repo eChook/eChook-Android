@@ -33,16 +33,15 @@ import com.ben.drivenbluetooth.threads.BTDataParser;
 import com.ben.drivenbluetooth.threads.BTStreamReader;
 import com.ben.drivenbluetooth.threads.DataToCsvFile;
 import com.ben.drivenbluetooth.threads.RandomGenerator;
+import com.ben.drivenbluetooth.threads.UDPSender;
 import com.ben.drivenbluetooth.util.Accelerometer;
 import com.ben.drivenbluetooth.util.BluetoothManager;
 import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenLocation;
 import com.ben.drivenbluetooth.util.DrivenSettings;
-import com.ben.drivenbluetooth.threads.UDPSender;
+import com.ben.drivenbluetooth.util.GraphData;
+import com.ben.drivenbluetooth.util.NetworkMonitor;
 import com.ben.drivenbluetooth.util.UIUpdateRunnable;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 
 import java.io.File;
 import java.util.Objects;
@@ -69,11 +68,12 @@ public class MainActivity
 	public static TextView prevLapTime;
 	public static TextView LapNumber;
 
-	public static RandomGenerator Gen = new RandomGenerator();
-	public BTDataParser Parser = new BTDataParser(this); // can't be static because of (this)
-	public static DataToCsvFile DataSaver = new DataToCsvFile();
-	public static BTStreamReader StreamReader; // initialize below
-	public static UDPSender NodeJS; // initialize below
+	public static RandomGenerator mRandomGenerator = new RandomGenerator();
+	public BTDataParser mBTDataParser = new BTDataParser(this); // can't be static because of (this)
+	public static DataToCsvFile mDataToCSVFile = new DataToCsvFile();
+	public static BTStreamReader mBTStreamReader; // initialize below
+	public static UDPSender mUDPSender; // initialize below
+	public static NetworkMonitor mNetworkMonitor = new NetworkMonitor();
 
 	private static Timer UIUpdateTimer; // don't initialize because it should be done below
 
@@ -104,9 +104,8 @@ public class MainActivity
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
 
-		/************** INITIALIZE UI ELEMENTS ************/
+		/************** INITIALIZE PERMANENT UI ELEMENTS ************/
 
-	/* OTHERS */
 		myMode = (TextView) findViewById(R.id.txt_Mode);
 
 		myDataFileName = (TextView) findViewById(R.id.txtDataFileName);
@@ -129,7 +128,7 @@ public class MainActivity
 		myAccelerometer = new Accelerometer((SensorManager) getSystemService(Context.SENSOR_SERVICE));
 
 		myDrivenLocation = new DrivenLocation(); // must be initialized here or else null object ref error
-		NodeJS = new UDPSender();
+		mUDPSender = new UDPSender();
 
 		UpdateDataFileInfo();
 
@@ -143,7 +142,7 @@ public class MainActivity
 
 		myBluetoothManager.setBluetoothEventsListener(this);
 
-		InitializeGraphDataSets();
+		GraphData.InitializeGraphDataSets();
 
 		InitializeLongClickStart();
 	}
@@ -282,45 +281,6 @@ public class MainActivity
 		showMessage(e.getMessage(), Toast.LENGTH_SHORT);
 	}
 
-	private void InitializeGraphDataSets() {
-		LineData dataSets[] = new LineData[] {
-				Global.ThrottleHistory,
-				Global.VoltsHistory,
-				Global.AmpsHistory,
-				Global.MotorRPMHistory,
-				Global.SpeedHistory,
-				Global.TempC1History
-		};
-
-		String legends[] = new String[]{
-				"Throttle",
-				"Volts",
-				"Amps",
-				"RPM",
-				"Speed",
-				"Temp"
-		};
-
-		int colors[] = new int[] {
-				getResources().getColor(R.color.throttle),
-				getResources().getColor(R.color.volts),
-				getResources().getColor(R.color.amps),
-				getResources().getColor(R.color.rpm),
-				getResources().getColor(R.color.speed),
-				getResources().getColor(R.color.temperature)
-		};
-
-		for (int i = 0; i < dataSets.length; i++) {
-			LineDataSet set = new LineDataSet(null, legends[i]);
-			set.setAxisDependency(YAxis.AxisDependency.LEFT);
-			set.setDrawCircles(false);
-			set.setLineWidth(5);
-			set.setDrawValues(false);
-			set.setColor(colors[i]);
-			dataSets[i].addDataSet(set);
-		}
-	}
-
 	/**************************************************/
 	/**************** BUTTON LISTENERS ****************/
 	/**
@@ -364,7 +324,7 @@ public class MainActivity
 	public void Stop(View v) {
 		try {
 			StopRandomGenerator();
-			StopDataSaver();
+			StopDataLogger();
 
 			MainActivity.myLogging.setText("NO");
 			MainActivity.myLogging.setTextColor(Color.RED);
@@ -389,10 +349,11 @@ public class MainActivity
 		}
 	}
 
+    /** For testing purposes only. Stops all the threads immediately. Called when the user double-taps the data file name in the top-left corner of the app*/
 	public void ForceStop(View v) {
 		try {
 			StopRandomGenerator();
-			StopDataSaver();
+			StopDataLogger();
 			StopStreamReader();
 
 			MainActivity.myLogging.setText("NO");
@@ -407,6 +368,7 @@ public class MainActivity
 		}
 	}
 
+    /** Called when the user taps the cogwheel in the app. Launches the settings fragment */
 	public void LaunchSettings(View v) {
 		SettingsFragment settingsFragment = new SettingsFragment();
 		getFragmentManager().beginTransaction()
@@ -415,6 +377,7 @@ public class MainActivity
 				.commit();
 	}
 
+    /** Called when the user taps "cycle" in the app. Cycles the view between the fragments contained in FragmentList */
 	public void Cycle(View v) {
 		byte[] cyclepacket = new byte[5];
 		cyclepacket[0] = Global.STARTBYTE;
@@ -426,6 +389,7 @@ public class MainActivity
 		BTDataParser.mHandler.sendEmptyMessage(0);
 	}
 
+    /** Called when the user taps "LM" in the app. Enables Launch Mode */
 	public void LaunchMode(View v) {
 		byte[] launchpacket = new byte[5];
 		launchpacket[0] = Global.STARTBYTE;
@@ -437,16 +401,19 @@ public class MainActivity
 		BTDataParser.mHandler.sendEmptyMessage(0);
 	}
 
+    /** For testing purposes. Simulates a race start by setting throttle to 100% */
 	@Deprecated
 	public void RaceStart(View v) {
 		Global.InputThrottle = 100d;
 	}
 
+    /** For testing purposes. Simulates crossing the finish line */
 	@Deprecated
 	public void CrossFinishLine(View v) {
 		myDrivenLocation.SimulateCrossStartFinishLine();
 	}
 
+    /** This function is called when the user taps "DEMO/RACE" in the top right corner of the app. Changes between race and demo mode */
 	public static void QuickChangeMode(View v) {
 		DrivenSettings.QuickChangeMode();
 	}
@@ -466,31 +433,32 @@ public class MainActivity
 		}
 	}
 
-	/**************************************************/
-	/**************** THREADS          ****************/
-	/**
-	 * **********************************************
-	 */
+	/* ======= */
+	/* THREADS */
+    /* ======= */
 
+    /** Starts the stream reader and data logger threads */
 	private void StartRaceMode() {
 		StartStreamReader();
 		StartDataLogger();
 	}
 
+    /** Starts the random generator */
 	private void StartDemoMode() {
 		StartRandomGenerator();
 	}
 
+    /** Starts the data logger thread (if not already running). Re-initializes the thread if needed */
 	private void StartDataLogger() {
 		try {
-			if (DataSaver == null) {
-				DataSaver = new DataToCsvFile();
-				DataSaver.start();
-			} else if (!DataSaver.isAlive()) {
-				if (DataSaver.getState() != Thread.State.NEW) {
-					DataSaver = new DataToCsvFile();
+			if (mDataToCSVFile == null) {
+				mDataToCSVFile = new DataToCsvFile();
+				mDataToCSVFile.start();
+			} else if (!mDataToCSVFile.isAlive()) {
+				if (mDataToCSVFile.getState() != Thread.State.NEW) {
+					mDataToCSVFile = new DataToCsvFile();
 				}
-				DataSaver.start();
+				mDataToCSVFile.start();
 				MainActivity.myLogging.setText("LOGGING");
 				MainActivity.myLogging.setTextColor(Color.GREEN);
 			}
@@ -499,70 +467,75 @@ public class MainActivity
 		}
 	}
 
+    /** Starts the Bluetooth stream reader thread (if not already running). Re-initializes the thread if needed */
 	private void StartStreamReader() {
 		try {
-			if (StreamReader == null) {
-				StreamReader = new BTStreamReader();
-				StreamReader.start();
-			} else if (!StreamReader.isAlive()) {
-				if (StreamReader.getState() != Thread.State.NEW) {
-					StreamReader = new BTStreamReader();
+			if (mBTStreamReader == null) {
+				mBTStreamReader = new BTStreamReader();
+				mBTStreamReader.start();
+			} else if (!mBTStreamReader.isAlive()) {
+				if (mBTStreamReader.getState() != Thread.State.NEW) {
+					mBTStreamReader = new BTStreamReader();
 				}
-				StreamReader.start();
+				mBTStreamReader.start();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+    /** Starts the Bluetooth parser thread (if not already running). Re-initializes the thread if needed */
 	private void StartDataParser() {
 		try {
-			if (Parser == null) {
-				Parser = new BTDataParser(this);
-				Parser.start();
-			} else if (!Parser.isAlive()) {
-				if (Parser.getState() != Thread.State.NEW) {
-					Parser = new BTDataParser(this);
+			if (mBTDataParser == null) {
+				mBTDataParser = new BTDataParser(this);
+				mBTDataParser.start();
+			} else if (!mBTDataParser.isAlive()) {
+				if (mBTDataParser.getState() != Thread.State.NEW) {
+					mBTDataParser = new BTDataParser(this);
 				}
-				Parser.start();
+				mBTDataParser.start();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+    /** Starts the UDP sender thread (if not already running). Re-initializes the thread if needed */
     private void StartUDPSender() {
         try {
-            if (NodeJS == null) {
-                NodeJS = new UDPSender();
-                NodeJS.start();
-            } else if (!NodeJS.isAlive()) {
-                if (NodeJS.getState() != Thread.State.NEW) {
-                    NodeJS = new UDPSender();
+            if (mUDPSender == null) {
+                mUDPSender = new UDPSender();
+                mUDPSender.start();
+            } else if (!mUDPSender.isAlive()) {
+                if (mUDPSender.getState() != Thread.State.NEW) {
+                    mUDPSender = new UDPSender();
                 }
-                NodeJS.start();
+                mUDPSender.start();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /** Starts the random generator thread (if not already running). Re-initializes the thread if needed */
 	private void StartRandomGenerator() {
 		try {
-			if (Gen == null) {
-				Gen = new RandomGenerator();
-				Gen.start();
-			} else if (!Gen.isAlive()) {
-				if (Gen.getState() != Thread.State.NEW) {
-					Gen = new RandomGenerator();
+			if (mRandomGenerator == null) {
+				mRandomGenerator = new RandomGenerator();
+				mRandomGenerator.start();
+			} else if (!mRandomGenerator.isAlive()) {
+				if (mRandomGenerator.getState() != Thread.State.NEW) {
+					mRandomGenerator = new RandomGenerator();
 				}
-				Gen.start();
+				mRandomGenerator.start();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+    /** Starts the UI updater thread (if not already running). Re-initializes the thread if needed */
 	private void StartUIUpdater() {
 		TimerTask UIUpdateTask = new TimerTask() {
 			public void run() {
@@ -573,39 +546,46 @@ public class MainActivity
 		UIUpdateTimer.schedule(UIUpdateTask, 0, Global.SLOW_UI_UPDATE_INTERVAL);
 	}
 
+    /** Stops the UI updater thread (if running) */
 	private void StopUIUpdater() {
 		UIUpdateTimer.cancel();
 		UIUpdateTimer.purge();
 	}
 
-	private void StopDataSaver() {
-		if (DataSaver != null && DataSaver.getState() != Thread.State.TERMINATED) {
-			DataSaver.cancel();
+    /** Stops the data logger thread (if running) */
+	private void StopDataLogger() {
+		if (mDataToCSVFile != null && mDataToCSVFile.getState() != Thread.State.TERMINATED) {
+			mDataToCSVFile.cancel();
 		}
 	}
 
+    /** Stops the random generator thread (if running) */
 	private void StopRandomGenerator() {
-		if (Gen != null && Gen.getState() != Thread.State.TERMINATED) {
-			Gen.cancel();
+		if (mRandomGenerator != null && mRandomGenerator.getState() != Thread.State.TERMINATED) {
+			mRandomGenerator.cancel();
 		}
 	}
 
+    /** Stops the Bluetooth stream reader thread (if running) */
 	private void StopStreamReader() {
-		if (StreamReader != null && StreamReader.getState() != Thread.State.TERMINATED) {
-			StreamReader.cancel();
+		if (mBTStreamReader != null && mBTStreamReader.getState() != Thread.State.TERMINATED) {
+			mBTStreamReader.cancel();
 		}
 	}
 
-	/**************************************************/
-	/**************** OTHER SHIT          *************/
-	/**
-	 * **********************************************
-	 */
+    /* ========== */
+	/* OTHER SHIT */
+    /* ========== */
 
+    /** Returns the AppContext from a static context
+     *
+     * @return The application context
+     */
 	public static Context getAppContext() {
 		return MainActivity.context;
 	}
 
+    /** Updates the TextView in the top-left corner of the app with the csv file name and size */
 	private static void UpdateDataFileInfo() {
 		File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
 		MediaScannerConnection.scanFile(MainActivity.getAppContext(), new String[]{f.getAbsolutePath()}, null, null);
@@ -613,22 +593,28 @@ public class MainActivity
 		myDataFileName.setText(Global.DATA_FILE);
 	}
 
-	/**************************************************/
-	/**************** BTDATAPARSER IMPLEMENTATION *****/
-	/**
-	 * **********************************************
-	 */
+	/* =========================== */
+	/* BTDATAPARSER IMPLEMENTATION */
+    /* =========================== */
 
+    /** This function is triggered by the Bluetooth data parser when it receives a {Cxx} packet.
+     *  The driver will not be able to interact with the app as they will be wearing gloves and the phone will be in a waterproof case.
+     *  A pushbutton in the cockpit is monitored by the Arduino for presses. If it detects the button, it will send a {Cxx} packet over Bluetooth
+     */
 	@Override
 	public void onCycleViewPacket() {
 		MainActivityHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				CycleView();
-			}
-		});
+            @Override
+            public void run() {
+                CycleView();
+            }
+        });
 	}
 
+    /** This function is triggered by the Bluetooth data parser when it receives a {Lxx} packet.
+     *  The driver will not be able to interact with the app as they will be wearing gloves and the phone will be in a waterproof case.
+     *  A pushbutton in the cockpit is monitored by the Arduino for presses. If it detects the button, it will send a {Lxx} packet over Bluetooth
+     */
 	@Override
 	public void onActivateLaunchModePacket() {
 		MainActivityHandler.post(new Runnable() {
@@ -639,12 +625,14 @@ public class MainActivity
 		});
 	}
 
-	/**************************************************/
-	/************ BLUETOOTHMANAGER IMPLEMENTATION *****/
-	/**
-	 * **********************************************
-	 */
+    /* =============================== */
+	/* BLUETOOTHMANAGER IMPLEMENTATION */
+    /* =============================== */
 
+    /** This function is triggered by BluetoothManager when a successful connection has been established with the Arduino. It receives a BluetoothSocket as the argument
+     *
+     * @param BTSocket  The BluetoothSocket which holds the connection to the Arduino
+     */
 	@Override
 	public void onBluetoothConnected(final BluetoothSocket BTSocket) {
 		Global.BTSocket = BTSocket;
@@ -654,11 +642,12 @@ public class MainActivity
 			@Override
 			public void run() {
 				showMessage(Global.BTDeviceName + " successfully connected");
-				StartStreamReader();
+				StartRaceMode();
 			}
 		});
 	}
 
+    /** This function is triggered by BluetoothManager when an unsuccessful connection occurs */
 	@Override
 	public void onFailConnection() {
 		MainActivityHandler.post(new Runnable() {
@@ -670,6 +659,7 @@ public class MainActivity
 		});
 	}
 
+    /** This function is triggered by BluetoothManager when the Bluetooth is disabled on the users phone. This must be handled by MainActivity because here is the only place where another Intent can be launched     */
 	@Override
 	public void onBluetoothDisabled() {
 		Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
