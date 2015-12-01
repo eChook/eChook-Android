@@ -24,6 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ben.drivenbluetooth.drivenbluetooth.R;
+import com.ben.drivenbluetooth.fragments.FourGraphsBars;
+import com.ben.drivenbluetooth.fragments.LapHistoryFragment;
+import com.ben.drivenbluetooth.fragments.RaceMapFragment;
 import com.ben.drivenbluetooth.fragments.SettingsFragment;
 import com.ben.drivenbluetooth.fragments.SixGraphsBars;
 import com.ben.drivenbluetooth.threads.BTDataParser;
@@ -199,10 +202,10 @@ public class MainActivity
 	}
 
 	private void InitializeFragmentList() {
-		//FragmentList.add(new RaceMapFragment());
+		FragmentList.add(new RaceMapFragment());
 		FragmentList.add(new SixGraphsBars());
-		//FragmentList.add(new FourGraphsBars());
-		//FragmentList.add(new LapHistoryFragment());
+		FragmentList.add(new FourGraphsBars());
+		FragmentList.add(new LapHistoryFragment());
 	}
 
 	private void InitializeLongClickStart() {

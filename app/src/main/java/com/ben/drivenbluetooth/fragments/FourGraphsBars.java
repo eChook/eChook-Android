@@ -185,9 +185,8 @@ public class FourGraphsBars extends UpdateFragment {
 			Voltage.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
 			VoltageBar.setValue(Global.Volts);
 
-			myVoltsGraph.notifyDataSetChanged();
-			myVoltsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			myVoltsGraph.moveViewToX(myVoltsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+			if (Global.EnableGraphs) UpdateGraph(myVoltsGraph);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -199,9 +198,8 @@ public class FourGraphsBars extends UpdateFragment {
 			Current.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
 			CurrentBar.setValue(Global.Amps);
 
-			myAmpsGraph.notifyDataSetChanged();
-			myAmpsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			myAmpsGraph.moveViewToX(myAmpsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+			if (Global.EnableGraphs) UpdateGraph(myAmpsGraph);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -226,9 +224,7 @@ public class FourGraphsBars extends UpdateFragment {
 				SpeedBar.setValue(Global.SpeedKPH);
 			}
 
-			mySpeedGraph.notifyDataSetChanged();
-			mySpeedGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			mySpeedGraph.moveViewToX(mySpeedGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+			if (Global.EnableGraphs) UpdateGraph(mySpeedGraph);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -241,13 +237,17 @@ public class FourGraphsBars extends UpdateFragment {
 			RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
 			RPMBar.setValue(Global.MotorRPM);
 
-			myMotorRPMGraph.notifyDataSetChanged();
-			myMotorRPMGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			myMotorRPMGraph.moveViewToX(myMotorRPMGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+			if (Global.EnableGraphs) UpdateGraph(myMotorRPMGraph);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void UpdateGraph(LineChart graph) {
+		graph.notifyDataSetChanged();
+		graph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+		graph.moveViewToX(graph.getXValCount() - Global.maxGraphDataPoints - 1);
 	}
 
 	@Deprecated
