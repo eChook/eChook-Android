@@ -1,6 +1,5 @@
 package com.ben.drivenbluetooth.fragments;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,11 +7,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ben.drivenbluetooth.Global;
-import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.ben.drivenbluetooth.util.ColorHelper;
 import com.ben.drivenbluetooth.util.CustomLabelFormatter;
 import com.ben.drivenbluetooth.util.DataBar;
+import com.ben.drivenbluetooth.util.UpdateFragment;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -22,10 +21,9 @@ import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 
 import java.util.Timer;
-import java.util.TimerTask;
 
 
-public class FourGraphsBars extends Fragment {
+public class FourGraphsBars extends UpdateFragment {
 
 	private static TextView Current;
 	private static TextView Voltage;
@@ -151,14 +149,11 @@ public class FourGraphsBars extends Fragment {
 		if (Global.EnableGraphs) {
 			InitializeGraphs();
 		}
-
-		StartFragmentUpdater();
 	}
 
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		StopFragmentUpdater();
 		Current				= null;
 		Voltage				= null;
 		RPM					= null;
@@ -181,38 +176,42 @@ public class FourGraphsBars extends Fragment {
 	/* FRAGMENT UPDATE
 	/*===================*/
 	public void UpdateFragmentUI() {
-		UpdateVoltage();
-		UpdateCurrent();
+		UpdateVolts();
+		UpdateAmps();
 		UpdateAmpHours();
 		UpdateSpeed();
 		UpdateMotorRPM();
-
-		if (Global.EnableGraphs) {
-			UpdateGraphs();
-		}
 	}
 
-	private void UpdateVoltage() {
+	public void UpdateVolts() {
 		try {
 			Voltage.setText(String.format("%.2f", Global.Volts));
 			Voltage.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
 			VoltageBar.setValue(Global.Volts);
+
+			myVoltsGraph.notifyDataSetChanged();
+			myVoltsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			myVoltsGraph.moveViewToX(myVoltsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void UpdateCurrent() {
+	public void UpdateAmps() {
 		try {
 			Current.setText(String.format("%.1f", Global.Amps));
 			Current.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
 			CurrentBar.setValue(Global.Amps);
+
+			myAmpsGraph.notifyDataSetChanged();
+			myAmpsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			myAmpsGraph.moveViewToX(myAmpsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void UpdateAmpHours() {
+	public void UpdateAmpHours() {
 		try {
 			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
 		} catch (Exception e) {
@@ -220,7 +219,7 @@ public class FourGraphsBars extends Fragment {
 		}
 	}
 
-	private void UpdateSpeed() {
+	public void UpdateSpeed() {
 		try {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
@@ -231,62 +230,33 @@ public class FourGraphsBars extends Fragment {
 				SpeedBar.setValue(Global.SpeedKPH);
 			}
 
+			mySpeedGraph.notifyDataSetChanged();
+			mySpeedGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			mySpeedGraph.moveViewToX(mySpeedGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void UpdateMotorRPM() {
+	public void UpdateMotorRPM() {
 		try {
 			RPM.setText(String.format("%.0f", Global.MotorRPM));
 			RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
 			RPMBar.setValue(Global.MotorRPM);
+
+			myMotorRPMGraph.notifyDataSetChanged();
+			myMotorRPMGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			myMotorRPMGraph.moveViewToX(myMotorRPMGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void UpdateGraphs() {
-		try {
-			myVoltsGraph.notifyDataSetChanged();
-			myVoltsGraph.invalidate();
-			myVoltsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			myVoltsGraph.moveViewToX(myVoltsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
+	@Deprecated
+	public void UpdateThrottle() {}
 
-			myAmpsGraph.notifyDataSetChanged();
-			myAmpsGraph.invalidate();
-			myAmpsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			myAmpsGraph.moveViewToX(myAmpsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
-
-			myMotorRPMGraph.notifyDataSetChanged();
-			myMotorRPMGraph.invalidate();
-			myMotorRPMGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			myMotorRPMGraph.moveViewToX(myMotorRPMGraph.getXValCount() - Global.maxGraphDataPoints - 1);
-
-			mySpeedGraph.notifyDataSetChanged();
-			mySpeedGraph.invalidate();
-			mySpeedGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			mySpeedGraph.moveViewToX(mySpeedGraph.getXValCount() - Global.maxGraphDataPoints - 1);
-		} catch (Exception ignored) {}
-	}
-
-	private void StartFragmentUpdater() {
-		TimerTask fragmentUpdateTask = new TimerTask() {
-			public void run() {
-				MainActivity.MainActivityHandler.post(new Runnable() {
-					public void run() {
-						UpdateFragmentUI();
-					}
-				});
-			}
-		};
-		FragmentUpdateTimer = new Timer();
-		FragmentUpdateTimer.schedule(fragmentUpdateTask, 250, Global.FAST_UI_UPDATE_INTERVAL);
-	}
-
-	private void StopFragmentUpdater() {
-		FragmentUpdateTimer.cancel();
-		FragmentUpdateTimer.purge();
-		FragmentUpdateTimer = null;
-	}
+	@Deprecated
+	public void UpdateTemp(int ignored) {}
 }

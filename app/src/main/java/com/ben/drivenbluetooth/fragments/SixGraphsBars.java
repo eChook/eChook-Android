@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ben.drivenbluetooth.Global;
-import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.ben.drivenbluetooth.util.ColorHelper;
 import com.ben.drivenbluetooth.util.CustomLabelFormatter;
@@ -22,7 +21,6 @@ import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 
 import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class SixGraphsBars extends UpdateFragment {
@@ -177,7 +175,6 @@ public class SixGraphsBars extends UpdateFragment {
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		StopFragmentUpdater();
 		Current				= null;
 		Voltage				= null;
 		RPM					= null;
@@ -212,10 +209,6 @@ public class SixGraphsBars extends UpdateFragment {
 		UpdateTemp(1);
 		UpdateMotorRPM();
 		UpdateAmpHours();
-
-		if (Global.EnableGraphs) {
-			UpdateGraphs();
-		}
 	}
 
 	public void UpdateVolts() {
@@ -336,57 +329,5 @@ public class SixGraphsBars extends UpdateFragment {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	private void StartFragmentUpdater() {
-		TimerTask fragmentUpdateTask = new TimerTask() {
-			public void run() {
-				MainActivity.MainActivityHandler.post(new Runnable() {
-					public void run() {
-						UpdateFragmentUI();
-					}
-				});
-			}
-		};
-		FragmentUpdateTimer = new Timer();
-		FragmentUpdateTimer.schedule(fragmentUpdateTask, 250, Global.FAST_UI_UPDATE_INTERVAL);
-	}
-
-	private void StopFragmentUpdater() {
-		try {
-			FragmentUpdateTimer.cancel();
-			FragmentUpdateTimer.purge();
-			FragmentUpdateTimer = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void UpdateGraphs() {
-		try {
-			myThrottleGraph.notifyDataSetChanged();
-			myThrottleGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			myThrottleGraph.moveViewToX(myThrottleGraph.getXValCount() - Global.maxGraphDataPoints - 1);
-
-			myVoltsGraph.notifyDataSetChanged();
-			myVoltsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			myVoltsGraph.moveViewToX(myVoltsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
-
-			myAmpsGraph.notifyDataSetChanged();
-			myAmpsGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			myAmpsGraph.moveViewToX(myAmpsGraph.getXValCount() - Global.maxGraphDataPoints - 1);
-
-			myMotorRPMGraph.notifyDataSetChanged();
-			myMotorRPMGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			myMotorRPMGraph.moveViewToX(myMotorRPMGraph.getXValCount() - Global.maxGraphDataPoints - 1);
-
-			mySpeedGraph.notifyDataSetChanged();
-			mySpeedGraph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			mySpeedGraph.moveViewToX(mySpeedGraph.getXValCount() - Global.maxGraphDataPoints - 1);
-
-			myTempC1Graph.notifyDataSetChanged();
-			myTempC1Graph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			myTempC1Graph.moveViewToX(myTempC1Graph.getXValCount() - Global.maxGraphDataPoints - 1);
-		} catch (Exception ignored) {}
 	}
 }
