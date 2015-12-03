@@ -13,6 +13,8 @@ import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 
 import org.acra.ACRA;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -22,6 +24,7 @@ import java.net.InetSocketAddress;
 public class UDPSender extends Thread {
 	public Handler PacketHandler;
     public Handler ConnectivityChangeHandler;
+    public Handler LocationHandler;
 
     private static InetAddress IPAddress;
 	private static DatagramSocket mUDPSocket;
@@ -38,8 +41,9 @@ public class UDPSender extends Thread {
             public boolean handleMessage(Message msg) {
                 if (mUDPSocketOpen) {
                     byte[] packet = (byte[]) msg.obj;
-                    if (!sendUDPPacket(packet)){
-                        sendFailCount++;
+                    if (socketCounter++ > 3) {
+                        if (!sendUDPPacket(packet, packet.length)) sendFailCount++;
+                        socketCounter = 0;
                     }
 
                     if (sendFailCount > 10) {
@@ -60,6 +64,16 @@ public class UDPSender extends Thread {
                 if (!mUDPSocketOpen && isNetworkAvailable()) {
                     mUDPSocketOpen = OpenUDPSocket();
                 }
+                return true;
+            }
+        });
+
+        LocationHandler = new Handler (new Handler.Callback() {
+
+            @Override
+            public boolean handleMessage(Message msg) {
+                Location loc = (Location) msg.obj;
+                sendUDPLocation(loc);
                 return true;
             }
         });
@@ -101,26 +115,34 @@ public class UDPSender extends Thread {
         return success;
     }
 
-    private boolean sendUDPPacket(byte[] data) {
+    private boolean sendUDPPacket(byte[] data, int length) {
         boolean success;
-        if (socketCounter > 3) {
-            try {
-                mUDPSocket.send(new DatagramPacket(data, 5, IPAddress, Global.SOCKETPORT));
-                success = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-                success = false;
-            }
-            socketCounter = 0;
-        } else {
+        try {
+            mUDPSocket.send(new DatagramPacket(data, length, IPAddress, Global.SOCKETPORT));
             success = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            success = false;
         }
-        socketCounter++;
         return success;
     }
 
     private boolean sendUDPLocation(Location location) {
-        return false;
+        double lat = location.getLatitude();
+        double lon = location.getLongitude();
+
+        JSONObject locJSON = new JSONObject();
+        try {
+            locJSON.put("lat", lat);
+            locJSON.put("lon", lon);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        byte[] locPacket = locJSON.toString().getBytes();
+        sendUDPPacket(locPacket, locPacket.length);
+        return true;
     }
 
     private boolean isNetworkAvailable() {
