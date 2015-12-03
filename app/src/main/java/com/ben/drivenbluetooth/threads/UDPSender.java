@@ -1,6 +1,7 @@
 package com.ben.drivenbluetooth.threads;
 
 import android.content.Context;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
@@ -116,6 +117,10 @@ public class UDPSender extends Thread {
         }
         socketCounter++;
         return success;
+    }
+
+    private boolean sendUDPLocation(Location location) {
+        return false;
     }
 
     private boolean isNetworkAvailable() {
