@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 
 import com.ben.drivenbluetooth.Global;
@@ -77,6 +78,11 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		}
 
 		_updateLocations(location);
+
+        // Notify UDPsender that we have a new location
+        Message msg = new Message();
+        msg.obj = location;
+        MainActivity.mUDPSender.LocationHandler.sendMessage(msg);
 
 		if (CurrentLocation != null && PreviousLocation != null) {
 			Global.DeltaDistance = _calculateDistanceBetween(PreviousLocation, CurrentLocation);
