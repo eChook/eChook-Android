@@ -41,7 +41,10 @@ public class UDPSender extends Thread {
             public boolean handleMessage(Message msg) {
                 if (mUDPSocketOpen) {
                     byte[] packet = (byte[]) msg.obj;
-                    if (/*socketCounter++ > 3 */ true) {
+                    if (packet[1] == Global.VOLTS_ID
+                            | packet[1] == Global.AMPS_ID
+                            | packet[1] == Global.MOTOR_RPM_ID
+                            | packet[1] == Global.SPEED_MPH_ID) {
                         if (!sendUDPPacket(packet, packet.length)) sendFailCount++;
                         socketCounter = 0;
                     }
