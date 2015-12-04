@@ -63,6 +63,17 @@ public class BTDataParser extends Thread {
                     if (poppedData.length == Global.PACKETLENGTH    // check if correct length
                             && poppedData[0] == Global.STARTBYTE    // check if starts with '{'
                             && poppedData[Global.PACKETLENGTH - 1] == Global.STOPBYTE) { // check if ends with '}'
+
+                        /* First send the packet over UDP */
+                        if (MainActivity.mUDPSender != null) {
+                            Message packet = Message.obtain();
+                            packet.obj = poppedData;
+                            MainActivity.mUDPSender.PacketHandler.sendMessage(packet);
+                        }
+
+                        byte firstByte = poppedData[2];
+                        byte secondByte = poppedData[3];
+
                         // data is good
                         // Now for the hard part
                         // if the byte is 255 / 0xFF / 11111111 then the value is interpreted as zero
@@ -78,11 +89,11 @@ public class BTDataParser extends Thread {
 						 * (int) 255, thus enabling the proper comparison
 						 */
 
-                        if ((poppedData[2] & 0xff) == 255) {
-                            poppedData[2] = 0;
+                        if ((firstByte & 0xff) == 255) {
+                            firstByte = 0;
                         }
-                        if ((poppedData[3] & 0xff) == 255) {
-                            poppedData[3] = 0;
+                        if ((secondByte & 0xff) == 255) {
+                            secondByte = 0;
                         }
 
 						/* if the first byte is greater than 127 then the value is treated as an INTEGER
@@ -92,15 +103,15 @@ public class BTDataParser extends Thread {
 						 * value = [first byte] + [second byte] / 100
 						 */
 
-                        if ((poppedData[2] & 0xff) < 128) {
+                        if ((firstByte & 0xff) < 128) {
                             // FLOAT
                             // value = [first byte] + [second byte] / 100
-                            value = (double) (poppedData[2] & 0xff) + (double) (poppedData[3] & 0xff) / 100;
+                            value = (double) (firstByte & 0xff) + (double) (secondByte & 0xff) / 100;
                         } else {
                             // INTEGER
                             // value = [first byte] * 100 + [second byte]
-                            poppedData[2] -= 128;
-                            value = (double) (poppedData[2] & 0xff) * 100 + (double) (poppedData[3] & 0xff);
+                            firstByte -= 128;
+                            value = (double) (firstByte & 0xff) * 100 + (double) (secondByte & 0xff);
                         }
 
                         // Check the ID
@@ -145,12 +156,6 @@ public class BTDataParser extends Thread {
                             default:
                                 Global.MangledDataCount++;
                                 return false;
-                        }
-
-                        if (MainActivity.mUDPSender != null) {
-                            Message packet = Message.obtain();
-                            packet.obj = poppedData;
-                            MainActivity.mUDPSender.PacketHandler.sendMessage(packet);
                         }
 
                         return true;
