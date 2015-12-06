@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.support.v4.app.FragmentManager;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -42,7 +44,7 @@ public class RaceMapFragment extends UpdateFragment
 											GoogleMap.OnInfoWindowClickListener
 {
 	private GoogleMap map;
-	private MapFragment mFragment;
+	private SupportMapFragment mFragment;
 
 	private TextView Current;
 	private TextView Voltage;
@@ -111,7 +113,7 @@ public class RaceMapFragment extends UpdateFragment
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+		mFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
 		mFragment.getMapAsync(this);
 		InitializeDataFields();
 		StartFragmentUpdater();

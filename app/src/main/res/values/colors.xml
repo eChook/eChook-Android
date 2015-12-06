@@ -9,4 +9,10 @@
     <color name="negative">#b71c1c</color>
     <color name="neutral">#ffab00</color>
     <color name="positive">#558b2f</color>
+    <color name="bt_connect">#1e88e5</color>
+    <color name="bt_disconnect">#94b6d4</color>
+    <color name="settings">#fff</color>
+    <color name="cycle">#f57f17</color>
+    <color name="play">#4caf50</color>
+    <color name="pause">#e57373</color>
 </resources>

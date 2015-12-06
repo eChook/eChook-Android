@@ -1,6 +1,6 @@
 package com.ben.drivenbluetooth.util;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 
 public abstract class UpdateFragment extends Fragment {
 	public abstract void UpdateFragmentUI();

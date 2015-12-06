@@ -1,9 +1,7 @@
 package com.ben.drivenbluetooth;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
@@ -14,11 +12,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Chronometer;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +49,7 @@ import java.util.TimerTask;
 
 
 public class MainActivity
-		extends 	Activity
+		extends AppCompatActivity
 		implements	BTDataParser.BTDataParserListener,
 					BluetoothManager.BluetoothEvents {
 
@@ -217,7 +216,7 @@ public class MainActivity
 
 	private void InitializeLongClickStart() {
 		// We can't do this in XML so must do it programatically
-		ImageButton startButton = (ImageButton) findViewById(R.id.start);
+		FloatingActionButton startButton = (FloatingActionButton) findViewById(R.id.start);
 		startButton.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
@@ -539,7 +538,7 @@ public class MainActivity
 
 	public void CycleView() {
 		try {
-			FragmentManager fragmentManager = getFragmentManager();
+			FragmentManager fragmentManager = getSupportFragmentManager();
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			currentFragment = FragmentList.cycle();
 			fragmentTransaction.replace(R.id.CenterView, currentFragment);
@@ -551,11 +550,11 @@ public class MainActivity
 
 	public void CycleViewReverse() {
 		try {
-			FragmentManager fragmentManager = getFragmentManager();
+			FragmentManager fragmentManager = getSupportFragmentManager();
 			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-			Fragment fragment = FragmentList.reverseCycle();
-			fragmentTransaction.replace(R.id.CenterView, fragment);
-			fragmentTransaction.commit();
+            currentFragment = FragmentList.reverseCycle();
+            fragmentTransaction.replace(R.id.CenterView, currentFragment);
+            fragmentTransaction.commit();
 		} catch (Exception e) {
 			e.getMessage();
 		}
