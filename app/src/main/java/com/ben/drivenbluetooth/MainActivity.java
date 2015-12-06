@@ -1,5 +1,7 @@
 package com.ben.drivenbluetooth;
 
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
@@ -87,6 +89,7 @@ public class MainActivity
 
 	private static final CyclingArrayList<UpdateFragment> FragmentList = new CyclingArrayList<>();
 	public static UpdateFragment currentFragment;
+    private static View SnackbarPosition;
 
 	/* ========= */
 	/* LIFECYCLE */
@@ -141,6 +144,8 @@ public class MainActivity
 		GraphData.InitializeGraphDataSets();
 
 		InitializeLongClickStart();
+
+        SnackbarPosition = findViewById(R.id.snackbarPosition);
 	}
 
 	@Override
@@ -231,11 +236,12 @@ public class MainActivity
     /* ======= */
 
 	public static void showMessage(String theMsg) {
-
+        showSnackbar(theMsg);
+        /*
 		if (context != null) {
 			Toast msg = Toast.makeText(context, theMsg, (Toast.LENGTH_SHORT));
 			msg.show();
-		}
+		}*/
 	}
 
 	public static void showMessage(String string, int length) {
@@ -246,6 +252,12 @@ public class MainActivity
 	public static void showError(Exception e) {
 		showMessage(e.getMessage(), Toast.LENGTH_SHORT);
 	}
+
+    public static void showSnackbar(String msg) {
+        Snackbar
+                .make(SnackbarPosition, msg, Snackbar.LENGTH_SHORT)
+                .show();
+    }
 
 	/* ================ */
 	/* BUTTON LISTENERS */
