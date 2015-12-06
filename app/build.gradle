@@ -43,4 +43,5 @@ dependencies {
     compile 'com.android.support:design:22.2.0'
     compile 'ch.acra:acra:4.6.2'
     compile 'com.github.PhilJay:MPAndroidChart:v2.1.6'
+    compile 'com.getbase:floatingactionbutton:1.10.1'
 }
