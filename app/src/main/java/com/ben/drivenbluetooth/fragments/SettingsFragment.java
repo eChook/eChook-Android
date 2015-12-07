@@ -2,11 +2,12 @@ package com.ben.drivenbluetooth.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
+
+import android.support.v7.preference.EditTextPreference;
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceManager;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -14,25 +15,29 @@ import com.ben.drivenbluetooth.drivenbluetooth.R;
 
 import java.util.Map;
 
-public class SettingsFragment 	extends PreferenceFragment
+public class SettingsFragment 	extends PreferenceFragmentCompat
 								implements SharedPreferences.OnSharedPreferenceChangeListener
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
-		addPreferencesFromResource(R.xml.user_settings);
-		updateAllPreferenceSummary();
+		//addPreferencesFromResource(R.xml.user_settings);
+		//updateAllPreferenceSummary();
 	}
 
-	private void updatePreferenceSummary(String key) {
+    @Override
+    public void onCreatePreferences(Bundle bundle, String s) {
+        addPreferencesFromResource(R.xml.user_settings);
+        updateAllPreferenceSummary();
+    }
+
+    private void updatePreferenceSummary(String key) {
 		Preference pref = findPreference(key);
 		if (pref instanceof ListPreference) {
 			ListPreference listPref = (ListPreference) pref;
 			pref.setSummary(listPref.getEntry());
 		} else if (pref instanceof EditTextPreference) {
 			EditTextPreference editTextPref = (EditTextPreference) pref;
-			pref.setSummary(editTextPref.getText());
 		}
 	}
 

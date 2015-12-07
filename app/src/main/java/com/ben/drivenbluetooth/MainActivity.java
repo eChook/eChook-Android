@@ -236,17 +236,15 @@ public class MainActivity
     /* ======= */
 
 	public static void showMessage(String theMsg) {
-        showSnackbar(theMsg);
-        /*
-		if (context != null) {
-			Toast msg = Toast.makeText(context, theMsg, (Toast.LENGTH_SHORT));
-			msg.show();
-		}*/
+        showMessage(theMsg, Toast.LENGTH_SHORT);
 	}
 
 	public static void showMessage(String string, int length) {
+        /*
 		final Toast msg = Toast.makeText(context, string, Toast.LENGTH_LONG);
 		msg.show();
+		*/
+        showSnackbar(string);
 	}
 
 	public static void showError(Exception e) {
@@ -256,6 +254,7 @@ public class MainActivity
     public static void showSnackbar(String msg) {
         Snackbar
                 .make(SnackbarPosition, msg, Snackbar.LENGTH_SHORT)
+                //.setActionTextColor(R.color.negative)
                 .show();
     }
 
@@ -341,7 +340,7 @@ public class MainActivity
     /** Called when the user taps the cogwheel in the app. Launches the settings fragment */
 	public void LaunchSettings(View v) {
 		SettingsFragment settingsFragment = new SettingsFragment();
-		getFragmentManager().beginTransaction()
+		getSupportFragmentManager().beginTransaction()
 				.replace(R.id.graphview_overlay, settingsFragment)
 				.addToBackStack(null)
 				.commit();
