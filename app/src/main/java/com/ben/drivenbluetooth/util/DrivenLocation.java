@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 										GoogleApiClient.OnConnectionFailedListener,
@@ -252,9 +253,12 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
             // UpdateLocationSetting the laptimer and counter tooltips
 			MainActivity.prevLapTime.setText(MainActivity.LapTimer.getText());
 
-            // UpdateLocationSetting lap data
-			Global.LapDataList.add(new LapData());
-			Global.LapDataList.get(Global.LapDataList.size() - 2).setLapTime(SystemClock.elapsedRealtime() - MainActivity.LapTimer.getBase()); // set previous lap time
+            // get delta time between last two laps
+            long deltaMillis = Global.LapDataList.get(Global.Lap - 2).getLapTimeMillis() - Global.LapDataList.get(Global.Lap - 1).getLapTimeMillis();
+
+            // update lap data
+			Global.LapDataList.get(Global.Lap - 1).setLapTime(SystemClock.elapsedRealtime() - MainActivity.LapTimer.getBase()); // set previous lap time
+            Global.LapDataList.add(new LapData());
 			Global.Lap++;
 
             // reset the lap timer
@@ -270,6 +274,12 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 
             // reset the path history on the map (black trail)
             _resetPathHistory();
+
+            // show lap summary message
+            MainActivity.showSnackbar(String.format("Lap %s - %s (%+02ds)",
+                    Global.Lap - 1,
+                    Global.LapDataList.get(Global.Lap - 2).getLapTime(),
+                    TimeUnit.MILLISECONDS.toSeconds(deltaMillis)));
 		}
 	}
 
