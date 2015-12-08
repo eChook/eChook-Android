@@ -194,7 +194,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		MainActivity.LapTimer.start();
 	}
 
-	public void update() {
+	public void UpdateLocationSetting() {
 		switch (Global.LocationStatus) {
 			case ENABLED:
 				startLocationUpdates();
@@ -246,20 +246,30 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	@Override
 	public void onCrossStartFinishLine() {
 		if (CrossStartFinishLineTriggerEnabled) {
-			CrossStartFinishLineTriggerEnabled = false; // disable crossing detection temporarily
+            // disable crossing detection temporarily. Effectively a 'debounce' in case of dodgy readings
+			CrossStartFinishLineTriggerEnabled = false;
+
+            // UpdateLocationSetting the laptimer and counter tooltips
 			MainActivity.prevLapTime.setText(MainActivity.LapTimer.getText());
+
+            // UpdateLocationSetting lap data
 			Global.LapDataList.add(new LapData());
 			Global.LapDataList.get(Global.LapDataList.size() - 2).lapTime = MainActivity.LapTimer.getText().toString(); // set previous lap time
 			Global.Lap++;
+
+            // reset the lap timer
 			_resetLapTimer();
+
+            // re-enable cross detection after 20 seconds
 			new Handler().postDelayed(new Runnable() {
 				@Override
 				public void run() {
 					CrossStartFinishLineTriggerEnabled = true;
 				}
-			}, 20000); // enable crossing detection after 20 seconds
+			}, 20000);
 		}
 
+        // reset the path history on the map (black trail)
 		_resetPathHistory();
 	}
 
@@ -268,7 +278,10 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	public void onRaceStart() {
 		InitialRaceDataPoints.add(CurrentLocation);
 		storePointsIntoInitialArray = true;
-		CrossStartFinishLineTriggerEnabled = false;	// disable crossing detection temporarily
+
+        // disable crossing detection temporarily
+		CrossStartFinishLineTriggerEnabled = false;
+
 		// After 10 seconds of the race we want to calculate the initial direction
 		new Handler().postDelayed(new Runnable() {
 			@Override
@@ -278,14 +291,13 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 				CrossStartFinishLineTriggerEnabled = true;
 			}
 		}, 20000);
-		Global.LapDataList.add(new LapData());
-		Global.Lap++; // first lap has begun
 
+        // add to the lap data list
+		Global.LapDataList.add(new LapData());
+		Global.Lap++;
+
+        // UpdateLocationSetting timer
 		MainActivity.LapTimer.setBase(SystemClock.elapsedRealtime());
 		MainActivity.LapTimer.start();
 	}
-	/*===================*/
-
-
-
 }

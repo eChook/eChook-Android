@@ -229,7 +229,7 @@
 			android:textStyle="bold"
 			android:gravity="right"
 			android:layout_toLeftOf="@+id/start"
-			/>
+            android:text="##:##"/>
 
 		<TextView
             android:layout_width="wrap_content"

@@ -116,15 +116,15 @@ public final class Global {
 	public static final byte GEAR_RATIO_ID			=	114;	// r
 	public static final byte CYCLE_VIEW_ID			=	67;		// C
 
-	public static final int 	FAST_UI_UPDATE_INTERVAL = 100; // fast UI update interval in milliseconds
-	public static final int		SLOW_UI_UPDATE_INTERVAL	= 500; // slow UI update interval in milliseconds
+	public static final int 	FAST_UI_UPDATE_INTERVAL = 100; // fast UI UpdateLocationSetting interval in milliseconds
+	public static final int		SLOW_UI_UPDATE_INTERVAL	= 500; // slow UI UpdateLocationSetting interval in milliseconds
     public static final int 	DATA_SAVE_INTERVAL 		= 250; // save interval in milliseconds
 	public static final String 	DATA_FILE 				= "arduino.csv";
 
 	public static final int BT_DATA_TIMEOUT = 2000; // Bluetooth connection timeout in milliseconds
 
-	public static final int LOCATION_INTERVAL 		= 2000; 	// Low speed location update interval in ms
-	public static final int LOCATION_FAST_INTERVAL 	= 1000;		// High speed location update interval in ms
+	public static final int LOCATION_INTERVAL 		= 2000; 	// Low speed location UpdateLocationSetting interval in ms
+	public static final int LOCATION_FAST_INTERVAL 	= 1000;		// High speed location UpdateLocationSetting interval in ms
 
 	public static final float LAP_TRIGGER_RANGE = 20f;  // locus around the start location to trigger a lap
 

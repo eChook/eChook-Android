@@ -11,9 +11,9 @@
     <color name="positive">#558b2f</color>
     <color name="bt_connect">#1e88e5</color>
     <color name="bt_disconnect">#94b6d4</color>
-    <color name="settings">#fff</color>
+    <color name="settings">#757575</color>
     <color name="cycle">#f57f17</color>
-    <color name="play">#4caf50</color>
-    <color name="pause">#e57373</color>
+    <color name="play">#64dd17</color>
+    <color name="pause">#e53935</color>
     <color name="launchmode">#cce573</color>
 </resources>

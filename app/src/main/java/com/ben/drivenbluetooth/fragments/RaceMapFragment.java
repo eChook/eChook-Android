@@ -306,7 +306,7 @@ public class RaceMapFragment extends UpdateFragment
 	public void UpdateMap() {
 		if (map != null) {
 			CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(new LatLng(Global.Latitude, Global.Longitude))      // Sets the center of the map to Mountain View
+					.target(new LatLng(Global.Latitude, Global.Longitude))
 					.zoom(16)                   // Sets the zoom
 					.bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
 							//.tilt(30)                   // Sets the tilt of the camera to 30 degrees

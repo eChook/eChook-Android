@@ -52,7 +52,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		// update the preference summaries
+		// UpdateLocationSetting the preference summaries
 		updatePreferenceSummary(key);
 
 		try {
@@ -69,7 +69,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 				case "prefLocation":
 					int location = Integer.valueOf(sharedPreferences.getString("prefLocation", ""));
 					Global.LocationStatus = Global.LOCATION.values()[location];
-					MainActivity.myDrivenLocation.update();
+					MainActivity.myDrivenLocation.UpdateLocationSetting();
 					break;
 				case "prefAccelerometer":
 					int accelerometer = Integer.valueOf(sharedPreferences.getString("prefAccelerometer", ""));
