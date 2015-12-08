@@ -267,10 +267,10 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
                     CrossStartFinishLineTriggerEnabled = true;
                 }
             }, 20000);
-		}
 
-        // reset the path history on the map (black trail)
-		_resetPathHistory();
+            // reset the path history on the map (black trail)
+            _resetPathHistory();
+		}
 	}
 
 	@Override

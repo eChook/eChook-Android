@@ -251,11 +251,15 @@ public class MainActivity
 		showMessage(e.getMessage(), Toast.LENGTH_SHORT);
 	}
 
-    public static void showSnackbar(String msg) {
+    public static void showSnackbar(String msg, int length) {
         Snackbar
-                .make(SnackbarPosition, msg, Snackbar.LENGTH_SHORT)
+                .make(SnackbarPosition, msg, length)
                 //.setActionTextColor(R.color.negative)
                 .show();
+    }
+
+    public static void showSnackbar(String msg) {
+        showSnackbar(msg, Snackbar.LENGTH_SHORT);
     }
 
 	/* ================ */
