@@ -254,7 +254,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 
             // UpdateLocationSetting lap data
 			Global.LapDataList.add(new LapData());
-			Global.LapDataList.get(Global.LapDataList.size() - 2).lapTime = MainActivity.LapTimer.getText().toString(); // set previous lap time
+			Global.LapDataList.get(Global.LapDataList.size() - 2).setLapTime(SystemClock.elapsedRealtime() - MainActivity.LapTimer.getBase()); // set previous lap time
 			Global.Lap++;
 
             // reset the lap timer
@@ -262,11 +262,11 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 
             // re-enable cross detection after 20 seconds
 			new Handler().postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					CrossStartFinishLineTriggerEnabled = true;
-				}
-			}, 20000);
+                @Override
+                public void run() {
+                    CrossStartFinishLineTriggerEnabled = true;
+                }
+            }, 20000);
 		}
 
         // reset the path history on the map (black trail)

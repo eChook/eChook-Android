@@ -1,5 +1,7 @@
 package com.ben.drivenbluetooth.util;
 
+import java.util.concurrent.TimeUnit;
+
 public class LapData {
 	private RunningAverage AmpsAvg;
 	private RunningAverage VoltsAvg;
@@ -8,7 +10,7 @@ public class LapData {
 
 	private Double AmpHours;
 
-	public String lapTime;
+    private long lapMillis;
 
 	public LapData() {
 		AmpsAvg 	= new RunningAverage(1);
@@ -16,7 +18,6 @@ public class LapData {
 		RPMAvg 		= new RunningAverage(0);
 		SpeedAvg 	= new RunningAverage(1);
 		AmpHours	= 0.0;
-		lapTime		= "";
 	}
 
 	public void AddAmps(Double amps) {
@@ -36,6 +37,10 @@ public class LapData {
 	}
 
 	public void AddAmpHours(Double ah) { AmpHours += ah; }
+
+    public void setLapTime(long millis) {
+        lapMillis = millis;
+    }
 
 	public Double getAmps() {
 		return AmpsAvg.getAverage();
@@ -58,4 +63,14 @@ public class LapData {
 	}
 
 	public Double getAmpHours() { return AmpHours; }
+
+    public long getLapTimeMillis() {
+        return lapMillis;
+    }
+
+    public String getLapTime() {
+        return String.format("%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(lapMillis),
+                TimeUnit.MILLISECONDS.toSeconds(lapMillis) - TimeUnit.MINUTES.toSeconds(lapMillis));
+    }
 }

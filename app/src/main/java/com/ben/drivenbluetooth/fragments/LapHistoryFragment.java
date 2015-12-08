@@ -104,7 +104,7 @@ public class LapHistoryFragment extends UpdateFragment {
 					tr.addView(hv);
 				}
 				TextView laptime = new TextView(ctx);
-				laptime.setText(Global.LapDataList.get(i).lapTime);
+				laptime.setText(Global.LapDataList.get(i).getLapTime());
 				laptime.setGravity(Gravity.CENTER);
 				laptime.setLayoutParams(textViewParams);
 				tr.addView(laptime);
