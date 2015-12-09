@@ -1,0 +1,294 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto">
+
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					xmlns:tools="http://schemas.android.com/tools"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:paddingLeft="@dimen/activity_horizontal_margin"
+					android:paddingRight="@dimen/activity_horizontal_margin"
+					android:paddingTop="@dimen/activity_vertical_margin"
+					android:paddingBottom="@dimen/activity_vertical_margin"
+					tools:context="com.ben.drivenbluetooth.MainActivity"
+					android:id="@+id/main">
+
+		<android.support.design.widget.FloatingActionButton
+			app:fabSize="mini"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Open BT"
+			android:id="@+id/open"
+			app:backgroundTint="@color/bt_connect"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentStart="true"
+			android:onClick="OpenBT"
+			android:layout_alignParentLeft="true"
+			android:src="@drawable/ic_bluetooth_connected_black_24dp"
+			android:layout_marginLeft="2dp"
+			android:layout_marginRight="2dp"
+			android:cropToPadding="false"
+			android:layout_marginBottom="2dp"
+			android:layout_marginTop="2dp"/>
+
+        <android.support.design.widget.FloatingActionButton
+			app:fabSize="mini"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Close BT"
+			android:id="@+id/close"
+			app:backgroundTint="@color/bt_disconnect"
+			android:layout_alignParentBottom="true"
+			android:layout_toRightOf="@+id/open"
+			android:layout_toEndOf="@+id/open"
+			android:onClick="CloseBT"
+			android:layout_alignBottom="@+id/open"
+			android:src="@drawable/ic_bluetooth_disabled_black_24dp"
+			android:layout_marginLeft="2dp"
+			android:layout_marginRight="2dp"
+			android:layout_marginBottom="2dp"
+			android:layout_marginTop="2dp"/>
+
+        <android.support.design.widget.FloatingActionButton
+			app:fabSize="mini"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Settings"
+			android:id="@+id/btnSettings"
+			app:backgroundTint="@color/settings"
+			android:onClick="LaunchSettings"
+			android:layout_alignParentBottom="true"
+			android:layout_toEndOf="@+id/close"
+			android:layout_toRightOf="@+id/close"
+			android:layout_alignBottom="@+id/close"
+			android:src="@drawable/mr_ic_settings_light"
+			android:layout_marginLeft="2dp"
+			android:layout_marginRight="2dp"
+			android:layout_marginBottom="2dp"
+			android:layout_marginTop="2dp"/>
+
+        <android.support.design.widget.FloatingActionButton
+			app:fabSize="mini"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Log"
+			android:id="@+id/start"
+			app:backgroundTint="@color/play"
+			android:textStyle="bold"
+			android:layout_alignParentBottom="true"
+			android:layout_toLeftOf="@+id/stop"
+			android:layout_toStartOf="@+id/stop"
+			android:onClick="Start"
+			android:longClickable="true"
+			android:src="@drawable/mr_ic_play_light"
+			android:layout_marginLeft="2dp"
+			android:layout_marginRight="2dp"
+			android:layout_marginBottom="2dp"
+			android:layout_marginTop="2dp"/>
+
+        <android.support.design.widget.FloatingActionButton
+			app:fabSize="mini"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Stop"
+			android:id="@+id/stop"
+			app:backgroundTint="@color/pause"
+			android:layout_alignParentBottom="true"
+
+			android:layout_alignParentEnd="true"
+			android:onClick="Stop"
+            android:src="@drawable/mr_ic_pause_light"
+			android:layout_marginLeft="2dp"
+			android:layout_marginRight="2dp"
+			android:layout_marginBottom="2dp"
+			android:layout_marginTop="2dp"/>
+
+        <android.support.design.widget.FloatingActionButton
+			app:fabSize="mini"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Cycle"
+			android:id="@+id/cycle"
+			app:backgroundTint="@color/cycle"
+			android:layout_alignParentBottom="true"
+			android:onClick="Cycle"
+			android:layout_toEndOf="@+id/btnSettings"
+			android:layout_alignBottom="@+id/btnSettings"
+			android:src="@drawable/mr_ic_media_route_mono_light"
+			android:layout_marginLeft="2dp"
+			android:layout_marginRight="2dp"
+			android:layout_marginBottom="2dp"
+			android:layout_marginTop="2dp"/>
+
+        <android.support.design.widget.FloatingActionButton
+            app:fabSize="mini"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:backgroundTint="@color/launchmode"
+            android:id="@+id/btnLaunchMode"
+            android:onClick="LaunchMode"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/ic_flight_takeoff_black_24dp"
+            android:layout_toEndOf="@+id/cycle"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="2dp"/>
+
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/txt_Mode"
+            android:onClick="QuickChangeMode"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:text="DEMO"
+            android:textStyle="bold"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:id="@+id/txtDataFileName"
+			android:layout_alignParentStart="true"
+			android:layout_marginRight="10dp"
+			android:text="arduino.csv"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:id="@+id/txtDataFileSize"
+			android:layout_alignBottom="@+id/txtDataFileName"
+			android:layout_toRightOf="@+id/txtDataFileName"
+			android:text="##kb"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="Bluetooth"
+			android:id="@+id/textView6"
+			android:gravity="right"
+			android:layout_marginRight="10dp"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentStart="true"
+			android:layout_marginLeft="150dp"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="Logging"
+			android:id="@+id/textView8"
+			android:gravity="right"
+			android:layout_below="@+id/txtBTState"
+			android:layout_marginRight="10dp"
+			android:layout_toLeftOf="@+id/txtBTState"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:id="@+id/txtBTState"
+			android:layout_alignTop="@+id/textView6"
+			android:layout_toRightOf="@+id/textView6"
+			android:gravity="left"
+			android:textStyle="bold"
+			android:text="DISCONNECTED"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:id="@+id/txtLogging"
+			android:textStyle="bold"
+			android:layout_toRightOf="@+id/textView8"
+			android:layout_alignTop="@+id/textView8"
+			android:text="LOGGING"/>
+
+		<RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:id="@+id/CenterView"
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/open"
+            android:layout_below="@+id/textView8"
+            android:layout_alignEnd="@+id/txt_Mode"
+            android:layout_alignParentEnd="true"/>
+
+		<Chronometer
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/LapTimer"
+			android:layout_alignParentTop="true"
+			android:textColor="@color/secondary_text_default_material_light"
+			android:typeface="monospace"
+			android:textStyle="bold"
+			android:gravity="right"
+			android:layout_toLeftOf="@+id/start"
+            android:text="##:##"/>
+
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/previousLapTime"
+            android:layout_below="@+id/LapTimer"
+            android:gravity="right"
+            android:layout_alignRight="@+id/LapTimer"
+            android:typeface="monospace"
+            android:text="##:##"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="##"
+			android:id="@+id/lap"
+			android:layout_alignParentTop="true"
+			android:layout_toEndOf="@+id/LapTimer"
+			android:layout_marginLeft="10dp"/>
+
+		<TextClock
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/textClock"
+			android:layout_alignParentTop="true"
+			android:layout_toEndOf="@+id/txtBTState"
+			android:layout_marginLeft="20dp"
+			android:textStyle="bold"
+			android:textSize="20dp"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/txtBTCarName"
+            android:layout_below="@+id/LapTimer"
+            android:layout_alignParentStart="true"
+            android:ellipsize="middle"
+            android:layout_alignLeft="@+id/txtDataFileName"
+            android:layout_toLeftOf="@+id/textView8"
+            android:text="BTDEVICE :: VEHICLE"/>
+
+	</RelativeLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/snackbarPosition">
+    </android.support.design.widget.CoordinatorLayout>
+
+	<FrameLayout android:id="@+id/graphview_overlay"
+				 android:layout_width="wrap_content"
+				 android:layout_height="wrap_content"
+				 android:visibility="visible"
+				 android:background="@color/background_material_light">
+	</FrameLayout>
+</merge>
