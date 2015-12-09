@@ -1,6 +1,5 @@
 package com.ben.drivenbluetooth;
 
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -101,7 +100,7 @@ public class MainActivity
 
 		context = getApplicationContext();
 
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_main_v2);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
 
@@ -345,7 +344,7 @@ public class MainActivity
 	public void LaunchSettings(View v) {
 		SettingsFragment settingsFragment = new SettingsFragment();
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.graphview_overlay, settingsFragment)
+				.replace(R.id.overlay, settingsFragment)
 				.addToBackStack(null)
 				.commit();
 	}

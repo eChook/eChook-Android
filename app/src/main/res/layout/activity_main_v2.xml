@@ -231,11 +231,11 @@
             android:textColor="@color/secondary_text_default_material_light"
             android:typeface="monospace"
             android:textStyle="bold"
-            android:gravity="right"
+            android:gravity="center_vertical|right"
             android:text="##:##"
-            android:layout_alignTop="@+id/btnLaunchMode"
             android:textSize="16sp"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/CenterView"/>
 
 		<TextView
             android:layout_width="wrap_content"
@@ -259,7 +259,9 @@
             android:layout_toEndOf="@+id/LapTimer"
             android:layout_marginLeft="10dp"
             android:layout_below="@+id/CenterView"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:typeface="monospace"
+            android:gravity="center_vertical"/>
 
 		<TextClock
             android:layout_width="wrap_content"
@@ -294,7 +296,7 @@
         android:id="@+id/snackbarPosition">
     </android.support.design.widget.CoordinatorLayout>
 
-	<FrameLayout android:id="@+id/graphview_overlay"
+	<FrameLayout android:id="@+id/overlay"
 				 android:layout_width="wrap_content"
 				 android:layout_height="wrap_content"
 				 android:visibility="visible"
