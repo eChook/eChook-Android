@@ -38,10 +38,6 @@ public class LapData {
 
 	public void AddAmpHours(Double ah) { AmpHours += ah; }
 
-    public void setLapTime(long millis) {
-        lapMillis = millis;
-    }
-
 	public Double getAmps() {
 		return AmpsAvg.getAverage();
 	}
@@ -69,8 +65,14 @@ public class LapData {
     }
 
     public String getLapTime() {
+        long sec1 = TimeUnit.MILLISECONDS.toSeconds(lapMillis);
+        long sec2 = TimeUnit.MINUTES.toSeconds(lapMillis);
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(lapMillis),
-                TimeUnit.MILLISECONDS.toSeconds(lapMillis) - TimeUnit.MINUTES.toSeconds(lapMillis));
+                TimeUnit.MILLISECONDS.toSeconds(lapMillis) % TimeUnit.MINUTES.toSeconds(1));
+    }
+
+    public void setLapTime(long millis) {
+        lapMillis = millis;
     }
 }

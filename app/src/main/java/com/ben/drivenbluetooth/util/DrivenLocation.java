@@ -19,7 +19,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 										GoogleApiClient.OnConnectionFailedListener,
@@ -253,11 +252,16 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
             // UpdateLocationSetting the laptimer and counter tooltips
 			MainActivity.prevLapTime.setText(MainActivity.LapTimer.getText());
 
-            // get delta time between last two laps
-            long deltaMillis = Global.LapDataList.get(Global.Lap - 2).getLapTimeMillis() - Global.LapDataList.get(Global.Lap - 1).getLapTimeMillis();
-
             // update lap data
-			Global.LapDataList.get(Global.Lap - 1).setLapTime(SystemClock.elapsedRealtime() - MainActivity.LapTimer.getBase()); // set previous lap time
+            Global.LapDataList.get(Global.Lap - 1).setLapTime(SystemClock.elapsedRealtime() - MainActivity.LapTimer.getBase()); // set previous lap time
+
+            // get delta time between last two laps
+            long deltaMillis = 0;
+            if (Global.Lap > 1) {
+                deltaMillis = Global.LapDataList.get(Global.Lap - 1).getLapTimeMillis() - Global.LapDataList.get(Global.Lap - 2).getLapTimeMillis();
+            }
+
+            // add new lap
             Global.LapDataList.add(new LapData());
 			Global.Lap++;
 
@@ -279,8 +283,9 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
             MainActivity.showSnackbar(String.format("Lap %s - %s (%+02ds)",
                     Global.Lap - 1,
                     Global.LapDataList.get(Global.Lap - 2).getLapTime(),
-                    TimeUnit.MILLISECONDS.toSeconds(deltaMillis)));
-		}
+                    deltaMillis / 1000)
+                    , 5000);
+        }
 	}
 
 	@Override

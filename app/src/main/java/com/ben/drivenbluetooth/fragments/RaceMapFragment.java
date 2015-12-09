@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.support.v4.app.FragmentManager;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -21,7 +20,6 @@ import com.ben.drivenbluetooth.util.RaceObserver;
 import com.ben.drivenbluetooth.util.UpdateFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -43,23 +41,19 @@ public class RaceMapFragment extends UpdateFragment
 											GoogleMap.OnMapClickListener,
 											GoogleMap.OnInfoWindowClickListener
 {
-	private GoogleMap map;
+    private static Timer FragmentUpdateTimer;
+    private GoogleMap map;
 	private SupportMapFragment mFragment;
-
 	private TextView Current;
 	private TextView Voltage;
 	private TextView RPM;
 	private TextView Speed;
 	private TextView AmpHours;
-
 	private TextView CurBearing;
 	private TextView SFLBearing;
 	private TextView Accuracy;
-
 	private Polyline pathHistory;
 	private Circle ObserverLocation;
-
-	private static Timer FragmentUpdateTimer;
 
 	/*===================*/
 	/* RACEMAPFRAGMENT
