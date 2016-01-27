@@ -18,4 +18,6 @@ public abstract class UpdateFragment extends Fragment {
 	public abstract void UpdateTemp(int sensorIndex);
 
 	public abstract void UpdateMotorRPM();
+
+    public abstract void UpdateWattHours();
 }

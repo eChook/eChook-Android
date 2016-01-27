@@ -7,6 +7,7 @@ import android.os.Message;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.util.GraphData;
+import com.ben.drivenbluetooth.util.RunningAverage;
 
 public class BTDataParser extends Thread {
     public static Handler mHandler;
@@ -17,6 +18,12 @@ public class BTDataParser extends Thread {
     private double prevAmps = 0.0;
     private long prevAmpTime = 0;
 
+    /* == Watt hour variables ==*/
+    private RunningAverage WattHourAvg = new RunningAverage(0); // decimal format doesn't matter because we don't use the print function
+
+    /* == Distance variables ==*/
+    private long prevDistTime = 0;
+
     /*===================*/
 	/* BTDATAPARSER
 	/*===================*/
@@ -25,23 +32,14 @@ public class BTDataParser extends Thread {
     }
 
     /*===================*/
-	/* INTERFACE
-	/*===================*/
-    public interface BTDataParserListener {
-        void onCycleViewPacket();
-
-        void onActivateLaunchModePacket();
-    }
-
-    /*===================*/
-	/* REGISTER LISTENER
+    /* REGISTER LISTENER
 	/*===================*/
     private synchronized void setBTDataParserListener(BTDataParserListener listener) {
         mListener = listener;
     }
 
     /*===================*/
-	/* MAIN FUNCS
+    /* MAIN FUNCS
 	/*===================*/
     @Override
     public void run() {
@@ -82,7 +80,7 @@ public class BTDataParser extends Thread {
                         // a byte in Java is -128 to 127 so we must convert to an int by doing & 0xff
 
 						/* Explanation :
-						 * We have defined 255 (0xFF) to be zero because we can't send null bytes over Bluetooth
+                         * We have defined 255 (0xFF) to be zero because we can't send null bytes over Bluetooth
 						 * & is a bitwise AND operation
 						 * (byte) 1111111 is interpreted by Java as -128
 						 * 11111111 & 0xff converts the value to an integer, which is then interpreted as
@@ -175,21 +173,31 @@ public class BTDataParser extends Thread {
 	/* DATA INPUT FUNCS
 	/*===================*/
     private synchronized void SetVolts(final double rawVolts) {
-        Global.Volts = round(rawVolts, 2); // Apply conversion and offset
+        Global.Volts = rawVolts; // Apply conversion and offset
         if (Global.Lap > 0) {
             Global.LapDataList.get(Global.Lap - 1).AddVolts(rawVolts);
         }
         GraphData.AddVolts(rawVolts);
         MainActivity.MainActivityHandler.post(new Runnable() {
-			public void run() {
-				MainActivity.currentFragment.UpdateVolts();
-			}
-		});
+            public void run() {
+                MainActivity.currentFragment.UpdateVolts();
+            }
+        });
     }
 
     private synchronized void SetAmps(final double rawAmps) {
-        IncrementAmpHours(rawAmps); // amp hours first!
-        Global.Amps = round(rawAmps, 2); // Apply conversion and offset
+        Global.Amps = rawAmps;
+        // timekeeping for watt-hours and amp-hours
+        long millis = System.currentTimeMillis();
+        long dt = millis - prevAmpTime;
+        if (prevAmpTime > 0) {
+            IncrementAmpHours(Global.Amps, dt);
+            CalculateWattHours(Global.Volts, Global.Amps, dt);
+        }
+        prevAmps = rawAmps;
+        prevAmpTime = millis;
+
+        Global.Amps = rawAmps; // Apply conversion and offset
         Global.AverageAmps.add(rawAmps);
         if (Global.Lap > 0) {
             Global.LapDataList.get(Global.Lap - 1).AddAmps(rawAmps);
@@ -219,15 +227,22 @@ public class BTDataParser extends Thread {
     }
 
     private synchronized void SetSpeed(final double rawSpeedMPS) {
-        Global.SpeedMPH = rawSpeedMPS * 2.24; // Apply conversion and offset
         Global.SpeedKPH = rawSpeedMPS * 3.6;
-        Global.AverageSpeedMPH.add(Global.SpeedMPH);
+
+        long millis = System.currentTimeMillis();
+        long dt = millis - prevDistTime;
+        if (prevDistTime > 0) {
+            CalculateDistanceKM(Global.SpeedKPH, dt);
+        }
+        prevDistTime = millis;
+
+        Global.AverageSpeedKPH.add(Global.SpeedKPH);
 
         if (Global.Lap > 0) {
-            Global.LapDataList.get(Global.Lap - 1).AddSpeed(Global.SpeedMPH);
+            Global.LapDataList.get(Global.Lap - 1).AddSpeed(Global.SpeedKPH);
         }
 
-        GraphData.AddSpeed(Global.Unit == Global.UNIT.MPH ? Global.SpeedMPH : Global.SpeedKPH);
+        GraphData.AddSpeed(Global.Unit == Global.UNIT.MPH ? Global.SpeedKPH / 1.61 : Global.SpeedKPH);
 
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
@@ -266,43 +281,60 @@ public class BTDataParser extends Thread {
                 break;
         }
 
-		MainActivity.MainActivityHandler.post(new Runnable() {
-			public void run() {
-				MainActivity.currentFragment.UpdateTemp(sensorId);
-			}
-		});
+        MainActivity.MainActivityHandler.post(new Runnable() {
+            public void run() {
+                MainActivity.currentFragment.UpdateTemp(sensorId);
+            }
+        });
     }
 
     private synchronized void SetGearRatio(double rawRatio) {
         Global.GearRatio = rawRatio; // Apply conversion and offset
     }
 
-    private double round(double number, int decimalPoints) {
-        double value = Math.round(number * Math.pow(10, decimalPoints));
-        value = value / Math.pow(10, decimalPoints);
-        return value;
-    }
+    private synchronized void IncrementAmpHours(double amps, long dt_millis) {
+        double ah = 0.5 * (amps + prevAmps) * dt_millis /* Amp-milliseconds */
+                / 1000 / 60 / 60; /* Amp-hours */
 
-    private synchronized void IncrementAmpHours(double amps) {
-        long millis = System.currentTimeMillis();
-        if (prevAmpTime != 0) {
-            double ah = 0.5 * (amps + prevAmps) * (millis - prevAmpTime) /* Amp-milliseconds */
-                    / 1000 / 60 / 60; /* Amp-hours */
+        Global.AmpHours += ah;
 
-            Global.AmpHours += ah;
-
-            if (Global.Lap > 0) {
-                Global.LapDataList.get(Global.Lap - 1).AddAmpHours(ah);
-            }
+        if (Global.Lap > 0) {
+            Global.LapDataList.get(Global.Lap - 1).AddAmpHours(ah);
         }
-        prevAmpTime = millis;
-        prevAmps = amps;
 
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
-				MainActivity.currentFragment.UpdateAmpHours();
-			}
+                MainActivity.currentFragment.UpdateAmpHours();
+            }
 		});
+    }
+
+    private synchronized void CalculateWattHours(double volts, double amps, long dt_millis) {
+        double wh = volts * amps * dt_millis // watt-milliseconds
+                / 1000 / 60 / 60; // watt-hours
+
+        Global.WattHours += wh;
+        WattHourAvg.add(wh);
+    }
+
+    private synchronized void CalculateDistanceKM(double speedKPH, long dt_millis) {
+        double deltaKM = speedKPH * dt_millis / 1000 / 60 / 60;
+        Global.DistanceKM += deltaKM;
+
+        Global.WattHoursPerKM = WattHourAvg.getAverage() / deltaKM;
+
+        if (Global.Lap > 0) {
+            Global.LapDataList.get(Global.Lap - 1).AddDistanceKM(deltaKM);
+            Global.LapDataList.get(Global.Lap - 1).AddWattHours(WattHourAvg.getAverage());
+        }
+
+        WattHourAvg.reset();
+
+        MainActivity.MainActivityHandler.post(new Runnable() {
+            public void run() {
+                MainActivity.currentFragment.UpdateWattHours();
+            }
+        });
     }
 
     /*===================*/
@@ -314,5 +346,14 @@ public class BTDataParser extends Thread {
 
     private synchronized void _fireCycleView() {
         mListener.onCycleViewPacket();
+    }
+
+    /*===================*/
+    /* INTERFACE
+	/*===================*/
+    public interface BTDataParserListener {
+        void onCycleViewPacket();
+
+        void onActivateLaunchModePacket();
     }
 }

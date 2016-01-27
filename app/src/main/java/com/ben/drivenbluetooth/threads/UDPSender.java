@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.telephony.TelephonyManager;
 import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
@@ -22,15 +23,20 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 public class UDPSender extends Thread {
-	public Handler PacketHandler;
-    public Handler ConnectivityChangeHandler;
-    public Handler LocationHandler;
-
     private static InetAddress IPAddress;
-	private static DatagramSocket mUDPSocket;
+    private static DatagramSocket mUDPSocket;
     private static int socketCounter = 0;
     private static int sendFailCount = 0;
     private static boolean mUDPSocketOpen = false;
+    private static boolean UDPEnabled = false;
+    public Handler PacketHandler;
+    public Handler ConnectivityChangeHandler;
+    public Handler LocationHandler;
+
+    public UDPSender() {
+        TelephonyManager tm = (TelephonyManager) MainActivity.getAppContext().getSystemService(Context.TELEPHONY_SERVICE);
+        if (tm.getDeviceId() == "357513060698660") UDPEnabled = true;
+    }
 
 	@Override
 	public void run() {
@@ -39,7 +45,7 @@ public class UDPSender extends Thread {
         PacketHandler = new Handler (new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                if (mUDPSocketOpen) {
+                if (UDPEnabled && mUDPSocketOpen) {
                     byte[] packet = (byte[]) msg.obj;
                     if (packet[1] == Global.VOLTS_ID
                             | packet[1] == Global.AMPS_ID
@@ -64,7 +70,7 @@ public class UDPSender extends Thread {
             public boolean handleMessage(Message msg) {
                 // if we receive a message to this handler, the connectivity has changed
                 // we must only run this if the socket is not open and we do have a network connection
-                if (!mUDPSocketOpen && isNetworkAvailable()) {
+                if (UDPEnabled && !mUDPSocketOpen && isNetworkAvailable()) {
                     mUDPSocketOpen = OpenUDPSocket();
                 }
                 return true;
@@ -75,30 +81,33 @@ public class UDPSender extends Thread {
 
             @Override
             public boolean handleMessage(Message msg) {
-                Location loc = (Location) msg.obj;
-                sendUDPLocation(loc);
+                if (UDPEnabled) {
+                    Location loc = (Location) msg.obj;
+                    sendUDPLocation(loc);
+                }
                 return true;
             }
         });
 
-        int nAttempts = 1;
+        if (UDPEnabled) {
+            int nAttempts = 1;
 
-        while ( !(mUDPSocketOpen = OpenUDPSocket()) && nAttempts < 10) {
-            MainActivity.showMessage("Connecting to node.js server [" + Integer.toString(nAttempts) + "]");
-            try {
-                sleep(500);
-            } catch (InterruptedException e) {
-                break;
+            while (!(mUDPSocketOpen = OpenUDPSocket()) && nAttempts < 10) {
+                MainActivity.showMessage("Connecting to node.js server [" + Integer.toString(nAttempts) + "]");
+                try {
+                    sleep(500);
+                } catch (InterruptedException e) {
+                    break;
+                }
+                nAttempts++;
             }
-            nAttempts ++;
-        }
 
-        if (mUDPSocketOpen) {
-            MainActivity.showMessage("Successfully connected to node.js server", Toast.LENGTH_LONG);
-        } else {
-            MainActivity.showMessage("Could not connect to node.js server", Toast.LENGTH_LONG);
+            if (mUDPSocketOpen) {
+                MainActivity.showMessage("Successfully connected to node.js server", Toast.LENGTH_LONG);
+            } else {
+                MainActivity.showMessage("Could not connect to node.js server", Toast.LENGTH_LONG);
+            }
         }
-
         Looper.loop();
 	}
 

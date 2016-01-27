@@ -207,8 +207,9 @@ public class SixGraphsBars extends UpdateFragment {
 		UpdateAmpHours();
 	}
 
-	public void UpdateVolts() {
-		try {
+    @Override
+    public synchronized void UpdateVolts() {
+        try {
 			Voltage.setText(String.format("%.2f", Global.Volts));
 			Voltage.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
 			VoltageBar.setValue(Global.Volts);
@@ -220,8 +221,9 @@ public class SixGraphsBars extends UpdateFragment {
 		}
 	}
 
-	public void UpdateAmps() {
-		try {
+    @Override
+    public synchronized void UpdateAmps() {
+        try {
 			Current.setText(String.format("%.1f", Global.Amps));
 			Current.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
 			CurrentBar.setValue(Global.Amps);
@@ -233,16 +235,18 @@ public class SixGraphsBars extends UpdateFragment {
 		}
 	}
 
-	public void UpdateAmpHours() {
-		try {
+    @Override
+    public synchronized void UpdateAmpHours() {
+        try {
 			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void UpdateThrottle() {
-		try {
+    @Override
+    public synchronized void UpdateThrottle() {
+        try {
 			if (Global.ActualThrottle < Global.InputThrottle) {
 				Throttle.setText(String.format("%.0f", Global.InputThrottle) + " (" + String.format("%.0f", Global.ActualThrottle) + ")");
 			} else {
@@ -257,13 +261,14 @@ public class SixGraphsBars extends UpdateFragment {
 		}
 	}
 
-	public void UpdateSpeed() {
-		try {
+    @Override
+    public synchronized void UpdateSpeed() {
+        try {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
-				Speed.setText(String.format("%.1f", Global.SpeedMPH) + " mph");
-				SpeedBar.setValue(Global.SpeedMPH);
-			} else if (Global.Unit == Global.UNIT.KPH) {
+                Speed.setText(String.format("%.1f", Global.SpeedKPH / 1.61) + " mph");
+                SpeedBar.setValue(Global.SpeedKPH / 1.61);
+            } else if (Global.Unit == Global.UNIT.KPH) {
 				Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
 				SpeedBar.setValue(Global.SpeedKPH);
 			}
@@ -275,8 +280,9 @@ public class SixGraphsBars extends UpdateFragment {
 		}
 	}
 
-	public void UpdateTemp(int sensorIndex) {
-		Double TempValue;
+    @Override
+    public synchronized void UpdateTemp(int sensorIndex) {
+        Double TempValue;
 		TextView TempText;
 		DataBar TempBar;
 		switch (sensorIndex) {
@@ -306,8 +312,9 @@ public class SixGraphsBars extends UpdateFragment {
 		}
 	}
 
-	public void UpdateMotorRPM() {
-		try {
+    @Override
+    public synchronized void UpdateMotorRPM() {
+        try {
 			RPM.setText(String.format("%.0f", Global.MotorRPM));
 			RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
 			RPMBar.setValue(Global.MotorRPM);
@@ -319,8 +326,13 @@ public class SixGraphsBars extends UpdateFragment {
 		}
 	}
 
-	private void UpdateGraph(LineChart graph) {
-		graph.notifyDataSetChanged();
+    @Override
+    public synchronized void UpdateWattHours() {
+        // TODO: implement method
+    }
+
+    private void UpdateGraph(LineChart graph) {
+        graph.notifyDataSetChanged();
 		graph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
 		graph.moveViewToX(graph.getXValCount() - Global.maxGraphDataPoints - 1);
 	}

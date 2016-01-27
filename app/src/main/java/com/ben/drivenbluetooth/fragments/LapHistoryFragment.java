@@ -88,10 +88,12 @@ public class LapHistoryFragment extends UpdateFragment {
 						String.format("%d", i + 1),
 						String.format("%.0f", Global.LapDataList.get(i).getAmps()),
 						String.format("%.1f", Global.LapDataList.get(i).getVolts()),
-						String.format("%.1f", Global.LapDataList.get(i).getSpeedMPH()),
-						String.format("%.2f", Global.LapDataList.get(i).getAmpHours()),
-						String.format("%.0f", Global.LapDataList.get(i).getRPM())
-				};
+                        String.format("%.1f", Global.Unit == Global.UNIT.KPH ? Global.LapDataList.get(i).getSpeedKPH() : Global.LapDataList.get(i).getSpeedMPH()),
+                        String.format("%.0f", Global.LapDataList.get(i).getRPM()),
+                        String.format("%.2f", Global.LapDataList.get(i).getAmpHours()),
+                        String.format("%.2f", Global.LapDataList.get(i).getWattHoursPerKM()),
+                        Global.LapDataList.get(i).getLapTime()
+                };
 
 				TableRow tr = new TableRow(ctx);
 				tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
@@ -121,36 +123,40 @@ public class LapHistoryFragment extends UpdateFragment {
 		UpdateMotorRPM();
 	}
 
-	public void UpdateVolts() {
-		try {
+    @Override
+    public synchronized void UpdateVolts() {
+        try {
 			this.Voltage.setText(String.format("%.2f", Global.Volts) + " V");
 		} catch (Exception e) {
 			e.getMessage();
 		}
 	}
 
-	public void UpdateAmps() {
-		try {
+    @Override
+    public synchronized void UpdateAmps() {
+        try {
 			this.Current.setText(String.format("%.1f", Global.Amps) + " A");
 		} catch (Exception e) {
 			e.getMessage();
 		}
 	}
 
-	public void UpdateAmpHours() {
-		try {
+    @Override
+    public synchronized void UpdateAmpHours() {
+        try {
 			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
 		} catch (Exception e) {
 			e.toString();
 		}
 	}
 
-	public void UpdateSpeed() {
-		try {
+    @Override
+    public synchronized void UpdateSpeed() {
+        try {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
-				this.Speed.setText(String.format("%.1f", Global.SpeedMPH) + " mph");
-			} else if (Global.Unit == Global.UNIT.KPH) {
+                this.Speed.setText(String.format("%.1f", Global.SpeedKPH / 1.61) + " mph");
+            } else if (Global.Unit == Global.UNIT.KPH) {
 				this.Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
 			}
 
@@ -159,16 +165,22 @@ public class LapHistoryFragment extends UpdateFragment {
 		}
 	}
 
-	public void UpdateMotorRPM() {
-		try {
+    @Override
+    public synchronized void UpdateMotorRPM() {
+        try {
 			this.RPM.setText(String.format("%.0f", Global.MotorRPM) + " RPM");
 		} catch (Exception e) {
 			e.getMessage();
 		}
 	}
 
-	private void _createHeaders() {
-		Context ctx = getActivity();
+    @Override
+    public synchronized void UpdateWattHours() {
+        // TODO: implement method
+    }
+
+    private void _createHeaders() {
+        Context ctx = getActivity();
 		TableRow.LayoutParams textViewParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
 							// left, top, right, bottom
 		textViewParams.setMargins(20, 10, 20, 10);
@@ -177,10 +189,11 @@ public class LapHistoryFragment extends UpdateFragment {
 				"Lap",
 				"Avg Amps (A)",
 				"Avg Volts (V)",
-				"Avg Spd (mph)",
-				"Avg RPM",
+                Global.Unit == Global.UNIT.KPH ? "Avg Spd (kph)" : "Avg Spd (mph)",
+                "Avg RPM",
 				"Amp hours (Ah)",
-				"Lap time"
+                "Avg Wh/km",
+                "Lap time"
 		};
 
 		TableRow tr = new TableRow(ctx);

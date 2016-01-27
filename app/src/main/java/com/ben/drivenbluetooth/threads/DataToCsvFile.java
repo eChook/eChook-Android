@@ -27,8 +27,9 @@ public class DataToCsvFile extends Thread {
 					"Amps (A)",
 					"Amp hours (Ah)",
 					"Motor speed (RPM)",
-					"Speed (mph)",
-					"Temp 1 (C)",
+                    "Speed (kph)",
+                    "Distance (km)",
+                    "Temp 1 (C)",
 					"Gear Ratio",
 
 					/* LocationStatus */
@@ -64,8 +65,9 @@ public class DataToCsvFile extends Thread {
 								String.format("%.2f",Global.Amps),
 								String.format("%.2f",Global.AmpHours),
 								String.format("%.0f",Global.MotorRPM),
-								String.format("%.1f",Global.SpeedMPH),
-								String.format("%.1f",Global.TempC1),
+                        String.format("%.1f", Global.SpeedKPH),
+                        String.format("%.3f", Global.DistanceKM),
+                        String.format("%.1f",Global.TempC1),
 								String.format("%.3f",Global.GearRatio),
 
 									/* LocationStatus */

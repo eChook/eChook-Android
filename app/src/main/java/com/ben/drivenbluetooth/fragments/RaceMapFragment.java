@@ -323,36 +323,40 @@ public class RaceMapFragment extends UpdateFragment
 		}
 	}
 
-	public void UpdateVolts() {
-		try {
+    @Override
+    public synchronized void UpdateVolts() {
+        try {
 			this.Voltage.setText(String.format("%.2f", Global.Volts) + " V");
 		} catch (Exception e) {
 			e.getMessage();
 		}
 	}
 
-	public void UpdateAmps() {
-		try {
+    @Override
+    public synchronized void UpdateAmps() {
+        try {
 			this.Current.setText(String.format("%.1f", Global.Amps) + " A");
 		} catch (Exception e) {
 			e.getMessage();
 		}
 	}
 
-	public void UpdateAmpHours() {
-		try {
+    @Override
+    public synchronized void UpdateAmpHours() {
+        try {
 			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
 		} catch (Exception e) {
 			e.toString();
 		}
 	}
 
-	public void UpdateSpeed() {
-		try {
+    @Override
+    public synchronized void UpdateSpeed() {
+        try {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
-				this.Speed.setText(String.format("%.1f", Global.SpeedMPH) + " mph");
-			} else if (Global.Unit == Global.UNIT.KPH) {
+                this.Speed.setText(String.format("%.1f", Global.SpeedKPH / 1.61) + " mph");
+            } else if (Global.Unit == Global.UNIT.KPH) {
 				this.Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
 			}
 
@@ -361,16 +365,22 @@ public class RaceMapFragment extends UpdateFragment
 		}
 	}
 
-	public void UpdateMotorRPM() {
-		try {
+    @Override
+    public synchronized void UpdateMotorRPM() {
+        try {
 			this.RPM.setText(String.format("%.0f", Global.MotorRPM) + " RPM");
 		} catch (Exception e) {
 			e.getMessage();
 		}
 	}
 
-	public void UpdateMapText() {
-		CurBearing.setText("car: " + String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_Current()));
+    @Override
+    public synchronized void UpdateWattHours() {
+        //TODO: implement method
+    }
+
+    public void UpdateMapText() {
+        CurBearing.setText("car: " + String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_Current()));
 		SFLBearing.setText("sfl: " + String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_SFL()));
 		Accuracy.setText("acc: " + String.format("%.1f", Global.GPSAccuracy));
 	}
