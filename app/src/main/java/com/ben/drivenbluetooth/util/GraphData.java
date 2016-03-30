@@ -9,6 +9,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 /**
  * Created by BNAGY4 on 15/09/2015.
@@ -64,7 +65,7 @@ public final class GraphData {
 		Global.VoltsHistory.addEntry(new Entry((float) rawVolts, Global.VoltsHistory.getXValCount() - 1), 0);
 
 		if (Global.VoltsHistory.getXValCount() > Global.maxGraphDataPoints) {
-			LineDataSet set = Global.VoltsHistory.getDataSetByIndex(0);
+			LineDataSet set = (LineDataSet) Global.VoltsHistory.getDataSetByIndex(0);
 			Global.VoltsHistory.getXVals().remove(0);
 			set.removeEntry(0);
 
@@ -79,7 +80,7 @@ public final class GraphData {
 		Global.AmpsHistory.addEntry(new Entry((float) rawAmps, Global.AmpsHistory.getXValCount() - 1), 0);
 
 		if (Global.AmpsHistory.getXValCount() > Global.maxGraphDataPoints) {
-			LineDataSet set = Global.AmpsHistory.getDataSetByIndex(0);
+			LineDataSet set = (LineDataSet) Global.AmpsHistory.getDataSetByIndex(0);
 			Global.AmpsHistory.getXVals().remove(0);
 			set.removeEntry(0);
 
@@ -114,7 +115,7 @@ public final class GraphData {
 		Global.ThrottleHistory.addEntry(new Entry((float) rawThrottle, Global.ThrottleHistory.getXValCount() - 1), 0);
 
 		if (Global.ThrottleHistory.getXValCount() > Global.maxGraphDataPoints) {
-			LineDataSet set = Global.ThrottleHistory.getDataSetByIndex(0);
+			LineDataSet set = (LineDataSet) Global.ThrottleHistory.getDataSetByIndex(0);
 			Global.ThrottleHistory.getXVals().remove(0);
 			set.removeEntry(0);
 
@@ -134,7 +135,7 @@ public final class GraphData {
 		}
 
 		if (Global.SpeedHistory.getXValCount() > Global.maxGraphDataPoints) {
-			LineDataSet set = Global.SpeedHistory.getDataSetByIndex(0);
+			LineDataSet set = (LineDataSet) Global.SpeedHistory.getDataSetByIndex(0);
 			Global.SpeedHistory.getXVals().remove(0);
 			set.removeEntry(0);
 
@@ -149,7 +150,7 @@ public final class GraphData {
 		Global.MotorRPMHistory.addEntry(new Entry((float) rawMotorRPM, Global.MotorRPMHistory.getXValCount() - 1), 0);
 
 		if (Global.MotorRPMHistory.getXValCount() > Global.maxGraphDataPoints) {
-			LineDataSet set = Global.MotorRPMHistory.getDataSetByIndex(0);
+			LineDataSet set = (LineDataSet) Global.MotorRPMHistory.getDataSetByIndex(0);
 			Global.MotorRPMHistory.getXVals().remove(0);
 			set.removeEntry(0);
 
@@ -166,7 +167,7 @@ public final class GraphData {
 				Global.TempC1History.addEntry(new Entry((float) rawTemp, Global.TempC1History.getXValCount() - 1), 0);
 
 				if (Global.TempC1History.getXValCount() > Global.maxGraphDataPoints) {
-					LineDataSet set = Global.TempC1History.getDataSetByIndex(0);
+					LineDataSet set = (LineDataSet) Global.TempC1History.getDataSetByIndex(0);
 					Global.TempC1History.getXVals().remove(0);
 					set.removeEntry(0);
 

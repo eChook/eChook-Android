@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">DrivenBluetooth</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="google_maps_api_key">AIzaSyBpcKddfAxD9ESmg4lLPLOmbzguagX5_pY</string>
+    <string name="google_maps_api_key">AIzaSyCzULO9ka1Wm3s_PYjfl4seuz-zXfskxvY</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

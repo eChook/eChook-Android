@@ -63,6 +63,11 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 				myRaceStartMonitor.join(); // wait for it to finish...
 				myRaceStartMonitor = new RaceStartMonitor(this);
 			}
+
+            if (myRaceStartMonitor.getState() == Thread.State.TERMINATED) {
+                myRaceStartMonitor = new RaceStartMonitor(this);
+            }
+
 			myRaceStartMonitor.start();
 			MainActivity.showMessage("Launch Mode Active - waiting for throttle input (minimum 20%)", Toast.LENGTH_LONG);
 		} catch (Exception e) {

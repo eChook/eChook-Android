@@ -58,6 +58,8 @@ public final class Global {
     public static final int MAP_UPDATE_INTERVAL = 5000;
     public static final String SOCKETADDRESS = "exantas.homenet.org";
     public static final int SOCKETPORT = 8081;
+
+    public static final int PERMISSIONS_REQUEST = 1;
     /**********************/
 	// use the volatile keyword for thread safety
     public static volatile BlockingQueue<byte[]> BTStreamQueue = 	new LinkedBlockingQueue<>();

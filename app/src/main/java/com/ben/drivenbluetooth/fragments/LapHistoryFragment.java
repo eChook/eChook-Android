@@ -86,7 +86,7 @@ public class LapHistoryFragment extends UpdateFragment {
 			for (int i = 0; i < Global.LapDataList.size(); i++) {
 				String[] values = new String[]{
 						String.format("%d", i + 1),
-						String.format("%.0f", Global.LapDataList.get(i).getAmps()),
+						String.format("%.1f", Global.LapDataList.get(i).getAmps()),
 						String.format("%.1f", Global.LapDataList.get(i).getVolts()),
                         String.format("%.1f", Global.Unit == Global.UNIT.KPH ? Global.LapDataList.get(i).getSpeedKPH() : Global.LapDataList.get(i).getSpeedMPH()),
                         String.format("%.0f", Global.LapDataList.get(i).getRPM()),

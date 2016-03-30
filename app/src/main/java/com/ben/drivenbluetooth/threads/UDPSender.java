@@ -35,7 +35,9 @@ public class UDPSender extends Thread {
 
     public UDPSender() {
         TelephonyManager tm = (TelephonyManager) MainActivity.getAppContext().getSystemService(Context.TELEPHONY_SERVICE);
-        if (tm.getDeviceId() == "357513060698660") UDPEnabled = true;
+        String IMEI = tm.getDeviceId();
+        if (IMEI.equals("357513060698660"))
+            UDPEnabled = true;
     }
 
 	@Override

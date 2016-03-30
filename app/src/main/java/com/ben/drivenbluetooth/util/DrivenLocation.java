@@ -18,6 +18,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.acra.ACRA;
+
 import java.util.ArrayList;
 
 public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
@@ -82,7 +84,13 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
         // Notify UDPsender that we have a new location
         Message msg = new Message();
         msg.obj = location;
-        MainActivity.mUDPSender.LocationHandler.sendMessage(msg);
+
+		try {
+			MainActivity.mUDPSender.LocationHandler.sendMessage(msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+			ACRA.getErrorReporter().handleException(e);
+		}
 
 		if (CurrentLocation != null && PreviousLocation != null) {
 			Global.DeltaDistance = _calculateDistanceBetween(PreviousLocation, CurrentLocation);
@@ -156,8 +164,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	}
 
 	protected void stopLocationUpdates() {
-		LocationServices.FusedLocationApi.removeLocationUpdates(
-				GoogleApi, this);
+		LocationServices.FusedLocationApi.removeLocationUpdates(GoogleApi, this);
 	}
 
 	private float _calculateDistanceBetween(Location location1, Location location2) {
@@ -253,7 +260,9 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 			MainActivity.prevLapTime.setText(MainActivity.LapTimer.getText());
 
             // update lap data
-            Global.LapDataList.get(Global.Lap - 1).setLapTime(SystemClock.elapsedRealtime() - MainActivity.LapTimer.getBase()); // set previous lap time
+            if (Global.Lap > 0) {
+                Global.LapDataList.get(Global.Lap - 1).setLapTime(SystemClock.elapsedRealtime() - MainActivity.LapTimer.getBase()); // set previous lap time
+            }
 
             // get delta time between last two laps
             long deltaMillis = 0;
@@ -280,11 +289,13 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
             _resetPathHistory();
 
             // show lap summary message
-            MainActivity.showSnackbar(String.format("Lap %s - %s (%+02ds)",
-                    Global.Lap - 1,
-                    Global.LapDataList.get(Global.Lap - 2).getLapTime(),
-                    deltaMillis / 1000)
-                    , 5000);
+            if (Global.Lap > 1) {
+                MainActivity.showSnackbar(String.format("Lap %s - %s (%+02.3fs)",
+                        Global.Lap - 1,
+                        Global.LapDataList.get(Global.Lap - 2).getLapTime(),
+                        (float) deltaMillis / 1000.0)
+                        , 5000);
+            }
         }
 	}
 
