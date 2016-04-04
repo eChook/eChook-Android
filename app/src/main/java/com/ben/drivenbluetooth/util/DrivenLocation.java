@@ -85,11 +85,8 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
         Message msg = new Message();
         msg.obj = location;
 
-		try {
+		if (MainActivity.mUDPSender != null) {
 			MainActivity.mUDPSender.LocationHandler.sendMessage(msg);
-		} catch (Exception e) {
-			e.printStackTrace();
-			ACRA.getErrorReporter().handleException(e);
 		}
 
 		if (CurrentLocation != null && PreviousLocation != null) {
@@ -158,7 +155,12 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 			CurrentLocation = LocationServices.FusedLocationApi.getLastLocation(GoogleApi);
 			Global.Latitude = CurrentLocation.getLatitude();
 			Global.Longitude = CurrentLocation.getLongitude();
+		} catch (SecurityException e) {
+			// this should never happen, but if it does...
+			ACRA.getErrorReporter().handleException(e);
+			MainActivity.showMessage("Permission denied to request location updates");
 		} catch (Exception e) {
+			ACRA.getErrorReporter().handleException(e);
 			MainActivity.showError(e);
 		}
 	}

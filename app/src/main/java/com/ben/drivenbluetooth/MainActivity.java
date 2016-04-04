@@ -139,12 +139,11 @@ public class MainActivity
         GraphData.InitializeGraphDataSets();
 
         InitializeLongClickStart();
-        CycleView();
 
         InitializeFragmentList();
+        CycleView();
 
         StartDataParser();
-        StartUDPSender();
 
         RequestAllPermissions();
     }
@@ -225,7 +224,19 @@ public class MainActivity
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.READ_PHONE_STATE
         };
-        ActivityCompat.requestPermissions(this, permissions, Global.PERMISSIONS_REQUEST);
+
+        boolean permissionRequestRequired = false;
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                permissionRequestRequired = true;
+            }
+        }
+
+        if (permissionRequestRequired) {
+            ActivityCompat.requestPermissions(this, permissions, Global.PERMISSIONS_REQUEST);
+        } else {
+            InitializeAllTheThings();
+        }
     }
 
     @Override
@@ -257,15 +268,13 @@ public class MainActivity
     }
 
     private void InitializeAllTheThings() {
-        mUDPSender = new UDPSender();
+        StartUDPSender();
 
         myAccelerometer = new Accelerometer((SensorManager) getSystemService(Context.SENSOR_SERVICE));
 
         UpdateDataFileInfo();
 
         myBluetoothManager.setBluetoothEventsListener(this);
-
-
     }
 
     private void InitializeFragmentList() {
@@ -617,6 +626,7 @@ public class MainActivity
             fragmentTransaction.replace(R.id.CenterView, currentFragment);
             fragmentTransaction.commit();
         } catch (Exception e) {
+            e.printStackTrace();
             e.getMessage();
         }
     }
