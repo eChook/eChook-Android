@@ -597,6 +597,7 @@ public class MainActivity
         if (mDataToCSVFile != null && mDataToCSVFile.getState() != Thread.State.TERMINATED) {
             mDataToCSVFile.cancel();
             MainActivity.myLogging.setTextColor(getResources().getColor(R.color.negative));
+            MainActivity.myLogging.setText("NO");
         }
     }
 
