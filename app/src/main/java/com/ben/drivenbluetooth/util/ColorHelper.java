@@ -4,7 +4,7 @@ import android.graphics.Color;
 
 public final class ColorHelper {
 	private static final float AMPS_LOW 		= 10f;
-	private static final float AMPS_ECO 		= 25f;
+	private static final float AMPS_ECO 		= 23f;
 	private static final float AMPS_HIGH 		= 30f;
 
 	private static final float VOLTAGE_UPPER 	= 26f;

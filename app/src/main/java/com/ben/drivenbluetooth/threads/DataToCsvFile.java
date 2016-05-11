@@ -28,7 +28,7 @@ public class DataToCsvFile extends Thread {
 					"Amp hours (Ah)",
 					"Motor speed (RPM)",
                     "Speed (m/s)",
-                    "Distance (km)",
+                    "Distance (m)",
                     "Temp 1 (C)",
 					"Gear Ratio",
 

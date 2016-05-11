@@ -38,7 +38,7 @@
         android:id="@+id/VoltsBarChart"
         class="com.ben.drivenbluetooth.util.DataBarChart"
         android:layout_width="@dimen/view4_field_width"
-        android:layout_height="200dp"
+        android:layout_height="150dp"
         android:layout_alignLeft="@+id/voltage"
         android:layout_alignParentLeft="false"
         android:layout_alignParentStart="false"

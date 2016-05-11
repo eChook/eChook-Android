@@ -116,26 +116,30 @@ public class FourGraphsBars extends UpdateFragment {
 		};
 
 		for (int i = 0; i < lineCharts.length; i++) {
-			lineCharts[i].setData(lineDatas[i]);
-			lineCharts[i].setDescription("");
-			lineCharts[i].setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			lineCharts[i].setNoDataText("");
-			lineCharts[i].setNoDataTextDescription("");
+            LineChart chart = lineCharts[i];
+			chart.setData(lineDatas[i]);
+			chart.setDescription("");
+			chart.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			chart.setNoDataText("");
+			chart.setNoDataTextDescription("");
 
-			YAxis leftAxis = lineCharts[i].getAxisLeft();
+			YAxis leftAxis = chart.getAxisLeft();
 			leftAxis.setAxisMinValue(minMax[i][0]);
 			leftAxis.setAxisMaxValue(minMax[i][1]);
 			leftAxis.setLabelCount(3, true);
 			leftAxis.setValueFormatter(labelFormats[i]);
 
-			YAxis rightAxis = lineCharts[i].getAxisRight();
+			YAxis rightAxis = chart.getAxisRight();
 			rightAxis.setEnabled(false);
 
-			Legend l = lineCharts[i].getLegend();
+			Legend l = chart.getLegend();
 			l.setEnabled(false);
 
-			XAxis bottomAxis = lineCharts[i].getXAxis();
+			XAxis bottomAxis = chart.getXAxis();
 			bottomAxis.setEnabled(false);
+
+            // Remove padding
+            chart.setViewPortOffsets(0f, 0f, 0f, 0f);
 		}
 
         String legend[] = new String[] {
@@ -311,7 +315,7 @@ public class FourGraphsBars extends UpdateFragment {
 
     @Override
     public synchronized void UpdateWattHours() {
-        WattHours.setText(String.format("%.2f Wh/km", Global.WattHoursPerMeter / 1000));
+        WattHours.setText(String.format("%.2f Wh/km", Global.WattHoursPerMeter * 1000));
     }
 
     private void UpdateBarChart(BarChart chart, Double value, int color) {
