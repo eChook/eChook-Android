@@ -242,7 +242,7 @@ public class BTDataParser extends Thread {
             Global.LapDataList.get(Global.Lap - 1).AddSpeedMPS(Global.SpeedMPS);
         }
 
-        GraphData.AddSpeed(Global.Unit == Global.UNIT.MPH ? Global.SpeedMPS * 2.2 : Global.SpeedMPS * 3.6);
+        GraphData.AddSpeed(Global.SpeedMPS);
 
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
