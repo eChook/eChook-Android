@@ -82,7 +82,7 @@ public final class Global {
     public static volatile ArrayList<LapData> LapDataList = new ArrayList<>();
 	public static volatile RunningAverage AverageAmps 		= new RunningAverage(2); // 2 = number of decimal places
     public static volatile RunningAverage AverageSpeedMPS = new RunningAverage(1);
-    public static 			int		maxGraphDataPoints	=	4 * 20; // 20 seconds of history on graphs assuming Arduino spews every 250ms
+    public static final	int MAX_GRAPH_DATA_POINTS =	4 * 50; // 50 seconds of history on graphs assuming Arduino spews every 250ms
 
     /**********************/
     /* VARIABLES          */

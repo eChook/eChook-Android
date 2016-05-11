@@ -115,7 +115,7 @@ public class SixGraphsBars extends UpdateFragment {
 		for (int i = 0; i < graphs.length; i++) {
 			graphs[i].setData(data[i]);
 			graphs[i].setDescription("");
-			graphs[i].setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			graphs[i].setVisibleXRangeMaximum(Global.MAX_GRAPH_DATA_POINTS);
 			graphs[i].setNoDataText("");
 			graphs[i].setNoDataTextDescription("");
 			graphs[i].setHardwareAccelerationEnabled(true);
@@ -340,7 +340,7 @@ public class SixGraphsBars extends UpdateFragment {
 
     private void UpdateGraph(LineChart graph) {
         graph.notifyDataSetChanged();
-		graph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-		graph.moveViewToX(graph.getXValCount() - Global.maxGraphDataPoints - 1);
+		graph.setVisibleXRangeMaximum(Global.MAX_GRAPH_DATA_POINTS);
+		graph.moveViewToX(graph.getXValCount() - Global.MAX_GRAPH_DATA_POINTS - 1);
 	}
 }

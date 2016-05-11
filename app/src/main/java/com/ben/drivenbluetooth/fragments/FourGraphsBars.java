@@ -119,7 +119,7 @@ public class FourGraphsBars extends UpdateFragment {
             LineChart chart = lineCharts[i];
 			chart.setData(lineDatas[i]);
 			chart.setDescription("");
-			chart.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			chart.setVisibleXRangeMaximum(Global.MAX_GRAPH_DATA_POINTS);
 			chart.setNoDataText("");
 			chart.setNoDataTextDescription("");
 
@@ -327,8 +327,8 @@ public class FourGraphsBars extends UpdateFragment {
 
     private void UpdateLineChart(LineChart graph) {
         graph.notifyDataSetChanged();
-        graph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-        graph.moveViewToX(graph.getXValCount() - Global.maxGraphDataPoints - 1);
+        graph.setVisibleXRangeMaximum(Global.MAX_GRAPH_DATA_POINTS);
+        graph.moveViewToX(graph.getXValCount() - Global.MAX_GRAPH_DATA_POINTS - 1);
     }
 
 	@Deprecated
