@@ -15,10 +15,10 @@ import com.ben.drivenbluetooth.drivenbluetooth.R;
  */
 public class DataBar extends View {
 
-	public Paint p;
-	public int color;
-	public int max;
-	public int min;
+	private Paint p;
+	private int color;
+	private int max;
+	private int min;
 	private int nValue;
 
 	public double xWidth; // width multiplier
@@ -148,6 +148,11 @@ public class DataBar extends View {
 
 		this.invalidate();
 	}
+
+    public void setBarColor(int ColorValue) {
+        this.color = ColorValue;
+        p.setColor(this.color);
+    }
 
 	private int HSVScale(int percent, int hue_min, int hue_max) {
 		if (percent < 0) { percent = 0; }

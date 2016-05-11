@@ -88,14 +88,14 @@ public final class Global {
     /* VARIABLES          */
 	public static volatile 	LineData ThrottleHistory	=	new LineData();
 	public static volatile 	LineData AmpsHistory		=	new LineData();
+    public static volatile 	LineData VoltsHistory		=	new LineData();
+    public static volatile 	LineData MotorRPMHistory	=	new LineData();
+    public static volatile 	LineData SpeedHistory		=	new LineData();
+    public static volatile 	LineData TempC1History		=	new LineData();
 
     /**********************/
     /* CONSTANTS          */
-	public static volatile 	LineData VoltsHistory		=	new LineData();
-	public static volatile 	LineData MotorRPMHistory	=	new LineData();
-	public static volatile 	LineData SpeedHistory		=	new LineData();
-    // 1   2   3   4  5
-    public static volatile 	LineData TempC1History		=	new LineData();
+
 	public static volatile Location StartFinishLineLocation;
 	public static volatile Double StartFinishLineBearing;
 	public static volatile Double Latitude 		=	0.0;

@@ -10,30 +10,36 @@ import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 import com.ben.drivenbluetooth.util.ColorHelper;
 import com.ben.drivenbluetooth.util.CustomLabelFormatter;
-import com.ben.drivenbluetooth.util.DataBar;
 import com.ben.drivenbluetooth.util.UpdateFragment;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 
+import java.util.ArrayList;
+
 
 public class FourGraphsBars extends UpdateFragment {
 
-	private static TextView Current;
-	private static TextView Voltage;
+	private static TextView Amps;
+	private static TextView Volts;
 	private static TextView RPM;
 	private static TextView Speed;
     private static TextView WattHours;
     private static TextView AmpHours;
 
-	private static DataBar CurrentBar;
-	private static DataBar VoltageBar;
-	private static DataBar RPMBar;
-	private static DataBar SpeedBar;
+    private static BarChart AmpsBarChart;
+    private static BarChart VoltsBarChart;
+    private static BarChart SpeedBarChart;
+    private static BarChart RPMBarChart;
 
 	private static LineChart myVoltsGraph;
 	private static LineChart myAmpsGraph;
@@ -53,8 +59,8 @@ public class FourGraphsBars extends UpdateFragment {
 	/*===================*/
 	private void InitializeDataFields() {
 		View v = getView();
-		Current 		= (TextView) v.findViewById(R.id.current);
-		Voltage 		= (TextView) v.findViewById(R.id.voltage);
+		Amps = (TextView) v.findViewById(R.id.current);
+		Volts = (TextView) v.findViewById(R.id.voltage);
 		RPM 			= (TextView) v.findViewById(R.id.rpm);
 		Speed 			= (TextView) v.findViewById(R.id.speed);
 		AmpHours		= (TextView) v.findViewById(R.id.ampHours);
@@ -63,19 +69,31 @@ public class FourGraphsBars extends UpdateFragment {
 
 	private void InitializeGraphs() {
 		View v = getView();
-		myVoltsGraph 	= (LineChart) v.findViewById(R.id.voltsGraph);
-		myAmpsGraph 	= (LineChart) v.findViewById(R.id.ampsGraph);
-		myMotorRPMGraph = (LineChart) v.findViewById(R.id.RPMGraph);
-		mySpeedGraph 	= (LineChart) v.findViewById(R.id.SpeedGraph);
+        VoltsBarChart   = (BarChart) v.findViewById(R.id.VoltsBarChart);
+        AmpsBarChart    = (BarChart) v.findViewById(R.id.AmpsBarChart);
+        RPMBarChart     = (BarChart) v.findViewById(R.id.RPMBarChart);
+        SpeedBarChart   = (BarChart) v.findViewById(R.id.SpeedBarChart);
 
-		LineChart graphs[] = new LineChart[] {
+        myVoltsGraph    = (LineChart) v.findViewById(R.id.voltsGraph);
+        myAmpsGraph     = (LineChart) v.findViewById(R.id.ampsGraph);
+        myMotorRPMGraph = (LineChart) v.findViewById(R.id.RPMGraph);
+        mySpeedGraph    = (LineChart) v.findViewById(R.id.SpeedGraph);
+
+        BarChart barCharts[] = new BarChart[] {
+                VoltsBarChart,
+                AmpsBarChart,
+                RPMBarChart,
+                SpeedBarChart
+        };
+
+		LineChart lineCharts[] = new LineChart[] {
 				myVoltsGraph,
 				myAmpsGraph,
 				myMotorRPMGraph,
 				mySpeedGraph
 		};
 
-		LineData data[] = new LineData[] {
+		LineData lineDatas[] = new LineData[] {
 				Global.VoltsHistory,
 				Global.AmpsHistory,
 				Global.MotorRPMHistory,
@@ -96,36 +114,62 @@ public class FourGraphsBars extends UpdateFragment {
 				new float[] {0, Global.Unit == Global.UNIT.MPH ? 50 : 70}	// speed
 		};
 
-		for (int i = 0; i < graphs.length; i++) {
-			graphs[i].setData(data[i]);
-			graphs[i].setDescription("");
-			graphs[i].setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-			graphs[i].setNoDataText("");
-			graphs[i].setNoDataTextDescription("");
+		for (int i = 0; i < lineCharts.length; i++) {
+			lineCharts[i].setData(lineDatas[i]);
+			lineCharts[i].setDescription("");
+			lineCharts[i].setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+			lineCharts[i].setNoDataText("");
+			lineCharts[i].setNoDataTextDescription("");
 
-			YAxis leftAxis = graphs[i].getAxisLeft();
+			YAxis leftAxis = lineCharts[i].getAxisLeft();
 			leftAxis.setAxisMinValue(minMax[i][0]);
 			leftAxis.setAxisMaxValue(minMax[i][1]);
 			leftAxis.setLabelCount(3, true);
 			leftAxis.setValueFormatter(labelFormats[i]);
 
-			YAxis rightAxis = graphs[i].getAxisRight();
+			YAxis rightAxis = lineCharts[i].getAxisRight();
 			rightAxis.setEnabled(false);
 
-			Legend l = graphs[i].getLegend();
+			Legend l = lineCharts[i].getLegend();
 			l.setEnabled(false);
 
-			XAxis bottomAxis = graphs[i].getXAxis();
+			XAxis bottomAxis = lineCharts[i].getXAxis();
 			bottomAxis.setEnabled(false);
 		}
-	}
 
-	private void InitializeDataBars() {
-		View v = getView();
-		CurrentBar 		= (DataBar) v.findViewById(R.id.CurrentBar);
-		VoltageBar 		= (DataBar) v.findViewById(R.id.VoltageBar);
-		RPMBar 			= (DataBar) v.findViewById(R.id.RPMBar);
-		SpeedBar 		= (DataBar) v.findViewById(R.id.SpeedBar);
+        String legend[] = new String[] {
+                "Volts",
+                "Amps",
+                "RPM",
+                Global.Unit == Global.UNIT.KPH ? "kph" : "mph"
+        };
+
+        for (int i = 0; i < barCharts.length; i++) {
+            BarChart chart = barCharts[i];
+            // Disable right-hand y-axis
+            chart.getAxisLeft().setEnabled(false);
+
+            // Disable legend
+            chart.getLegend().setEnabled(false);
+
+            // Set y-axis limits
+            YAxis yAxis = chart.getAxisLeft();
+            yAxis.setAxisMinValue(minMax[i][0]);
+            yAxis.setAxisMaxValue(minMax[i][1]);
+
+            // Create data
+            BarEntry entry = new BarEntry(0,0);
+            BarDataSet dataSet = new BarDataSet(new ArrayList<BarEntry>(), legend[i]);
+            BarData data = new BarData();
+
+            // Attach data
+            dataSet.addEntry(entry);
+            data.addDataSet(dataSet);
+            chart.setData(data);
+
+            // Refresh chart
+            chart.invalidate();
+        }
 	}
 
 	/*===================*/
@@ -141,7 +185,6 @@ public class FourGraphsBars extends UpdateFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		InitializeDataBars();
 		InitializeDataFields();
 
 		if (Global.EnableGraphs) {
@@ -152,15 +195,15 @@ public class FourGraphsBars extends UpdateFragment {
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		Current				= null;
-		Voltage				= null;
+		Amps                = null;
+		Volts               = null;
 		RPM					= null;
 		Speed				= null;
 
-		CurrentBar			= null;
-		VoltageBar			= null;
-		RPMBar				= null;
-		SpeedBar			= null;
+		AmpsBarChart		= null;
+		VoltsBarChart		= null;
+		SpeedBarChart	    = null;
+		RPMBarChart 	    = null;
 
 		myVoltsGraph		= null;
 		myAmpsGraph			= null;
@@ -184,11 +227,12 @@ public class FourGraphsBars extends UpdateFragment {
     @Override
     public synchronized void UpdateVolts() {
         try {
-			Voltage.setText(String.format("%.2f", Global.Volts));
-			Voltage.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
+			Volts.setText(String.format("%.2f", Global.Volts));
+			Volts.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
 			VoltageBar.setValue(Global.Volts);
+            VoltageBar.setBarColor(ColorHelper.GetVoltsColor(Global.Volts));
 
-			if (Global.EnableGraphs) UpdateGraph(myVoltsGraph);
+			if (Global.EnableGraphs) UpdateLineChart(myVoltsGraph);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -198,12 +242,9 @@ public class FourGraphsBars extends UpdateFragment {
     @Override
     public synchronized void UpdateAmps() {
         try {
-			Current.setText(String.format("%.1f", Global.Amps));
-			Current.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
-			CurrentBar.setValue(Global.Amps);
-
-			if (Global.EnableGraphs) UpdateGraph(myAmpsGraph);
-
+			Amps.setText(String.format("%.1f", Global.Amps));
+			Amps.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
+            if (Global.EnableGraphs) UpdateBarChart(AmpsBarChart, Global.Amps, ColorHelper.GetAmpsColor(Global.Amps));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -230,7 +271,7 @@ public class FourGraphsBars extends UpdateFragment {
 				SpeedBar.setValue(Global.SpeedKPH);
 			}
 
-			if (Global.EnableGraphs) UpdateGraph(mySpeedGraph);
+			if (Global.EnableGraphs) UpdateLineChart(mySpeedGraph);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -243,8 +284,9 @@ public class FourGraphsBars extends UpdateFragment {
 			RPM.setText(String.format("%.0f", Global.MotorRPM));
 			RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
 			RPMBar.setValue(Global.MotorRPM);
+            RPMBar.setBarColor(ColorHelper.GetRPMColor(Global.MotorRPM));
 
-			if (Global.EnableGraphs) UpdateGraph(myMotorRPMGraph);
+			if (Global.EnableGraphs) UpdateLineChart(myMotorRPMGraph);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -256,11 +298,18 @@ public class FourGraphsBars extends UpdateFragment {
         WattHours.setText(String.format("%.2f Wh/km", Global.WattHoursPerKM));
     }
 
-    private void UpdateGraph(LineChart graph) {
+    private void UpdateBarChart(BarChart chart, Double value, int color) {
+        chart.getBarData().getDataSetByIndex(0).getEntryForIndex(0).setVal(value.floatValue());
+        DataSet set = (DataSet) chart.getData().getDataSetByIndex(0);
+        set.setColor(color);
+        chart.animateY(100);
+    }
+
+    private void UpdateLineChart(LineChart graph) {
         graph.notifyDataSetChanged();
-		graph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
-		graph.moveViewToX(graph.getXValCount() - Global.maxGraphDataPoints - 1);
-	}
+        graph.setVisibleXRangeMaximum(Global.maxGraphDataPoints);
+        graph.moveViewToX(graph.getXValCount() - Global.maxGraphDataPoints - 1);
+    }
 
 	@Deprecated
 	public void UpdateThrottle() {}
