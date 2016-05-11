@@ -294,7 +294,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
             if (Global.Lap > 1) {
                 MainActivity.showSnackbar(String.format("Lap %s - %s (%+02.3fs)",
                         Global.Lap - 1,
-                        Global.LapDataList.get(Global.Lap - 2).getLapTime(),
+                        Global.LapDataList.get(Global.Lap - 2).getLapTimeString(),
                         (float) deltaMillis / 1000.0)
                         , 5000);
             }

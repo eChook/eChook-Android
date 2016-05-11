@@ -86,13 +86,13 @@ public class LapHistoryFragment extends UpdateFragment {
 			for (int i = 0; i < Global.LapDataList.size(); i++) {
 				String[] values = new String[]{
 						String.format("%d", i + 1),
-						String.format("%.1f", Global.LapDataList.get(i).getAmps()),
-						String.format("%.1f", Global.LapDataList.get(i).getVolts()),
-                        String.format("%.1f", Global.Unit == Global.UNIT.KPH ? Global.LapDataList.get(i).getSpeedKPH() : Global.LapDataList.get(i).getSpeedMPH()),
-                        String.format("%.0f", Global.LapDataList.get(i).getRPM()),
+						String.format("%.1f", Global.LapDataList.get(i).getAverageAmps()),
+						String.format("%.1f", Global.LapDataList.get(i).getAverageVolts()),
+                        String.format("%.1f", Global.Unit == Global.UNIT.KPH ? Global.LapDataList.get(i).getAverageSpeedKPH() : Global.LapDataList.get(i).getAverageSpeedMPH()),
+                        String.format("%.0f", Global.LapDataList.get(i).getAverageRPM()),
                         String.format("%.2f", Global.LapDataList.get(i).getAmpHours()),
                         String.format("%.2f", Global.LapDataList.get(i).getWattHoursPerKM()),
-                        Global.LapDataList.get(i).getLapTime()
+                        Global.LapDataList.get(i).getLapTimeString()
                 };
 
 				TableRow tr = new TableRow(ctx);
@@ -106,7 +106,7 @@ public class LapHistoryFragment extends UpdateFragment {
 					tr.addView(hv);
 				}
 				TextView laptime = new TextView(ctx);
-				laptime.setText(Global.LapDataList.get(i).getLapTime());
+				laptime.setText(Global.LapDataList.get(i).getLapTimeString());
 				laptime.setGravity(Gravity.CENTER);
 				laptime.setLayoutParams(textViewParams);
 				tr.addView(laptime);
@@ -155,9 +155,9 @@ public class LapHistoryFragment extends UpdateFragment {
         try {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
-                this.Speed.setText(String.format("%.1f", Global.SpeedKPH / 1.61) + " mph");
+                this.Speed.setText(String.format("%.1f", Global.SpeedMPS * 2.2) + " mph");
             } else if (Global.Unit == Global.UNIT.KPH) {
-				this.Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
+				this.Speed.setText(String.format("%.1f", Global.SpeedMPS * 3.6) + " kph");
 			}
 
 		} catch (Exception e) {

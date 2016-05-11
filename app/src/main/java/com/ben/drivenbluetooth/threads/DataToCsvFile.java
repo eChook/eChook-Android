@@ -27,7 +27,7 @@ public class DataToCsvFile extends Thread {
 					"Amps (A)",
 					"Amp hours (Ah)",
 					"Motor speed (RPM)",
-                    "Speed (kph)",
+                    "Speed (m/s)",
                     "Distance (km)",
                     "Temp 1 (C)",
 					"Gear Ratio",
@@ -38,7 +38,7 @@ public class DataToCsvFile extends Thread {
 					"Altitude (m)",
 					"Bearing (deg)",
 					"SpeedGPS (m/s)",
-					"GPSTime",			// milliseconds since epoch (UTC)
+					"GPSTime",			    // milliseconds since epoch (UTC)
 					"GPSAccuracy (m)",		// radius of 68% confidence
 					"Lap",
 					"Vehicle"
@@ -59,18 +59,16 @@ public class DataToCsvFile extends Thread {
 		while (!this.stopWorker) {
 			try {
 				this.ArrayOfVariables = new String[] {
-								String.format("%.0f",Global.InputThrottle),
-								String.format("%.0f",Global.ActualThrottle),
-								String.format("%.2f",Global.Volts),
-								String.format("%.2f",Global.Amps),
-								String.format("%.2f",Global.AmpHours),
-								String.format("%.0f",Global.MotorRPM),
-                        String.format("%.1f", Global.SpeedKPH),
-                        String.format("%.3f", Global.DistanceKM),
-                        String.format("%.1f",Global.TempC1),
-								String.format("%.3f",Global.GearRatio),
-
-									/* LocationStatus */
+								String.format("%.0f", Global.InputThrottle),
+								String.format("%.0f", Global.ActualThrottle),
+								String.format("%.2f", Global.Volts),
+								String.format("%.2f", Global.Amps),
+								String.format("%.2f", Global.AmpHours),
+								String.format("%.0f", Global.MotorRPM),
+                                String.format("%.1f", Global.SpeedMPS),
+                                String.format("%.3f", Global.DistanceMeters),
+                                String.format("%.1f", Global.TempC1),
+								String.format("%.3f", Global.GearRatio),
 								String.format("%.6f", Global.Latitude),
 								String.format("%.6f", Global.Longitude),
 								String.format("%.1f", Global.Altitude),

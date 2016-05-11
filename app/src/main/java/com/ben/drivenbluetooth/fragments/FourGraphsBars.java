@@ -1,5 +1,6 @@
 package com.ben.drivenbluetooth.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,10 +42,10 @@ public class FourGraphsBars extends UpdateFragment {
     private static BarChart SpeedBarChart;
     private static BarChart RPMBarChart;
 
-	private static LineChart myVoltsGraph;
-	private static LineChart myAmpsGraph;
-	private static LineChart myMotorRPMGraph;
-	private static LineChart mySpeedGraph;
+	private static LineChart VoltsLineChart;
+	private static LineChart AmpsLineChart;
+	private static LineChart RPMLineChart;
+	private static LineChart SpeedLineChart;
 
 
 	/*===================*/
@@ -74,10 +75,10 @@ public class FourGraphsBars extends UpdateFragment {
         RPMBarChart     = (BarChart) v.findViewById(R.id.RPMBarChart);
         SpeedBarChart   = (BarChart) v.findViewById(R.id.SpeedBarChart);
 
-        myVoltsGraph    = (LineChart) v.findViewById(R.id.voltsGraph);
-        myAmpsGraph     = (LineChart) v.findViewById(R.id.ampsGraph);
-        myMotorRPMGraph = (LineChart) v.findViewById(R.id.RPMGraph);
-        mySpeedGraph    = (LineChart) v.findViewById(R.id.SpeedGraph);
+        VoltsLineChart = (LineChart) v.findViewById(R.id.voltsGraph);
+        AmpsLineChart = (LineChart) v.findViewById(R.id.ampsGraph);
+        RPMLineChart = (LineChart) v.findViewById(R.id.RPMGraph);
+        SpeedLineChart = (LineChart) v.findViewById(R.id.SpeedGraph);
 
         BarChart barCharts[] = new BarChart[] {
                 VoltsBarChart,
@@ -87,10 +88,10 @@ public class FourGraphsBars extends UpdateFragment {
         };
 
 		LineChart lineCharts[] = new LineChart[] {
-				myVoltsGraph,
-				myAmpsGraph,
-				myMotorRPMGraph,
-				mySpeedGraph
+                VoltsLineChart,
+                AmpsLineChart,
+                RPMLineChart,
+                SpeedLineChart
 		};
 
 		LineData lineDatas[] = new LineData[] {
@@ -205,10 +206,10 @@ public class FourGraphsBars extends UpdateFragment {
 		SpeedBarChart	    = null;
 		RPMBarChart 	    = null;
 
-		myVoltsGraph		= null;
-		myAmpsGraph			= null;
-		myMotorRPMGraph		= null;
-		mySpeedGraph		= null;
+		VoltsLineChart      = null;
+		AmpsLineChart       = null;
+        SpeedLineChart      = null;
+        RPMLineChart        = null;
 
 		AmpHours			= null;
 	}
@@ -229,11 +230,10 @@ public class FourGraphsBars extends UpdateFragment {
         try {
 			Volts.setText(String.format("%.2f", Global.Volts));
 			Volts.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
-			VoltageBar.setValue(Global.Volts);
-            VoltageBar.setBarColor(ColorHelper.GetVoltsColor(Global.Volts));
-
-			if (Global.EnableGraphs) UpdateLineChart(myVoltsGraph);
-
+            if (Global.EnableGraphs) {
+                UpdateBarChart(VoltsBarChart, Global.Volts, ColorHelper.GetVoltsColor(Global.Volts));
+                UpdateLineChart(VoltsLineChart);
+            }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -244,7 +244,10 @@ public class FourGraphsBars extends UpdateFragment {
         try {
 			Amps.setText(String.format("%.1f", Global.Amps));
 			Amps.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
-            if (Global.EnableGraphs) UpdateBarChart(AmpsBarChart, Global.Amps, ColorHelper.GetAmpsColor(Global.Amps));
+            if (Global.EnableGraphs) {
+                UpdateBarChart(AmpsBarChart, Global.Amps, ColorHelper.GetAmpsColor(Global.Amps));
+                UpdateLineChart(AmpsLineChart);
+            }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -263,15 +266,22 @@ public class FourGraphsBars extends UpdateFragment {
     public synchronized void UpdateSpeed() {
         try {
 			// check user preference for speed
+            Double speed = 0d;
+            String speedText = "";
 			if (Global.Unit == Global.UNIT.MPH) {
-                Speed.setText(String.format("%.1f", Global.SpeedKPH / 1.61) + " mph");
-                SpeedBar.setValue(Global.SpeedKPH / 1.61);
+                speed = Global.SpeedMPS * 2.2;
+                speedText = String.format("%.1f mph", speed);
             } else if (Global.Unit == Global.UNIT.KPH) {
-				Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
-				SpeedBar.setValue(Global.SpeedKPH);
+                speed = Global.SpeedMPS * 3.6;
+                speedText = String.format("%.1f kph", speed);
 			}
 
-			if (Global.EnableGraphs) UpdateLineChart(mySpeedGraph);
+            Speed.setText(speedText);
+
+            if (Global.EnableGraphs) {
+                UpdateBarChart(SpeedBarChart, speed, Color.BLACK);
+                UpdateLineChart(SpeedLineChart);
+            }
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -283,10 +293,10 @@ public class FourGraphsBars extends UpdateFragment {
         try {
 			RPM.setText(String.format("%.0f", Global.MotorRPM));
 			RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
-			RPMBar.setValue(Global.MotorRPM);
-            RPMBar.setBarColor(ColorHelper.GetRPMColor(Global.MotorRPM));
-
-			if (Global.EnableGraphs) UpdateLineChart(myMotorRPMGraph);
+            if (Global.EnableGraphs) {
+                UpdateBarChart(RPMBarChart, Global.MotorRPM, ColorHelper.GetRPMColor(Global.MotorRPM));
+                UpdateLineChart(RPMLineChart);
+            }
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -295,7 +305,7 @@ public class FourGraphsBars extends UpdateFragment {
 
     @Override
     public synchronized void UpdateWattHours() {
-        WattHours.setText(String.format("%.2f Wh/km", Global.WattHoursPerKM));
+        WattHours.setText(String.format("%.2f Wh/km", Global.WattHoursPerMeter / 1000));
     }
 
     private void UpdateBarChart(BarChart chart, Double value, int color) {

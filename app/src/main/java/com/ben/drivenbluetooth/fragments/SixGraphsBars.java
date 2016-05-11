@@ -266,14 +266,18 @@ public class SixGraphsBars extends UpdateFragment {
     @Override
     public synchronized void UpdateSpeed() {
         try {
-			// check user preference for speed
-			if (Global.Unit == Global.UNIT.MPH) {
-                Speed.setText(String.format("%.1f", Global.SpeedKPH / 1.61) + " mph");
-                SpeedBar.setValue(Global.SpeedKPH / 1.61);
+            // check user preference for speed
+            Double speed = 0d;
+            String speedText = "";
+            if (Global.Unit == Global.UNIT.MPH) {
+                speed = Global.SpeedMPS * 2.2;
+                speedText = String.format("%.1f mph", speed);
             } else if (Global.Unit == Global.UNIT.KPH) {
-				Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
-				SpeedBar.setValue(Global.SpeedKPH);
-			}
+                speed = Global.SpeedMPS * 3.6;
+                speedText = String.format("%.1f kph", speed);
+            }
+
+            Speed.setText(speedText);
 
 			if (Global.EnableGraphs) UpdateGraph(mySpeedGraph);
 

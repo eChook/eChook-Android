@@ -6,10 +6,9 @@ public class LapData {
 	private RunningAverage AmpsAvg;
 	private RunningAverage VoltsAvg;
 	private RunningAverage RPMAvg;
-    private RunningAverage SpeedKPHAvg;
-    //private RunningAverage WattHoursAvg;
+    private RunningAverage SpeedMPSAvg;
 
-    private Double DistanceKM;
+    private Double DistanceMeters;
     private Double WattHours;
     private Double AmpHours;
 
@@ -19,8 +18,8 @@ public class LapData {
 		AmpsAvg 	= new RunningAverage(1);
 		VoltsAvg 	= new RunningAverage(1);
 		RPMAvg 		= new RunningAverage(0);
-        SpeedKPHAvg = new RunningAverage(1);
-        DistanceKM = 0.0;
+        SpeedMPSAvg = new RunningAverage(1);
+        DistanceMeters = 0.0;
         WattHours = 0.0;
         AmpHours	= 0.0;
 	}
@@ -37,8 +36,8 @@ public class LapData {
 		RPMAvg.add(rpm);
 	}
 
-	public void AddSpeed(Double speed) {
-        SpeedKPHAvg.add(speed);
+	public void AddSpeedMPS(Double speedMPS) {
+        SpeedMPSAvg.add(speedMPS);
     }
 
 	public void AddAmpHours(Double ah) { AmpHours += ah; }
@@ -47,41 +46,51 @@ public class LapData {
         WattHours += wh;
     }
 
-    public void AddDistanceKM(Double km) {
-        DistanceKM += km;
+    public void AddDistanceMeters(Double meters) {
+        DistanceMeters += meters;
     }
 
-	public Double getAmps() {
+	public Double getAverageAmps() {
 		return AmpsAvg.getAverage();
 	}
 
-	public Double getVolts() {
+	public Double getAverageVolts() {
 		return VoltsAvg.getAverage();
 	}
 
-	public Double getRPM() {
+	public Double getAverageRPM() {
 		return RPMAvg.getAverage();
 	}
 
-	public Double getSpeedMPH() {
-        return SpeedKPHAvg.getAverage() / 1.61;
+	public Double getAverageSpeedMPH() {
+        return SpeedMPSAvg.getAverage() * 2.2;
     }
 
-	public Double getSpeedKPH() {
-        return SpeedKPHAvg.getAverage();
+	public Double getAverageSpeedKPH() {
+        return SpeedMPSAvg.getAverage() * 3.6;
+    }
+
+    public Double getAverageSpeedMPS() {
+        return SpeedMPSAvg.getAverage();
     }
 
 	public Double getAmpHours() { return AmpHours; }
 
     public Double getWattHoursPerKM() {
-        return WattHours / DistanceKM;
+        return WattHours / DistanceMeters / 1000;
     }
+
+    public Double getDistanceMeters() { return DistanceMeters; }
+
+    public Double getDistanceKM() { return DistanceMeters / 1000; }
 
     public long getLapTimeMillis() {
         return lapMillis;
     }
 
-    public String getLapTime() {
+    public long getLapTimeSeconds() { return lapMillis / 1000; }
+
+    public String getLapTimeString() {
         long sec1 = TimeUnit.MILLISECONDS.toSeconds(lapMillis);
         long sec2 = TimeUnit.MINUTES.toSeconds(lapMillis);
         return String.format("%02d:%02d",

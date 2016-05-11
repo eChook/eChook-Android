@@ -355,9 +355,9 @@ public class RaceMapFragment extends UpdateFragment
         try {
 			// check user preference for speed
 			if (Global.Unit == Global.UNIT.MPH) {
-                this.Speed.setText(String.format("%.1f", Global.SpeedKPH / 1.61) + " mph");
+                this.Speed.setText(String.format("%.1f", Global.SpeedMPS * 2.2) + " mph");
             } else if (Global.Unit == Global.UNIT.KPH) {
-				this.Speed.setText(String.format("%.1f", Global.SpeedKPH) + " kph");
+				this.Speed.setText(String.format("%.1f", Global.SpeedMPS * 3.6) + " kph");
 			}
 
 		} catch (Exception e) {

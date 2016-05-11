@@ -70,18 +70,18 @@ public final class Global {
 	public static volatile Double InputThrottle 	= 0.0;
 	public static volatile Double ActualThrottle 	= 0.0;
 	public static volatile Double MotorRPM 			= 0.0;
-	public static volatile Double SpeedKPH 			= 0.0;
+	public static volatile Double SpeedMPS          = 0.0;
 	public static volatile Double TempC1 			= 0.0;
 	public static volatile Double TempC2 			= 0.0;
 	public static volatile Double TempC3 			= 0.0;
 	public static volatile Double GearRatio			= 0.0;
 	public static volatile Double AmpHours 			= 0.0;
     public static volatile Double WattHours = 0.0;
-    public static volatile Double WattHoursPerKM = 0.0;
-    public static volatile Double DistanceKM = 0.0;
+    public static volatile Double WattHoursPerMeter = 0.0;
+    public static volatile Double DistanceMeters = 0.0;
     public static volatile ArrayList<LapData> LapDataList = new ArrayList<>();
 	public static volatile RunningAverage AverageAmps 		= new RunningAverage(2); // 2 = number of decimal places
-    public static volatile RunningAverage AverageSpeedKPH = new RunningAverage(1);
+    public static volatile RunningAverage AverageSpeedMPS = new RunningAverage(1);
     public static 			int		maxGraphDataPoints	=	4 * 20; // 20 seconds of history on graphs assuming Arduino spews every 250ms
 
     /**********************/

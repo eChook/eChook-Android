@@ -227,22 +227,22 @@ public class BTDataParser extends Thread {
     }
 
     private synchronized void SetSpeed(final double rawSpeedMPS) {
-        Global.SpeedKPH = rawSpeedMPS * 3.6;
+        Global.SpeedMPS = rawSpeedMPS;
 
         long millis = System.currentTimeMillis();
         long dt = millis - prevDistTime;
         if (prevDistTime > 0) {
-            CalculateDistanceKM(Global.SpeedKPH, dt);
+            CalculateDistanceMeters(Global.SpeedMPS, dt);
         }
         prevDistTime = millis;
 
-        Global.AverageSpeedKPH.add(Global.SpeedKPH);
+        Global.AverageSpeedMPS.add(Global.SpeedMPS);
 
         if (Global.Lap > 0) {
-            Global.LapDataList.get(Global.Lap - 1).AddSpeed(Global.SpeedKPH);
+            Global.LapDataList.get(Global.Lap - 1).AddSpeedMPS(Global.SpeedMPS);
         }
 
-        GraphData.AddSpeed(Global.Unit == Global.UNIT.MPH ? Global.SpeedKPH / 1.61 : Global.SpeedKPH);
+        GraphData.AddSpeed(Global.Unit == Global.UNIT.MPH ? Global.SpeedMPS * 2.2 : Global.SpeedMPS * 3.6);
 
 		MainActivity.MainActivityHandler.post(new Runnable() {
 			public void run() {
@@ -317,14 +317,15 @@ public class BTDataParser extends Thread {
         WattHourAvg.add(wh);
     }
 
-    private synchronized void CalculateDistanceKM(double speedKPH, long dt_millis) {
-        double deltaKM = speedKPH * dt_millis / 1000 / 60 / 60;
-        Global.DistanceKM += deltaKM;
+    private synchronized void CalculateDistanceMeters(double speedMPS, long dt_millis) {
+        double deltaMeters = speedMPS * dt_millis / 1000;
 
-        Global.WattHoursPerKM = WattHourAvg.getAverage() / deltaKM;
+        Global.DistanceMeters += deltaMeters;
+
+        Global.WattHoursPerMeter = WattHourAvg.getAverage() / deltaMeters;
 
         if (Global.Lap > 0) {
-            Global.LapDataList.get(Global.Lap - 1).AddDistanceKM(deltaKM);
+            Global.LapDataList.get(Global.Lap - 1).AddDistanceMeters(deltaMeters);
             Global.LapDataList.get(Global.Lap - 1).AddWattHours(WattHourAvg.getAverage());
         }
 
