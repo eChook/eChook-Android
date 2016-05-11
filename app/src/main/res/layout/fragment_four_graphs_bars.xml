@@ -61,7 +61,7 @@
     <!-- LINE CHARTS -->
 
 	<com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/voltsGraph"
+        android:id="@+id/VoltsLineChart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/ampHours"
@@ -72,25 +72,25 @@
         android:layout_below="@+id/VoltsBarChart"/>
 
 	<com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/ampsGraph"
+        android:id="@+id/AmpsLineChart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/voltsGraph"
+        android:layout_alignBottom="@+id/VoltsLineChart"
         android:layout_alignEnd="@+id/AmpsBarChart"
         android:layout_alignLeft="@+id/AmpsBarChart"
         android:layout_alignRight="@+id/AmpsBarChart"
         android:layout_alignStart="@+id/AmpsBarChart"
-        android:layout_alignTop="@+id/voltsGraph"/>
+        android:layout_alignTop="@+id/VoltsLineChart"/>
 
 	<com.github.mikephil.charting.charts.LineChart
         android:id="@+id/RPMGraph"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/ampsGraph"
+        android:layout_alignBottom="@+id/AmpsLineChart"
         android:layout_alignLeft="@+id/RPMBarChart"
         android:layout_alignRight="@+id/RPMBarChart"
         android:layout_alignStart="@+id/RPMBarChart"
-        android:layout_alignTop="@+id/ampsGraph"
+        android:layout_alignTop="@+id/AmpsLineChart"
         android:layout_toEndOf="@+id/RPMBarChart"/>
 
 	<com.github.mikephil.charting.charts.LineChart
@@ -228,7 +228,7 @@
         android:id="@+id/ampHours"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/ampsGraph"
+        android:layout_alignEnd="@+id/AmpsLineChart"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:gravity="center"

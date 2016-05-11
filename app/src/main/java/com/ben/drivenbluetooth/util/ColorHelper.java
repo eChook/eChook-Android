@@ -10,6 +10,9 @@ public final class ColorHelper {
 	private static final float VOLTAGE_UPPER 	= 26f;
 	private static final float VOLTAGE_LOWER 	= 15f;
 
+    private static final float TEMP_UPPER       = 40f;
+    private static final float TEMP_LOWER       = 30f;
+
 	private static final int RPM_LOW 		= 1400;
 	private static final int RPM_ECO 		= 1800;
 	private static final int RPM_HIGH 		= 3000;
@@ -58,4 +61,24 @@ public final class ColorHelper {
 		}
 		return Color.HSVToColor(new float[]{hue, SATURATION, VALUE});
 	}
+
+    public static int getThrottleColor(Double throttle) {
+        if (throttle < 100) {
+            return Color.HSVToColor(new float[] {BAD, SATURATION, VALUE});
+        } else {
+            return Color.HSVToColor(new float[] {GOOD, SATURATION, VALUE});
+        }
+    }
+
+    public static int getTempColor(Double temp) {
+        float hue;
+        if (temp >= TEMP_UPPER) {
+            hue = BAD;
+        } else if (temp <= TEMP_LOWER) {
+            hue = GOOD;
+        } else {
+            hue = GOOD - (temp.floatValue() - TEMP_LOWER) / (TEMP_UPPER - TEMP_LOWER) * (GOOD - BAD) + BAD;
+        }
+        return Color.HSVToColor(new float[]{hue, SATURATION, VALUE});
+    }
 }

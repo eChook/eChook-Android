@@ -75,8 +75,8 @@ public class FourGraphsBars extends UpdateFragment {
         RPMBarChart     = (BarChart) v.findViewById(R.id.RPMBarChart);
         SpeedBarChart   = (BarChart) v.findViewById(R.id.SpeedBarChart);
 
-        VoltsLineChart  = (LineChart) v.findViewById(R.id.voltsGraph);
-        AmpsLineChart   = (LineChart) v.findViewById(R.id.ampsGraph);
+        VoltsLineChart  = (LineChart) v.findViewById(R.id.VoltsLineChart);
+        AmpsLineChart   = (LineChart) v.findViewById(R.id.AmpsLineChart);
         RPMLineChart    = (LineChart) v.findViewById(R.id.RPMGraph);
         SpeedLineChart  = (LineChart) v.findViewById(R.id.SpeedGraph);
 
