@@ -12,7 +12,7 @@ public class RandomGenerator extends Thread {
     private final float AMPS_STEP   = 30f   / NUM_STEPS;
     private final float VOLTS_STEP  = 26.5f / NUM_STEPS;
     private final float TEMP1_STEP  = 50f   / NUM_STEPS;
-    private final float RPM_STEP    = 3000  / NUM_STEPS;
+    private final float RPM_STEP    = 2000  / NUM_STEPS;
     private final float SPEED_STEP  = 20f   / NUM_STEPS;
     private final float THRA_STEP   = 100f  / NUM_STEPS;
 
