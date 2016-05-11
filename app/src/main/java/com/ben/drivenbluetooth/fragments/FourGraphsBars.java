@@ -75,10 +75,10 @@ public class FourGraphsBars extends UpdateFragment {
         RPMBarChart     = (BarChart) v.findViewById(R.id.RPMBarChart);
         SpeedBarChart   = (BarChart) v.findViewById(R.id.SpeedBarChart);
 
-        VoltsLineChart = (LineChart) v.findViewById(R.id.voltsGraph);
-        AmpsLineChart = (LineChart) v.findViewById(R.id.ampsGraph);
-        RPMLineChart = (LineChart) v.findViewById(R.id.RPMGraph);
-        SpeedLineChart = (LineChart) v.findViewById(R.id.SpeedGraph);
+        VoltsLineChart  = (LineChart) v.findViewById(R.id.voltsGraph);
+        AmpsLineChart   = (LineChart) v.findViewById(R.id.ampsGraph);
+        RPMLineChart    = (LineChart) v.findViewById(R.id.RPMGraph);
+        SpeedLineChart  = (LineChart) v.findViewById(R.id.SpeedGraph);
 
         BarChart barCharts[] = new BarChart[] {
                 VoltsBarChart,
@@ -111,7 +111,7 @@ public class FourGraphsBars extends UpdateFragment {
 		float minMax[][] = new float[][] {
 				new float[] {0, 30},	// volts
 				new float[] {0, 50},	// amps
-				new float[] {0, 2000},	// motor rpm
+				new float[] {0, 2100},	// motor rpm
 				new float[] {0, Global.Unit == Global.UNIT.MPH ? 50 : 70}	// speed
 		};
 
@@ -148,10 +148,13 @@ public class FourGraphsBars extends UpdateFragment {
         for (int i = 0; i < barCharts.length; i++) {
             BarChart chart = barCharts[i];
             // Disable right-hand y-axis
-            chart.getAxisLeft().setEnabled(false);
+            chart.getAxisRight().setEnabled(false);
 
             // Disable legend
             chart.getLegend().setEnabled(false);
+
+            // Disable description
+            chart.setDescription("");
 
             // Set y-axis limits
             YAxis yAxis = chart.getAxisLeft();
@@ -162,11 +165,14 @@ public class FourGraphsBars extends UpdateFragment {
             BarEntry entry = new BarEntry(0,0);
             BarDataSet dataSet = new BarDataSet(new ArrayList<BarEntry>(), legend[i]);
             BarData data = new BarData();
+            data.setDrawValues(false);
 
             // Attach data
             dataSet.addEntry(entry);
             data.addDataSet(dataSet);
             chart.setData(data);
+
+            chart.setHardwareAccelerationEnabled(true);
 
             // Refresh chart
             chart.invalidate();
@@ -312,7 +318,7 @@ public class FourGraphsBars extends UpdateFragment {
         chart.getBarData().getDataSetByIndex(0).getEntryForIndex(0).setVal(value.floatValue());
         DataSet set = (DataSet) chart.getData().getDataSetByIndex(0);
         set.setColor(color);
-        chart.animateY(100);
+        chart.invalidate();
     }
 
     private void UpdateLineChart(LineChart graph) {
