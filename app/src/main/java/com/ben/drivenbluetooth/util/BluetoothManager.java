@@ -3,6 +3,7 @@ package com.ben.drivenbluetooth.util;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.os.AsyncTask;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -27,6 +28,7 @@ public final class BluetoothManager {
 		void onBluetoothConnected(BluetoothSocket BTSocket);
 		void onFailConnection();
 		void onBluetoothDisabled();
+        void onBluetoothReconnecting();
 	}
 
     /** Registers the listener for BluetoothEvents
@@ -134,6 +136,7 @@ public final class BluetoothManager {
 
     /** The routine to reconnect to Bluetooth if it has become unresponsive or disconnected during a race */
 	public void reconnectBT() {
+        mListener.onBluetoothReconnecting();
 		if (Global.BTState == Global.BTSTATE.DISCONNECTED) {
 			try {
 				try {

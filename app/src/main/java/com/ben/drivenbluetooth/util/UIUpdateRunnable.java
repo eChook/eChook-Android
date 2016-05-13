@@ -17,7 +17,6 @@ public class UIUpdateRunnable implements Runnable {
 	@Override
 	public void run() {
         try {
-            UpdateBTStatus();
             UpdateFileSize();
             UpdateLap();
             UpdateBTCarName();

@@ -668,6 +668,28 @@ public class MainActivity
         myDataFileName.setText(Global.DATA_FILE);
     }
 
+    /** Updates the TextView in the top-right corner of the app with the current Bluetooth connection status */
+    private void UpdateBTStatus() {
+        switch (Global.BTState) {
+            case DISCONNECTED:
+                MainActivity.myBTState.setText("DISCONNECTED");
+                MainActivity.myBTState.setTextColor(getResources().getColor(R.color.negative));
+                break;
+            case CONNECTING:
+                MainActivity.myBTState.setText("CONNECTING");
+                MainActivity.myBTState.setTextColor(getResources().getColor(R.color.neutral));
+                break;
+            case CONNECTED:
+                MainActivity.myBTState.setText("CONNECTED");
+                MainActivity.myBTState.setTextColor(getResources().getColor(R.color.positive));
+                break;
+            case RECONNECTING:
+                MainActivity.myBTState.setText("RECONNECTING... [" + Global.BTReconnectAttempts + "]");
+                MainActivity.myBTState.setTextColor(getResources().getColor(R.color.neutral));
+                break;
+        }
+    }
+
 	/* =========================== */
 	/* BTDATAPARSER IMPLEMENTATION */
     /* =========================== */
@@ -712,6 +734,7 @@ public class MainActivity
     public void onBluetoothConnected(final BluetoothSocket BTSocket) {
         Global.BTSocket = BTSocket;
         Global.BTState = Global.BTSTATE.CONNECTED;
+        UpdateBTStatus();
 
         MainActivityHandler.post(new Runnable() {
             @Override
@@ -730,6 +753,7 @@ public class MainActivity
             public void run() {
                 showMessage("Could not connect to " + Global.BTDeviceName + ". Please try again");
                 Global.BTState = Global.BTSTATE.DISCONNECTED;
+                UpdateBTStatus();
             }
         });
     }
@@ -739,5 +763,11 @@ public class MainActivity
     public void onBluetoothDisabled() {
         Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         startActivityForResult(enableBluetooth, 0);
+    }
+
+    @Override
+    public void onBluetoothReconnecting() {
+        Global.BTState = Global.BTSTATE.RECONNECTING;
+        UpdateBTStatus();
     }
 }
