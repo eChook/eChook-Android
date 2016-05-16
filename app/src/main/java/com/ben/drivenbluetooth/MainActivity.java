@@ -2,6 +2,7 @@ package com.ben.drivenbluetooth;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -61,7 +62,7 @@ public class MainActivity
         extends AppCompatActivity
         implements	BTDataParser.BTDataParserListener,
         BluetoothManager.BluetoothEvents,
-        DrivenSettings.DrivenSettingsInterface {
+        SettingsFragment.SettingsInterface {
 
     public static TextView myMode;
 
@@ -132,10 +133,9 @@ public class MainActivity
         MainActivity.myLogging.setText("NO");
         MainActivity.myLogging.setTextColor(getResources().getColor(R.color.negative));
 
-        StartUIUpdater();
+        //StartUIUpdater();
 
         DrivenSettings.InitializeSettings();
-        DrivenSettings.setSettingsListener(this);
 
         myDrivenLocation = new DrivenLocation(); // must be initialized here or else null object ref error
 
@@ -149,6 +149,9 @@ public class MainActivity
         StartDataParser();
 
         RequestAllPermissions();
+
+        UpdateBTStatus();
+        UpdateBTCarName();
     }
 
     @Override
@@ -212,10 +215,6 @@ public class MainActivity
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     }
-
-	/* ============ */
-	/* INITIALIZERS */
-    /* ============ */
 
     private void RequestAllPermissions() {
         String[] permissions = new String[] {
@@ -416,6 +415,7 @@ public class MainActivity
     /** Called when the user taps the cogwheel in the app. Launches the settings fragment */
     public void LaunchSettings(View v) {
         SettingsFragment settingsFragment = new SettingsFragment();
+        settingsFragment.setSettingsListener(this);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.overlay, settingsFragment)
                 .addToBackStack(null)
@@ -713,7 +713,7 @@ public class MainActivity
     }
 
     /** Updates the TextView at the top of the UI showing the BT device name */
-    public void UpdateBTCarName() {
+    public static void UpdateBTCarName() {
         MainActivity.myBTCarName.setText(Global.BTDeviceName + " :: " + Global.CarName);
     }
 
@@ -800,15 +800,9 @@ public class MainActivity
     }
 
     /* =============================== */
-	/* DRIVENSETTINGS IMPLEMENTATION */
+	/* SETTINGSFRAGMENT IMPLEMENTATION */
     /* =============================== */
 
     @Override
-    public void onUDPSettingChanged() {
-        if (Global.UDPEnabled) {
-            mUDPSender.Enable();
-        } else {
-            mUDPSender.Disable();
-        }
-    }
+    public void onSettingChanged(SharedPreferences sharedPreferences, String key) {}
 }

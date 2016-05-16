@@ -110,7 +110,7 @@ public class UDPSender extends Thread {
         Looper.loop();
 	}
 
-    private boolean OpenUDPSocket() {
+    public boolean OpenUDPSocket() {
         boolean success;
         try {
             IPAddress = InetAddress.getByName(Global.SOCKETADDRESS);
@@ -166,6 +166,7 @@ public class UDPSender extends Thread {
     public void Enable() {
         UDPEnabled = true;
         Global.UDPEnabled = UDPEnabled;
+        OpenUDPSocket();
     }
 
     public void Disable() {

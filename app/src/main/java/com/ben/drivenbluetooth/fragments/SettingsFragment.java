@@ -13,11 +13,23 @@ import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.drivenbluetooth.R;
 
+import org.acra.ACRA;
+
 import java.util.Map;
 
 public class SettingsFragment 	extends PreferenceFragmentCompat
 								implements SharedPreferences.OnSharedPreferenceChangeListener
 {
+    private SettingsInterface mListener;
+
+    public interface SettingsInterface {
+        void onSettingChanged(SharedPreferences sharedPreferences, String key);
+    }
+
+    public void setSettingsListener(SettingsInterface settingsInterface) {
+        mListener = settingsInterface;
+    }
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,14 +44,18 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
     }
 
     private void updatePreferenceSummary(String key) {
-		Preference pref = findPreference(key);
-		if (pref instanceof ListPreference) {
-			ListPreference listPref = (ListPreference) pref;
-			pref.setSummary(listPref.getEntry());
-		} else if (pref instanceof EditTextPreference) {
-			EditTextPreference editTextPref = (EditTextPreference) pref;
-            pref.setSummary(editTextPref.getText());
-		}
+        try {
+            Preference pref = findPreference(key);
+            if (pref instanceof ListPreference) {
+                ListPreference listPref = (ListPreference) pref;
+                pref.setSummary(listPref.getEntry());
+            } else if (pref instanceof EditTextPreference) {
+                EditTextPreference editTextPref = (EditTextPreference) pref;
+                pref.setSummary(editTextPref.getText());
+            }
+        } catch (Exception e) {
+            ACRA.getErrorReporter().handleException(e);
+        }
 	}
 
 	private void updateAllPreferenceSummary() {
@@ -82,18 +98,26 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					break;
 				case "prefCarName":
 					Global.CarName = sharedPreferences.getString("prefCarName","");
+                    MainActivity.UpdateBTCarName();
 					break;
 				case "prefGraphs":
 					Global.EnableGraphs = Integer.valueOf(sharedPreferences.getString("prefGraphs", "")) != 0;
                     break;
                 case "prefUDP":
                     Global.UDPEnabled = sharedPreferences.getString("prefUDP", "").equals(Global.UDP_PASSWORD);
+                    if (Global.UDPEnabled) {
+                        MainActivity.mUDPSender.Enable();
+                    } else {
+                        MainActivity.mUDPSender.Disable();
+                    }
                     break;
 				default:
 					break;
 			}
+            mListener.onSettingChanged(sharedPreferences, key);
 		} catch (Exception e) {
 			MainActivity.showError(e);
+            ACRA.getErrorReporter().handleException(e);
 		}
 	}
 
