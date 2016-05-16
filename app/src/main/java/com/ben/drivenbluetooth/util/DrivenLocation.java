@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.acra.ACRA;
 
 import java.util.ArrayList;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 										GoogleApiClient.OnConnectionFailedListener,
@@ -195,7 +196,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
         SimpleRegression simpleRegression = new SimpleRegression(true); // true makes intercept non-zero
         for (int i = 0; i < InitialRaceDataPoints.size(); i++) {
             float bearing = observerLocation.bearingTo(InitialRaceDataPoints.get(i));
-            simpleRegression.addData(new float[][] {
+            simpleRegression.addData(new double[][] {
                     {i, bearing}
             });
         }

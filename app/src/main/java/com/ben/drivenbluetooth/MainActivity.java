@@ -60,7 +60,8 @@ import java.util.TimerTask;
 public class MainActivity
         extends AppCompatActivity
         implements	BTDataParser.BTDataParserListener,
-        BluetoothManager.BluetoothEvents {
+        BluetoothManager.BluetoothEvents,
+        DrivenSettings.DrivenSettingsInterface {
 
     public static TextView myMode;
 
@@ -134,6 +135,7 @@ public class MainActivity
         StartUIUpdater();
 
         DrivenSettings.InitializeSettings();
+        DrivenSettings.setSettingsListener(this);
 
         myDrivenLocation = new DrivenLocation(); // must be initialized here or else null object ref error
 
@@ -650,7 +652,8 @@ public class MainActivity
     }
 
     private void ActivateLaunchMode() {
-        // reset the lap timer & lap counters
+        // reset some key variables
+        // lap counters
         Global.Lap = 0;
         LapTimer.stop();
         LapTimer.setBase(SystemClock.elapsedRealtime());
@@ -711,8 +714,6 @@ public class MainActivity
     public void UpdateBTCarName() {
         MainActivity.myBTCarName.setText(Global.BTDeviceName + " :: " + Global.CarName);
     }
-
-    public void Update
 
 	/* =========================== */
 	/* BTDATAPARSER IMPLEMENTATION */
@@ -789,9 +790,23 @@ public class MainActivity
         startActivityForResult(enableBluetooth, 0);
     }
 
+    /** Called when BluetoothManager is in a reconnecting loop */
     @Override
     public void onBluetoothReconnecting() {
         Global.BTState = Global.BTSTATE.RECONNECTING;
         UpdateBTStatus();
+    }
+
+    /* =============================== */
+	/* DRIVENSETTINGS IMPLEMENTATION */
+    /* =============================== */
+
+    @Override
+    public void onUDPSettingChanged() {
+        if (Global.UDPEnabled) {
+            mUDPSender.Enable();
+        } else {
+            mUDPSender.Disable();
+        }
     }
 }

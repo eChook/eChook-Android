@@ -23,21 +23,18 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 public class UDPSender extends Thread {
-    private static InetAddress IPAddress;
-    private static DatagramSocket mUDPSocket;
-    private static int socketCounter = 0;
-    private static int sendFailCount = 0;
-    private static boolean mUDPSocketOpen = false;
-    private static boolean UDPEnabled = false;
+    private InetAddress IPAddress;
+    private DatagramSocket mUDPSocket;
+    private int socketCounter = 0;
+    private int sendFailCount = 0;
+    private boolean mUDPSocketOpen = false;
+    private boolean UDPEnabled = false;
     public Handler PacketHandler;
     public Handler ConnectivityChangeHandler;
     public Handler LocationHandler;
 
     public UDPSender() {
-        TelephonyManager tm = (TelephonyManager) MainActivity.getAppContext().getSystemService(Context.TELEPHONY_SERVICE);
-        String IMEI = tm.getDeviceId();
-        if (IMEI.equals("357513060698660"))
-            UDPEnabled = true;
+        UDPEnabled = Global.UDPEnabled;
     }
 
 	@Override
@@ -164,5 +161,15 @@ public class UDPSender extends Thread {
                 = (ConnectivityManager) MainActivity.getAppContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public void Enable() {
+        UDPEnabled = true;
+        Global.UDPEnabled = UDPEnabled;
+    }
+
+    public void Disable() {
+        UDPEnabled = false;
+        Global.UDPEnabled = UDPEnabled;
     }
 }

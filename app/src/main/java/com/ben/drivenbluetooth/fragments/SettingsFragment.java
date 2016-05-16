@@ -85,6 +85,10 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					break;
 				case "prefGraphs":
 					Global.EnableGraphs = Integer.valueOf(sharedPreferences.getString("prefGraphs", "")) != 0;
+                    break;
+                case "prefUDP":
+                    Global.UDPEnabled = sharedPreferences.getString("prefUDP", "").equals(Global.UDP_PASSWORD);
+                    break;
 				default:
 					break;
 			}

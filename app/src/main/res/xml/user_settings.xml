@@ -54,4 +54,13 @@
 			android:summary="%s"
 			/>
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Live Data"
+        android:key="prefKeyLiveData">
+        <EditTextPreference
+            android:key="prefUDP"
+            android:title="Live data keyword"
+            android:summary="%s"
+            />
+    </PreferenceCategory>
 </PreferenceScreen>

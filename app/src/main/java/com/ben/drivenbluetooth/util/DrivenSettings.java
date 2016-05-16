@@ -9,9 +9,23 @@ import com.ben.drivenbluetooth.drivenbluetooth.R;
 
 public final class DrivenSettings {
 
+    private static DrivenSettingsInterface mListener = null;
+
 	private DrivenSettings() {
 		// required empty constructor
 	}
+
+    public interface DrivenSettingsInterface {
+        void onUDPSettingChanged();
+    }
+
+    public static void setSettingsListener(DrivenSettingsInterface listener) {
+        mListener = listener;
+    }
+
+    public static void removeSettingsListener() {
+        mListener = null;
+    }
 
 	public static void InitializeSettings() {
 		PreferenceManager.setDefaultValues(MainActivity.getAppContext(), R.xml.user_settings, false);
@@ -23,6 +37,7 @@ public final class DrivenSettings {
 		BTDevice(prefs);
 		CarName(prefs);
 		Graphs(prefs);
+        UDP(prefs);
 	}
 
 	public static void QuickChangeMode() {
@@ -95,4 +110,9 @@ public final class DrivenSettings {
 			// probably not needed
 		}
 	}
+
+    private static void UDP(SharedPreferences prefs) {
+        Global.UDPEnabled = prefs.getString("prefUDP", "").equals(Global.UDP_PASSWORD);
+        mListener.onUDPSettingChanged();
+    }
 }

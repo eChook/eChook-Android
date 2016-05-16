@@ -58,10 +58,13 @@ public final class Global {
     public static final int LOCATION_FAST_INTERVAL = 1000;        // High speed location UpdateLocationSetting interval in ms
     public static final float LAP_TRIGGER_RANGE = 20f;  // locus around the start location to trigger a lap
     public static final int MAP_UPDATE_INTERVAL = 5000;
-    public static final String SOCKETADDRESS = "exantas.homenet.org";
+    public static final String SOCKETADDRESS = "exantas.me";
     public static final int SOCKETPORT = 8081;
 
     public static final int PERMISSIONS_REQUEST = 1;
+
+    public static final String UDP_PASSWORD = "daevbro";
+
     /**********************/
 	// use the volatile keyword for thread safety
     public static volatile BlockingQueue<byte[]> BTStreamQueue = 	new LinkedBlockingQueue<>();
@@ -128,8 +131,9 @@ public final class Global {
 	public static String BTDeviceName;
 	public static boolean EnableGraphs = true;
 	public static Double BatteryCapacityAh;
+    public static boolean UDPEnabled = false;
 
-	/**********************/
+    /**********************/
     private Global() {
         try {
             // Initialize an empty queue
