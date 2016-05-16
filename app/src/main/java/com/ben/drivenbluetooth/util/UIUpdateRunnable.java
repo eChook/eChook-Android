@@ -17,8 +17,6 @@ public class UIUpdateRunnable implements Runnable {
 	@Override
 	public void run() {
         try {
-            UpdateFileSize();
-            UpdateLap();
             UpdateBTCarName();
         } catch (Exception e) {
             ACRA.getErrorReporter().handleException(e);

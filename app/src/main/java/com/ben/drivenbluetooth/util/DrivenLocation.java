@@ -90,10 +90,10 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		}
 
 		if (CurrentLocation != null && PreviousLocation != null) {
-			Global.DeltaDistance = _calculateDistanceBetween(PreviousLocation, CurrentLocation);
+			Global.DeltaDistance = calculateDistanceBetween(PreviousLocation, CurrentLocation);
 		}
 
-		_addToPathHistory(location);
+		addToPathHistory(location);
 		if (myRaceObserver != null) {
 			myRaceObserver.updateLocation(location);
 		}
@@ -169,11 +169,11 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		LocationServices.FusedLocationApi.removeLocationUpdates(GoogleApi, this);
 	}
 
-	private float _calculateDistanceBetween(Location location1, Location location2) {
+	private float calculateDistanceBetween(Location location1, Location location2) {
 		return location1.distanceTo(location2);
 	}
 
-	private void _calculateInitialBearing() {
+	private void calculateInitialBearing() {
 		Location start = null;
 		// sync not required as this function and onRaceStart() run on the same thread
 		// i.e. they cannot be called at the same time
@@ -188,16 +188,45 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		}
 	}
 
-	private void _addToPathHistory(Location loc) {
+    private void calculateTrackOrientation() {
+        // Linear regression time!
+        // We need to calculate the bearing to each location point and throw them into an array
+        Location observerLocation = myRaceObserver.getLocation();
+        SimpleRegression simpleRegression = new SimpleRegression(true); // true makes intercept non-zero
+        for (int i = 0; i < InitialRaceDataPoints.size(); i++) {
+            float bearing = observerLocation.bearingTo(InitialRaceDataPoints.get(i));
+            simpleRegression.addData(new float[][] {
+                    {i, bearing}
+            });
+        }
+
+        // get slope of line
+        if (simpleRegression.getSlope() > 0) {
+            // the bearing is INCREASING which means the vehicle is traveling clockwise
+            myRaceObserver.setOrientation(RaceObserver.ORIENTATION.CLOCKWISE);
+        } else {
+            // the bearing is DECREASING which means the vehicle is traveling counterclockwise
+            myRaceObserver.setOrientation(RaceObserver.ORIENTATION.ANTICLOCKWISE);
+        }
+
+        MainActivity.MainActivityHandler.post(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+    }
+
+	private void addToPathHistory(Location loc) {
 		this.pathHistory.add(new LatLng(loc.getLatitude(), loc.getLongitude()));
 	}
 
-	private void _resetPathHistory() {
+	private void resetPathHistory() {
 		this.pathHistory = null;
 		this.pathHistory = new PolylineOptions();
 	}
 
-	private void _resetLapTimer() {
+	private void resetLapTimer() {
 		MainActivity.LapTimer.stop();
 		MainActivity.LapTimer.setBase(SystemClock.elapsedRealtime());
 		MainActivity.LapTimer.start();
@@ -276,8 +305,11 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
             Global.LapDataList.add(new LapData());
 			Global.Lap++;
 
+            // Update the lap text
+            MainActivity.UpdateLap();
+
             // reset the lap timer
-			_resetLapTimer();
+			resetLapTimer();
 
             // re-enable cross detection after 20 seconds
 			new Handler().postDelayed(new Runnable() {
@@ -288,7 +320,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
             }, 20000);
 
             // reset the path history on the map (black trail)
-            _resetPathHistory();
+            resetPathHistory();
 
             // show lap summary message
             if (Global.Lap > 1) {
@@ -314,7 +346,8 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				_calculateInitialBearing();
+				calculateInitialBearing();
+                calculateTrackOrientation();
 				storePointsIntoInitialArray = false;
 				CrossStartFinishLineTriggerEnabled = true;
 			}

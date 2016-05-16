@@ -38,6 +38,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 			pref.setSummary(listPref.getEntry());
 		} else if (pref instanceof EditTextPreference) {
 			EditTextPreference editTextPref = (EditTextPreference) pref;
+            pref.setSummary(editTextPref.getText());
 		}
 	}
 

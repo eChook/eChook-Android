@@ -3,6 +3,7 @@ package com.ben.drivenbluetooth;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -619,6 +620,10 @@ public class MainActivity
 	/* OTHER SHIT */
     /* ========== */
 
+    private boolean checkIfUIThread() {
+        return Looper.getMainLooper().getThread() == Thread.currentThread();
+    }
+
     public void CycleView() {
         try {
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -665,6 +670,13 @@ public class MainActivity
         File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
         MediaScannerConnection.scanFile(MainActivity.getAppContext(), new String[]{f.getAbsolutePath()}, null, null);
         Global.DataFileLength = f.length();
+        if (Global.DataFileLength < 1024) {
+            MainActivity.myDataFileSize.setText(String.valueOf(Global.DataFileLength) + " B");
+        } else if (Global.DataFileLength < 1048576) {
+            MainActivity.myDataFileSize.setText(String.format("%.2f", (float) Global.DataFileLength / 1024.0) + " KB");
+        } else {
+            MainActivity.myDataFileSize.setText(String.format("%.2f", (float) Global.DataFileLength / 1048576) + " MB");
+        }
         myDataFileName.setText(Global.DATA_FILE);
     }
 
@@ -689,6 +701,18 @@ public class MainActivity
                 break;
         }
     }
+
+    /** Updates the TextView at the bottom of the UI showing the lap number */
+    public static void UpdateLap() {
+        MainActivity.LapNumber.setText("L" + Global.Lap);
+    }
+
+    /** Updates the TextView at the top of the UI showing the BT device name */
+    public void UpdateBTCarName() {
+        MainActivity.myBTCarName.setText(Global.BTDeviceName + " :: " + Global.CarName);
+    }
+
+    public void Update
 
 	/* =========================== */
 	/* BTDATAPARSER IMPLEMENTATION */

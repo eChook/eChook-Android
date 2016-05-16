@@ -51,7 +51,7 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 		CheckIfCrossStartFinishLine();
 	}
 
-	public Location getMyLocation() {
+	public Location getLocation() {
 		return myLocation;
 	}
 
@@ -124,6 +124,14 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 	public float getBearingToStartFinishLine() {
 		return bearingToStartFinishLine;
 	}
+
+    public void setOrientation(ORIENTATION or) {
+        Orientation = or;
+    }
+
+    public ORIENTATION getOrientation() {
+        return Orientation;
+    }
 
 	/*===================*/
 	/* RACESTARTMONITOR IMPLEMENTATION
