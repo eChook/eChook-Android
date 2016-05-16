@@ -160,7 +160,9 @@ public class MainActivity
     @Override
     protected void onStop() {
         super.onStop();
-        myDrivenLocation.disconnect();
+        try {
+            myDrivenLocation.disconnect();
+        } catch (Exception ignored) {}
     }
 
     @Override
