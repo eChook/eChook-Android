@@ -180,7 +180,7 @@ public class MainActivity
 
     @Override
     protected void onDestroy() {
-        StopUIUpdater();
+        //StopUIUpdater();
         ForceStop(myDataFileName);
         myMode			= null;
         myDataFileName	= null;
@@ -687,24 +687,28 @@ public class MainActivity
 
     /** Updates the TextView in the top-right corner of the app with the current Bluetooth connection status */
     private void UpdateBTStatus() {
-        switch (Global.BTState) {
-            case DISCONNECTED:
-                MainActivity.myBTState.setText("DISCONNECTED");
-                MainActivity.myBTState.setTextColor(getResources().getColor(R.color.negative));
-                break;
-            case CONNECTING:
-                MainActivity.myBTState.setText("CONNECTING");
-                MainActivity.myBTState.setTextColor(getResources().getColor(R.color.neutral));
-                break;
-            case CONNECTED:
-                MainActivity.myBTState.setText("CONNECTED");
-                MainActivity.myBTState.setTextColor(getResources().getColor(R.color.positive));
-                break;
-            case RECONNECTING:
-                MainActivity.myBTState.setText("RECONNECTING... [" + Global.BTReconnectAttempts + "]");
-                MainActivity.myBTState.setTextColor(getResources().getColor(R.color.neutral));
-                break;
-        }
+        MainActivityHandler.post(new Runnable() {
+            public void run() {
+                switch (Global.BTState) {
+                    case DISCONNECTED:
+                        MainActivity.myBTState.setText("DISCONNECTED");
+                        MainActivity.myBTState.setTextColor(getResources().getColor(R.color.negative));
+                        break;
+                    case CONNECTING:
+                        MainActivity.myBTState.setText("CONNECTING");
+                        MainActivity.myBTState.setTextColor(getResources().getColor(R.color.neutral));
+                        break;
+                    case CONNECTED:
+                        MainActivity.myBTState.setText("CONNECTED");
+                        MainActivity.myBTState.setTextColor(getResources().getColor(R.color.positive));
+                        break;
+                    case RECONNECTING:
+                        MainActivity.myBTState.setText("RECONNECTING... [" + Global.BTReconnectAttempts + "]");
+                        MainActivity.myBTState.setTextColor(getResources().getColor(R.color.neutral));
+                        break;
+                }
+            }
+        });
     }
 
     /** Updates the TextView at the bottom of the UI showing the lap number */
@@ -714,7 +718,12 @@ public class MainActivity
 
     /** Updates the TextView at the top of the UI showing the BT device name */
     public static void UpdateBTCarName() {
-        MainActivity.myBTCarName.setText(Global.BTDeviceName + " :: " + Global.CarName);
+        MainActivityHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity.myBTCarName.setText(Global.BTDeviceName + " :: " + Global.CarName);
+            }
+        });
     }
 
 	/* =========================== */
@@ -772,6 +781,18 @@ public class MainActivity
         });
     }
 
+    @Override
+    public void onBluetoothConnecting() {
+        MainActivityHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                showMessage("Connecting to " + Global.BTDeviceName + "...");
+                Global.BTState = Global.BTSTATE.CONNECTING;
+                UpdateBTStatus();
+            }
+        });
+    }
+
     /** This function is triggered by BluetoothManager when an unsuccessful connection occurs */
     @Override
     public void onFailConnection() {
@@ -781,6 +802,20 @@ public class MainActivity
                 showMessage("Could not connect to " + Global.BTDeviceName + ". Please try again");
                 Global.BTState = Global.BTSTATE.DISCONNECTED;
                 UpdateBTStatus();
+            }
+        });
+    }
+
+    @Override
+    public void onBluetoothDisconnected() {
+        MainActivityHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                showMessage(Global.BTDeviceName + " disconnected");
+                Global.BTState = Global.BTSTATE.DISCONNECTED;
+                UpdateBTStatus();
+                StopDataLogger();
+                UpdateDataFileInfo();
             }
         });
     }

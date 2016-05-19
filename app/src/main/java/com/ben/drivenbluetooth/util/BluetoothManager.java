@@ -3,7 +3,6 @@ package com.ben.drivenbluetooth.util;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.os.AsyncTask;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -26,7 +25,9 @@ public final class BluetoothManager {
 
 	public interface BluetoothEvents {
 		void onBluetoothConnected(BluetoothSocket BTSocket);
+        void onBluetoothDisconnected();
 		void onFailConnection();
+        void onBluetoothConnecting();
 		void onBluetoothDisabled();
         void onBluetoothReconnecting();
 	}
@@ -82,6 +83,12 @@ public final class BluetoothManager {
     public void openBT(boolean wait) {
 		if (matchingDeviceFound && !isConnecting) {
 			Global.BTState = Global.BTSTATE.CONNECTING;
+            if (wait) {
+                // usually wait is only true when we are in a reconnect loop...
+                mListener.onBluetoothReconnecting();
+            } else {
+                mListener.onBluetoothConnecting();
+            }
 			Thread connectToBTDevice = new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -131,24 +138,24 @@ public final class BluetoothManager {
             mmSocket.close();
 			Global.BTSocket.close();
 			Global.BTState = Global.BTSTATE.DISCONNECTED;
+            mListener.onBluetoothDisconnected();
         }
     }
 
     /** The routine to reconnect to Bluetooth if it has become unresponsive or disconnected during a race */
 	public void reconnectBT() {
         mListener.onBluetoothReconnecting();
-		if (Global.BTState == Global.BTSTATE.DISCONNECTED) {
-			try {
-				try {
-					Global.BTSocket.close();
-				} catch (Exception ignored) {}
-				try {
-					mmSocket.close();
-				} catch (Exception ignored) {}
-				this.openBT(true); // true waits for openBT to finish before returning
-			} catch (Exception e) {
-				e.getMessage();
-			}
-		}
+        Global.BTReconnectAttempts++;
+        try {
+            try {
+                Global.BTSocket.close();
+            } catch (Exception ignored) {}
+            try {
+                mmSocket.close();
+            } catch (Exception ignored) {}
+            this.openBT(true); // true waits for openBT to finish before returning
+        } catch (Exception e) {
+            e.getMessage();
+        }
 	}
 }
