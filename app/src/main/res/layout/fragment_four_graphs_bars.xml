@@ -24,7 +24,7 @@
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/RPMBarChart"
-        class="com.ben.drivenbluetooth.util.DataBarChart"
+        class="com.ben.echookcompanion.util.DataBarChart"
         android:layout_width="@dimen/view4_field_width"
         android:layout_height="200dp"
         android:layout_alignBottom="@+id/AmpsBarChart"
@@ -36,7 +36,7 @@
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/VoltsBarChart"
-        class="com.ben.drivenbluetooth.util.DataBarChart"
+        class="com.ben.echookcompanion.util.DataBarChart"
         android:layout_width="@dimen/view4_field_width"
         android:layout_height="150dp"
         android:layout_alignLeft="@+id/voltage"
@@ -47,7 +47,7 @@
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/SpeedBarChart"
-        class="com.ben.drivenbluetooth.util.DataBarChart"
+        class="com.ben.echookcompanion.util.DataBarChart"
         android:layout_width="@dimen/view4_field_width"
         android:layout_height="200dp"
         android:layout_alignBottom="@+id/RPMBarChart"
