@@ -4,7 +4,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.widget.Toast;
 
 import com.ben.echookcompanion.Global;
 import com.ben.echookcompanion.MainActivity;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public class Accelerometer implements SensorEventListener {
 
-	private SensorManager mSensorManager;
+	private final SensorManager mSensorManager;
 	private Sensor mAccelerometer;
 	private boolean supportsAccelerometer = false;
 	private float[] AccelerometerSensorValues;
@@ -30,16 +29,16 @@ public class Accelerometer implements SensorEventListener {
 				mAccelerometer = gravSensors.get(0);
 				supportsAccelerometer = true;
 			} else {
-				MainActivity.showMessage("Device does not support accelerometer", Toast.LENGTH_LONG);
+				MainActivity.showMessage("Device does not support accelerometer");
 				supportsAccelerometer = false;
 			}
 		} else {
-			MainActivity.showMessage("Device does not support accelerometer", Toast.LENGTH_LONG);
+			MainActivity.showMessage("Device does not support accelerometer");
 			supportsAccelerometer = false;
 		}
 	}
 
-	public void startAccelerometerData() {
+	private void startAccelerometerData() {
 		if (supportsAccelerometer && Global.Accelerometer == Global.ACCELEROMETER.ENABLED) {
 			try {
 				mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -47,7 +46,7 @@ public class Accelerometer implements SensorEventListener {
 		}
 	}
 
-	public void stopAccelerometerData() {
+	private void stopAccelerometerData() {
 		try {
 			mSensorManager.unregisterListener(this);
 		} catch (Exception ignored) {}
@@ -93,7 +92,7 @@ public class Accelerometer implements SensorEventListener {
 		Global.Gz = (float)Math.round(AccelerometerSensorValues[2] * 1000) / 1000;
 	}
 
-	protected float[] lowPass( float[] input, float[] output ) {
+	private float[] lowPass(float[] input, float[] output) {
 		if ( output == null ) return input;
 		for ( int i=0; i<input.length; i++ ) {
 			output[i] = output[i] + 0.25f * (input[i] - output[i]);

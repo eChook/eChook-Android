@@ -19,7 +19,7 @@ public class BTDataParser extends Thread {
     private long prevAmpTime = 0;
 
     /* == Watt hour variables ==*/
-    private RunningAverage WattHourAvg = new RunningAverage(0); // decimal format doesn't matter because we don't use the print function
+    private final RunningAverage WattHourAvg = new RunningAverage(0); // decimal format doesn't matter because we don't use the print function
 
     /* == Distance variables ==*/
     private long prevDistTime = 0;
@@ -283,7 +283,7 @@ public class BTDataParser extends Thread {
 
         MainActivity.MainActivityHandler.post(new Runnable() {
             public void run() {
-                MainActivity.currentFragment.UpdateTemp(sensorId);
+                MainActivity.currentFragment.UpdateTemp();
             }
         });
     }

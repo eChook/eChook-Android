@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 
 import com.ben.echookcompanion.Global;
 import com.ben.echookcompanion.MainActivity;
@@ -28,15 +29,14 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 										LocationListener,
 										RaceObserver.RaceObserverListener
 {
-	public static GoogleApiClient GoogleApi;
-	public Location CurrentLocation;
-	public Location PreviousLocation;
+	private static GoogleApiClient GoogleApi;
+	private Location CurrentLocation;
 
-	public PolylineOptions pathHistory = new PolylineOptions();		// polyline for drawing paths on the map
+    public PolylineOptions pathHistory = new PolylineOptions();		// polyline for drawing paths on the map
 	public CircleOptions ObserverLocation = new CircleOptions();		// circle for showing the observer location
 	private RaceObserver myRaceObserver = null;
 	private LocationRequest mLocationRequest;
-	private ArrayList<Location> InitialRaceDataPoints = new ArrayList<>();	// store the first few location points to calculate start position and bearing
+	private final ArrayList<Location> InitialRaceDataPoints = new ArrayList<>();	// store the first few location points to calculate start position and bearing
 	private boolean storePointsIntoInitialArray = false;	// flag to write locations to the above array or not
 	private boolean CrossStartFinishLineTriggerEnabled = true;	// used for the timeout to make sure we don't get excessive triggers firing if the location is slightly erratic
 
@@ -59,7 +59,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	}
 
 	@Override
-	public void onConnectionFailed(ConnectionResult result) {
+	public void onConnectionFailed(@NonNull ConnectionResult result) {
 		// Refer to the javadoc for ConnectionResult to see what error codes might be returned in
 		// onConnectionFailed.
 	}
@@ -74,7 +74,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 
 	@Override
 	public void onLocationChanged(Location location) {
-		PreviousLocation = CurrentLocation;
+        Location previousLocation = CurrentLocation;
 		CurrentLocation = location;
 		if (storePointsIntoInitialArray && InitialRaceDataPoints.size() < 5) {
 			InitialRaceDataPoints.add(location);
@@ -90,8 +90,8 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 			MainActivity.mUDPSender.LocationHandler.sendMessage(msg);
 		}
 
-		if (CurrentLocation != null && PreviousLocation != null) {
-			Global.DeltaDistance = calculateDistanceBetween(PreviousLocation, CurrentLocation);
+		if (CurrentLocation != null && previousLocation != null) {
+			Global.DeltaDistance = calculateDistanceBetween(previousLocation, CurrentLocation);
 		}
 
 		addToPathHistory(location);
@@ -112,7 +112,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		}
 	}
 
-	protected synchronized void buildGoogleApiClient() {
+	private synchronized void buildGoogleApiClient() {
 		GoogleApi = new GoogleApiClient.Builder(MainActivity.getAppContext())
 				.addConnectionCallbacks(this)
 				.addOnConnectionFailedListener(this)
@@ -120,7 +120,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 				.build();
 	}
 
-	protected void createLocationRequest() {
+	private void createLocationRequest() {
 		this.mLocationRequest = new LocationRequest();
 		mLocationRequest.setInterval(Global.LOCATION_INTERVAL);
 		mLocationRequest.setFastestInterval(Global.LOCATION_FAST_INTERVAL);
@@ -149,7 +149,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 				.fillColor(Color.RED);
 	}
 
-	protected void startLocationUpdates() {
+	private void startLocationUpdates() {
 		try {
 			LocationServices.FusedLocationApi.requestLocationUpdates(
 					GoogleApi, mLocationRequest, this);
@@ -166,7 +166,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		}
 	}
 
-	protected void stopLocationUpdates() {
+	private void stopLocationUpdates() {
 		LocationServices.FusedLocationApi.removeLocationUpdates(GoogleApi, this);
 	}
 

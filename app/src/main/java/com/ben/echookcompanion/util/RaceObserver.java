@@ -1,7 +1,6 @@
 package com.ben.echookcompanion.util;
 
 import android.location.Location;
-import android.widget.Toast;
 
 import com.ben.echookcompanion.Global;
 import com.ben.echookcompanion.MainActivity;
@@ -12,14 +11,14 @@ import java.util.List;
 
 
 public class RaceObserver implements RaceStartMonitor.ThrottleListener{
-	private Location myLocation;
+	private final Location myLocation;
 
 	private float bearingToStartFinishLine;
 	private float currentBearingToVehicle;
 	private float previousBearingToVehicle;
 	private volatile boolean raceStarted = false;
 
-	private List<RaceObserverListener> _listeners = new ArrayList<>();
+	private final List<RaceObserverListener> _listeners = new ArrayList<>();
 
 	private RaceStartMonitor myRaceStartMonitor = new RaceStartMonitor(this);
 
@@ -69,7 +68,7 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
             }
 
 			myRaceStartMonitor.start();
-			MainActivity.showMessage("Launch Mode Active - waiting for throttle input (minimum 20%)", Toast.LENGTH_LONG);
+			MainActivity.showMessage("Launch Mode Active - waiting for throttle input (minimum 20%)");
 		} catch (Exception e) {
 			MainActivity.showError(e);
 		}
@@ -140,7 +139,7 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 	public void onThrottleMax() {
 		_fireRaceStart();
 		raceStarted = true;
-		MainActivity.showMessage("Race start detected - lap timing has begun", Toast.LENGTH_LONG);
+		MainActivity.showMessage("Race start detected - lap timing has begun");
 	}
 
 	/*===================*/

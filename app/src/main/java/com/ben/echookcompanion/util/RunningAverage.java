@@ -3,7 +3,7 @@ package com.ben.echookcompanion.util;
 public class RunningAverage {
 	private long count;
 	private Double average;
-	private int acc;
+	private final int acc;
 
 	public RunningAverage(int accuracy) {
 		count = 0;

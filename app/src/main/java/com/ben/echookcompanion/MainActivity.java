@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ben.echookcompanion.echookcompanion.R;
 import com.ben.echookcompanion.fragments.FourGraphsBars;
@@ -62,22 +61,22 @@ public class MainActivity
 
     public static TextView myMode;
 
-    public static TextView myDataFileSize;
-    public static TextView myDataFileName;
+    private static TextView myDataFileSize;
+    private static TextView myDataFileName;
 
-    public static TextView myBTCarName;
+    private static TextView myBTCarName;
 
-    public static TextView myBTState;
-    public static TextView myLogging;
+    private static TextView myBTState;
+    private static TextView myLogging;
 
     public static Chronometer LapTimer;
     public static TextView prevLapTime;
-    public static TextView LapNumber;
+    private static TextView LapNumber;
 
-    public static RandomGenerator mRandomGenerator = new RandomGenerator();
-    public BTDataParser mBTDataParser = new BTDataParser(this); // can't be static because of (this)
-    public static DataToCsvFile mDataToCSVFile = new DataToCsvFile();
-    public static BTStreamReader mBTStreamReader; // initialize below
+    private static RandomGenerator mRandomGenerator = new RandomGenerator();
+    private BTDataParser mBTDataParser = new BTDataParser(this); // can't be static because of (this)
+    private static DataToCsvFile mDataToCSVFile = new DataToCsvFile();
+    private static BTStreamReader mBTStreamReader; // initialize below
     public static UDPSender mUDPSender; // initialize below
     public static NetworkMonitor mNetworkMonitor = new NetworkMonitor();
 
@@ -162,16 +161,6 @@ public class MainActivity
         try {
             myDrivenLocation.disconnect();
         } catch (Exception ignored) {}
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     @Override
@@ -300,11 +289,7 @@ public class MainActivity
 	/* TOASTER */
     /* ======= */
 
-    public static void showMessage(String theMsg) {
-        showMessage(theMsg, Toast.LENGTH_SHORT);
-    }
-
-    public static void showMessage(String string, int length) {
+    public static void showMessage(String string) {
         /*
 		final Toast msg = Toast.makeText(context, string, Toast.LENGTH_LONG);
 		msg.show();
@@ -313,7 +298,7 @@ public class MainActivity
     }
 
     public static void showError(Exception e) {
-        showMessage(e.getMessage(), Toast.LENGTH_SHORT);
+        showMessage(e.getMessage());
     }
 
     public static void showSnackbar(String msg, int length) {
@@ -325,7 +310,7 @@ public class MainActivity
         } catch (Exception ignored) {}
     }
 
-    public static void showSnackbar(String msg) {
+    private static void showSnackbar(String msg) {
         showSnackbar(msg, Snackbar.LENGTH_SHORT);
     }
 
@@ -379,7 +364,7 @@ public class MainActivity
         }
     }
 
-    public void StartWithForcedLogging(View v) {
+    private void StartWithForcedLogging(View v) {
         try {
             if (Global.Mode == Global.MODE.DEMO) {
                 StartDataLogger();
@@ -393,7 +378,7 @@ public class MainActivity
     }
 
     /** For testing purposes only. Stops all the threads immediately. Called when the user double-taps the data file name in the top-left corner of the app*/
-    public void ForceStop(View v) {
+    private void ForceStop(View v) {
         try {
             StopRandomGenerator();
         } catch (Exception ignored) {}
@@ -456,7 +441,7 @@ public class MainActivity
     }
 
     /** This function is called when the user taps "DEMO/RACE" in the top right corner of the app. Changes between race and demo mode */
-    public static void QuickChangeMode(View v) {
+    public void QuickChangeMode(View v) {
         DrivenSettings.QuickChangeMode();
     }
 
@@ -608,7 +593,7 @@ public class MainActivity
         return Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 
-    public void CycleView() {
+    private void CycleView() {
         try {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -621,7 +606,7 @@ public class MainActivity
         }
     }
 
-    public void CycleViewReverse() {
+    private void CycleViewReverse() {
         try {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -828,4 +813,5 @@ public class MainActivity
 
     @Override
     public void onSettingChanged(SharedPreferences sharedPreferences, String key) {}
+
 }

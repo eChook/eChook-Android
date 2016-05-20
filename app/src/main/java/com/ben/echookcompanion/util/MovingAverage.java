@@ -1,7 +1,7 @@
 package com.ben.echookcompanion.util;
 
 public class MovingAverage {
-	private int window;
+	private final int window;
 	private Double average;
 
 	public MovingAverage(int windowSize) {

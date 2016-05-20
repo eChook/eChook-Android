@@ -18,7 +18,7 @@ public class BTStreamReader extends Thread {
     // Member variables
     private InputStream mmInStream = null;
 	private volatile boolean stopWorker = false;
-	public int errorCount = 0;
+	private int errorCount = 0;
 
 	// Constructor
     public BTStreamReader() {

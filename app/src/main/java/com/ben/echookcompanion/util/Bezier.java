@@ -130,7 +130,6 @@ public final class Bezier {
 			// sanity check
 			if (ControlPoints.size() != 2 * LatLngs.size() - 4) {
 				// we have a problem
-				boolean problem = true;
 				throw new InternalError("Number of control points does not satisfy 2n-4");
 			}
 		}

@@ -7,7 +7,6 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.widget.Toast;
 
 import com.ben.echookcompanion.Global;
 import com.ben.echookcompanion.MainActivity;
@@ -101,15 +100,15 @@ public class UDPSender extends Thread {
             }
 
             if (mUDPSocketOpen) {
-                MainActivity.showMessage("Successfully connected to node.js server", Toast.LENGTH_LONG);
+                MainActivity.showMessage("Successfully connected to node.js server");
             } else {
-                MainActivity.showMessage("Could not connect to node.js server", Toast.LENGTH_LONG);
+                MainActivity.showMessage("Could not connect to node.js server");
             }
         }
         Looper.loop();
 	}
 
-    public boolean OpenUDPSocket() {
+    private boolean OpenUDPSocket() {
         boolean success;
         try {
             IPAddress = InetAddress.getByName(Global.SOCKETADDRESS);

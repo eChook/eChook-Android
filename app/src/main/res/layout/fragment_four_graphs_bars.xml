@@ -1,7 +1,6 @@
 <RelativeLayout
     android:id="@+id/CenterView"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_above="@+id/open"
@@ -24,7 +23,6 @@
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/RPMBarChart"
-        class="com.ben.echookcompanion.util.DataBarChart"
         android:layout_width="@dimen/view4_field_width"
         android:layout_height="200dp"
         android:layout_alignBottom="@+id/AmpsBarChart"
@@ -36,7 +34,6 @@
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/VoltsBarChart"
-        class="com.ben.echookcompanion.util.DataBarChart"
         android:layout_width="@dimen/view4_field_width"
         android:layout_height="150dp"
         android:layout_alignLeft="@+id/voltage"
@@ -47,7 +44,6 @@
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/SpeedBarChart"
-        class="com.ben.echookcompanion.util.DataBarChart"
         android:layout_width="@dimen/view4_field_width"
         android:layout_height="200dp"
         android:layout_alignBottom="@+id/RPMBarChart"

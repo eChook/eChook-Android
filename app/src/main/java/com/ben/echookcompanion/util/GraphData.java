@@ -15,7 +15,7 @@ import com.github.mikephil.charting.data.LineDataSet;
  */
 public final class GraphData {
 
-	private static void GraphData() {
+	private GraphData() {
 		// empty constructor
 	}
 

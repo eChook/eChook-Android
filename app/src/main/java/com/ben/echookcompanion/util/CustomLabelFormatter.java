@@ -6,9 +6,9 @@ import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 import java.text.DecimalFormat;
 
 public class CustomLabelFormatter implements YAxisValueFormatter {
-	private DecimalFormat mFormat;
-	private String _prefix;
-	private String _suffix;
+	private final DecimalFormat mFormat;
+	private final String _prefix;
+	private final String _suffix;
 
 	public CustomLabelFormatter(String prefix, String format, String suffix) {
 		mFormat = new DecimalFormat(format);

@@ -261,7 +261,7 @@ public class SixGraphsBars extends UpdateFragment {
 		UpdateAmps();
 		UpdateThrottle();
 		UpdateSpeed();
-		UpdateTemp(1);
+		UpdateTemp();
 		UpdateMotorRPM();
 		UpdateAmpHours();
         UpdateWattHours();
@@ -348,7 +348,7 @@ public class SixGraphsBars extends UpdateFragment {
     }
 
     @Override
-    public synchronized void UpdateTemp(int sensorIndex) {
+    public synchronized void UpdateTemp() {
         try {
             Temp1.setText(String.format("%.1f", Global.Amps));
             Temp1.setTextColor(ColorHelper.GetVoltsColor(Global.Amps));

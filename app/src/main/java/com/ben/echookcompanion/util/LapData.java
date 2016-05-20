@@ -3,10 +3,10 @@ package com.ben.echookcompanion.util;
 import java.util.concurrent.TimeUnit;
 
 public class LapData {
-	private RunningAverage AmpsAvg;
-	private RunningAverage VoltsAvg;
-	private RunningAverage RPMAvg;
-    private RunningAverage SpeedMPSAvg;
+	private final RunningAverage AmpsAvg;
+	private final RunningAverage VoltsAvg;
+	private final RunningAverage RPMAvg;
+    private final RunningAverage SpeedMPSAvg;
 
     private Double DistanceMeters;
     private Double WattHours;
@@ -91,8 +91,6 @@ public class LapData {
     public long getLapTimeSeconds() { return lapMillis / 1000; }
 
     public String getLapTimeString() {
-        long sec1 = TimeUnit.MILLISECONDS.toSeconds(lapMillis);
-        long sec2 = TimeUnit.MINUTES.toSeconds(lapMillis);
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(lapMillis),
                 TimeUnit.MILLISECONDS.toSeconds(lapMillis) % TimeUnit.MINUTES.toSeconds(1));

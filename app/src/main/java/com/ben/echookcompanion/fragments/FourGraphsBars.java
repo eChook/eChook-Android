@@ -337,5 +337,5 @@ public class FourGraphsBars extends UpdateFragment {
 	public void UpdateThrottle() {}
 
 	@Deprecated
-	public void UpdateTemp(int ignored) {}
+	public void UpdateTemp() {}
 }

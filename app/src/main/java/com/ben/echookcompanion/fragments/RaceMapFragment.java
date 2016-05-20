@@ -251,7 +251,7 @@ public class RaceMapFragment extends UpdateFragment
 		someshit3.add(new LatLng(55.953252, -3.188267));	// Edinburgh Waverley, Edinburgh
 		someshit3.color(Color.GREEN);
 
-		Polyline herp = map.addPolyline(UK);
+		map.addPolyline(UK);
 		Polyline smoothedherp = map.addPolyline(someshit);
 		smoothedherp.setPoints(SmoothPath(UK));
 
@@ -299,7 +299,7 @@ public class RaceMapFragment extends UpdateFragment
         UpdateWattHours();
 	}
 
-	public void UpdateMap() {
+	private void UpdateMap() {
 		if (map != null) {
 			CameraPosition cameraPosition = new CameraPosition.Builder()
 					.target(new LatLng(Global.Latitude, Global.Longitude))
@@ -381,13 +381,13 @@ public class RaceMapFragment extends UpdateFragment
         //TODO: implement method
     }
 
-    public void UpdateMapText() {
+    private void UpdateMapText() {
         CurBearing.setText("car: " + String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_Current()));
 		SFLBearing.setText("sfl: " + String.format("%.1f", MainActivity.myDrivenLocation.GetRaceObserverBearing_SFL()));
 		Accuracy.setText("acc: " + String.format("%.1f", Global.GPSAccuracy));
 	}
 
-	public void StartFragmentUpdater() {
+	private void StartFragmentUpdater() {
 		TimerTask mapUpdateTask = new TimerTask() {
 			public void run() {
 				MainActivity.MainActivityHandler.post(new Runnable() {
@@ -402,7 +402,7 @@ public class RaceMapFragment extends UpdateFragment
 		FragmentUpdateTimer.schedule(mapUpdateTask, Global.MAP_UPDATE_INTERVAL, Global.MAP_UPDATE_INTERVAL);
 	}
 
-	public void StopFragmentUpdater() {
+	private void StopFragmentUpdater() {
 		try {
 			FragmentUpdateTimer.cancel();
 			FragmentUpdateTimer.purge();
@@ -410,7 +410,7 @@ public class RaceMapFragment extends UpdateFragment
 	}
 
 	@Override
-	public void UpdateTemp(int ignored) {}	// required as per UpdateFragment contract
+	public void UpdateTemp() {}	// required as per UpdateFragment contract
 
 	@Override
 	public void UpdateThrottle() {}	// required as per UpdateFragment contract

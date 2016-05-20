@@ -30,13 +30,6 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         mListener = settingsInterface;
     }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		//addPreferencesFromResource(R.xml.user_settings);
-		//updateAllPreferenceSummary();
-	}
-
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
         addPreferencesFromResource(R.xml.user_settings);

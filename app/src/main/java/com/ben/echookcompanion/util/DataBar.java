@@ -21,8 +21,8 @@ public class DataBar extends View {
 	private int min;
 	private int nValue;
 
-	public double xWidth; // width multiplier
-	public double xHeight; // height multiplier
+	private double xWidth; // width multiplier
+	private double xHeight; // height multiplier
 
 	/* CONSTRUCTOR */
 	public DataBar(Context context) {
@@ -98,7 +98,6 @@ public class DataBar extends View {
 			int x0 = (int) (boxWidth * (1 - xWidth) / 2);
 			int y0 = (int) (boxHeight - (float) (nValue - min) / (max - min) * boxHeight + min);
 			int x1 = (int) (x0 + boxWidth * xWidth);
-			int y1 = boxHeight;
 
 			/*
 			float y0 = (float) boxWidth - (float) (nValue - min) / (max - min) * height + min;
@@ -108,11 +107,11 @@ public class DataBar extends View {
 			float h = (float) height - (float) (nValue - min) / (max - min) * height + min;
 			//this.p.setColor(HSVScale((int)pct, 0, 120));
 			// canvas.drawRect(LEFT, TOP, RIGHT, BOTTOM, PAINT); */
-			canvas.drawRect(x0, y0, x1, y1, this.p); //
+			canvas.drawRect(x0, y0, x1, boxHeight, this.p); //
 		}
 	}
 
-	public void init() {
+	private void init() {
 		this.p = new Paint();
 		p.setColor(this.color);
 	}

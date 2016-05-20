@@ -67,7 +67,7 @@ public final class Global {
 
     /**********************/
 	// use the volatile keyword for thread safety
-    public static volatile BlockingQueue<byte[]> BTStreamQueue = 	new LinkedBlockingQueue<>();
+    public static final BlockingQueue<byte[]> BTStreamQueue = 	new LinkedBlockingQueue<>();
 	public static volatile Double Volts 			= 0.0;
 	public static volatile Double Amps 				= 0.0;
 	public static volatile Double InputThrottle 	= 0.0;
@@ -82,19 +82,19 @@ public final class Global {
     public static volatile Double WattHours = 0.0;
     public static volatile Double WattHoursPerMeter = 0.0;
     public static volatile Double DistanceMeters = 0.0;
-    public static volatile ArrayList<LapData> LapDataList = new ArrayList<>();
-	public static volatile RunningAverage AverageAmps 		= new RunningAverage(2); // 2 = number of decimal places
-    public static volatile RunningAverage AverageSpeedMPS = new RunningAverage(1);
+    public static final ArrayList<LapData> LapDataList = new ArrayList<>();
+	public static final RunningAverage AverageAmps 		= new RunningAverage(2); // 2 = number of decimal places
+    public static final RunningAverage AverageSpeedMPS = new RunningAverage(1);
     public static final	int MAX_GRAPH_DATA_POINTS =	4 * 50; // 50 seconds of history on graphs assuming Arduino spews every 250ms
 
     /**********************/
     /* VARIABLES          */
-	public static volatile 	LineData ThrottleHistory	=	new LineData();
-	public static volatile 	LineData AmpsHistory		=	new LineData();
-    public static volatile 	LineData VoltsHistory		=	new LineData();
-    public static volatile 	LineData MotorRPMHistory	=	new LineData();
-    public static volatile 	LineData SpeedHistory		=	new LineData();
-    public static volatile 	LineData TempC1History		=	new LineData();
+	public static final LineData ThrottleHistory	=	new LineData();
+	public static final LineData AmpsHistory		=	new LineData();
+    public static final LineData VoltsHistory		=	new LineData();
+    public static final LineData MotorRPMHistory	=	new LineData();
+    public static final LineData SpeedHistory		=	new LineData();
+    public static final LineData TempC1History		=	new LineData();
 
     /**********************/
     /* CONSTANTS          */
@@ -108,7 +108,7 @@ public final class Global {
 	public static volatile Double SpeedGPS		=	0.0;
 	public static volatile Double GPSTime		=	0.0;
 	public static volatile Double GPSAccuracy 	=	0.0;
-	public static		   float MinGPSAccuracy	=	50.0f;
+	public static final float MinGPSAccuracy	=	50.0f;
 	public static volatile float DeltaDistance	=	0;	// difference between current and previous location in meters
 	public static volatile int Lap	= 0;
 	public static String CarName = "";

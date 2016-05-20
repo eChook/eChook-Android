@@ -74,7 +74,7 @@ public class LapHistoryFragment extends UpdateFragment {
 		Speed	= null;
 	}
 
-	public void UpdateLapTable() {
+	private void UpdateLapTable() {
 		if (LapTable != null) {
 			LapTable.removeAllViews();
 			_createHeaders();
@@ -234,7 +234,7 @@ public class LapHistoryFragment extends UpdateFragment {
 	}
 
 	@Deprecated
-	public void UpdateTemp(int ignored) {}	// required as per UpdateFragment contract
+	public void UpdateTemp() {}	// required as per UpdateFragment contract
 
 	@Deprecated
 	public void UpdateThrottle() {}	// required as per UpdateFragment contract
