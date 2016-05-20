@@ -224,7 +224,7 @@ public class SixGraphsBars extends UpdateFragment {
 		if (Global.EnableGraphs) {
 			InitializeGraphs();
 		}
-		//StartFragmentUpdater();
+		UpdateFragmentUI();
 	}
 
 	@Override
@@ -264,6 +264,7 @@ public class SixGraphsBars extends UpdateFragment {
 		UpdateTemp(1);
 		UpdateMotorRPM();
 		UpdateAmpHours();
+        UpdateWattHours();
 	}
 
     @Override

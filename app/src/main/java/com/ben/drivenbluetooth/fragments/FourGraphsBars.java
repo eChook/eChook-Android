@@ -201,6 +201,7 @@ public class FourGraphsBars extends UpdateFragment {
 		if (Global.EnableGraphs) {
 			InitializeGraphs();
 		}
+        UpdateFragmentUI();
 	}
 
 	@Override
@@ -233,6 +234,7 @@ public class FourGraphsBars extends UpdateFragment {
 		UpdateAmpHours();
 		UpdateSpeed();
 		UpdateMotorRPM();
+        UpdateWattHours();
 	}
 
     @Override

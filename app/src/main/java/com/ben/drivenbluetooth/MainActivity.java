@@ -400,16 +400,17 @@ public class MainActivity
     public void ForceStop(View v) {
         try {
             StopRandomGenerator();
+        } catch (Exception ignored) {}
+        try {
             StopDataLogger();
+        } catch (Exception ignored) {}
+        try {
             StopStreamReader();
-
+        } catch (Exception ignored) {}
             UpdateDataFileInfo();
-
+        try {
             UIUpdateTimer.purge();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
     }
 
     /** Called when the user taps the cogwheel in the app. Launches the settings fragment */
@@ -580,30 +581,13 @@ public class MainActivity
         }
     }
 
-    /** Starts the UI updater thread (if not already running). Re-initializes the thread if needed */
-    private void StartUIUpdater() {
-        TimerTask UIUpdateTask = new TimerTask() {
-            public void run() {
-                MainActivityHandler.post(new UIUpdateRunnable());
-            }
-        };
-        UIUpdateTimer = new Timer();
-        UIUpdateTimer.schedule(UIUpdateTask, 0, Global.SLOW_UI_UPDATE_INTERVAL);
-    }
-
-    /** Stops the UI updater thread (if running) */
-    private void StopUIUpdater() {
-        UIUpdateTimer.cancel();
-        UIUpdateTimer.purge();
-    }
-
     /** Stops the data logger thread (if running) */
     private void StopDataLogger() {
         if (mDataToCSVFile != null && mDataToCSVFile.getState() != Thread.State.TERMINATED) {
             mDataToCSVFile.cancel();
-            MainActivity.myLogging.setTextColor(getResources().getColor(R.color.negative));
-            MainActivity.myLogging.setText("NO");
         }
+        MainActivity.myLogging.setTextColor(getResources().getColor(R.color.negative));
+        MainActivity.myLogging.setText("NO");
     }
 
     /** Stops the random generator thread (if running) */
@@ -648,6 +632,7 @@ public class MainActivity
             currentFragment = FragmentList.reverseCycle();
             fragmentTransaction.replace(R.id.CenterView, currentFragment);
             fragmentTransaction.commit();
+            currentFragment.UpdateFragmentUI();
         } catch (Exception e) {
             e.getMessage();
         }
@@ -657,6 +642,13 @@ public class MainActivity
         // reset some key variables
         // lap counters
         Global.Lap = 0;
+
+        // Amp hours
+        Global.AmpHours = 0d;
+
+        // Lap data if any exists
+        Global.LapDataList.clear();
+
         LapTimer.stop();
         LapTimer.setBase(SystemClock.elapsedRealtime());
         myDrivenLocation.ActivateLaunchMode();

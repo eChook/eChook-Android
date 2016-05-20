@@ -111,6 +111,7 @@ public class RaceMapFragment extends UpdateFragment
 		mFragment.getMapAsync(this);
 		InitializeDataFields();
 		StartFragmentUpdater();
+        UpdateFragmentUI();
 	}
 
 	@Override
@@ -295,6 +296,7 @@ public class RaceMapFragment extends UpdateFragment
 		UpdateMotorRPM();
 		UpdateVolts();
 		UpdateSpeed();
+        UpdateWattHours();
 	}
 
 	public void UpdateMap() {

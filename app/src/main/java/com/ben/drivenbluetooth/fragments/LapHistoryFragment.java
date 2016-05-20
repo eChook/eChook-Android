@@ -98,13 +98,13 @@ public class LapHistoryFragment extends UpdateFragment {
 				TableRow tr = new TableRow(ctx);
 				tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
-				for (int j = 0; j < values.length; j++) {
-					TextView hv = new TextView(ctx);
-					hv.setText(values[j]);
-					hv.setGravity(Gravity.CENTER);
-					hv.setLayoutParams(textViewParams);
-					tr.addView(hv);
-				}
+                for (String value : values) {
+                    TextView hv = new TextView(ctx);
+                    hv.setText(value);
+                    hv.setGravity(Gravity.CENTER);
+                    hv.setLayoutParams(textViewParams);
+                    tr.addView(hv);
+                }
 				TextView laptime = new TextView(ctx);
 				laptime.setText(Global.LapDataList.get(i).getLapTimeString());
 				laptime.setGravity(Gravity.CENTER);
@@ -121,6 +121,7 @@ public class LapHistoryFragment extends UpdateFragment {
 		UpdateAmpHours();
 		UpdateSpeed();
 		UpdateMotorRPM();
+        UpdateWattHours();
 	}
 
     @Override
