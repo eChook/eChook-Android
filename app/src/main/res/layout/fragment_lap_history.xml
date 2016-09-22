@@ -2,7 +2,7 @@
 			 xmlns:tools="http://schemas.android.com/tools"
 			 android:layout_width="match_parent"
 			 android:layout_height="match_parent"
-			 tools:context="com.ben.echookcompanion.fragments.LapHistoryFragment">
+			 tools:context="com.ben.drivenbluetooth.fragments.LapHistoryFragment">
 
 	<TextView
 		android:layout_width="wrap_content"

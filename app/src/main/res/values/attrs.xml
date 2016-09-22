@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<declare-styleable name="DataBar">
-		<attr name="BarColor" format="color" />
-		<attr name="max" format="integer" />
-		<attr name="min" format="integer" />
-		<attr name="xWidth" format="float" />
-		<attr name="xHeight" format="float" />
-	</declare-styleable>
+
 </resources>

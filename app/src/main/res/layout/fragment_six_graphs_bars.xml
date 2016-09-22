@@ -98,10 +98,6 @@
 		android:layout_height="150dp"
 		android:id="@+id/ThrottleBarChart"
 		android:layout_below="@+id/current"
-		custom:BarColor="@color/throttle"
-		custom:min="0"
-		custom:max="100"
-		custom:xWidth="@integer/databar_xWidth"
 		android:layout_alignStart="@+id/ThrottleLineChart"
 		android:layout_toStartOf="@+id/VoltsBarChart"/>
 
@@ -142,11 +138,7 @@
 		android:layout_alignRight="@+id/voltage"
 		android:layout_alignParentStart="false"
 		android:layout_alignParentLeft="false"
-		android:layout_alignTop="@+id/ThrottleBarChart"
-		custom:BarColor="@color/volts"
-		custom:min="0"
-		custom:max="28"
-		custom:xWidth="@integer/databar_xWidth"/>
+		android:layout_alignTop="@+id/ThrottleBarChart"/>
 
 	<TextView
 		android:layout_width="@dimen/view6_field_width"
