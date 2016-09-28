@@ -30,7 +30,7 @@
 		<EditTextPreference
 			android:key="prefCarName"
 			android:title="Car name (used for logging)"
-			android:summary="%s"
+			android:summary=""
 			/>
 	</PreferenceCategory>
 	<PreferenceCategory
@@ -51,7 +51,7 @@
 		<EditTextPreference
 			android:key="prefBTDeviceName"
 			android:title="Bluetooth device name"
-			android:summary="%s"
+			android:summary=""
 			/>
     </PreferenceCategory>
     <PreferenceCategory
@@ -59,8 +59,8 @@
         android:key="prefKeyLiveData">
         <EditTextPreference
             android:key="prefUDP"
-            android:title="Live data keyword"
-            android:summary="%s"
+            android:title="Live data password"
+            android:summary=""
             />
     </PreferenceCategory>
 </PreferenceScreen>
