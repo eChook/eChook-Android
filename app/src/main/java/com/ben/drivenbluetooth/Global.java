@@ -54,7 +54,7 @@ public final class Global {
 
     public static final int     PERMISSIONS_REQUEST     = 1;
 
-    public static final String  UDP_PASSWORD            = "daevbro";
+    public static String        UDPPassword = "";
 
     public static final BlockingQueue<byte[]> BTStreamQueue = 	new LinkedBlockingQueue<>();
 	public static volatile Double Volts 			    = 0.0;
