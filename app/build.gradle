@@ -25,7 +25,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 24
         versionCode getVersionCodeTimestamp()
-        versionName "1.8M"
+        versionName "1.9"
         multiDexEnabled true
     }
     buildTypes {
@@ -57,4 +57,5 @@ dependencies {
     compile 'com.android.support:preference-v14:24.2.1'
     compile 'com.android.support:percent:24.2.1'
     compile 'org.apache.commons:commons-math3:3.6.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
 }

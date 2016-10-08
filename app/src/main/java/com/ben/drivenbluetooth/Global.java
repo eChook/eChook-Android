@@ -24,7 +24,7 @@ public final class Global {
     public static final byte    STOPBYTE                = 125; // ASCII code for '}'
     public static final int     PACKETLENGTH            = 5;   // { [id] [1] [2] }
     public static final byte    VOLTS_ID                = 118; // v
-    public static final byte    VOLTS_AUX_ID            = 117; // w
+    public static final byte    VOLTS_AUX_ID            = 119; // w
     public static final byte    AMPS_ID                 = 105; // i
     public static final byte    MOTOR_RPM_ID            = 109; // m
     public static final byte    THR_INPUT_ID            = 116; // t
@@ -39,7 +39,9 @@ public final class Global {
     public static final byte    LOOP_COUNTER_ID         = 108; // l
     public static final byte    THROTTLE_MODE_ID        = 110; // n
     public static final byte    BRAKE_ID                = 66;  // B
-    public static final byte    FAN_STATUS_ID           = 102; // f
+    public static final byte    FAN_STATUS_ID           = 70;  // F
+    public static final byte    FAN_DUTY_ID             = 102; // f
+    public static final byte    STEERING_ID             = 122; // z
 
     public static final int     DATA_SAVE_INTERVAL      = 250; // save interval in milliseconds
 
@@ -77,7 +79,8 @@ public final class Global {
     public static volatile Double SteeringAngle         = 0.0;
     public static volatile Double PerformanceMetric     = 0.0;
     public static volatile int Brake                    = 0;
-    public static volatile int Fan                      = 0;
+    public static volatile int FanStatus                = 0;
+    public static volatile Double FanDuty               = 0.0;
     public static final ArrayList<LapData> LapDataList  = new ArrayList<>();
 	public static final RunningAverage AverageAmps 		= new RunningAverage(2); // 2 = number of decimal places
     public static final RunningAverage AverageSpeedMPS  = new RunningAverage(1);
@@ -114,6 +117,8 @@ public final class Global {
 	public static volatile BTSTATE BTState              = BTSTATE.DISCONNECTED;
 	public static volatile BluetoothSocket BTSocket;
 	public static int MangledDataCount                  = 0;
+    public static volatile int Gear                     = 0;
+    public static volatile int IdealGear                = 0;
 
     public static MODE Mode;
 	public static UNIT Unit;
@@ -125,6 +130,9 @@ public final class Global {
 	public static boolean EnableGraphs                  = true;
 	public static Double BatteryCapacityAh;
     public static boolean UDPEnabled                    = false;
+
+    public static int MotorTeeth                        = 0;
+    public static int[] WheelTeeth;
 
     /**********************/
     private Global() {

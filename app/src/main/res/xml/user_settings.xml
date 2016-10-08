@@ -3,6 +3,16 @@
     <PreferenceCategory
         android:title="Vehicle"
         android:key="prefKeySettings">
+        <EditTextPreference
+            android:key="prefMotorTeeth"
+            android:title="Motor sprocket teeth number"
+            android:summary=""
+            />
+        <EditTextPreference
+            android:key="prefWheelTeeth"
+            android:title="Wheel teeth numbers (separate using commas)"
+            android:summary=""
+            />
         <ListPreference
             android:key="prefSpeedUnits"
             android:title="Speed unit"
