@@ -3,11 +3,15 @@ package com.ben.drivenbluetooth.fragments;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -29,6 +33,14 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
     public void setSettingsListener(SettingsInterface settingsInterface) {
         mListener = settingsInterface;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        view.setBackgroundColor(ContextCompat.getColor(MainActivity.getAppContext(), android.R.color.background_light));
+
+        return view;
     }
 
     @Override

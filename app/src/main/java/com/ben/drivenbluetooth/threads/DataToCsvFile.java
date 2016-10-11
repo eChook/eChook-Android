@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import static com.ben.drivenbluetooth.MainActivity.MainActivityHandler;
+
 public class DataToCsvFile extends Thread {
 
 	private String[] ArrayOfVariables;
@@ -133,7 +135,12 @@ public class DataToCsvFile extends Thread {
 
             try {
                 oStream.close();
-                MainActivity.UpdateDataFileInfo();
+                MainActivityHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        MainActivity.UpdateDataFileInfo();
+                    }
+                });
             } catch (IOException e) {
                 ACRA.getErrorReporter().handleException(e);
             }
