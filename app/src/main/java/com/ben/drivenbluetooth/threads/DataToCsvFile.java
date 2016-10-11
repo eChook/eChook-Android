@@ -5,6 +5,8 @@ import android.os.Environment;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 
+import org.acra.ACRA;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -61,6 +63,7 @@ public class DataToCsvFile extends Thread {
 			};
 		} catch (Exception e) {
 			MainActivity.showError(e);
+            ACRA.getErrorReporter().handleException(e);
 		}
 	}
 
@@ -116,13 +119,13 @@ public class DataToCsvFile extends Thread {
 
                 } catch (Exception e) {
                     // something failed with writing to file
-                    MainActivity.showError(e);
+                    ACRA.getErrorReporter().handleException(e);
                 }
 
                 try { // for some reason this needs to be in a try/catch block
                     Thread.sleep(Global.DATA_SAVE_INTERVAL);
                 } catch (Exception e) {
-                    MainActivity.showError(e);
+                    ACRA.getErrorReporter().handleException(e);
                 }
             }
 
@@ -132,12 +135,12 @@ public class DataToCsvFile extends Thread {
                 oStream.close();
                 MainActivity.UpdateDataFileInfo();
             } catch (IOException e) {
-                MainActivity.showError(e);
+                ACRA.getErrorReporter().handleException(e);
             }
 
         } catch (Exception e) {
             // something failed with opening the file
-            MainActivity.showError(e);
+            ACRA.getErrorReporter().handleException(e);
         }
     }
 
@@ -192,11 +195,11 @@ public class DataToCsvFile extends Thread {
 				oStream.write(data.getBytes());
 
 			} catch (Exception e) {
-				MainActivity.showError(e);
+                ACRA.getErrorReporter().handleException(e);
 				try {
 					oStream.close();
 				} catch (Exception ex) {
-                    MainActivity.showError(ex);
+                    ACRA.getErrorReporter().handleException(e);
                 }
 			}
 		}
@@ -214,6 +217,7 @@ public class DataToCsvFile extends Thread {
 			oStream.close();
 		} catch (Exception e) {
             MainActivity.showError(e);
+            ACRA.getErrorReporter().handleException(e);
         }
 	}
 }
