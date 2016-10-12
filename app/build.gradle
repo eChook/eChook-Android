@@ -16,7 +16,7 @@ android {
         variant.outputs.each { output ->
             output.outputFile = new File(
                     output.outputFile.parent,
-                    output.outputFile.name.replace(".apk", "-${variant.versionName}.apk"))
+                    output.outputFile.name.replace("app-release.apk", "echook-companion-release-${variant.versionName}_${variant.versionCode}.apk"))
         }
     }
 
@@ -25,7 +25,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 24
         versionCode getVersionCodeTimestamp()
-        versionName "1.91"
+        versionName "1.92"
         multiDexEnabled true
     }
     buildTypes {
