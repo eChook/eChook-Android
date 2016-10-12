@@ -155,6 +155,7 @@ public class MainActivity
 
         UpdateBTStatus();
         UpdateBTCarName();
+        UpdateGear(0);
     }
 
     @Override
@@ -728,7 +729,7 @@ public class MainActivity
         MainActivityHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (Global.Gear == -1) {
+                if (Global.Gear <= 0) {
                     MainActivity.myGear.setText("?");
                     MainActivity.myShiftIndicator.setVisibility(View.INVISIBLE);
                 } else {

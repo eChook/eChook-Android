@@ -149,7 +149,7 @@ public final class Global {
 
     public enum MODE {DEMO, RACE}
 
-    public enum UNIT {MPH, KPH}
+    public enum UNIT {MPH, KPH, MPS, FFF, KNOT}
 
     public enum LOCATION {DISABLED, ENABLED} // REMINDER: KEEP THESE CONSISTENT WITH ARRAYS.XML!
 

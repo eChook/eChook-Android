@@ -17,6 +17,7 @@ import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.R;
 import com.ben.drivenbluetooth.util.Bezier;
 import com.ben.drivenbluetooth.util.RaceObserver;
+import com.ben.drivenbluetooth.util.UnitHelper;
 import com.ben.drivenbluetooth.util.UpdateFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -350,12 +351,7 @@ public class RaceMapFragment extends UpdateFragment
     @Override
     public synchronized void UpdateSpeed() {
         try {
-			// check user preference for speed
-			if (Global.Unit == Global.UNIT.MPH) {
-                this.Speed.setText(String.format("%.1f", Global.SpeedMPS * 2.2) + " mph");
-            } else if (Global.Unit == Global.UNIT.KPH) {
-				this.Speed.setText(String.format("%.1f", Global.SpeedMPS * 3.6) + " kph");
-			}
+            Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.Unit));
 
 		} catch (Exception e) {
 			e.getMessage();

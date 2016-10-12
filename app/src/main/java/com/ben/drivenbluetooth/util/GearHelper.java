@@ -25,7 +25,7 @@ public final class GearHelper {
             // if we reach here then we have an indeterminate gear ratio
             CurrentGear = -1;
         } else {
-            // wheel teeth and motor teeth haven't been defined
+            // wheel teeth or motor teeth haven't been defined
             CurrentGear = 0;
             return CurrentGear;
         }

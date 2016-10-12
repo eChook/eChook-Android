@@ -11,6 +11,7 @@ import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.R;
 import com.ben.drivenbluetooth.util.ColorHelper;
 import com.ben.drivenbluetooth.util.CustomLabelFormatter;
+import com.ben.drivenbluetooth.util.UnitHelper;
 import com.ben.drivenbluetooth.util.UpdateFragment;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -134,7 +135,7 @@ public class SixGraphsBars extends UpdateFragment {
 				new float[] {0, 50},	// amps
 				new float[] {0, 50},	// temp
 				new float[] {0, 2100},	// motor rpm
-				new float[] {0, Global.Unit == Global.UNIT.MPH ? 50 : 70}	// speed
+				new float[] {0, UnitHelper.getMaxSpeed(Global.Unit)}	// speed
 		};
 
         for (int i = 0; i < lineCharts.length; i++) {
@@ -324,18 +325,8 @@ public class SixGraphsBars extends UpdateFragment {
     @Override
     public synchronized void UpdateSpeed() {
         try {
-            // check user preference for speed
-            Double speed = 0d;
-            String speedText = "";
-            if (Global.Unit == Global.UNIT.MPH) {
-                speed = Global.SpeedMPS * 2.2;
-                speedText = String.format("%.1f mph", speed);
-            } else if (Global.Unit == Global.UNIT.KPH) {
-                speed = Global.SpeedMPS * 3.6;
-                speedText = String.format("%.1f kph", speed);
-            }
-
-            Speed.setText(speedText);
+            Double speed = UnitHelper.getSpeed(Global.SpeedMPS, Global.Unit);
+            Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.Unit));
 
             if (Global.EnableGraphs) {
                 UpdateBarChart(SpeedBarChart, speed, Color.BLACK);

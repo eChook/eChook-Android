@@ -223,7 +223,6 @@ public class DataToCsvFile extends Thread {
 		try {
 			oStream.close();
 		} catch (Exception e) {
-            MainActivity.showError(e);
             ACRA.getErrorReporter().handleException(e);
         }
 	}
