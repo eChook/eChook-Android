@@ -6,6 +6,28 @@
     android:layout_height="match_parent"
     android:id="@+id/activity">
 
+    <FrameLayout
+        android:layout_width="0dp"
+        android:id="@+id/overlay"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+    </FrameLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/snackbarPosition"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+    </android.support.design.widget.CoordinatorLayout>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -135,28 +157,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="BT"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:id="@+id/textView6"
-                app:layout_constraintRight_toLeftOf="@+id/txtBTState"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintTop_toTopOf="parent"/>
-
-            <TextView
-                android:id="@+id/textView8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="LOG"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                app:layout_constraintRight_toRightOf="@+id/textView6"
-                app:layout_constraintTop_toBottomOf="@+id/txtBTState"/>
-
-            <TextView
+        <TextView
                 android:id="@+id/txtBTState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -215,7 +216,8 @@
                 android:id="@+id/textClock"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintBottom_toBottomOf="@+id/txtBTCarName"/>
+                app:layout_constraintBottom_toBottomOf="@+id/txtBTCarName"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 android:id="@+id/txtBTCarName"
@@ -279,7 +281,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/launchmode"
                 app:layout_constraintRight_toRightOf="@+id/LapTimer"/>
 
-            <TextView
+        <TextView
                 android:id="@+id/txtDataFileSize"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -288,6 +290,30 @@
                 app:layout_constraintLeft_toRightOf="@+id/txtDataFileName"
                 android:layout_marginStart="8dp"
                 app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_bluetooth_black_24dp"
+            android:id="@+id/imageView"
+            tools:layout_editor_absoluteY="0dp"
+            tools:layout_editor_absoluteX="462dp"
+            android:tint="@color/place_autocomplete_prediction_primary_text_highlight"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:srcCompat="@drawable/ic_save_black_24dp"
+            android:id="@+id/imageView2"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            app:layout_constraintRight_toLeftOf="@+id/txtLogging"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintBottom_toTopOf="@+id/CenterView"
+            android:tint="@color/place_autocomplete_prediction_secondary_text"/>
 
         <RelativeLayout
             android:id="@+id/CenterView"
@@ -302,27 +328,5 @@
         </RelativeLayout>
 
     </android.support.constraint.ConstraintLayout>
-
-    <FrameLayout
-        android:layout_width="0dp"
-        android:id="@+id/overlay"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-    </FrameLayout>
-
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/snackbarPosition"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent">
-    </android.support.design.widget.CoordinatorLayout>
 
 </android.support.constraint.ConstraintLayout>
