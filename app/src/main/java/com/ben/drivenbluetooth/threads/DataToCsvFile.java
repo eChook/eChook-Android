@@ -56,6 +56,7 @@ public class DataToCsvFile extends Thread {
 					"Lap",
 					"Vehicle name",
 					"Mode",
+                    "Bluetooth",
 
                     "SFLBearing (deg)",
                     "ObserverBearing (deg)",
@@ -109,6 +110,7 @@ public class DataToCsvFile extends Thread {
                             String.format("%d", Global.Lap),
                             Global.CarName,
                             Global.Mode.toString(),
+                            Global.BTState.toString(),
 
                             String.format("%.0f", Global.StartFinishLineBearing),
                             String.format("%.0f", Global.BearingFromObserverToCar),
