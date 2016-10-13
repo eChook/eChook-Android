@@ -69,8 +69,8 @@ public class MainActivity
 
     private static TextView myBTCarName;
 
-    private static TextView myBTState;
-    private static TextView myLogging;
+    private static ImageView myBTState;
+    private static ImageView myLogging;
 
     public static Chronometer LapTimer;
     public static TextView prevLapTime;
@@ -121,8 +121,8 @@ public class MainActivity
 
         myBTCarName = (TextView) findViewById(R.id.txtBTCarName);
 
-        myBTState = (TextView) findViewById(R.id.txtBTState);
-        myLogging = (TextView) findViewById(R.id.txtLogging);
+        myBTState = (ImageView) findViewById(R.id.btStatusSymbol);
+        myLogging = (ImageView) findViewById(R.id.logStatusSymbol);
 
         LapTimer = (Chronometer) findViewById(R.id.LapTimer);
         prevLapTime = (TextView) findViewById(R.id.previousLapTime);
@@ -133,8 +133,7 @@ public class MainActivity
 
         SnackbarPosition = findViewById(R.id.snackbarPosition);
 
-        MainActivity.myLogging.setText("NO");
-        MainActivity.myLogging.setTextColor(getResources().getColor(R.color.negative));
+        UpdateLoggingStatus(false);
 
         //StartUIUpdater();
 
@@ -512,8 +511,7 @@ public class MainActivity
                     mDataToCSVFile = new DataToCsvFile();
                 }
                 mDataToCSVFile.start();
-                MainActivity.myLogging.setText("LOGGING");
-                MainActivity.myLogging.setTextColor(getResources().getColor(R.color.positive));
+                UpdateLoggingStatus(true);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -593,8 +591,7 @@ public class MainActivity
         if (mDataToCSVFile != null && mDataToCSVFile.getState() != Thread.State.TERMINATED) {
             mDataToCSVFile.cancel();
         }
-        MainActivity.myLogging.setTextColor(getResources().getColor(R.color.negative));
-        MainActivity.myLogging.setText("NO");
+        UpdateLoggingStatus(false);
     }
 
     /** Stops the random generator thread (if running) */
@@ -690,24 +687,34 @@ public class MainActivity
             public void run() {
                 switch (Global.BTState) {
                     case DISCONNECTED:
-                        MainActivity.myBTState.setText("DISCONNECTED");
-                        MainActivity.myBTState.setTextColor(getResources().getColor(R.color.negative));
+                        MainActivity.myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_cancel_black_24dp, null));
+                        MainActivity.myBTState.setColorFilter(ContextCompat.getColor(context, R.color.negative));
                         break;
                     case CONNECTING:
-                        MainActivity.myBTState.setText("CONNECTING");
-                        MainActivity.myBTState.setTextColor(getResources().getColor(R.color.neutral));
+                        MainActivity.myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_group_work_black_24dp, null));
+                        MainActivity.myBTState.setColorFilter(ContextCompat.getColor(context, R.color.neutral));
                         break;
                     case CONNECTED:
-                        MainActivity.myBTState.setText("CONNECTED");
-                        MainActivity.myBTState.setTextColor(getResources().getColor(R.color.positive));
+                        MainActivity.myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_check_circle_black_24dp, null));
+                        MainActivity.myBTState.setColorFilter(ContextCompat.getColor(context, R.color.positive));
                         break;
                     case RECONNECTING:
-                        MainActivity.myBTState.setText("RECONNECTING... [" + Global.BTReconnectAttempts + "]");
-                        MainActivity.myBTState.setTextColor(getResources().getColor(R.color.neutral));
+                        MainActivity.myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_warning_black_24dp, null));
+                        MainActivity.myBTState.setColorFilter(ContextCompat.getColor(context, R.color.neutral));
                         break;
                 }
             }
         });
+    }
+
+    private void UpdateLoggingStatus(boolean logging) {
+        if (logging) {
+            MainActivity.myLogging.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_check_circle_black_24dp, null));
+            MainActivity.myLogging.setColorFilter(ContextCompat.getColor(context, R.color.positive));
+        } else {
+            MainActivity.myLogging.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_cancel_black_24dp, null));
+            MainActivity.myLogging.setColorFilter(ContextCompat.getColor(context, R.color.negative));
+        }
     }
 
     /** Updates the TextView at the bottom of the UI showing the lap number */
