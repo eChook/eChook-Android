@@ -748,7 +748,7 @@ public class MainActivity
                     } else if (shift == -1) {
                         // shift down indicator
                         MainActivity.myShiftIndicator.setVisibility(View.VISIBLE);
-                        MainActivity.myShiftIndicator.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.shift_down, null));
+                        MainActivity.myShiftIndicator.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_down_circular_xxl, null));
                     } else {
                         // hide shift indicator
                         MainActivity.myShiftIndicator.setVisibility(View.INVISIBLE);

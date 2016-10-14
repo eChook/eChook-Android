@@ -19,9 +19,9 @@ public abstract class UpdateFragment extends Fragment {
 
 	public abstract void UpdateMotorRPM();
 
-    public abstract void UpdateWattHours();
+	public abstract void UpdateWattHours();
 
-    public abstract void UpdatePerformanceMetric();
+	public abstract void UpdatePerformanceMetric();
 
-    public abstract void UpdateThrottleMode();
+	public abstract void UpdateThrottleMode();
 }
