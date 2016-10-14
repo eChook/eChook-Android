@@ -191,7 +191,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:id="@+id/temp1"
-        android:gravity="center"
+        android:gravity="top|center"
         android:singleLine="false"
         android:inputType="none"
         android:width="90dp"
@@ -201,6 +201,18 @@
         custom:layout_constraintRight_toLeftOf="@+id/guideline8"
         custom:layout_constraintLeft_toLeftOf="@+id/guideline3"
         custom:layout_constraintTop_toBottomOf="@+id/textView9"/>
+
+    <TextView
+        android:text="###"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/fan"
+        custom:layout_constraintLeft_toLeftOf="@+id/temp1"
+        custom:layout_constraintRight_toRightOf="@+id/temp1"
+        custom:layout_constraintBottom_toBottomOf="@+id/temp1"
+        android:gravity="bottom|center_horizontal"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
 
     <com.github.mikephil.charting.charts.BarChart
         android:layout_width="0dp"

@@ -25,6 +25,7 @@ import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.YAxisValueFormatter;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 
@@ -37,6 +38,7 @@ public class SixGraphsBars extends UpdateFragment {
   private static TextView Temp1;
   private static TextView RPM;
   private static TextView Speed;
+  private static TextView Fan;
 
   private static BarChart ThrottleBarChart;
   private static BarChart AmpsBarChart;
@@ -67,14 +69,15 @@ public class SixGraphsBars extends UpdateFragment {
 	/*===================*/
   private void InitializeDataFields() {
     View v = getView();
-    Throttle 		= (TextView) v.findViewById(R.id.throttle);
-    Amps            = (TextView) v.findViewById(R.id.current);
-    Volts           = (TextView) v.findViewById(R.id.voltage);
-    Temp1 			= (TextView) v.findViewById(R.id.temp1);
+    Throttle 	= (TextView) v.findViewById(R.id.throttle);
+    Amps      = (TextView) v.findViewById(R.id.current);
+    Volts     = (TextView) v.findViewById(R.id.voltage);
+    Temp1 		= (TextView) v.findViewById(R.id.temp1);
     RPM 			= (TextView) v.findViewById(R.id.rpm);
-    Speed 			= (TextView) v.findViewById(R.id.speed);
-    AmpHours		= (TextView) v.findViewById(R.id.ampHours);
-    WattHours       = (TextView) v.findViewById(R.id.wattHours);
+    Speed 		= (TextView) v.findViewById(R.id.speed);
+    AmpHours	= (TextView) v.findViewById(R.id.ampHours);
+    WattHours = (TextView) v.findViewById(R.id.wattHours);
+    Fan       = (TextView) v.findViewById(R.id.fan);
   }
 
   private void InitializeGraphs() {
@@ -351,6 +354,7 @@ public class SixGraphsBars extends UpdateFragment {
     try {
       Temp1.setText(String.format("%.1f", Global.TempC1));
       Temp1.setTextColor(ColorHelper.GetVoltsColor(Global.TempC1));
+      Fan.setText(String.format("%.0f", Global.FanDuty));
       if (Global.EnableGraphs) {
         UpdateBarChart(TempBarChart, Global.TempC1, ColorHelper.getTempColor(Global.TempC1));
         UpdateLineChart(TempLineChart);
