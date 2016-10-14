@@ -158,7 +158,6 @@
                 android:text="##"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textSize="16sp"
-                android:typeface="monospace"
                 app:layout_constraintBottom_toBottomOf="@+id/LapTimer"
                 app:layout_constraintRight_toLeftOf="@+id/textView4"/>
 
