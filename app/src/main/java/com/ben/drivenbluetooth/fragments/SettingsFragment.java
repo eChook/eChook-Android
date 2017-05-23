@@ -74,7 +74,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
     }
 
-    //OnClck callback to generate list of BT devices
+    //OnClick callback to generate list of BT devices each time settings is launched
     protected static void setListPreferenceData(ListPreference lp) {
 
 
@@ -82,7 +82,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 
-        //Count the number of paired devices - Must be a more elegant solution!! TODO
+        //Count the number of paired devices - Must be a more elegant solution...
         int devTotalCount = 0;
         for(BluetoothDevice bt : pairedDevices) {
             devTotalCount ++;
@@ -92,13 +92,11 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         CharSequence[] entryValues = new CharSequence[devTotalCount];
 
         int devCount = 0;
-        Log.v("eChook","Adding 0 to list");
-        Global.BTDeviceNames.add(0, "null"); //pre fill the 0 index of the list to keep everything else in sync
+
         for(BluetoothDevice bt : pairedDevices) {
             entries[devCount] = bt.getName();
-            entryValues[devCount] = String.format("%d",devCount+1);
-            Log.v("eChook","Adding to list");
-            Global.BTDeviceNames.add(devCount+1,bt.getName());
+            entryValues[devCount] = bt.getName();
+
             devCount ++;
 
         }
@@ -162,12 +160,8 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					MainActivity.myAccelerometer.update();
 					break;
 				case "prefBTDeviceName":
-                    Log.v("eChook","Checking if list is empty");
-					if(!Global.BTDeviceNames.isEmpty()) {
-                        int nameID = Integer.parseInt(sharedPreferences.getString("prefBTDeviceName", ""));
-                        Global.BTDeviceName = Global.BTDeviceNames.get(nameID);
-                        MainActivity.UpdateBTCarName();
-                    }
+                    Global.BTDeviceName = sharedPreferences.getString("prefBTDeviceName", "");
+					MainActivity.UpdateBTCarName();
 					break;
 				case "prefCarName":
 					Global.CarName = sharedPreferences.getString("prefCarName","");
