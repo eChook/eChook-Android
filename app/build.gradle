@@ -10,7 +10,7 @@ def getVersionCodeTimestamp() {
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '24.0.0'
+    buildToolsVersion '25.0.0'
 
     applicationVariants.all { variant ->
         variant.outputs.each { output ->

@@ -8,6 +8,7 @@ import com.ben.drivenbluetooth.util.RunningAverage;
 import com.github.mikephil.charting.data.LineData;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -130,6 +131,8 @@ public final class Global {
 	public static boolean EnableGraphs                  = true;
 	public static Double BatteryCapacityAh;
     public static boolean UDPEnabled                    = false;
+    public static List<String> BTDeviceNames = new ArrayList<String>(248); //248 is the maximum number of devices it is possible to bond
+
 
     public static int MotorTeeth                        = 0;
     public static int[] WheelTeeth;

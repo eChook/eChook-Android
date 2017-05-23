@@ -344,7 +344,7 @@ public class MainActivity
     /* ================ */
 
   public void OpenBT(View v) {
-    if (!Objects.equals(Global.BTDeviceName, "")) { // fucking Java string comparators...
+    if (!Objects.equals(Global.BTDeviceName, "")) { // annoying Java string comparators...
       try {
         myBluetoothManager.findBT();
         myBluetoothManager.openBT(false);
@@ -608,9 +608,9 @@ public class MainActivity
     }
   }
 
-    /* ========== */
-	/* OTHER SHIT */
-    /* ========== */
+    /* =========== */
+	/* OTHER STUFF */
+    /* =========== */
 
   private boolean checkIfUIThread() {
     return Looper.getMainLooper().getThread() == Thread.currentThread();
@@ -748,7 +748,7 @@ public class MainActivity
           } else if (shift == -1) {
             // shift down indicator
             MainActivity.myShiftIndicator.setVisibility(View.VISIBLE);
-            MainActivity.myShiftIndicator.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_down_circular_xxl, null));
+            //MainActivity.myShiftIndicator.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_down_circular_xxl, null));
           } else {
             // hide shift indicator
             MainActivity.myShiftIndicator.setVisibility(View.INVISIBLE);
