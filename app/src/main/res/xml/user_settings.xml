@@ -58,10 +58,10 @@
 	<PreferenceCategory
 		android:title="Bluetooth"
 		android:key="prefKeyBluetooth">
-		<EditTextPreference
+		<ListPreference
 			android:key="prefBTDeviceName"
-			android:title="Bluetooth device name"
-			android:summary=""
+			android:title="Bluetooth Device Name"
+			android:summary="%s"
 			/>
     </PreferenceCategory>
     <PreferenceCategory
