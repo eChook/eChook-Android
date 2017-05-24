@@ -206,7 +206,11 @@ public class MainActivity
                       | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                       | View.SYSTEM_UI_FLAG_FULLSCREEN
                       | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+    }else //window has lost focus - lets stop tracking/logging/uploading
+    {
+
     }
+
   }
 
   private void RequestAllPermissions() {
