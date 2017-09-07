@@ -3,6 +3,7 @@ package com.ben.drivenbluetooth.fragments;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.support.v4.content.ContextCompat;
@@ -16,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
+import android.content.Intent;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -62,6 +65,8 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         // THIS IS REQUIRED IF YOU DON'T HAVE 'entries' and 'entryValues' in your XML
         setListPreferenceData(btDevListPreference);
 
+
+
         btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -71,6 +76,24 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             }
         });
 
+        //On click event for Sharing Log
+        Preference sharePref = findPreference("prefShareLog");
+        sharePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("Download\\"+ Global.DATA_FILE));
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
+                return true;
+            }});
+
+    }
+
+    // Share function for onClick preference
+    private void shareDataLog ()
+    {
 
     }
 
