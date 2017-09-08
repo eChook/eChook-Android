@@ -150,7 +150,7 @@ public final class Global {
 
     public enum BTSTATE {DISCONNECTED, CONNECTING, CONNECTED, RECONNECTING}
 
-    public enum MODE {DEMO, RACE}
+    public enum MODE {RACE, DEMO}
 
     public enum UNIT {MPH, KPH, MPS, FFF, KNOT}
 

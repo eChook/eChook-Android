@@ -11,6 +11,7 @@
             android:key="prefClearLog"
             android:title="Clear Logfile"
             />
+
     </PreferenceCategory>
     <PreferenceCategory
         android:title="Bluetooth"
@@ -24,6 +25,10 @@
     <PreferenceCategory
         android:title="App Settings"
         android:key="prefAppSettings">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefMode"
+            android:title="Demo Mode" />
         <ListPreference
             android:key="prefSpeedUnits"
             android:title="Speed unit"
@@ -40,13 +45,6 @@
             android:defaultValue="1"
             android:summary="%s"
             />
-        <ListPreference
-            android:defaultValue="0"
-            android:entries="@array/prefMode"
-            android:entryValues="@array/prefModeValues"
-            android:key="prefMode"
-            android:summary="%s"
-            android:title="Mode" />
         <EditTextPreference
             android:key="prefCarName"
             android:title="Car name (used for logging)"

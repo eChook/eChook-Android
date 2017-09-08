@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
@@ -27,6 +28,7 @@ import com.ben.drivenbluetooth.util.DrivenSettings;
 
 import org.acra.ACRA;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -81,11 +83,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         sharePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("Download\\"+ Global.DATA_FILE));
-                sendIntent.setType("text/plain");
-                startActivity(sendIntent);
+                shareDataLog ();
                 return true;
             }});
 
@@ -94,13 +92,17 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
     // Share function for onClick preference
     private void shareDataLog ()
     {
-
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        //Open file
+        File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
+        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(logFile));
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
     }
 
     //OnClick callback to generate list of BT devices each time settings is launched
     protected static void setListPreferenceData(ListPreference lp) {
-
-
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -164,7 +166,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 		try {
 			switch (key) {
 				case "prefMode":
-					int mode = Integer.valueOf(sharedPreferences.getString("prefMode", ""));
+					int mode = sharedPreferences.getBoolean("prefMode",false)? 1:0;// getString("prefMode", ""));
 					Global.Mode = Global.MODE.values()[mode];
 					MainActivity.myMode.setText(Global.Mode.toString());
 					break;
