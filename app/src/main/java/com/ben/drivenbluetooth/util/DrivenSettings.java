@@ -2,6 +2,8 @@ package com.ben.drivenbluetooth.util;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v7.preference.Preference;
+import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -31,12 +33,13 @@ public final class DrivenSettings {
 	public static void QuickChangeMode() {
 		try {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
-			int mode = Integer.parseInt(prefs.getString("prefMode", "0"));
+			int mode = prefs.getBoolean("prefMode", false)? 1:0;
 
 			mode = mode == 0 ? 1 : 0; // flip it
 
 			SharedPreferences.Editor editor = prefs.edit();
-			editor.putString("prefMode", Integer.toString(mode));
+//			editor.putString("prefMode", Integer.toString(mode));
+			editor.putBoolean("prefMode", (mode != 0) );
 			editor.apply();
 
 			Global.Mode = Global.MODE.values()[mode];
@@ -64,7 +67,7 @@ public final class DrivenSettings {
 
 	private static void Mode(SharedPreferences prefs) {
 		try {
-			int mode = Integer.valueOf(prefs.getString("prefMode", "0"));
+			int mode = prefs.getBoolean("prefMode", false)? 1:0;
 			Global.Mode = Global.MODE.values()[mode];
 			MainActivity.myMode.setText(Global.MODE.values()[mode].name());
 		} catch (Exception e) {
@@ -84,7 +87,7 @@ public final class DrivenSettings {
 
 	private static void Location(SharedPreferences prefs) {
 		try {
-			int location = Integer.valueOf(prefs.getString("prefLocation", "0"));
+			int location = prefs.getBoolean("prefLocation", false)? 1:0;
 			Global.LocationStatus = Global.LOCATION.values()[location];
 		} catch (Exception e) {
 			Global.LocationStatus = Global.LOCATION.DISABLED;
@@ -109,7 +112,7 @@ public final class DrivenSettings {
 
 	private static void Graphs(SharedPreferences prefs) {
 		try {
-			Global.EnableGraphs = Integer.valueOf(prefs.getString("prefGraphs", "")) != 0;
+			Global.EnableGraphs = prefs.getBoolean("prefGraphs", false);
 		} catch (Exception e) {
 			// probably not needed
 		}
@@ -117,7 +120,14 @@ public final class DrivenSettings {
 
     private static void UDP(SharedPreferences prefs) {
         Global.UDPPassword = prefs.getString("prefUDP", "");
-        Global.UDPEnabled = true;
+
+		if(Global.UDPPassword.equals("eChookLiveData") && prefs.getBoolean("prefUdpEnabled", false))
+		{
+			Global.UDPEnabled = true;
+		} else{
+			Global.UDPEnabled = false;
+		}
+
     }
 
     public static int[] parseWheelTeeth(String wheelTeethString) {
