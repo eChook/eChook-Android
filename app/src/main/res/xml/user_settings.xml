@@ -1,7 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="Vehicle"
+		android:title="Data logging"
+		android:key="prefKeyLogging">
+        <Preference
+            android:key="prefShareLog"
+            android:title="Share Logged Data"
+            />
+        <Preference
+            android:key="prefClearLog"
+            android:title="Clear Logfile"
+            />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Bluetooth"
+        android:key="prefKeyBluetooth">
+        <ListPreference
+            android:key="prefBTDeviceName"
+            android:title="Select Bluetooth Device"
+            android:summary="%s"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="App Settings"
+        android:key="prefAppSettings">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefMode"
+            android:title="Demo Mode"
+            android:summaryOff="Data from Bluetooth is displayed"
+            android:summaryOn="Generated data displayed for demo purposes"/>
+
+
+
+        <ListPreference
+            android:key="prefSpeedUnits"
+            android:title="Speed unit"
+            android:entries="@array/prefSpeedUnit"
+            android:entryValues="@array/prefSpeedUnitValues"
+            android:defaultValue="0"
+            android:summary="%s"
+            />
+        <SwitchPreference
+            android:key="prefGraphs"
+            android:title="Enable Graphs"
+            android:defaultValue="true"
+            android:summaryOn="Reduces performance and increased battery drain if enabled. Looks nice though."
+            android:summaryOff="Reduces performance and increased battery drain if enabled."
+
+            />
+        <EditTextPreference
+            android:key="prefCarName"
+            android:summary=""
+            android:title="Car name (Shown in Log)" />
+    </PreferenceCategory>
+	<PreferenceCategory
+        android:title="Gearing Settings"
         android:key="prefKeySettings">
         <EditTextPreference
             android:key="prefMotorTeeth"
@@ -10,67 +65,34 @@
             />
         <EditTextPreference
             android:key="prefWheelTeeth"
-            android:title="Wheel teeth numbers (separate using commas)"
-            android:summary=""
+            android:title="Wheel teeth numbers"
+            android:summary="Separate using commas, i.e. 10,11,12"
             />
-        <ListPreference
-            android:key="prefSpeedUnits"
-            android:title="Speed unit"
-            android:entries="@array/prefSpeedUnit"
-            android:entryValues="@array/prefSpeedUnitValues"
-            android:defaultValue="0"
-			android:summary="%s"
-            />
-		<ListPreference
-			android:key="prefMode"
-			android:title="Mode"
-			android:entries="@array/prefMode"
-			android:entryValues="@array/prefModeValues"
-			android:defaultValue="0"
-			android:summary="%s"
-			/>
-		<ListPreference
-			android:key="prefGraphs"
-			android:title="Enable graphs (reduces performance if enabled)"
-			android:entries="@array/prefGraphs"
-			android:entryValues="@array/prefGraphsValues"
-			android:defaultValue="1"
-			android:summary="%s"
-			/>
-		<EditTextPreference
-			android:key="prefCarName"
-			android:title="Car name (used for logging)"
-			android:summary=""
-			/>
+
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:title="Sensors"
 		android:key="prefKeySensors">
-        <ListPreference
+        <SwitchPreference
             android:key="prefLocation"
 			android:title="Location tracking"
-			android:entries="@array/prefLocation"
-			android:entryValues="@array/prefLocationValues"
-			android:defaultValue="0"
-			android:summary="%s"
+			android:defaultValue="false"
+			android:summary="Required for lap counting"
 			/>
 	</PreferenceCategory>
-	<PreferenceCategory
-		android:title="Bluetooth"
-		android:key="prefKeyBluetooth">
-		<ListPreference
-			android:key="prefBTDeviceName"
-			android:title="Bluetooth Device Name"
-			android:summary="%s"
-			/>
-    </PreferenceCategory>
+
     <PreferenceCategory
-        android:title="Live Data"
+        android:title="Live Data (Testing Only)"
         android:key="prefKeyLiveData">
         <EditTextPreference
             android:key="prefUDP"
             android:title="Live data password"
             android:summary=""
             />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="prefUdpEnabled"
+        android:title="Enable Live Data Upload"
+        android:summary="Correct password required - feature in very early stages"/>
     </PreferenceCategory>
 </PreferenceScreen>

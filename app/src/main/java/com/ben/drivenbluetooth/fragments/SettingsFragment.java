@@ -2,9 +2,13 @@ package com.ben.drivenbluetooth.fragments;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.app.AlertDialog;
 
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
@@ -16,6 +20,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
+import android.content.Intent;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -24,6 +30,7 @@ import com.ben.drivenbluetooth.util.DrivenSettings;
 
 import org.acra.ACRA;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +69,8 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         // THIS IS REQUIRED IF YOU DON'T HAVE 'entries' and 'entryValues' in your XML
         setListPreferenceData(btDevListPreference);
 
+
+
         btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -71,13 +80,72 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             }
         });
 
+        //On click event for Sharing Log
+        Preference sharePref = findPreference("prefShareLog");
+        sharePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                shareDataLog ();
+                return true;
+            }});
+
+        //On click event for Deleting Log
+        Preference deletePref = findPreference("prefClearLog");
+        deletePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                clearDataLog ();
+                return true;
+            }});
+
+        //Disable live data option if password incorrect
+        Preference dataPref = findPreference("prefUdpEnabled");
+        if(!Global.UDPPassword.equals("eChookLiveData"))
+        {
+            dataPref.setEnabled(false);
+            Global.UDPEnabled = false;
+        }
+
+    }
+
+    // Share function for onClick preference
+    private void shareDataLog ()
+    {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        //Open file
+        File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
+        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(logFile));
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
+    }
+
+    //OnClick callback for deleting data log
+    private void clearDataLog()
+    {   Log.d("Debug","Clear Data Pressed");
+        final AlertDialog.Builder warningBox = new AlertDialog.Builder(this.getActivity());
+        warningBox.setMessage("This will delete all logged data")
+                .setTitle("Are you sure?");
+        warningBox.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
+                logFile.delete();
+                MainActivity.UpdateDataFileInfo();
+            }
+        });
+        warningBox.setNegativeButton("Don't Delete", new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int id) {
+            dialog.dismiss();
+        }
+    });
+        Log.d("Debug","Launching create");
+        AlertDialog dialog = warningBox.show();
+
 
     }
 
     //OnClick callback to generate list of BT devices each time settings is launched
     protected static void setListPreferenceData(ListPreference lp) {
-
-
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -141,7 +209,8 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 		try {
 			switch (key) {
 				case "prefMode":
-					int mode = Integer.valueOf(sharedPreferences.getString("prefMode", ""));
+                    //int mode = Integer.valueOf(sharedPreferences.getString("prefMode", ""));
+                    int mode = sharedPreferences.getBoolean("prefMode", false)? 1:0;
 					Global.Mode = Global.MODE.values()[mode];
 					MainActivity.myMode.setText(Global.Mode.toString());
 					break;
@@ -150,7 +219,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					Global.Unit = Global.UNIT.values()[units];
 					break;
 				case "prefLocation":
-					int location = Integer.valueOf(sharedPreferences.getString("prefLocation", ""));
+					int location = sharedPreferences.getBoolean("prefLocation", false)? 1:0;
 					Global.LocationStatus = Global.LOCATION.values()[location];
 					MainActivity.myDrivenLocation.UpdateLocationSetting();
 					break;
@@ -168,14 +237,23 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                     MainActivity.UpdateBTCarName();
 					break;
 				case "prefGraphs":
-					Global.EnableGraphs = Integer.valueOf(sharedPreferences.getString("prefGraphs", "")) != 0;
+					Global.EnableGraphs = sharedPreferences.getBoolean("prefGraphs", false);
                     break;
                 case "prefUDP":
                     Global.UDPPassword = sharedPreferences.getString("prefUDP", "");
-                    Global.UDPEnabled = true;
-                    if (Global.UDPEnabled) {
-                        MainActivity.mUDPSender.OpenUDPSocketHandler.sendEmptyMessage(0);
+                    Preference pref = findPreference("prefUdpEnabled");
+                    if(Global.UDPPassword.equals("eChookLiveData"))
+                    {
+                        Toast.makeText(this.getContext(), "Password Correct :)", Toast.LENGTH_SHORT).show();
+                        pref.setEnabled(true);
+
+                    } else{
+
+                        Toast.makeText(this.getContext(), "Nice Guess... try again :p", Toast.LENGTH_SHORT).show();
+
+                        pref.setEnabled(false);
                     }
+
                     break;
                 case "prefMotorTeeth":
                     Global.MotorTeeth = DrivenSettings.parseMotorTeeth(sharedPreferences.getString("prefMotorTeeth", ""));
@@ -183,6 +261,14 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                 case "prefWheelTeeth":
                     Global.WheelTeeth = DrivenSettings.parseWheelTeeth(sharedPreferences.getString("prefWheelTeeth", ""));
                     break;
+                case "prefUdpEnabled":
+                    if(sharedPreferences.getBoolean("prefUdpEnabled", false))
+                    {
+
+                    }else{
+                        Global.UDPEnabled = false;
+                    }
+
 				default:
 					break;
 			}

@@ -46,11 +46,11 @@ public final class Global {
 
     public static final int     DATA_SAVE_INTERVAL      = 250; // save interval in milliseconds
 
-    public static final String  DATA_FILE               = "arduino.csv";
-    public static final int     BT_DATA_TIMEOUT         = 2000; // Bluetooth connection timeout in milliseconds
-    public static final int     LOCATION_INTERVAL       = 2000;    // Low speed location UpdateLocationSetting interval in ms
-    public static final int     LOCATION_FAST_INTERVAL  = 1000;        // High speed location UpdateLocationSetting interval in ms
-    public static final float   LAP_TRIGGER_RANGE       = 20f;  // locus around the start location to trigger a lap
+    public static final String  DATA_FILE               = "eChook-Log.csv";
+    public static final int     BT_DATA_TIMEOUT         = 2000;     // Bluetooth connection timeout in milliseconds
+    public static final int     LOCATION_INTERVAL       = 2000;     // Low speed location UpdateLocationSetting interval in ms
+    public static final int     LOCATION_FAST_INTERVAL  = 1000;     // High speed location UpdateLocationSetting interval in ms
+    public static final float   LAP_TRIGGER_RANGE       = 20f;      // locus around the start location to trigger a lap
     public static final int     MAP_UPDATE_INTERVAL     = 5000;
     public static final String  SOCKETADDRESS           = "exantas.me";
     public static final int     SOCKETPORT              = 8081;
@@ -150,7 +150,7 @@ public final class Global {
 
     public enum BTSTATE {DISCONNECTED, CONNECTING, CONNECTED, RECONNECTING}
 
-    public enum MODE {DEMO, RACE}
+    public enum MODE {RACE, DEMO}
 
     public enum UNIT {MPH, KPH, MPS, FFF, KNOT}
 

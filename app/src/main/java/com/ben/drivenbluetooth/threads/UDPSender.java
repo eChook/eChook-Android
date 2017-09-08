@@ -236,4 +236,13 @@ public class UDPSender extends Thread {
         UDPEnabled = false;
         Global.UDPEnabled = UDPEnabled;
     }
+
+    public void pause() {
+        UDPEnabled = false;
+    }
+
+    public void restart() {
+        if(Global.UDPEnabled == UDPEnabled)
+            UDPEnabled = true;
+    }
 }
