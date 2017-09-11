@@ -108,6 +108,11 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             }
         }catch (Exception e) {
             e.printStackTrace();
+
+            final AlertDialog.Builder errorBox = new AlertDialog.Builder(this.getActivity());
+            errorBox.setMessage("That wasn't supposed to happen. Please clear app cache and try again")
+                    .setTitle("Oops! Sorry.");
+            AlertDialog dialog = errorBox.show();
         }
 
     }
