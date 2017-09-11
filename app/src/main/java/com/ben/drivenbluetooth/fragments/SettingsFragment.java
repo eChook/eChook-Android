@@ -222,7 +222,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
 		try {
 			switch (key) {
-				case "prefMode":
+				case "prefModeSwitch":
                     //int mode = Integer.valueOf(sharedPreferences.getString("prefMode", ""));
                     int mode = sharedPreferences.getBoolean("prefMode", false)? 1:0;
 					Global.Mode = Global.MODE.values()[mode];
@@ -232,7 +232,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					int units = Integer.valueOf(sharedPreferences.getString("prefSpeedUnits", ""));
 					Global.Unit = Global.UNIT.values()[units];
 					break;
-				case "prefLocation":
+				case "prefLocationSwitch":
 					int location = sharedPreferences.getBoolean("prefLocation", false)? 1:0;
 					Global.LocationStatus = Global.LOCATION.values()[location];
 					MainActivity.myDrivenLocation.UpdateLocationSetting();
@@ -253,7 +253,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					Global.CarName = sharedPreferences.getString("prefCarName","");
                     MainActivity.UpdateBTCarName();
 					break;
-				case "prefGraphs":
+				case "prefGraphsSwitch":
 					Global.EnableGraphs = sharedPreferences.getBoolean("prefGraphs", false);
                     break;
                 case "prefUDP":
