@@ -2,6 +2,7 @@ package com.ben.drivenbluetooth.fragments;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -42,6 +43,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
     private SettingsInterface mListener;
 
     public interface SettingsInterface {
+
         void onSettingChanged(SharedPreferences sharedPreferences, String key);
     }
 
@@ -53,14 +55,18 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         view.setBackgroundColor(ContextCompat.getColor(MainActivity.getAppContext(), android.R.color.background_light));
-
         return view;
     }
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
         try{
-            addPreferencesFromResource(R.xml.user_settings);
+            try {
+                addPreferencesFromResource(R.xml.user_settings);
+            }catch (Exception e) {
+                e.printStackTrace();
+
+            }
             updateAllPreferenceSummary();
 
             //Added to support BT device list generation
@@ -131,7 +137,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
     //OnClick callback for deleting data log
     private void clearDataLog()
-    {   Log.d("Debug","Clear Data Pressed");
+    {
         final AlertDialog.Builder warningBox = new AlertDialog.Builder(this.getActivity());
         warningBox.setMessage("This will delete all logged data")
                 .setTitle("Are you sure?");
@@ -147,7 +153,6 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             dialog.dismiss();
         }
     });
-        Log.d("Debug","Launching create");
         AlertDialog dialog = warningBox.show();
 
 
@@ -169,12 +174,10 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         CharSequence[] entryValues = new CharSequence[devTotalCount];
 
         int devCount = 0;
-        Log.v("eChook","Adding 0 to list");
         Global.BTDeviceNames.add(0, "null"); //pre fill the 0 index of the list to keep everything else in sync
         for(BluetoothDevice bt : pairedDevices) {
             entries[devCount] = bt.getName();
             entryValues[devCount] = String.format("%d",devCount+1);
-            Log.v("eChook","Adding to list");
             Global.BTDeviceNames.add(devCount+1,bt.getName());
             devCount ++;
 
@@ -240,8 +243,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					MainActivity.myAccelerometer.update();
 					break;
 				case "prefBTDeviceName":
-                    Log.v("eChook","Checking if list is empty");
-					if(!Global.BTDeviceNames.isEmpty()) {
+                    if(!Global.BTDeviceNames.isEmpty()) {
                         int nameID = Integer.parseInt(sharedPreferences.getString("prefBTDeviceName", ""));
                         Global.BTDeviceName = Global.BTDeviceNames.get(nameID);
                         MainActivity.UpdateBTCarName();
@@ -296,15 +298,22 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
 	@Override
 	public void onResume() {
-		super.onResume();
-		getPreferenceScreen().getSharedPreferences()
-				.registerOnSharedPreferenceChangeListener(this);
+		try {
+            super.onResume();
+            getPreferenceScreen().getSharedPreferences()
+                    .registerOnSharedPreferenceChangeListener(this);
+        }catch (Exception e) {
+
+        }
 	}
 
 	@Override
 	public void onPause() {
-		super.onPause();
-		getPreferenceScreen().getSharedPreferences()
-				.unregisterOnSharedPreferenceChangeListener(this);
+        try {
+            super.onPause();
+            getPreferenceScreen().getSharedPreferences()
+                    .unregisterOnSharedPreferenceChangeListener(this);
+        }catch (Exception e) {
+        }
 	}
 }
