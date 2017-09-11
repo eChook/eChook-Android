@@ -67,7 +67,7 @@ public final class DrivenSettings {
 
 	private static void Mode(SharedPreferences prefs) {
 		try {
-			int mode = prefs.getBoolean("prefMode", false)? 1:0;
+			int mode = prefs.getBoolean("prefModeSwitch", false)? 1:0;
 			Global.Mode = Global.MODE.values()[mode];
 			MainActivity.myMode.setText(Global.MODE.values()[mode].name());
 		} catch (Exception e) {
@@ -87,7 +87,7 @@ public final class DrivenSettings {
 
 	private static void Location(SharedPreferences prefs) {
 		try {
-			int location = prefs.getBoolean("prefLocation", false)? 1:0;
+			int location = prefs.getBoolean("prefLocationSwitch", false)? 1:0;
 			Global.LocationStatus = Global.LOCATION.values()[location];
 		} catch (Exception e) {
 			Global.LocationStatus = Global.LOCATION.DISABLED;
@@ -112,7 +112,7 @@ public final class DrivenSettings {
 
 	private static void Graphs(SharedPreferences prefs) {
 		try {
-			Global.EnableGraphs = prefs.getBoolean("prefGraphs", false);
+			Global.EnableGraphs = prefs.getBoolean("prefGraphsSwitch", false);
 		} catch (Exception e) {
 			// probably not needed
 		}

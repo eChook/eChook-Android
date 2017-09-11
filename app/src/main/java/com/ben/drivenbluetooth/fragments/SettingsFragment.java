@@ -2,6 +2,7 @@ package com.ben.drivenbluetooth.fragments;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -42,6 +43,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
     private SettingsInterface mListener;
 
     public interface SettingsInterface {
+
         void onSettingChanged(SharedPreferences sharedPreferences, String key);
     }
 
@@ -53,57 +55,70 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         view.setBackgroundColor(ContextCompat.getColor(MainActivity.getAppContext(), android.R.color.background_light));
-
         return view;
     }
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
-        addPreferencesFromResource(R.xml.user_settings);
-        updateAllPreferenceSummary();
+        try{
+            try {
+                addPreferencesFromResource(R.xml.user_settings);
+            }catch (Exception e) {
+                e.printStackTrace();
 
-        //Added to support BT device list generation
-
-        final ListPreference btDevListPreference = (ListPreference) findPreference("prefBTDeviceName");
-
-        // THIS IS REQUIRED IF YOU DON'T HAVE 'entries' and 'entryValues' in your XML
-        setListPreferenceData(btDevListPreference);
-
-
-
-        btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-
-                setListPreferenceData(btDevListPreference);
-                return false;
             }
-        });
+            updateAllPreferenceSummary();
 
-        //On click event for Sharing Log
-        Preference sharePref = findPreference("prefShareLog");
-        sharePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                shareDataLog ();
-                return true;
-            }});
+            //Added to support BT device list generation
 
-        //On click event for Deleting Log
-        Preference deletePref = findPreference("prefClearLog");
-        deletePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                clearDataLog ();
-                return true;
-            }});
+            final ListPreference btDevListPreference = (ListPreference) findPreference("prefBTDeviceName");
 
-        //Disable live data option if password incorrect
-        Preference dataPref = findPreference("prefUdpEnabled");
-        if(!Global.UDPPassword.equals("eChookLiveData"))
-        {
-            dataPref.setEnabled(false);
-            Global.UDPEnabled = false;
+            // This is required if you don't have 'entries' and 'entryValues' in your XML - which can't be hard coded for BT devices
+            setListPreferenceData(btDevListPreference);
+
+
+            btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+
+                    setListPreferenceData(btDevListPreference);
+                    return false;
+                }
+            });
+
+            //On click event for Sharing Log
+            Preference sharePref = findPreference("prefShareLog");
+            sharePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    shareDataLog();
+                    return true;
+                }
+            });
+
+            //On click event for Deleting Log
+            Preference deletePref = findPreference("prefClearLog");
+            deletePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    clearDataLog();
+                    return true;
+                }
+            });
+
+            //Disable live data option if password incorrect
+            Preference dataPref = findPreference("prefUdpEnabled");
+            if (!Global.UDPPassword.equals("eChookLiveData")) {
+                dataPref.setEnabled(false);
+                Global.UDPEnabled = false;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+
+            final AlertDialog.Builder errorBox = new AlertDialog.Builder(this.getActivity());
+            errorBox.setMessage("That wasn't supposed to happen. Please clear app cache and try again")
+                    .setTitle("Oops! Sorry.");
+            AlertDialog dialog = errorBox.show();
         }
 
     }
@@ -122,7 +137,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
     //OnClick callback for deleting data log
     private void clearDataLog()
-    {   Log.d("Debug","Clear Data Pressed");
+    {
         final AlertDialog.Builder warningBox = new AlertDialog.Builder(this.getActivity());
         warningBox.setMessage("This will delete all logged data")
                 .setTitle("Are you sure?");
@@ -138,19 +153,18 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             dialog.dismiss();
         }
     });
-        Log.d("Debug","Launching create");
         AlertDialog dialog = warningBox.show();
 
 
     }
 
-    //OnClick callback to generate list of BT devices each time settings is launched
+    //OnClck callback to generate list of BT devices
     protected static void setListPreferenceData(ListPreference lp) {
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 
-        //Count the number of paired devices - Must be a more elegant solution...
+        //Count the number of paired devices - Must be a more elegant solution!! TODO
         int devTotalCount = 0;
         for(BluetoothDevice bt : pairedDevices) {
             devTotalCount ++;
@@ -160,11 +174,11 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         CharSequence[] entryValues = new CharSequence[devTotalCount];
 
         int devCount = 0;
-
+        Global.BTDeviceNames.add(0, "null"); //pre fill the 0 index of the list to keep everything else in sync
         for(BluetoothDevice bt : pairedDevices) {
             entries[devCount] = bt.getName();
-            entryValues[devCount] = bt.getName();
-
+            entryValues[devCount] = String.format("%d",devCount+1);
+            Global.BTDeviceNames.add(devCount+1,bt.getName());
             devCount ++;
 
         }
@@ -208,7 +222,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
 		try {
 			switch (key) {
-				case "prefMode":
+				case "prefModeSwitch":
                     //int mode = Integer.valueOf(sharedPreferences.getString("prefMode", ""));
                     int mode = sharedPreferences.getBoolean("prefMode", false)? 1:0;
 					Global.Mode = Global.MODE.values()[mode];
@@ -218,7 +232,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					int units = Integer.valueOf(sharedPreferences.getString("prefSpeedUnits", ""));
 					Global.Unit = Global.UNIT.values()[units];
 					break;
-				case "prefLocation":
+				case "prefLocationSwitch":
 					int location = sharedPreferences.getBoolean("prefLocation", false)? 1:0;
 					Global.LocationStatus = Global.LOCATION.values()[location];
 					MainActivity.myDrivenLocation.UpdateLocationSetting();
@@ -229,14 +243,17 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					MainActivity.myAccelerometer.update();
 					break;
 				case "prefBTDeviceName":
-                    Global.BTDeviceName = sharedPreferences.getString("prefBTDeviceName", "");
-					MainActivity.UpdateBTCarName();
+                    if(!Global.BTDeviceNames.isEmpty()) {
+                        int nameID = Integer.parseInt(sharedPreferences.getString("prefBTDeviceName", ""));
+                        Global.BTDeviceName = Global.BTDeviceNames.get(nameID);
+                        MainActivity.UpdateBTCarName();
+                    }
 					break;
 				case "prefCarName":
 					Global.CarName = sharedPreferences.getString("prefCarName","");
                     MainActivity.UpdateBTCarName();
 					break;
-				case "prefGraphs":
+				case "prefGraphsSwitch":
 					Global.EnableGraphs = sharedPreferences.getBoolean("prefGraphs", false);
                     break;
                 case "prefUDP":
@@ -281,15 +298,22 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
 	@Override
 	public void onResume() {
-		super.onResume();
-		getPreferenceScreen().getSharedPreferences()
-				.registerOnSharedPreferenceChangeListener(this);
+		try {
+            super.onResume();
+            getPreferenceScreen().getSharedPreferences()
+                    .registerOnSharedPreferenceChangeListener(this);
+        }catch (Exception e) {
+
+        }
 	}
 
 	@Override
 	public void onPause() {
-		super.onPause();
-		getPreferenceScreen().getSharedPreferences()
-				.unregisterOnSharedPreferenceChangeListener(this);
+        try {
+            super.onPause();
+            getPreferenceScreen().getSharedPreferences()
+                    .unregisterOnSharedPreferenceChangeListener(this);
+        }catch (Exception e) {
+        }
 	}
 }

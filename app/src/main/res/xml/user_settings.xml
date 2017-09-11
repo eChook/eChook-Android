@@ -26,8 +26,16 @@
         android:title="App Settings"
         android:key="prefAppSettings">
         <SwitchPreference
+            android:defaultValue="true"
+            android:key="prefGraphsSwitch"
+            android:summaryOff="Reduces performance and increased battery drain if enabled."
+            android:summaryOn="Reduces performance and increased battery drain if enabled. Looks nice though."
+            android:title="Enable Graphs"
+
+            />
+        <SwitchPreference
             android:defaultValue="false"
-            android:key="prefMode"
+            android:key="prefModeSwitch"
             android:title="Demo Mode"
             android:summaryOff="Data from Bluetooth is displayed"
             android:summaryOn="Generated data displayed for demo purposes"/>
@@ -41,14 +49,6 @@
             android:entryValues="@array/prefSpeedUnitValues"
             android:defaultValue="0"
             android:summary="%s"
-            />
-        <SwitchPreference
-            android:key="prefGraphs"
-            android:title="Enable Graphs"
-            android:defaultValue="true"
-            android:summaryOn="Reduces performance and increased battery drain if enabled. Looks nice though."
-            android:summaryOff="Reduces performance and increased battery drain if enabled."
-
             />
         <EditTextPreference
             android:key="prefCarName"
@@ -74,7 +74,7 @@
 		android:title="Sensors"
 		android:key="prefKeySensors">
         <SwitchPreference
-            android:key="prefLocation"
+            android:key="prefLocationSwitch"
 			android:title="Location tracking"
 			android:defaultValue="false"
 			android:summary="Required for lap counting"
