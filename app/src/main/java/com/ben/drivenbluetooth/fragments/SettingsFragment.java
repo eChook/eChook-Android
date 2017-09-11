@@ -59,51 +59,55 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
-        addPreferencesFromResource(R.xml.user_settings);
-        updateAllPreferenceSummary();
+        try{
+            addPreferencesFromResource(R.xml.user_settings);
+            updateAllPreferenceSummary();
 
-        //Added to support BT device list generation
+            //Added to support BT device list generation
 
-        final ListPreference btDevListPreference = (ListPreference) findPreference("prefBTDeviceName");
+            final ListPreference btDevListPreference = (ListPreference) findPreference("prefBTDeviceName");
 
-        // THIS IS REQUIRED IF YOU DON'T HAVE 'entries' and 'entryValues' in your XML
-        setListPreferenceData(btDevListPreference);
+            // This is required if you don't have 'entries' and 'entryValues' in your XML - which can't be hard coded for BT devices
+            setListPreferenceData(btDevListPreference);
 
 
+            btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
 
-        btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
+                    setListPreferenceData(btDevListPreference);
+                    return false;
+                }
+            });
 
-                setListPreferenceData(btDevListPreference);
-                return false;
+            //On click event for Sharing Log
+            Preference sharePref = findPreference("prefShareLog");
+            sharePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    shareDataLog();
+                    return true;
+                }
+            });
+
+            //On click event for Deleting Log
+            Preference deletePref = findPreference("prefClearLog");
+            deletePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    clearDataLog();
+                    return true;
+                }
+            });
+
+            //Disable live data option if password incorrect
+            Preference dataPref = findPreference("prefUdpEnabled");
+            if (!Global.UDPPassword.equals("eChookLiveData")) {
+                dataPref.setEnabled(false);
+                Global.UDPEnabled = false;
             }
-        });
-
-        //On click event for Sharing Log
-        Preference sharePref = findPreference("prefShareLog");
-        sharePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                shareDataLog ();
-                return true;
-            }});
-
-        //On click event for Deleting Log
-        Preference deletePref = findPreference("prefClearLog");
-        deletePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                clearDataLog ();
-                return true;
-            }});
-
-        //Disable live data option if password incorrect
-        Preference dataPref = findPreference("prefUdpEnabled");
-        if(!Global.UDPPassword.equals("eChookLiveData"))
-        {
-            dataPref.setEnabled(false);
-            Global.UDPEnabled = false;
+        }catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
