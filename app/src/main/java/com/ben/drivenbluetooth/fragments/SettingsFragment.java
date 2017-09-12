@@ -224,7 +224,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 			switch (key) {
 				case "prefModeSwitch":
                     //int mode = Integer.valueOf(sharedPreferences.getString("prefMode", ""));
-                    int mode = sharedPreferences.getBoolean("prefMode", false)? 1:0;
+                    int mode = sharedPreferences.getBoolean("prefModeSwitch", false)? 1:0;
 					Global.Mode = Global.MODE.values()[mode];
 					MainActivity.myMode.setText(Global.Mode.toString());
 					break;
@@ -233,7 +233,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					Global.Unit = Global.UNIT.values()[units];
 					break;
 				case "prefLocationSwitch":
-					int location = sharedPreferences.getBoolean("prefLocation", false)? 1:0;
+					int location = sharedPreferences.getBoolean("prefLocationSwitch", false)? 1:0;
 					Global.LocationStatus = Global.LOCATION.values()[location];
 					MainActivity.myDrivenLocation.UpdateLocationSetting();
 					break;
@@ -254,7 +254,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                     MainActivity.UpdateBTCarName();
 					break;
 				case "prefGraphsSwitch":
-					Global.EnableGraphs = sharedPreferences.getBoolean("prefGraphs", false);
+					Global.EnableGraphs = sharedPreferences.getBoolean("prefGraphsSwitch", false);
                     break;
                 case "prefUDP":
                     Global.UDPPassword = sharedPreferences.getString("prefUDP", "");
@@ -292,6 +292,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             mListener.onSettingChanged(sharedPreferences, key);
 		} catch (Exception e) {
 			MainActivity.showError(e);
+            e.printStackTrace();
             ACRA.getErrorReporter().handleException(e);
 		}
 	}
