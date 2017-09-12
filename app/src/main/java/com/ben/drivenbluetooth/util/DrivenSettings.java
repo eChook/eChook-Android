@@ -38,7 +38,6 @@ public final class DrivenSettings {
 			mode = mode == 0 ? 1 : 0; // flip it
 
 			SharedPreferences.Editor editor = prefs.edit();
-//			editor.putString("prefMode", Integer.toString(mode));
 			editor.putBoolean("prefMode", (mode != 0) );
 			editor.apply();
 
