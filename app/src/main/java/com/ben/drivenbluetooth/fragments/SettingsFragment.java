@@ -34,6 +34,7 @@ import org.acra.ACRA;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -164,29 +165,26 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 
-        //Count the number of paired devices - Must be a more elegant solution!! TODO
+        //Count the number of paired devices - Must be a more elegant solution!!
         int devTotalCount = 0;
         for(BluetoothDevice bt : pairedDevices) {
             devTotalCount ++;
         }
 
         CharSequence[] entries = new CharSequence[devTotalCount];
-        CharSequence[] entryValues = new CharSequence[devTotalCount];
 
         int devCount = 0;
         Global.BTDeviceNames.add(0, "null"); //pre fill the 0 index of the list to keep everything else in sync
         for(BluetoothDevice bt : pairedDevices) {
             entries[devCount] = bt.getName();
-            entryValues[devCount] = String.format("%d",devCount+1);
-            Global.BTDeviceNames.add(devCount+1,bt.getName());
             devCount ++;
 
         }
 
 
         lp.setEntries(entries);
-        lp.setDefaultValue("1");
-        lp.setEntryValues(entryValues);
+        lp.setEntryValues(entries);
+        lp.setSummary(Global.BTDeviceName);
 
 
     }
@@ -244,8 +242,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					break;
 				case "prefBTDeviceName":
                     if(!Global.BTDeviceNames.isEmpty()) {
-                        int nameID = Integer.parseInt(sharedPreferences.getString("prefBTDeviceName", ""));
-                        Global.BTDeviceName = Global.BTDeviceNames.get(nameID);
+                        Global.BTDeviceName = sharedPreferences.getString("prefBTDeviceName", "");
                         MainActivity.UpdateBTCarName();
                     }
 					break;

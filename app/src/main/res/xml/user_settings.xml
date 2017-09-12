@@ -38,10 +38,8 @@
             android:key="prefModeSwitch"
             android:title="Demo Mode"
             android:summaryOff="Data from Bluetooth is displayed"
-            android:summaryOn="Generated data displayed for demo purposes"/>
-
-
-
+            android:summaryOn="Generated data displayed for demo purposes"
+            />
         <ListPreference
             android:key="prefSpeedUnits"
             android:title="Speed unit"
@@ -52,8 +50,8 @@
             />
         <EditTextPreference
             android:key="prefCarName"
-            android:summary=""
-            android:title="Car name (Shown in Log)" />
+            android:summary="Shown in Logfile"
+            android:title="Car name" />
     </PreferenceCategory>
 	<PreferenceCategory
         android:title="Gearing Settings"
