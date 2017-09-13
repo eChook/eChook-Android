@@ -120,7 +120,7 @@ public final class DrivenSettings {
     private static void UDP(SharedPreferences prefs) {
         Global.UDPPassword = prefs.getString("prefUDP", "");
 
-		if(Global.UDPPassword.equals("eChookLiveData") && prefs.getBoolean("prefUdpEnabled", false))
+		if(prefs.getBoolean("prefUdpEnabled", false))
 		{
 			Global.UDPEnabled = true;
 		} else{

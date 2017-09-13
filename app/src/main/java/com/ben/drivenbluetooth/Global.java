@@ -2,6 +2,7 @@ package com.ben.drivenbluetooth;
 
 import android.bluetooth.BluetoothSocket;
 import android.location.Location;
+import android.text.StaticLayout;
 
 import com.ben.drivenbluetooth.util.LapData;
 import com.ben.drivenbluetooth.util.RunningAverage;
@@ -132,6 +133,7 @@ public final class Global {
 	public static Double BatteryCapacityAh;
     public static boolean UDPEnabled                    = false;
     public static List<String> BTDeviceNames = new ArrayList<String>(248); //248 is the maximum number of devices it is possible to bond
+    public static String dataPin                        ="";
 
 
     public static int MotorTeeth                        = 0;

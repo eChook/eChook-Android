@@ -84,13 +84,14 @@
         android:key="prefKeyLiveData">
         <EditTextPreference
             android:key="prefUDP"
-            android:title="Live data password"
-            android:summary=""
+            android:title="Live data key"
+            android:summary="Public 6+ digit data identifier. See Documentation"
             />
     <SwitchPreference
         android:defaultValue="false"
         android:key="prefUdpEnabled"
         android:title="Enable Live Data Upload"
         android:summary="Correct password required - feature in very early stages"/>
+
     </PreferenceCategory>
 </PreferenceScreen>

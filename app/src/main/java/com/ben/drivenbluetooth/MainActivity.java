@@ -24,6 +24,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -48,7 +49,6 @@ import com.ben.drivenbluetooth.util.DrivenLocation;
 import com.ben.drivenbluetooth.util.DrivenSettings;
 import com.ben.drivenbluetooth.util.GearHelper;
 import com.ben.drivenbluetooth.util.GraphData;
-import com.ben.drivenbluetooth.util.NetworkMonitor;
 import com.ben.drivenbluetooth.util.UpdateFragment;
 
 import java.io.File;
@@ -84,7 +84,6 @@ public class MainActivity
     private static DataToCsvFile mDataToCSVFile = new DataToCsvFile();
     private static BTStreamReader mBTStreamReader; // initialize below
     public static UDPSender mUDPSender; // initialize below
-    public static NetworkMonitor mNetworkMonitor = new NetworkMonitor();
 
     private static Timer UIUpdateTimer; // don't initialize because it should be done below
 
@@ -210,7 +209,7 @@ public class MainActivity
 
             //will need to restart/reconnect to bluetooth, and relevant threads
             if(Global.UDPEnabled == true)
-                mUDPSender.restart();
+                StartUDPSender();
 
             //myBluetoothManager.reconnectBT();
 
@@ -587,7 +586,9 @@ public class MainActivity
                     mUDPSender = new UDPSender();
                 }
                 mUDPSender.start();
+
             }
+            Log.d("UDP","UDP Sender Started");
         } catch (Exception e) {
             e.printStackTrace();
         }

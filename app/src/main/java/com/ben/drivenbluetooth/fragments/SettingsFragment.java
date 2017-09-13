@@ -107,12 +107,6 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                 }
             });
 
-            //Disable live data option if password incorrect
-            Preference dataPref = findPreference("prefUdpEnabled");
-            if (!Global.UDPPassword.equals("eChookLiveData")) {
-                dataPref.setEnabled(false);
-                Global.UDPEnabled = false;
-            }
         }catch (Exception e) {
             e.printStackTrace();
 
@@ -256,18 +250,6 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                 case "prefUDP":
                     Global.UDPPassword = sharedPreferences.getString("prefUDP", "");
                     Preference pref = findPreference("prefUdpEnabled");
-                    if(Global.UDPPassword.equals("eChookLiveData"))
-                    {
-                        Toast.makeText(this.getContext(), "Password Correct :)", Toast.LENGTH_SHORT).show();
-                        pref.setEnabled(true);
-
-                    } else{
-
-                        Toast.makeText(this.getContext(), "Nice Guess... try again :p", Toast.LENGTH_SHORT).show();
-
-                        pref.setEnabled(false);
-                    }
-
                     break;
                 case "prefMotorTeeth":
                     Global.MotorTeeth = DrivenSettings.parseMotorTeeth(sharedPreferences.getString("prefMotorTeeth", ""));
@@ -278,6 +260,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                 case "prefUdpEnabled":
                     if(sharedPreferences.getBoolean("prefUdpEnabled", false))
                     {
+                        Global.UDPEnabled = true;
 
                     }else{
                         Global.UDPEnabled = false;
