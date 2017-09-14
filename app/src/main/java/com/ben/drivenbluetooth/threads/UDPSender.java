@@ -1,45 +1,27 @@
 package com.ben.drivenbluetooth.threads;
 
-import android.content.Context;
 import android.icu.text.DecimalFormat;
-import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
-import android.support.annotation.BoolRes;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.ben.drivenbluetooth.Global;
-import com.ben.drivenbluetooth.MainActivity;
 
-import org.acra.ACRA;
-import org.apache.commons.math3.stat.regression.ModelSpecificationException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -64,6 +46,8 @@ public class UDPSender extends Thread {
     };
     private Timer udpTimer = new Timer();
 
+
+
     public UDPSender() {
         UDPEnabled = Global.UDPEnabled;
     }
@@ -85,14 +69,15 @@ public class UDPSender extends Thread {
         private TimerTask sendJsonTask = new TimerTask(){
             @Override
             public void run() {
-                try {
-                    Log.d("SendData","About to JSON Data Timer");
-                    Boolean success = sendJSONData();
-                    //MainActivity.showMessage("Sent JSON Data");
-                    //Log.d("SendData","Sent JSON Data");
-                }catch (IOException e)
-                {
-                    e.printStackTrace();
+                if (UDPEnabled) {
+                    try {
+                        Log.d("SendData", "About to JSON Data Timer");
+                        Boolean success = sendJSONData();
+                        //MainActivity.showMessage("Sent JSON Data");
+                        //Log.d("SendData","Sent JSON Data");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -105,14 +90,23 @@ public class UDPSender extends Thread {
         JSONObject dataJSON = new JSONObject();
         DecimalFormat format = new DecimalFormat("#.##");
         try{
-            dataJSON.put("Vtotal", format.format(Global.Volts));
-            dataJSON.put("Vlower", format.format(Global.VoltsAux));
-            dataJSON.put("Amps", format.format(Global.Amps));
+            dataJSON.put("Vt", format.format(Global.Volts));
+            dataJSON.put("V1", format.format(Global.VoltsAux));
+            dataJSON.put("V2", format.format(Global.Volts - Global.VoltsAux));
+            dataJSON.put("A", format.format(Global.Amps));
             dataJSON.put("RPM", format.format(Global.MotorRPM));
-            dataJSON.put("Throttle", format.format(Global.InputThrottle));
-            dataJSON.put("Lat", Global.Latitude);
-            dataJSON.put("Lon", Global.Longitude);
-            dataJSON.put("AmpH", format.format(Global.AmpHours));
+            dataJSON.put("Spd", format.format(Global.MotorRPM));
+            dataJSON.put("Thrtl", format.format(Global.InputThrottle));
+            dataJSON.put("AH", format.format(Global.AmpHours));
+            dataJSON.put("Lap", format.format(Global.Lap));
+            dataJSON.put("Tmp1", format.format(Global.TempC1));
+            dataJSON.put("Tmp2", format.format(Global.TempC2));
+            dataJSON.put("Brk", format.format(Global.Brake));
+
+            if(Global.enableLocationUpload) {
+                dataJSON.put("Lat", Global.Latitude);
+                dataJSON.put("Lon", Global.Longitude);
+            }
 
         }catch (JSONException e) {
             e.printStackTrace();
@@ -181,7 +175,7 @@ public class UDPSender extends Thread {
 
     public void Disable() {
         UDPEnabled = false;
-        Global.UDPEnabled = UDPEnabled;
+        //Global.UDPEnabled = UDPEnabled;
     }
 
     public void pause() {
@@ -189,7 +183,7 @@ public class UDPSender extends Thread {
     }
 
     public void restart() {
-        if(Global.UDPEnabled == UDPEnabled)
-            UDPEnabled = true;
+        UDPEnabled = Global.UDPEnabled;
+
     }
 }

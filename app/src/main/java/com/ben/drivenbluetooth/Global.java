@@ -134,6 +134,7 @@ public final class Global {
     public static boolean UDPEnabled                    = false;
     public static List<String> BTDeviceNames = new ArrayList<String>(248); //248 is the maximum number of devices it is possible to bond
     public static String dataPin                        ="";
+    public static boolean enableLocationUpload = false;
 
 
     public static int MotorTeeth                        = 0;

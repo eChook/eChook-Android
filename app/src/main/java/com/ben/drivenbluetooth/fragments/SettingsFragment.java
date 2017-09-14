@@ -2,7 +2,6 @@ package com.ben.drivenbluetooth.fragments;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -16,12 +15,9 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import android.content.Intent;
 
 import com.ben.drivenbluetooth.Global;
@@ -32,9 +28,6 @@ import com.ben.drivenbluetooth.util.DrivenSettings;
 import org.acra.ACRA;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -258,13 +251,10 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                     Global.WheelTeeth = DrivenSettings.parseWheelTeeth(sharedPreferences.getString("prefWheelTeeth", ""));
                     break;
                 case "prefUdpEnabled":
-                    if(sharedPreferences.getBoolean("prefUdpEnabled", false))
-                    {
-                        Global.UDPEnabled = true;
-
-                    }else{
-                        Global.UDPEnabled = false;
-                    }
+                    Global.UDPEnabled = sharedPreferences.getBoolean("prefUdpEnabled", false);
+                    break;
+                case "prefLocationUpload":
+                    Global.enableLocationUpload = sharedPreferences.getBoolean(key, false);
 
 				default:
 					break;

@@ -210,6 +210,7 @@ public class MainActivity
             //will need to restart/reconnect to bluetooth, and relevant threads
             if(Global.UDPEnabled == true)
                 StartUDPSender();
+                mUDPSender.restart();
 
             //myBluetoothManager.reconnectBT();
 
@@ -224,9 +225,9 @@ public class MainActivity
                     e.printStackTrace();
                 }
             }
-
+            Log.d("eChook", "Window Lost Focus");
             mDataToCSVFile.cancel();
-            mUDPSender.pause();
+            mUDPSender.Disable();
 
         }
 

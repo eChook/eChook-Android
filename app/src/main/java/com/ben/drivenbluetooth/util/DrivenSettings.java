@@ -2,8 +2,6 @@ package com.ben.drivenbluetooth.util;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v7.preference.Preference;
-import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -28,6 +26,7 @@ public final class DrivenSettings {
 		CarName(prefs);
 		Graphs(prefs);
         UDP(prefs);
+		locationUpload(prefs);
 	}
 
 	public static void QuickChangeMode() {
@@ -128,6 +127,15 @@ public final class DrivenSettings {
 		}
 
     }
+
+	private static void locationUpload(SharedPreferences prefs) {
+		//Disables Location upload on every app restart
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putBoolean("prefLocationUpload", false );
+		editor.apply();
+
+		Global.enableLocationUpload = false;
+	}
 
     public static int[] parseWheelTeeth(String wheelTeethString) {
         wheelTeethString = wheelTeethString.replaceAll("\\s+", ""); // remove spaces
