@@ -1,6 +1,6 @@
 package com.ben.drivenbluetooth.threads;
 
-import android.icu.text.DecimalFormat;
+
 import android.os.Looper;
 import android.util.Log;
 
@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -93,7 +94,6 @@ public class TelemetrySender extends Thread {
 
     private boolean sendJSONData()  throws IOException {
 
-
         HttpURLConnection urlConnection;
         try {
             URL url;
@@ -105,8 +105,10 @@ public class TelemetrySender extends Thread {
             urlConnection.setRequestProperty("content-type","application/json");
 
             OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-            if(Global.enableDweetPro)
-                out.write("key="+Global.dweetProMasterKey+"&"getJson().toString().getBytes());
+            if(Global.enableDweetPro) {
+                String writeOut = "key=" + Global.dweetProMasterKey + "&" + getJson().toString();
+                out.write(writeOut.getBytes());
+            }
             else
                 out.write(getJson().toString().getBytes());
             out.flush();

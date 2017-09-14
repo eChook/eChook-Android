@@ -255,7 +255,13 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                     break;
                 case "prefLocationUpload":
                     Global.enableLocationUpload = sharedPreferences.getBoolean(key, false);
-
+                    break;
+                case "prefDweetMasterKey":
+                    Global.dweetProMasterKey = sharedPreferences.getString(key, "");
+                    break;
+                case "prefDweetLocked":
+                    Global.enableDweetPro = sharedPreferences.getBoolean(key, false);
+                    break;
 				default:
 					break;
 			}

@@ -27,6 +27,8 @@ public final class DrivenSettings {
 		Graphs(prefs);
         UDP(prefs);
 		locationUpload(prefs);
+		dweetProEnable(prefs);
+		dweetProKey(prefs);
 	}
 
 	public static void QuickChangeMode() {
@@ -117,16 +119,16 @@ public final class DrivenSettings {
 	}
 
     private static void UDP(SharedPreferences prefs) {
-        Global.UDPPassword = prefs.getString("prefUDP", "");
-
-		if(prefs.getBoolean("prefUdpEnabled", false))
-		{
-			Global.telemetryEnabled = true;
-		} else{
-			Global.telemetryEnabled = false;
-		}
-
+        Global.telemetryEnabled = prefs.getBoolean("prefUdpEnabled", false);
     }
+
+    private static void dweetProEnable(SharedPreferences prefs){
+		Global.enableDweetPro = prefs.getBoolean("prefDweetLocked", false);
+	}
+
+	private static void dweetProKey(SharedPreferences prefs){
+		Global.dweetProMasterKey = prefs.getString("prefDweetMasterKey","");
+	}
 
 	private static void locationUpload(SharedPreferences prefs) {
 		//Disables Location upload on every app restart
