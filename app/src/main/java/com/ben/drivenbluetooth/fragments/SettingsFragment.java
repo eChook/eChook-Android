@@ -251,7 +251,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                     Global.WheelTeeth = DrivenSettings.parseWheelTeeth(sharedPreferences.getString("prefWheelTeeth", ""));
                     break;
                 case "prefUdpEnabled":
-                    Global.UDPEnabled = sharedPreferences.getBoolean("prefUdpEnabled", false);
+                    Global.telemetryEnabled = sharedPreferences.getBoolean("prefUdpEnabled", false);
                     break;
                 case "prefLocationUpload":
                     Global.enableLocationUpload = sharedPreferences.getBoolean(key, false);

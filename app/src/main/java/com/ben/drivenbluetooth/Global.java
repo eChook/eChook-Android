@@ -131,10 +131,12 @@ public final class Global {
 	public static String BTDeviceName;
 	public static boolean EnableGraphs                  = true;
 	public static Double BatteryCapacityAh;
-    public static boolean UDPEnabled                    = false;
-    public static List<String> BTDeviceNames = new ArrayList<String>(248); //248 is the maximum number of devices it is possible to bond
+    public static boolean telemetryEnabled              = false;
+    public static List<String> BTDeviceNames            = new ArrayList<String>(248); //248 is the maximum number of devices it is possible to bond
     public static String dataPin                        ="";
-    public static boolean enableLocationUpload = false;
+    public static boolean enableLocationUpload          = false;
+    public static boolean enableDweetPro                = false;
+    public static String dweetProMasterKey              ="";
 
 
     public static int MotorTeeth                        = 0;

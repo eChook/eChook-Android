@@ -121,9 +121,9 @@ public final class DrivenSettings {
 
 		if(prefs.getBoolean("prefUdpEnabled", false))
 		{
-			Global.UDPEnabled = true;
+			Global.telemetryEnabled = true;
 		} else{
-			Global.UDPEnabled = false;
+			Global.telemetryEnabled = false;
 		}
 
     }

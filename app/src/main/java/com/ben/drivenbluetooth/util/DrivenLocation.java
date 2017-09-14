@@ -86,8 +86,8 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
         Message msg = new Message();
         msg.obj = location;
 
-//		if (MainActivity.mUDPSender != null) {
-//			MainActivity.mUDPSender.LocationHandler.sendMessage(msg);
+//		if (MainActivity.mTelemetrySender != null) {
+//			MainActivity.mTelemetrySender.LocationHandler.sendMessage(msg);
 //		}
 
 		if (currentLocation != null && previousLocation != null) {

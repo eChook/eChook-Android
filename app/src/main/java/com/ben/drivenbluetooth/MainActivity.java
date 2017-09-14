@@ -41,18 +41,16 @@ import com.ben.drivenbluetooth.threads.BTDataParser;
 import com.ben.drivenbluetooth.threads.BTStreamReader;
 import com.ben.drivenbluetooth.threads.DataToCsvFile;
 import com.ben.drivenbluetooth.threads.RandomGenerator;
-import com.ben.drivenbluetooth.threads.UDPSender;
+import com.ben.drivenbluetooth.threads.TelemetrySender;
 import com.ben.drivenbluetooth.util.Accelerometer;
 import com.ben.drivenbluetooth.util.BluetoothManager;
 import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenLocation;
 import com.ben.drivenbluetooth.util.DrivenSettings;
-import com.ben.drivenbluetooth.util.GearHelper;
 import com.ben.drivenbluetooth.util.GraphData;
 import com.ben.drivenbluetooth.util.UpdateFragment;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 import java.util.Timer;
 
@@ -83,7 +81,7 @@ public class MainActivity
     private BTDataParser mBTDataParser = new BTDataParser(this); // can't be static because of (this)
     private static DataToCsvFile mDataToCSVFile = new DataToCsvFile();
     private static BTStreamReader mBTStreamReader; // initialize below
-    public static UDPSender mUDPSender; // initialize below
+    public static TelemetrySender mTelemetrySender; // initialize below
 
     private static Timer UIUpdateTimer; // don't initialize because it should be done below
 
@@ -208,9 +206,9 @@ public class MainActivity
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
             //will need to restart/reconnect to bluetooth, and relevant threads
-            if(Global.UDPEnabled == true)
+            if(Global.telemetryEnabled == true)
                 StartUDPSender();
-                mUDPSender.restart();
+                mTelemetrySender.restart();
 
             //myBluetoothManager.reconnectBT();
 
@@ -225,9 +223,8 @@ public class MainActivity
                     e.printStackTrace();
                 }
             }
-            Log.d("eChook", "Window Lost Focus");
             mDataToCSVFile.cancel();
-            mUDPSender.Disable();
+            mTelemetrySender.Disable();
 
         }
 
@@ -579,14 +576,14 @@ public class MainActivity
     /** Starts the UDP sender thread (if not already running). Re-initializes the thread if needed */
     private void StartUDPSender() {
         try {
-            if (mUDPSender == null) {
-                mUDPSender = new UDPSender();
-                mUDPSender.start();
-            } else if (!mUDPSender.isAlive()) {
-                if (mUDPSender.getState() != Thread.State.NEW) {
-                    mUDPSender = new UDPSender();
+            if (mTelemetrySender == null) {
+                mTelemetrySender = new TelemetrySender();
+                mTelemetrySender.start();
+            } else if (!mTelemetrySender.isAlive()) {
+                if (mTelemetrySender.getState() != Thread.State.NEW) {
+                    mTelemetrySender = new TelemetrySender();
                 }
-                mUDPSender.start();
+                mTelemetrySender.start();
 
             }
             Log.d("UDP","UDP Sender Started");

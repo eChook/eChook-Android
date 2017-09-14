@@ -1,7 +1,6 @@
 package com.ben.drivenbluetooth.threads;
 
 import android.icu.text.DecimalFormat;
-import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
@@ -12,53 +11,31 @@ import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.DatagramSocket;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class UDPSender extends Thread {
-    public Handler PacketHandler;
-    public Handler ConnectivityChangeHandler;
-    public Handler LocationHandler;
-    public Handler OpenUDPSocketHandler;
-    private InetAddress IPAddress;
-    private DatagramSocket mUDPSocket;
-    private int socketCounter = 0;
-    private int sendFailCount = 0;
-    private boolean mUDPSocketOpen = false;
-    private boolean UDPEnabled = false;
-    private TimerTask udpTask = new TimerTask() {
-        @Override
-        public void run() {
-            if (PacketHandler != null) {
-                PacketHandler.sendEmptyMessage(0);
-            }
-        }
-    };
-    private Timer udpTimer = new Timer();
+public class TelemetrySender extends Thread {
+    private boolean telEnabled = false;
+    private Timer telUpdateTimer = new Timer();
 
 
 
-    public UDPSender() {
-        UDPEnabled = Global.UDPEnabled;
+    public TelemetrySender() {
+        telEnabled = Global.telemetryEnabled;
     }
 
         @Override
         public void run() {
             Looper.prepare();
 
-            udpTimer.schedule(sendJsonTask, 0, 1100);
+            telUpdateTimer.schedule(sendJsonTask, 0, 1100);
 
-//            if (UDPEnabled) {
+//            if (telEnabled) {
 //
 //
 //                }
@@ -69,12 +46,10 @@ public class UDPSender extends Thread {
         private TimerTask sendJsonTask = new TimerTask(){
             @Override
             public void run() {
-                if (UDPEnabled) {
+                if (telEnabled) {
                     try {
                         Log.d("SendData", "About to JSON Data Timer");
                         Boolean success = sendJSONData();
-                        //MainActivity.showMessage("Sent JSON Data");
-                        //Log.d("SendData","Sent JSON Data");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -119,12 +94,9 @@ public class UDPSender extends Thread {
     private boolean sendJSONData()  throws IOException {
 
 
-        HttpURLConnection urlConnection = null;
+        HttpURLConnection urlConnection;
         try {
             URL url;
-            URLConnection urlConn;
-            DataOutputStream printout;
-            DataInputStream input;
 
             url = new URL("https://dweet.io/dweet/for/"+Global.UDPPassword+"?");
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -132,12 +104,11 @@ public class UDPSender extends Thread {
             urlConnection.setChunkedStreamingMode(0);
             urlConnection.setRequestProperty("content-type","application/json");
 
-
             OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-            out.write(getJson().toString().getBytes());
-//            Log.d("SendData", "Sending: "+getJson().toString());
-//            Log.d("SendData", "To: "+url.toString());
-
+            if(Global.enableDweetPro)
+                out.write("key="+Global.dweetProMasterKey+"&"getJson().toString().getBytes());
+            else
+                out.write(getJson().toString().getBytes());
             out.flush();
 
 
@@ -147,7 +118,7 @@ public class UDPSender extends Thread {
                 Log.d("SendData", "HTTP Response OK");
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
-                String line = null;
+                String line;
                 while ((line = br.readLine()) != null) {
                     sb.append(line + "\n");
                 }
@@ -168,22 +139,22 @@ public class UDPSender extends Thread {
 
 
     public void Enable() {
-        UDPEnabled = true;
-        Global.UDPEnabled = UDPEnabled;
+        telEnabled = true;
+        Global.telemetryEnabled = telEnabled;
 
     }
 
     public void Disable() {
-        UDPEnabled = false;
-        //Global.UDPEnabled = UDPEnabled;
+        telEnabled = false;
+        //Global.telEnabled = telEnabled;
     }
 
     public void pause() {
-        UDPEnabled = false;
+        telEnabled = false;
     }
 
     public void restart() {
-        UDPEnabled = Global.UDPEnabled;
+        telEnabled = Global.telemetryEnabled;
 
     }
 }

@@ -64,10 +64,10 @@ public class BTDataParser extends Thread {
                             && poppedData[Global.PACKETLENGTH - 1] == Global.STOPBYTE) { // check if ends with '}'
 
                         /* First send the packet over UDP */
-                        if (MainActivity.mUDPSender != null) {
+                        if (MainActivity.mTelemetrySender != null) {
                             Message packet = Message.obtain();
                             packet.obj = poppedData;
-                            //MainActivity.mUDPSender.PacketHandler.sendMessage(packet);
+                            //MainActivity.mTelemetrySender.PacketHandler.sendMessage(packet);
                         }
 
                         byte firstByte = poppedData[2];

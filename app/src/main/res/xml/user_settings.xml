@@ -87,16 +87,28 @@
             android:title="Live Data Identifier"
             android:summary="Public 6+ digit data identifier. dweet.io/follow/{identifier}"
             />
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="prefUdpEnabled"
-        android:title="Enable Live Data Upload"
-        android:summary="Correct password required - feature in very early stages"/>
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="prefLocationUpload"
-        android:title="Live Location Data"
-        android:summaryOn="Location Data being uploaded. THIS IS PUBLIC, USE WITH CAUTION."
-        android:summaryOff="Enabling this uploads your location to a PUBLIC data stream. We strongly recommend enabling for the race ONLY"/>
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefUdpEnabled"
+            android:title="Enable Live Data Upload"
+            android:summary="Correct password required - feature in very early stages"/>
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefDweetLocked"
+            android:title="Use DweetPro"
+            android:summary="Are you using a paid (or trial) dweetPro locked 'thing'?"
+            />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefLocationUpload"
+            android:title="Live Location Data"
+            android:summaryOn="Location Data being uploaded. THIS IS PUBLIC, USE WITH CAUTION."
+            android:summaryOff="Enabling this uploads your location to a PUBLIC data stream. We strongly recommend enabling for the race ONLY"
+            />
+        <EditTextPreference
+            android:key="prefDweetMasterKey"
+            android:title="DweetPro Thing Master Key"
+            android:summary="For use with DweetPro only"
+            />
     </PreferenceCategory>
 </PreferenceScreen>
