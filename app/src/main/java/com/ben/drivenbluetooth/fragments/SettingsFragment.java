@@ -71,6 +71,13 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             setListPreferenceData(btDevListPreference);
 
 
+            //Check if DweetPro Login worked
+            Preference dweetProPref = findPreference("prefDweetLocked");
+            if(Global.enableDweetPro != dweetProPref.isEnabled()) {
+                dweetProPref.setSummary("Error. Please check login info and internet connection");
+            }
+
+
             btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -196,7 +203,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 		Map<String,?> keys = sharedPreferences.getAll();
 
 		for (Map.Entry<String, ?> entry : keys.entrySet()) {
-			updatePreferenceSummary(entry.getKey());
+			//updatePreferenceSummary(entry.getKey());
 		}
 	}
 
@@ -241,7 +248,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					Global.EnableGraphs = sharedPreferences.getBoolean("prefGraphsSwitch", false);
                     break;
                 case "prefUDP":
-                    Global.UDPPassword = sharedPreferences.getString("prefUDP", "");
+                    Global.dweetThingName = sharedPreferences.getString("prefUDP", "");
                     Preference pref = findPreference("prefUdpEnabled");
                     break;
                 case "prefMotorTeeth":
@@ -256,11 +263,14 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                 case "prefLocationUpload":
                     Global.enableLocationUpload = sharedPreferences.getBoolean(key, false);
                     break;
-                case "prefDweetMasterKey":
-                    Global.dweetProMasterKey = sharedPreferences.getString(key, "");
+                case "prefDweetPassword":
+                    Global.dweetProPassword = sharedPreferences.getString(key, "");
                     break;
                 case "prefDweetLocked":
                     Global.enableDweetPro = sharedPreferences.getBoolean(key, false);
+                    break;
+                case "prefDweetUsername":
+                    Global.dweetProUsername = sharedPreferences.getString(key, "");
                     break;
 				default:
 					break;
@@ -272,6 +282,10 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             ACRA.getErrorReporter().handleException(e);
 		}
 	}
+
+
+
+
 
 	@Override
 	public void onResume() {

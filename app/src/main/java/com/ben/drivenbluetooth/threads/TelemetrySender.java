@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.ben.drivenbluetooth.Global;
+import com.ben.drivenbluetooth.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,12 +18,14 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class TelemetrySender extends Thread {
     private boolean telEnabled = false;
     private Timer telUpdateTimer = new Timer();
+    private String dweetProToken = "";
 
 
 
@@ -36,10 +39,15 @@ public class TelemetrySender extends Thread {
 
             telUpdateTimer.schedule(sendJsonTask, 0, 1100);
 
-//            if (telEnabled) {
-//
-//
-//                }
+            boolean tokenRecieved = false;
+
+            if (telEnabled && Global.enableDweetPro && (Global.dweetProUsername != "") && Global.dweetProPassword != "") {
+                Log.d("eChook", "Attempting to get dweet Auth Token");
+                tokenRecieved = getDweetProToken();
+                if(!tokenRecieved){
+                    dweetLoginFailed();
+                }
+            }
 
             Looper.loop();
         }
@@ -59,9 +67,115 @@ public class TelemetrySender extends Thread {
         };
 
 
+    private void dweetLoginFailed()
+    {
+        MainActivity.showDialog("Dweet Login Failed","Please check login details and internet connection" );
+        Global.enableDweetPro = false;
+    }
+
+    private boolean getDweetProToken()
+    {
+        boolean success = false;
+        HttpURLConnection urlConnection;
+        try {
+            URL url;
+
+            url = new URL("https://dweetpro.io:443/v2/users/login");
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoOutput(true);
+            urlConnection.setChunkedStreamingMode(0);
+            urlConnection.setRequestProperty("content-type","application/json");
+
+            OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+            out.write(getLoginJson().toString().getBytes());
+            out.flush();
 
 
-    private JSONObject getJson()
+            StringBuilder sb = new StringBuilder();
+            int HttpResult = urlConnection.getResponseCode();
+            if (HttpResult == HttpURLConnection.HTTP_OK) {
+                Log.d("SendData", "HTTP Response OK");
+                BufferedReader br = new BufferedReader(
+                        new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                br.close();
+
+                Log.d("eChook", "Token request response:"+sb.toString());
+
+                //Get token from response:
+
+//                try {
+//                    JSONObject receivedJson = new JSONObject(sb.toString());
+//                    dweetProToken = receivedJson.getString("");
+//                }catch (JSONException e)
+//                {
+//                    e.printStackTrace();
+//                    Log.d("eChook", "Token not Found - JSON exception");
+//                    success = false;
+//                }
+
+                try {
+                    JSONObject receivedJson = new JSONObject(sb.toString());
+                    Iterator iterator = receivedJson.keys();
+                    String key = "";
+                    while(iterator.hasNext())
+                    {
+                        key = (String)iterator.next();
+                        Log.d("eChook", "Keys Found " + key);
+                    }
+                    Log.d("eChook", "Opening object from key");
+                    JSONObject nestedJson = receivedJson.getJSONObject(key);
+                    Log.d("eChook", "Looking in object:" + receivedJson.toString());
+                    dweetProToken = nestedJson.getString("token");
+                }catch (JSONException e)
+                {
+                    e.printStackTrace();
+                    Log.d("eChook", "Token not Found - JSON exception");
+                    success = false;
+                }
+
+
+                success = true;
+
+                Log.d("eChook", "Received Token:"+dweetProToken);
+
+                //System.out.println("" + sb.toString());
+            } else {
+                System.out.println(urlConnection.getResponseMessage());
+                success = false;
+                Log.d("eChook", "Non OK response to dweet login request");
+            }
+            urlConnection.disconnect();
+
+        }catch (IOException e) {
+            e.printStackTrace();
+            success = false;
+        }
+
+        return success;
+    }
+
+
+    private JSONObject getLoginJson()
+    {
+        JSONObject loginJson = new JSONObject();
+        DecimalFormat format = new DecimalFormat("#.##");
+        try{
+            loginJson.put("username", Global.dweetProUsername);
+            loginJson.put("password", Global.dweetProPassword);
+            
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return loginJson;
+        
+    }
+    
+    private JSONObject getDataJson()
     {
         JSONObject dataJSON = new JSONObject();
         DecimalFormat format = new DecimalFormat("#.##");
@@ -98,7 +212,7 @@ public class TelemetrySender extends Thread {
         try {
             URL url;
 
-            url = new URL("https://dweet.io/dweet/for/"+Global.UDPPassword+"?");
+            url = new URL("https://dweet.io/dweet/for/"+Global.dweetThingName +"?");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
             urlConnection.setChunkedStreamingMode(0);
@@ -106,11 +220,11 @@ public class TelemetrySender extends Thread {
 
             OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
             if(Global.enableDweetPro) {
-                String writeOut = "key=" + Global.dweetProMasterKey + "&" + getJson().toString();
+                String writeOut = "key=" + Global.dweetProPassword + "&" + getDataJson().toString(); //TODO
                 out.write(writeOut.getBytes());
             }
             else
-                out.write(getJson().toString().getBytes());
+                out.write(getDataJson().toString().getBytes());
             out.flush();
 
 

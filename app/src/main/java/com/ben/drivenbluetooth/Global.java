@@ -58,7 +58,7 @@ public final class Global {
 
     public static final int     PERMISSIONS_REQUEST     = 1;
 
-    public static String        UDPPassword = "";
+
 
     public static final BlockingQueue<byte[]> BTStreamQueue = 	new LinkedBlockingQueue<>();
 	public static volatile Double Volts 			    = 0.0;
@@ -134,9 +134,11 @@ public final class Global {
     public static boolean telemetryEnabled              = false;
     public static List<String> BTDeviceNames            = new ArrayList<String>(248); //248 is the maximum number of devices it is possible to bond
     public static String dataPin                        ="";
+    public static String dweetThingName                 = "";
     public static boolean enableLocationUpload          = false;
     public static boolean enableDweetPro                = false;
-    public static String dweetProMasterKey              ="";
+    public static String dweetProPassword               ="";
+    public static String dweetProUsername               ="";
 
 
     public static int MotorTeeth                        = 0;

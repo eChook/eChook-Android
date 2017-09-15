@@ -28,7 +28,8 @@ public final class DrivenSettings {
         UDP(prefs);
 		locationUpload(prefs);
 		dweetProEnable(prefs);
-		dweetProKey(prefs);
+		dweetProPassword(prefs);
+        dweetProUsername(prefs);
 	}
 
 	public static void QuickChangeMode() {
@@ -126,8 +127,14 @@ public final class DrivenSettings {
 		Global.enableDweetPro = prefs.getBoolean("prefDweetLocked", false);
 	}
 
-	private static void dweetProKey(SharedPreferences prefs){
-		Global.dweetProMasterKey = prefs.getString("prefDweetMasterKey","");
+	private static void dweetProUsername(SharedPreferences prefs){
+		Global.dweetProUsername = prefs.getString("prefDweetUsername","");
+
+	}
+
+	private static void dweetProPassword(SharedPreferences prefs){
+		Global.dweetProPassword = prefs.getString("prefDweetPassword","");
+
 	}
 
 	private static void locationUpload(SharedPreferences prefs) {

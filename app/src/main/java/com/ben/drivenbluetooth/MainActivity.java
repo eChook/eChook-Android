@@ -1,6 +1,7 @@
 package com.ben.drivenbluetooth;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Looper;
@@ -98,6 +99,8 @@ public class MainActivity
     public static UpdateFragment currentFragment;
     private static View SnackbarPosition;
 
+    private static MainActivity instance = null;
+
 	/* ========= */
 	/* LIFECYCLE */
     /* ========= */
@@ -107,6 +110,8 @@ public class MainActivity
         super.onCreate(savedInstanceState);
 
         context = getApplicationContext();
+
+        this.instance = this; //enables getting MainActivity instance from Static function
 
         setContentView(R.layout.activity_main_v2);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -230,6 +235,10 @@ public class MainActivity
 
     }
 
+    public static MainActivity getInstance(){
+        return instance;
+    }
+
     private void RequestAllPermissions() {
         String[] permissions = new String[] {
                 Manifest.permission.BLUETOOTH,
@@ -324,6 +333,19 @@ public class MainActivity
 		msg.show();
 		*/
         showSnackbar(string);
+    }
+
+    public static void showDialog(String title, String message)
+    {
+        final android.app.AlertDialog.Builder dweetLoginFailBox = new android.app.AlertDialog.Builder(MainActivity.getInstance());
+        dweetLoginFailBox.setMessage(message)
+                .setTitle(title);
+        dweetLoginFailBox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+        android.app.AlertDialog dialog = dweetLoginFailBox.show();
     }
 
     public static void showError(Exception e) {
