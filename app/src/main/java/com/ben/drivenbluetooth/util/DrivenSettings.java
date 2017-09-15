@@ -30,6 +30,8 @@ public final class DrivenSettings {
 		dweetProEnable(prefs);
 		dweetProPassword(prefs);
         dweetProUsername(prefs);
+        dweetThingName(prefs);
+        dweetMasterKey(prefs);
 	}
 
 	public static void QuickChangeMode() {
@@ -136,6 +138,14 @@ public final class DrivenSettings {
 		Global.dweetProPassword = prefs.getString("prefDweetPassword","");
 
 	}
+
+	private static void dweetThingName(SharedPreferences prefs){
+        Global.dweetThingName = prefs.getString("prefUDP", "");
+    }
+
+    private static void dweetMasterKey(SharedPreferences prefs){
+        Global.dweetMasterKey = prefs.getString("prefDweetMasterKey", "");
+    }
 
 	private static void locationUpload(SharedPreferences prefs) {
 		//Disables Location upload on every app restart

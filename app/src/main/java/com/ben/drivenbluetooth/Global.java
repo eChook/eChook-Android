@@ -139,6 +139,7 @@ public final class Global {
     public static boolean enableDweetPro                = false;
     public static String dweetProPassword               ="";
     public static String dweetProUsername               ="";
+    public static String dweetMasterKey                 ="";
 
 
     public static int MotorTeeth                        = 0;

@@ -77,7 +77,6 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                 dweetProPref.setSummary("Error. Please check login info and internet connection");
             }
 
-
             btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -199,18 +198,18 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 	}
 
 	private void updateAllPreferenceSummary() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
-		Map<String,?> keys = sharedPreferences.getAll();
-
-		for (Map.Entry<String, ?> entry : keys.entrySet()) {
-			//updatePreferenceSummary(entry.getKey());
-		}
+//		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
+//		Map<String,?> keys = sharedPreferences.getAll();
+//
+//		for (Map.Entry<String, ?> entry : keys.entrySet()) {
+//			//updatePreferenceSummary(entry.getKey());
+//		}
 	}
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		// UpdateLocationSetting the preference summaries
-		updatePreferenceSummary(key);
+		//updatePreferenceSummary(key);
 
 		try {
 			switch (key) {
@@ -249,7 +248,6 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                     break;
                 case "prefUDP":
                     Global.dweetThingName = sharedPreferences.getString("prefUDP", "");
-                    Preference pref = findPreference("prefUdpEnabled");
                     break;
                 case "prefMotorTeeth":
                     Global.MotorTeeth = DrivenSettings.parseMotorTeeth(sharedPreferences.getString("prefMotorTeeth", ""));
@@ -265,12 +263,16 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                     break;
                 case "prefDweetPassword":
                     Global.dweetProPassword = sharedPreferences.getString(key, "");
+                    //TODO make sure this hides the password!! setting inputType="textPassword" doesn't work.
                     break;
                 case "prefDweetLocked":
                     Global.enableDweetPro = sharedPreferences.getBoolean(key, false);
                     break;
                 case "prefDweetUsername":
                     Global.dweetProUsername = sharedPreferences.getString(key, "");
+                    break;
+                case "prefDweetMasterKey":
+                    Global.dweetMasterKey = sharedPreferences.getString(key, "");
                     break;
 				default:
 					break;

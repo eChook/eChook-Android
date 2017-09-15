@@ -37,15 +37,16 @@ public class TelemetrySender extends Thread {
         public void run() {
             Looper.prepare();
 
-            telUpdateTimer.schedule(sendJsonTask, 0, 1100);
+            telUpdateTimer.schedule(sendJsonTask, 0, 1500);
 
             boolean tokenRecieved = false;
 
-            if (telEnabled && Global.enableDweetPro && (Global.dweetProUsername != "") && Global.dweetProPassword != "") {
+            if (telEnabled && Global.enableDweetPro && (Global.dweetProUsername != "") && Global.dweetProPassword != "" && Global.dweetMasterKey != "") {
                 Log.d("eChook", "Attempting to get dweet Auth Token");
                 tokenRecieved = getDweetProToken();
                 if(!tokenRecieved){
                     dweetLoginFailed();
+                    Global.enableDweetPro = false;
                 }
             }
 
@@ -178,6 +179,7 @@ public class TelemetrySender extends Thread {
     private JSONObject getDataJson()
     {
         JSONObject dataJSON = new JSONObject();
+        JSONObject proJSON = new JSONObject();
         DecimalFormat format = new DecimalFormat("#.##");
         try{
             dataJSON.put("Vt", format.format(Global.Volts));
@@ -193,16 +195,27 @@ public class TelemetrySender extends Thread {
             dataJSON.put("Tmp2", format.format(Global.TempC2));
             dataJSON.put("Brk", format.format(Global.Brake));
 
-            if(Global.enableLocationUpload) {
+            if(Global.enableDweetPro && Global.enableLocationUpload) {
                 dataJSON.put("Lat", Global.Latitude);
                 dataJSON.put("Lon", Global.Longitude);
+            }
+
+            if(Global.enableDweetPro){
+                proJSON.put("thing", Global.dweetThingName);
+                proJSON.put("key", Global.dweetMasterKey);
+                proJSON.put("content", dataJSON);
             }
 
         }catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return dataJSON;
+        if(Global.enableDweetPro) {
+            Log.d("eChook", "Compiled JSON pro = " + proJSON.toString());
+            return proJSON;
+        }
+        else
+            return dataJSON;
     }
 
 
@@ -212,19 +225,21 @@ public class TelemetrySender extends Thread {
         try {
             URL url;
 
-            url = new URL("https://dweet.io/dweet/for/"+Global.dweetThingName +"?");
+            if(Global.enableDweetPro) {
+                url = new URL("https://dweetpro.io:443/v2/dweets");
+            }else{
+                url = new URL("https://dweet.io/dweet/for/" + Global.dweetThingName + "?");
+            }
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
             urlConnection.setChunkedStreamingMode(0);
             urlConnection.setRequestProperty("content-type","application/json");
+            if(Global.enableDweetPro)
+                urlConnection.setRequestProperty("X-DWEET-AUTH", dweetProToken);
 
             OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-            if(Global.enableDweetPro) {
-                String writeOut = "key=" + Global.dweetProPassword + "&" + getDataJson().toString(); //TODO
-                out.write(writeOut.getBytes());
-            }
-            else
-                out.write(getDataJson().toString().getBytes());
+
+            out.write(getDataJson().toString().getBytes());
             out.flush();
 
 

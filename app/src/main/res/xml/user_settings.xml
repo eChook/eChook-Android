@@ -82,16 +82,16 @@
     <PreferenceCategory
         android:title="Live Data Telemetry"
         android:key="prefKeyLiveData">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefUdpEnabled"
+            android:summary="Upload live data to dweet or Dweet pro"
+            android:title="Enable Live Data Upload" />
         <EditTextPreference
             android:key="prefUDP"
             android:title="dweet 'Thing' name"
             android:summary="Public 6+ digit data identifier. dweet.io/follow/{identifier}"
             />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefUdpEnabled"
-            android:title="Enable Live Data Upload"
-            android:summary="Correct password required - feature in very early stages"/>
         <SwitchPreference
             android:defaultValue="false"
             android:key="prefDweetLocked"
@@ -110,11 +110,15 @@
             android:summary="Password used to log into your dweetPro account"
             android:inputType="textPassword"
             />
+        <EditTextPreference
+            android:key="prefDweetMasterKey"
+            android:title="DweetPro Thing Master Key"
+            android:summary="Found in your dweet pro dashboard"
+            />
         <SwitchPreference
             android:defaultValue="false"
             android:key="prefLocationUpload"
-            android:summaryOff="Enabling this uploads your location to a PUBLIC data stream. We strongly recommend enabling for the race ONLY"
-            android:summaryOn="Location Data being uploaded. THIS IS PUBLIC, USE WITH CAUTION."
+            android:summary="For security, Dweet Pro required for location upload"
             android:title="Live Location Data" />
     </PreferenceCategory>
 </PreferenceScreen>
