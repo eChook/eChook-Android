@@ -184,10 +184,9 @@ public class TelemetrySender extends Thread {
         try{
             dataJSON.put("Vt", format.format(Global.Volts));
             dataJSON.put("V1", format.format(Global.VoltsAux));
-            dataJSON.put("V2", format.format(Global.Volts - Global.VoltsAux));
             dataJSON.put("A", format.format(Global.Amps));
             dataJSON.put("RPM", format.format(Global.MotorRPM));
-            dataJSON.put("Spd", format.format(Global.MotorRPM));
+            dataJSON.put("Spd", format.format(Global.SpeedMPS));
             dataJSON.put("Thrtl", format.format(Global.InputThrottle));
             dataJSON.put("AH", format.format(Global.AmpHours));
             dataJSON.put("Lap", format.format(Global.Lap));
