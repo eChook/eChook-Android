@@ -26,6 +26,7 @@ public class TelemetrySender extends Thread {
     private boolean telEnabled = false;
     private Timer telUpdateTimer = new Timer();
     private String dweetProToken = "";
+    private boolean waitingForLogin = false;
 
 
 
@@ -41,13 +42,14 @@ public class TelemetrySender extends Thread {
 
             boolean tokenRecieved = false;
 
-            if (telEnabled && Global.enableDweetPro && (Global.dweetProUsername != "") && Global.dweetProPassword != "" && Global.dweetMasterKey != "") {
+            if (telEnabled && Global.enableDweetPro && (!Global.dweetProUsername.equals("")) && !Global.dweetProPassword.equals("") && Global.dweetMasterKey.equals("")) {
                 Log.d("eChook", "Attempting to get dweet Auth Token");
                 tokenRecieved = getDweetProToken();
                 if(!tokenRecieved){
                     dweetLoginFailed();
-                    Global.enableDweetPro = false;
+                    //Global.enableDweetPro = false;
                 }
+                waitingForLogin = false;
             }
 
             Looper.loop();
@@ -76,7 +78,7 @@ public class TelemetrySender extends Thread {
 
     private boolean getDweetProToken()
     {
-        boolean success = false;
+        boolean success;
         HttpURLConnection urlConnection;
         try {
             URL url;
@@ -193,6 +195,8 @@ public class TelemetrySender extends Thread {
             dataJSON.put("Tmp1", format.format(Global.TempC1));
             dataJSON.put("Tmp2", format.format(Global.TempC2));
             dataJSON.put("Brk", format.format(Global.Brake));
+            dataJSON.put("Gear", format.format(Global.Gear));
+
 
             if(Global.enableDweetPro && Global.enableLocationUpload) {
                 dataJSON.put("Lat", Global.Latitude);
@@ -220,57 +224,68 @@ public class TelemetrySender extends Thread {
 
     private boolean sendJSONData()  throws IOException {
 
-        HttpURLConnection urlConnection;
-        try {
-            URL url;
+        Log.d("eChook","Entering SendJSON data Token= "+ dweetProToken);
+        Log.d("eChook","waiting for login = "+ waitingForLogin);
+        if(Global.enableDweetPro && !waitingForLogin && dweetProToken.equals("")) //Catches the usecase when someone enables dweet pro once the thread is started and a login is needed.
+        {
+            Log.d("eChook","PRo enabled but no token. Token = "+ dweetProToken);
+            waitingForLogin = true;
+            getDweetProToken();
+            return true;
+        }else {
+            HttpURLConnection urlConnection;
+            try {
+                URL url;
 
-            if(Global.enableDweetPro) {
-                url = new URL("https://dweetpro.io:443/v2/dweets");
-            }else{
-                url = new URL("https://dweet.io/dweet/for/" + Global.dweetThingName + "?");
-            }
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setDoOutput(true);
-            urlConnection.setChunkedStreamingMode(0);
-            urlConnection.setRequestProperty("content-type","application/json");
-            if(Global.enableDweetPro)
-                urlConnection.setRequestProperty("X-DWEET-AUTH", dweetProToken);
-
-            OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-
-            out.write(getDataJson().toString().getBytes());
-            out.flush();
-
-
-            StringBuilder sb = new StringBuilder();
-            int HttpResult = urlConnection.getResponseCode();
-            if (HttpResult == HttpURLConnection.HTTP_OK) {
-                Log.d("SendData", "HTTP Response OK");
-                BufferedReader br = new BufferedReader(
-                        new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
+                if (Global.enableDweetPro) {
+                    url = new URL("https://dweetpro.io:443/v2/dweets");
+                } else {
+                    url = new URL("https://dweet.io/dweet/for/" + Global.dweetThingName + "?");
                 }
-                br.close();
-                System.out.println("" + sb.toString());
-            } else {
-                System.out.println(urlConnection.getResponseMessage());
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setChunkedStreamingMode(0);
+                urlConnection.setRequestProperty("content-type", "application/json");
+                if (Global.enableDweetPro)
+                    urlConnection.setRequestProperty("X-DWEET-AUTH", dweetProToken);
+
+                OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+
+                out.write(getDataJson().toString().getBytes());
+                out.flush();
+
+
+                StringBuilder sb = new StringBuilder();
+                int HttpResult = urlConnection.getResponseCode();
+                if (HttpResult == HttpURLConnection.HTTP_OK) {
+                    Log.d("SendData", "HTTP Response OK");
+                    BufferedReader br = new BufferedReader(
+                            new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    br.close();
+                    System.out.println("" + sb.toString());
+                } else {
+                    System.out.println(urlConnection.getResponseMessage());
+                }
+
+                urlConnection.disconnect();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
             }
 
-            urlConnection.disconnect();
-
-        }catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            return true;
         }
-        return true;
     }
 
 
     public void Enable() {
         telEnabled = true;
-        Global.telemetryEnabled = telEnabled;
+        Global.telemetryEnabled = true;
 
     }
 
