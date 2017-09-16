@@ -1,12 +1,14 @@
 package com.ben.drivenbluetooth;
 
 import android.Manifest;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.media.MediaScannerConnection;
@@ -19,8 +21,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -33,6 +33,12 @@ import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ben.drivenbluetooth.events.ArduinoEvent;
+import com.ben.drivenbluetooth.events.DialogEvent;
+import com.ben.drivenbluetooth.events.LocationEvent;
+import com.ben.drivenbluetooth.events.PreferenceEvent;
+import com.ben.drivenbluetooth.events.SnackbarEvent;
+import com.ben.drivenbluetooth.events.UpdateUIEvent;
 import com.ben.drivenbluetooth.fragments.FourGraphsBars;
 import com.ben.drivenbluetooth.fragments.LapHistoryFragment;
 import com.ben.drivenbluetooth.fragments.RaceMapFragment;
@@ -49,57 +55,52 @@ import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenLocation;
 import com.ben.drivenbluetooth.util.DrivenSettings;
 import com.ben.drivenbluetooth.util.GraphData;
-import com.ben.drivenbluetooth.util.UpdateFragment;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.Objects;
-import java.util.Timer;
 
 
 public class MainActivity
         extends AppCompatActivity
-        implements	BTDataParser.BTDataParserListener,
-        BluetoothManager.BluetoothEvents,
-        SettingsFragment.SettingsInterface {
+        implements BluetoothManager.BluetoothEvents {
 
-    public static TextView myMode;
+    public TextView myMode;
 
-    private static TextView myDataFileSize;
-    private static TextView myDataFileName;
+    private TextView myDataFileSize;
+    private TextView myDataFileName;
 
-    private static TextView myBTCarName;
+    private TextView myBTCarName;
 
-    private static ImageView myBTState;
-    private static ImageView myLogging;
+    private ImageView myBTState;
+    private ImageView myLogging;
 
-    public static Chronometer LapTimer;
-    public static TextView prevLapTime;
-    private static TextView LapNumber;
-    public static TextView myGear;
-    public static ImageView myShiftIndicator;
+    private Chronometer LapTimer;
+    private TextView prevLapTime;
+    private TextView LapNumber;
+    public TextView myGear;
+    public ImageView myShiftIndicator;
 
     private static RandomGenerator mRandomGenerator = new RandomGenerator();
-    private BTDataParser mBTDataParser = new BTDataParser(this); // can't be static because of (this)
+    private static BTDataParser mBTDataParser = new BTDataParser(); // can't be static because of (this)
     private static DataToCsvFile mDataToCSVFile = new DataToCsvFile();
     private static BTStreamReader mBTStreamReader; // initialize below
     public static TelemetrySender mTelemetrySender; // initialize below
 
-    private static Timer UIUpdateTimer; // don't initialize because it should be done below
-
     public static final Handler MainActivityHandler = new Handler();
 
-    public static DrivenLocation myDrivenLocation; // must be initialized below or else null object ref error
+    public DrivenLocation myDrivenLocation; // must be initialized below or else null object ref error
 
     public static Accelerometer myAccelerometer;
 
-    private static Context context;
+    private Context context;
     public static final BluetoothManager myBluetoothManager = new BluetoothManager();
 
-    private static final CyclingArrayList<UpdateFragment> FragmentList = new CyclingArrayList<>();
-    public static UpdateFragment currentFragment;
-    private static View SnackbarPosition;
-
-    private static MainActivity instance = null;
+    private static final CyclingArrayList<Fragment> FragmentList = new CyclingArrayList<>();
+    private View SnackbarPosition;
 
 	/* ========= */
 	/* LIFECYCLE */
@@ -111,40 +112,36 @@ public class MainActivity
 
         context = getApplicationContext();
 
-        this.instance = this; //enables getting MainActivity instance from Static function
-
         setContentView(R.layout.activity_main_v2);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
 
-        myMode = (TextView) findViewById(R.id.txt_Mode);
+        myMode = findViewById(R.id.txt_Mode);
 
-        myDataFileName = (TextView) findViewById(R.id.txtDataFileName);
-        myDataFileSize = (TextView) findViewById(R.id.txtDataFileSize);
+        myDataFileName = findViewById(R.id.txtDataFileName);
+        myDataFileSize = findViewById(R.id.txtDataFileSize);
 
-        myBTCarName = (TextView) findViewById(R.id.txtBTCarName);
+        myBTCarName = findViewById(R.id.txtBTCarName);
 
-        myBTState = (ImageView) findViewById(R.id.btStatusSymbol);
-        myLogging = (ImageView) findViewById(R.id.logStatusSymbol);
+        myBTState = findViewById(R.id.btStatusSymbol);
+        myLogging = findViewById(R.id.logStatusSymbol);
 
-        LapTimer = (Chronometer) findViewById(R.id.LapTimer);
-        prevLapTime = (TextView) findViewById(R.id.previousLapTime);
-        LapNumber = (TextView) findViewById(R.id.lap);
+        LapTimer = findViewById(R.id.LapTimer);
+        prevLapTime = findViewById(R.id.previousLapTime);
+        LapNumber = findViewById(R.id.lap);
 
-        myGear = (TextView) findViewById(R.id.txtGear);
-        myShiftIndicator = (ImageView) findViewById(R.id.imgShiftIndicator);
+        myGear = findViewById(R.id.txtGear);
+        myShiftIndicator = findViewById(R.id.imgShiftIndicator);
 
         SnackbarPosition = findViewById(R.id.snackbarPosition);
 
         UpdateLoggingStatus(false);
 
-        //StartUIUpdater();
+        DrivenSettings.InitializeSettings(context);
 
-        DrivenSettings.InitializeSettings();
+        myDrivenLocation = new DrivenLocation(LapTimer, prevLapTime, context); // must be initialized here or else null object ref error
 
-        myDrivenLocation = new DrivenLocation(); // must be initialized here or else null object ref error
-
-        GraphData.InitializeGraphDataSets();
+        GraphData.InitializeGraphDataSets(context);
 
         InitializeLongClickStart();
 
@@ -160,10 +157,15 @@ public class MainActivity
         UpdateGear(0);
     }
 
+
+
     @Override
     protected void onStart() {
         super.onStart();
         myDrivenLocation.connect();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
@@ -196,6 +198,7 @@ public class MainActivity
         FragmentList.clear();
 
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -211,7 +214,7 @@ public class MainActivity
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
             //will need to restart/reconnect to bluetooth, and relevant threads
-            if(Global.telemetryEnabled == true)
+            if (Global.telemetryEnabled)
                 StartUDPSender();
                 mTelemetrySender.restart();
 
@@ -233,10 +236,6 @@ public class MainActivity
 
         }
 
-    }
-
-    public static MainActivity getInstance(){
-        return instance;
     }
 
     private void RequestAllPermissions() {
@@ -304,15 +303,18 @@ public class MainActivity
     }
 
     private void InitializeFragmentList() {
-        FragmentList.add(new RaceMapFragment());
+        RaceMapFragment rmf = new RaceMapFragment();
+        rmf.initialize(myDrivenLocation);
+
         FragmentList.add(new SixGraphsBars());
         FragmentList.add(new FourGraphsBars());
+        FragmentList.add(rmf);
         FragmentList.add(new LapHistoryFragment());
     }
 
     private void InitializeLongClickStart() {
         // We can't do this in XML so must do it programatically
-        FloatingActionButton startButton = (FloatingActionButton) findViewById(R.id.start);
+        FloatingActionButton startButton = findViewById(R.id.start);
         startButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -326,45 +328,38 @@ public class MainActivity
 	/* TOASTER */
     /* ======= */
 
-    public static void showMessage(String string) {
-        /*
-		final Toast msg = Toast.makeText(context, string, Toast.LENGTH_LONG);
-		msg.show();
-		*/
-        showSnackbar(string);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void showError(SnackbarEvent e) {
+        showMessage(e.message);
     }
 
-    public static void showDialog(String title, String message)
-    {
-        final android.app.AlertDialog.Builder dweetLoginFailBox = new android.app.AlertDialog.Builder(MainActivity.getInstance());
-        dweetLoginFailBox.setMessage(message)
-                .setTitle(title);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void showDialog(DialogEvent e) {
+        final android.app.AlertDialog.Builder dweetLoginFailBox = new android.app.AlertDialog.Builder(context);
+        dweetLoginFailBox.setMessage(e.message)
+                .setTitle(e.title);
         dweetLoginFailBox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
             }
         });
-        android.app.AlertDialog dialog = dweetLoginFailBox.show();
+        dweetLoginFailBox.show();
     }
 
-    public static void showError(Exception e) {
-        showMessage(e.getMessage());
+    public void showMessage(String string) {
+        showSnackbar(string, Snackbar.LENGTH_LONG);
     }
 
-    public static void showSnackbar(String msg, int length) {
+    private void showSnackbar(String msg, int length) {
         try {
             Snackbar sb = Snackbar.make(SnackbarPosition, msg, length);
-            TextView tv = (TextView) (sb.getView()).findViewById(android.support.design.R.id.snackbar_text);
+            TextView tv = (sb.getView()).findViewById(android.support.design.R.id.snackbar_text);
             tv.setTextSize(20);
             sb.show();
         } catch (Exception ignored) {}
     }
 
-    private static void showSnackbar(String msg) {
-        showSnackbar(msg, Snackbar.LENGTH_SHORT);
-    }
-
-    public static void showLapSummary(String message, int duration) {
+    public void showLapSummary(String message, int duration) {
         final AlertDialog lapSummary = new AlertDialog.Builder(getAppContext())
                 .setMessage(message)
                 .setTitle("Lap summary")
@@ -456,15 +451,11 @@ public class MainActivity
             StopStreamReader();
         } catch (Exception ignored) {}
         UpdateDataFileInfo();
-        try {
-            UIUpdateTimer.purge();
-        } catch (Exception ignored) {}
     }
 
     /** Called when the user taps the cogwheel in the app. Launches the settings fragment */
     public void LaunchSettings(View v) {
         SettingsFragment settingsFragment = new SettingsFragment();
-        settingsFragment.setSettingsListener(this);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.overlay, settingsFragment)
                 .addToBackStack(null)
@@ -509,7 +500,7 @@ public class MainActivity
 
     /** This function is called when the user taps "DEMO/RACE" in the top right corner of the app. Changes between race and demo mode */
     public void QuickChangeMode(View v) {
-        DrivenSettings.QuickChangeMode();
+        DrivenSettings.QuickChangeMode(context);
     }
 
     @Override
@@ -581,11 +572,11 @@ public class MainActivity
     private void StartDataParser() {
         try {
             if (mBTDataParser == null) {
-                mBTDataParser = new BTDataParser(this);
+                mBTDataParser = new BTDataParser();
                 mBTDataParser.start();
             } else if (!mBTDataParser.isAlive()) {
                 if (mBTDataParser.getState() != Thread.State.NEW) {
-                    mBTDataParser = new BTDataParser(this);
+                    mBTDataParser = new BTDataParser();
                 }
                 mBTDataParser.start();
             }
@@ -662,10 +653,9 @@ public class MainActivity
 
     private void CycleView() {
         try {
-            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            currentFragment = FragmentList.cycle();
-            fragmentTransaction.replace(R.id.CenterView, currentFragment);
+            fragmentTransaction.replace(R.id.CenterView, FragmentList.cycle());
             fragmentTransaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -675,12 +665,10 @@ public class MainActivity
 
     private void CycleViewReverse() {
         try {
-            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            currentFragment = FragmentList.reverseCycle();
-            fragmentTransaction.replace(R.id.CenterView, currentFragment);
+            fragmentTransaction.replace(R.id.CenterView, FragmentList.reverseCycle());
             fragmentTransaction.commit();
-            currentFragment.UpdateFragmentUI();
         } catch (Exception e) {
             e.getMessage();
         }
@@ -706,21 +694,21 @@ public class MainActivity
      *
      * @return The application context
      */
-    public static Context getAppContext() {
-        return MainActivity.context;
+    public Context getAppContext() {
+        return context;
     }
 
     /** Updates the TextView in the top-left corner of the app with the csv file name and size */
-    public static void UpdateDataFileInfo() {
+    private void UpdateDataFileInfo() {
         File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
-        MediaScannerConnection.scanFile(MainActivity.getAppContext(), new String[]{f.getAbsolutePath()}, null, null);
+        MediaScannerConnection.scanFile(context, new String[]{f.getAbsolutePath()}, null, null);
         Global.DataFileLength = f.length();
         if (Global.DataFileLength < 1024) {
-            MainActivity.myDataFileSize.setText(String.valueOf(Global.DataFileLength) + " B");
+            myDataFileSize.setText(String.valueOf(Global.DataFileLength) + " B");
         } else if (Global.DataFileLength < 1048576) {
-            MainActivity.myDataFileSize.setText(String.format("%.2f", (float) Global.DataFileLength / 1024.0) + " KB");
+            myDataFileSize.setText(String.format("%.2f", (float) Global.DataFileLength / 1024.0) + " KB");
         } else {
-            MainActivity.myDataFileSize.setText(String.format("%.2f", (float) Global.DataFileLength / 1048576) + " MB");
+            myDataFileSize.setText(String.format("%.2f", (float) Global.DataFileLength / 1048576) + " MB");
         }
         myDataFileName.setText(Global.DATA_FILE);
     }
@@ -731,20 +719,20 @@ public class MainActivity
             public void run() {
                 switch (Global.BTState) {
                     case DISCONNECTED:
-                        MainActivity.myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_cancel_black_24dp, null));
-                        MainActivity.myBTState.setColorFilter(ContextCompat.getColor(context, R.color.negative));
+                        myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_cancel_black_24dp, null));
+                        myBTState.setColorFilter(ContextCompat.getColor(context, R.color.negative));
                         break;
                     case CONNECTING:
-                        MainActivity.myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_group_work_black_24dp, null));
-                        MainActivity.myBTState.setColorFilter(ContextCompat.getColor(context, R.color.neutral));
+                        myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_group_work_black_24dp, null));
+                        myBTState.setColorFilter(ContextCompat.getColor(context, R.color.neutral));
                         break;
                     case CONNECTED:
-                        MainActivity.myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_check_circle_black_24dp, null));
-                        MainActivity.myBTState.setColorFilter(ContextCompat.getColor(context, R.color.positive));
+                        myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_check_circle_black_24dp, null));
+                        myBTState.setColorFilter(ContextCompat.getColor(context, R.color.positive));
                         break;
                     case RECONNECTING:
-                        MainActivity.myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_warning_black_24dp, null));
-                        MainActivity.myBTState.setColorFilter(ContextCompat.getColor(context, R.color.neutral));
+                        myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_warning_black_24dp, null));
+                        myBTState.setColorFilter(ContextCompat.getColor(context, R.color.neutral));
                         break;
                 }
             }
@@ -753,86 +741,111 @@ public class MainActivity
 
     private void UpdateLoggingStatus(boolean logging) {
         if (logging) {
-            MainActivity.myLogging.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_check_circle_black_24dp, null));
-            MainActivity.myLogging.setColorFilter(ContextCompat.getColor(context, R.color.positive));
+            myLogging.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_check_circle_black_24dp, null));
+            myLogging.setColorFilter(ContextCompat.getColor(context, R.color.positive));
         } else {
-            MainActivity.myLogging.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_cancel_black_24dp, null));
-            MainActivity.myLogging.setColorFilter(ContextCompat.getColor(context, R.color.negative));
+            myLogging.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_cancel_black_24dp, null));
+            myLogging.setColorFilter(ContextCompat.getColor(context, R.color.negative));
         }
     }
 
     /** Updates the TextView at the bottom of the UI showing the lap number */
-    public static void UpdateLap() {
-        MainActivity.LapNumber.setText("L" + Global.Lap);
+    public void UpdateLap() {
+        LapNumber.setText("L" + Global.Lap);
     }
 
     /** Updates the TextView at the top of the UI showing the BT device name */
-    public static void UpdateBTCarName() {
+    public void UpdateBTCarName() {
         MainActivityHandler.post(new Runnable() {
             @Override
             public void run() {
-                MainActivity.myBTCarName.setText(Global.BTDeviceName + " :: " + Global.CarName);
+                myBTCarName.setText(Global.BTDeviceName + " :: " + Global.CarName);
             }
         });
     }
 
-    public static void UpdateGear(final int shift) {
+    public void UpdateGear(final int shift) {
         MainActivityHandler.post(new Runnable() {
             @Override
             public void run() {
                 if (Global.Gear <= 0) {
-                    MainActivity.myGear.setText("?");
-                    MainActivity.myShiftIndicator.setVisibility(View.INVISIBLE);
+                    myGear.setText("?");
+                    myShiftIndicator.setVisibility(View.INVISIBLE);
                 } else {
-                    MainActivity.myGear.setText(String.valueOf(Global.Gear));
+                    myGear.setText(String.valueOf(Global.Gear));
                     if (shift == 1) {
                         // shift up indicator
-                        MainActivity.myShiftIndicator.setVisibility(View.VISIBLE);
-                        MainActivity.myShiftIndicator.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.shift_up, null));
+                        myShiftIndicator.setVisibility(View.VISIBLE);
+                        myShiftIndicator.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.shift_up, null));
                     } else if (shift == -1) {
                         // shift down indicator
-                        MainActivity.myShiftIndicator.setVisibility(View.VISIBLE);
+                        myShiftIndicator.setVisibility(View.VISIBLE);
                         //MainActivity.myShiftIndicator.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_down_circular_xxl, null));
                     } else {
                         // hide shift indicator
-                        MainActivity.myShiftIndicator.setVisibility(View.INVISIBLE);
+                        myShiftIndicator.setVisibility(View.INVISIBLE);
                     }
                 }
             }
         });
     }
 
-	/* =========================== */
-	/* BTDATAPARSER IMPLEMENTATION */
-    /* =========================== */
-
     /** This function is triggered by the Bluetooth data parser when it receives a {Cxx} packet.
      *  The driver will not be able to interact with the app as they will be wearing gloves and the phone will be in a waterproof case.
      *  A pushbutton in the cockpit is monitored by the Arduino for presses. If it detects the button, it will send a {Cxx} packet over Bluetooth
      */
-    @Override
-    public void onCycleViewPacket() {
-        MainActivityHandler.post(new Runnable() {
-            @Override
-            public void run() {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onArduinoEvent(ArduinoEvent e)  {
+        switch (e.eventType) {
+            case CycleView:
                 CycleView();
-            }
-        });
+                break;
+            case LaunchMode:
+                ActivateLaunchMode();
+                break;
+        }
     }
 
-    /** This function is triggered by the Bluetooth data parser when it receives a {Lxx} packet.
-     *  The driver will not be able to interact with the app as they will be wearing gloves and the phone will be in a waterproof case.
-     *  A pushbutton in the cockpit is monitored by the Arduino for presses. If it detects the button, it will send a {Lxx} packet over Bluetooth
-     */
-    @Override
-    public void onActivateLaunchModePacket() {
-        MainActivityHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                ActivateLaunchMode();
-            }
-        });
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPreferenceEvent(PreferenceEvent e) {
+        switch (e.eventType) {
+
+            case ModeChange:
+                myMode.setText(Global.Mode.toString());
+                break;
+            case BTDeviceNameChange:
+                UpdateBTStatus();
+                break;
+            case CarNameChange:
+                UpdateBTCarName();
+                break;
+            case UDPChange:
+                break;
+            case LocationChange:
+                break;
+            case DataFileSettingChange:
+                break;
+        }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLocationEvent(LocationEvent e) {
+        switch (e.eventType) {
+            case NewLap:
+                UpdateLap();
+                break;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateUIEvent(UpdateUIEvent e) {
+        switch (e.eventType) {
+            case DataFile:
+                UpdateDataFileInfo();
+                break;
+        }
+    }
+
 
     /* =============================== */
 	/* BLUETOOTHMANAGER IMPLEMENTATION */
@@ -909,12 +922,4 @@ public class MainActivity
         Global.BTState = Global.BTSTATE.RECONNECTING;
         UpdateBTStatus();
     }
-
-    /* =============================== */
-	/* SETTINGSFRAGMENT IMPLEMENTATION */
-    /* =============================== */
-
-    @Override
-    public void onSettingChanged(SharedPreferences sharedPreferences, String key) {}
-
 }

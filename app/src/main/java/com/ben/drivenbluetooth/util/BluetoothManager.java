@@ -5,7 +5,9 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
 import com.ben.drivenbluetooth.Global;
-import com.ben.drivenbluetooth.MainActivity;
+import com.ben.drivenbluetooth.events.SnackbarEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.Set;
@@ -55,7 +57,7 @@ public final class BluetoothManager {
 			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
 			if(!mBluetoothAdapter.isEnabled()) {
-				MainActivity.showMessage("Bluetooth adapter not enabled");
+				EventBus.getDefault().post(new SnackbarEvent("Bluetooth adapter not enabled"));
 				return;
 			}
         }
@@ -73,7 +75,7 @@ public final class BluetoothManager {
         }
 
 		// if we have reached this point then we could not find a device
-		MainActivity.showMessage(Global.BTDeviceName + " is not paired with this phone. Please open Settings and pair the device first");
+		EventBus.getDefault().post(new SnackbarEvent(Global.BTDeviceName + " is not paired with this phone. Please open Settings and pair the device first"));
     }
 
     /** Attempts to open a connection to the Bluetooth device by using a background thread.

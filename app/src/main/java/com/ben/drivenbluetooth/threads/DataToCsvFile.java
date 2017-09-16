@@ -3,15 +3,14 @@ package com.ben.drivenbluetooth.threads;
 import android.os.Environment;
 
 import com.ben.drivenbluetooth.Global;
-import com.ben.drivenbluetooth.MainActivity;
+import com.ben.drivenbluetooth.events.SnackbarEvent;
+import com.ben.drivenbluetooth.events.UpdateUIEvent;
 
-import org.acra.ACRA;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import static com.ben.drivenbluetooth.MainActivity.MainActivityHandler;
 
 public class DataToCsvFile extends Thread {
 
@@ -65,8 +64,7 @@ public class DataToCsvFile extends Thread {
                     "Mangled data"          // mangled data count (Bluetooth)
 			};
 		} catch (Exception e) {
-			MainActivity.showError(e);
-            ACRA.getErrorReporter().handleException(e);
+			EventBus.getDefault().post(new SnackbarEvent(e));
 		}
 	}
 
@@ -123,13 +121,13 @@ public class DataToCsvFile extends Thread {
 
                 } catch (Exception e) {
                     // something failed with writing to file
-                    ACRA.getErrorReporter().handleException(e);
+                    EventBus.getDefault().post(new SnackbarEvent(e));
                 }
 
                 try { // for some reason this needs to be in a try/catch block
                     Thread.sleep(Global.DATA_SAVE_INTERVAL);
                 } catch (Exception e) {
-                    ACRA.getErrorReporter().handleException(e);
+                    EventBus.getDefault().post(new SnackbarEvent(e));
                 }
             }
 
@@ -137,19 +135,14 @@ public class DataToCsvFile extends Thread {
 
             try {
                 oStream.close();
-                MainActivityHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        MainActivity.UpdateDataFileInfo();
-                    }
-                });
+                EventBus.getDefault().post(new UpdateUIEvent(UpdateUIEvent.EventType.DataFile));
             } catch (IOException e) {
-                ACRA.getErrorReporter().handleException(e);
+                EventBus.getDefault().post(new SnackbarEvent(e));
             }
 
         } catch (Exception e) {
             // something failed with opening the file
-            ACRA.getErrorReporter().handleException(e);
+            EventBus.getDefault().post(new SnackbarEvent(e));
         }
     }
 
@@ -204,11 +197,11 @@ public class DataToCsvFile extends Thread {
 				oStream.write(data.getBytes());
 
 			} catch (Exception e) {
-                ACRA.getErrorReporter().handleException(e);
+                EventBus.getDefault().post(new SnackbarEvent(e));
 				try {
 					oStream.close();
 				} catch (Exception ex) {
-                    ACRA.getErrorReporter().handleException(e);
+                    EventBus.getDefault().post(new SnackbarEvent(e));
                 }
 			}
 		}
@@ -225,7 +218,7 @@ public class DataToCsvFile extends Thread {
 		try {
 			oStream.close();
 		} catch (Exception e) {
-            ACRA.getErrorReporter().handleException(e);
+            EventBus.getDefault().post(new SnackbarEvent(e));
         }
 	}
 }

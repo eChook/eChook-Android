@@ -2,8 +2,9 @@ package com.ben.drivenbluetooth.threads;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
+import com.ben.drivenbluetooth.events.SnackbarEvent;
 
-import org.acra.ACRA;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +27,7 @@ public class BTStreamReader extends Thread {
             this.mmInStream = Global.BTSocket.getInputStream();
 
         } catch (IOException e) {
-            MainActivity.showMessage("Bluetooth is not connected!");
+            EventBus.getDefault().post(new SnackbarEvent("Bluetooth is not connected!"));
         }
     }
 
@@ -72,7 +73,7 @@ public class BTStreamReader extends Thread {
 							try {
 								BTDataParser.mHandler.sendEmptyMessage(0);
 							} catch (Exception e) {
-								ACRA.getErrorReporter().handleException(e);
+								EventBus.getDefault().post(new SnackbarEvent(e));
 							}
 
 							// reset the buffer pointer

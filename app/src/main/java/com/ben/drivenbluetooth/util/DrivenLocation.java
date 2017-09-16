@@ -1,5 +1,6 @@
 package com.ben.drivenbluetooth.util;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -7,9 +8,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.widget.Chronometer;
+import android.widget.TextView;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
+import com.ben.drivenbluetooth.events.LocationEvent;
+import com.ben.drivenbluetooth.events.PreferenceEvent;
+import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -19,10 +25,12 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import org.acra.ACRA;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 										GoogleApiClient.OnConnectionFailedListener,
@@ -32,6 +40,10 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	private static GoogleApiClient GoogleApi;
 	private Location currentLocation;
 
+	private Chronometer mTimer;
+    private TextView mPrevLapTime;
+    private TextView mLapNumber;
+
     public PolylineOptions pathHistory = new PolylineOptions();		// polyline for drawing paths on the map
 	public CircleOptions ObserverLocation = new CircleOptions();		// circle for showing the observer location
 	private RaceObserver myRaceObserver = null;
@@ -40,12 +52,18 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	private boolean storePointsIntoInitialArray = false;	// flag to write locations to the above array or not
 	private boolean CrossStartFinishLineTriggerEnabled = true;	// used for the timeout to make sure we don't get excessive triggers firing if the location is slightly erratic
 
+	private Context context;
+
 	/*===================*/
 	/* DRIVENLOCATION
 	/*===================*/
-	public DrivenLocation() {
+	public DrivenLocation(Chronometer timer, TextView prevLapTime, Context ctx) {
+		context = ctx;
+		mTimer = timer;
+		mPrevLapTime = prevLapTime;
 		createLocationRequest();
 		buildGoogleApiClient();
+		EventBus.getDefault().register(this);
 	}
 
 	/*===================*/
@@ -70,6 +88,13 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		// attempt to re-establish the connection.
 		//Log.i(TAG, "Connection suspended");
 		GoogleApi.connect();
+	}
+
+	@Subscribe
+	public void onPreferenceEvent(PreferenceEvent e) {
+		if (e.eventType == PreferenceEvent.EventType.LocationChange) {
+			startLocationUpdates();
+		}
 	}
 
 	@Override
@@ -126,11 +151,13 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	}
 
 	private synchronized void buildGoogleApiClient() {
-		GoogleApi = new GoogleApiClient.Builder(MainActivity.getAppContext())
-				.addConnectionCallbacks(this)
-				.addOnConnectionFailedListener(this)
-				.addApi(LocationServices.API)
-				.build();
+		if (context != null) {
+			GoogleApi = new GoogleApiClient.Builder(context)
+					.addConnectionCallbacks(this)
+					.addOnConnectionFailedListener(this)
+					.addApi(LocationServices.API)
+					.build();
+		}
 	}
 
 	private void createLocationRequest() {
@@ -171,11 +198,10 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 			Global.Longitude = currentLocation.getLongitude();
 		} catch (SecurityException e) {
 			// this should never happen, but if it does...
-			ACRA.getErrorReporter().handleException(e);
-			MainActivity.showMessage("Permission denied to request location updates");
+			EventBus.getDefault().post(new SnackbarEvent(e));
+			EventBus.getDefault().post(new SnackbarEvent("Permission denied to allow location services"));
 		} catch (Exception e) {
-			ACRA.getErrorReporter().handleException(e);
-			MainActivity.showError(e);
+			EventBus.getDefault().post(new SnackbarEvent(e));
 		}
 	}
 
@@ -241,19 +267,22 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 	}
 
 	private void resetLapTimer() {
-		MainActivity.LapTimer.stop();
-		MainActivity.LapTimer.setBase(SystemClock.elapsedRealtime());
-		MainActivity.LapTimer.start();
+		mTimer.stop();
+		mTimer.setBase(SystemClock.elapsedRealtime());
+		mTimer.start();
 	}
 
-	public void UpdateLocationSetting() {
-		switch (Global.LocationStatus) {
-			case ENABLED:
-				startLocationUpdates();
-				break;
-			case DISABLED:
-				stopLocationUpdates();
-				break;
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void UpdateLocationSetting(PreferenceEvent e) {
+		if (e.eventType == PreferenceEvent.EventType.LocationChange) {
+			switch (Global.LocationStatus) {
+				case ENABLED:
+					startLocationUpdates();
+					break;
+				case DISABLED:
+					stopLocationUpdates();
+					break;
+			}
 		}
 	}
 
@@ -264,13 +293,13 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 				if (myRaceObserver != null) {
 					myRaceObserver.ActivateLaunchMode(Global.StartFinishLineLocation);
 				} else {
-					MainActivity.showMessage("Observer not defined - cannot activate launch mode!");
+					EventBus.getDefault().post(new SnackbarEvent("Observer not defined - cannot activate launch mode!"));
 				}
 			} else {
-				MainActivity.showMessage("Could not obtain your location. Please try again");
+				EventBus.getDefault().post(new SnackbarEvent("Could not obtain your location. Please try again"));
 			}
 		} else {
-			MainActivity.showMessage("Location updates are not enabled on your device. Please go to settings and enable it!");
+			EventBus.getDefault().post(new SnackbarEvent("Location updates are not enabled on your device. Please go to settings and enable it!"));
 		}
 	}
 
@@ -278,7 +307,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		if (myRaceObserver != null) {
 			myRaceObserver.SimulateCrossStartFinishLine();
 		} else {
-			MainActivity.showMessage("Observer is not yet defined!");
+			EventBus.getDefault().post(new SnackbarEvent("Observer is not yet defined!"));
 		}
 	}
 
@@ -302,11 +331,11 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 			CrossStartFinishLineTriggerEnabled = false;
 
             // UpdateLocationSetting the laptimer and counter tooltips
-			MainActivity.prevLapTime.setText(MainActivity.LapTimer.getText());
+			mPrevLapTime.setText(mTimer.getText());
 
             // update lap data
             if (Global.Lap > 0) {
-                Global.LapDataList.get(Global.Lap - 1).setLapTime(SystemClock.elapsedRealtime() - MainActivity.LapTimer.getBase()); // set previous lap time
+                Global.LapDataList.get(Global.Lap - 1).setLapTime(SystemClock.elapsedRealtime() - mTimer.getBase()); // set previous lap time
             }
 
             // get delta time between last two laps
@@ -320,7 +349,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 			Global.Lap++;
 
             // Update the lap text
-            MainActivity.UpdateLap();
+			EventBus.getDefault().post(new LocationEvent(LocationEvent.EventType.NewLap));
 
             // reset the lap timer
 			resetLapTimer();
@@ -338,17 +367,11 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 
             // show lap summary message
             if (Global.Lap > 1) {
-                MainActivity.showSnackbar(String.format("Lap %s - %s (%+02.3fs)",
+                EventBus.getDefault().post(new SnackbarEvent(
+                		String.format("Lap %s - %s (%+02.3fs)",
                         Global.Lap - 1,
                         Global.LapDataList.get(Global.Lap - 2).getLapTimeString(),
-                        (float) deltaMillis / 1000.0)
-                        , 5000);
-
-//                MainActivity.showLapSummary(String.format("Lap %s - %s (%+02.3fs)",
-//                        Global.Lap - 1,
-//                        Global.LapDataList.get(Global.Lap - 2).getLapTimeString(),
-//                        (float) deltaMillis / 1000.0)
-//                , 5000);
+                        (float) deltaMillis / 1000.0)));
             }
         }
 	}
@@ -381,8 +404,8 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		Global.Lap++;
 
         // UpdateLocationSetting timer
-		MainActivity.LapTimer.setBase(SystemClock.elapsedRealtime());
-		MainActivity.LapTimer.start();
+		mTimer.setBase(SystemClock.elapsedRealtime());
+		mTimer.start();
 	}
 
 	public Location getCurrentLocation() {

@@ -1,5 +1,6 @@
 package com.ben.drivenbluetooth.fragments;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -14,13 +15,18 @@ import android.widget.TextView;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.R;
+import com.ben.drivenbluetooth.events.ArduinoEvent;
+import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.util.UnitHelper;
-import com.ben.drivenbluetooth.util.UpdateFragment;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LapHistoryFragment extends UpdateFragment {
+public class LapHistoryFragment extends Fragment {
 
 	private TableLayout LapTable;
 
@@ -38,11 +44,11 @@ public class LapHistoryFragment extends UpdateFragment {
 
 	private void InitializeDataFields() {
 		View v = getView();
-		Current 		= (TextView) v.findViewById(R.id.current);
-		Voltage 		= (TextView) v.findViewById(R.id.voltage);
-		RPM 			= (TextView) v.findViewById(R.id.rpm);
-		Speed 			= (TextView) v.findViewById(R.id.speed);
-		AmpHours		= (TextView) v.findViewById(R.id.ampHours);
+		Current 		= v.findViewById(R.id.current);
+		Voltage 		= v.findViewById(R.id.voltage);
+		RPM 			= v.findViewById(R.id.rpm);
+		Speed 			= v.findViewById(R.id.speed);
+		AmpHours		= v.findViewById(R.id.ampHours);
 	}
 
 	/*===================*/
@@ -52,15 +58,16 @@ public class LapHistoryFragment extends UpdateFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		return inflater.inflate(R.layout.fragment_lap_history, container, false);
+        return inflater.inflate(R.layout.fragment_lap_history, container, false);
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		LapTable = (TableLayout) getView().findViewById(R.id.laptable);
+		LapTable =  getView().findViewById(R.id.laptable);
 		InitializeDataFields();
 		StartFragmentUpdater();
+        EventBus.getDefault().register(this);
 	}
 
 	@Override
@@ -73,6 +80,8 @@ public class LapHistoryFragment extends UpdateFragment {
 		Voltage	= null;
 		RPM		= null;
 		Speed	= null;
+
+        EventBus.getDefault().unregister(this);
 	}
 
 	private void UpdateLapTable() {
@@ -125,7 +134,35 @@ public class LapHistoryFragment extends UpdateFragment {
         UpdateWattHours();
 	}
 
-    @Override
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onArduinoEvent(ArduinoEvent event) {
+		try {
+			switch (event.eventType) {
+
+				case Volts:
+					UpdateVolts();
+					break;
+				case Amps:
+					UpdateAmps();
+					break;
+				case AmpHours:
+					UpdateAmpHours();
+					break;
+				case WheelSpeedMPS:
+					UpdateSpeed();
+					break;
+				case MotorSpeedRPM:
+					UpdateMotorRPM();
+					break;
+				case WattHours:
+					UpdateWattHours();
+					break;
+			}
+		} catch (Exception e) {
+			EventBus.getDefault().post(new SnackbarEvent(e));
+		}
+	}
+
     public synchronized void UpdateVolts() {
         try {
 			this.Voltage.setText(String.format("%.2f", Global.Volts) + " V");
@@ -134,7 +171,6 @@ public class LapHistoryFragment extends UpdateFragment {
 		}
 	}
 
-    @Override
     public synchronized void UpdateAmps() {
         try {
 			this.Current.setText(String.format("%.1f", Global.Amps) + " A");
@@ -143,7 +179,6 @@ public class LapHistoryFragment extends UpdateFragment {
 		}
 	}
 
-    @Override
     public synchronized void UpdateAmpHours() {
         try {
 			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
@@ -152,7 +187,6 @@ public class LapHistoryFragment extends UpdateFragment {
 		}
 	}
 
-    @Override
     public synchronized void UpdateSpeed() {
         try {
             Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.Unit));
@@ -162,7 +196,6 @@ public class LapHistoryFragment extends UpdateFragment {
 		}
 	}
 
-    @Override
     public synchronized void UpdateMotorRPM() {
         try {
 			this.RPM.setText(String.format("%.0f", Global.MotorRPM) + " RPM");
@@ -171,19 +204,8 @@ public class LapHistoryFragment extends UpdateFragment {
 		}
 	}
 
-    @Override
     public synchronized void UpdateWattHours() {
         // TODO: implement method
-    }
-
-    @Override
-    public void UpdatePerformanceMetric() {
-
-    }
-
-    @Override
-    public void UpdateThrottleMode() {
-
     }
 
     private void _createHeaders() {
@@ -238,10 +260,4 @@ public class LapHistoryFragment extends UpdateFragment {
 			FragmentUpdateTimer.purge();
 		} catch (Exception ignored) {}
 	}
-
-	@Deprecated
-	public void UpdateTemp() {}	// required as per UpdateFragment contract
-
-	@Deprecated
-	public void UpdateThrottle() {}	// required as per UpdateFragment contract
 }

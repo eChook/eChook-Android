@@ -9,23 +9,21 @@ def getVersionCodeTimestamp() {
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 26
+    buildToolsVersion '25.0.2'
 
     applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            output.outputFile = new File(
-                    output.outputFile.parent,
-                    output.outputFile.name.replace("app-release.apk", "echook-companion-release-${variant.versionName}_${variant.versionCode}.apk"))
+        variant.outputs.all {
+            outputFileName = "echook-companion-release-${variant.versionName}_${variant.versionCode}.apk"
         }
     }
 
     defaultConfig {
         applicationId "com.ben.drivenbluetooth"
         minSdkVersion 21
-        targetSdkVersion 24
+        targetSdkVersion 26
         versionCode getVersionCodeTimestamp()
-        versionName "1.95"
+        versionName "1.96"
         multiDexEnabled true
     }
     buildTypes {
@@ -46,16 +44,21 @@ repositories {
 }
 
 dependencies {
+    // https://developers.google.com/android/guides/setup#split
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.google.android.gms:play-services:9.4.0'
-    compile 'com.android.support:design:24.2.1'
-    compile 'ch.acra:acra:4.8.5'
+    compile 'com.google.android.gms:play-services-maps:11.2.2'
+    compile 'com.google.android.gms:play-services-location:11.2.2'
+
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.3'
     compile 'com.getbase:floatingactionbutton:1.10.1'
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:preference-v7:24.2.1'
-    compile 'com.android.support:preference-v14:24.2.1'
-    compile 'com.android.support:percent:24.2.1'
+    compile 'com.android.support:appcompat-v7:26.0.2'
+
+    compile 'com.android.support:preference-v14:26.0.2'
+
     compile 'org.apache.commons:commons-math3:3.6.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
+
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    compile 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.android.support:design:26.0.2'
 }

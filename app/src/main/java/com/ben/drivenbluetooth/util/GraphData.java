@@ -3,7 +3,6 @@ package com.ben.drivenbluetooth.util;
 import android.content.Context;
 
 import com.ben.drivenbluetooth.Global;
-import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.R;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -19,8 +18,7 @@ public final class GraphData {
 		// empty constructor
 	}
 
-    public static void InitializeGraphDataSets() {
-        Context context = MainActivity.getAppContext();
+    public static void InitializeGraphDataSets(Context context) {
         LineData dataSets[] = new LineData[] {
                 Global.ThrottleHistory,
                 Global.VoltsHistory,
