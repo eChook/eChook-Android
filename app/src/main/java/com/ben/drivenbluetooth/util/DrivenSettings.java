@@ -2,8 +2,6 @@ package com.ben.drivenbluetooth.util;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v7.preference.Preference;
-import android.widget.Toast;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -28,6 +26,12 @@ public final class DrivenSettings {
 		CarName(prefs);
 		Graphs(prefs);
         UDP(prefs);
+		locationUpload(prefs);
+		dweetProEnable(prefs);
+		dweetProPassword(prefs);
+        dweetProUsername(prefs);
+        dweetThingName(prefs);
+        dweetMasterKey(prefs);
 	}
 
 	public static void QuickChangeMode() {
@@ -118,16 +122,39 @@ public final class DrivenSettings {
 	}
 
     private static void UDP(SharedPreferences prefs) {
-        Global.UDPPassword = prefs.getString("prefUDP", "");
-
-		if(Global.UDPPassword.equals("eChookLiveData") && prefs.getBoolean("prefUdpEnabled", false))
-		{
-			Global.UDPEnabled = true;
-		} else{
-			Global.UDPEnabled = false;
-		}
-
+        Global.telemetryEnabled = prefs.getBoolean("prefUdpEnabled", false);
     }
+
+    private static void dweetProEnable(SharedPreferences prefs){
+		Global.enableDweetPro = prefs.getBoolean("prefDweetLocked", false);
+	}
+
+	private static void dweetProUsername(SharedPreferences prefs){
+		Global.dweetProUsername = prefs.getString("prefDweetUsername","");
+
+	}
+
+	private static void dweetProPassword(SharedPreferences prefs){
+		Global.dweetProPassword = prefs.getString("prefDweetPassword","");
+
+	}
+
+	private static void dweetThingName(SharedPreferences prefs){
+        Global.dweetThingName = prefs.getString("prefUDP", "");
+    }
+
+    private static void dweetMasterKey(SharedPreferences prefs){
+        Global.dweetMasterKey = prefs.getString("prefDweetMasterKey", "");
+    }
+
+	private static void locationUpload(SharedPreferences prefs) {
+		//Disables Location upload on every app restart
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putBoolean("prefLocationUpload", false );
+		editor.apply();
+
+		Global.enableLocationUpload = false;
+	}
 
     public static int[] parseWheelTeeth(String wheelTeethString) {
         wheelTeethString = wheelTeethString.replaceAll("\\s+", ""); // remove spaces

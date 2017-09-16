@@ -2,6 +2,7 @@ package com.ben.drivenbluetooth;
 
 import android.bluetooth.BluetoothSocket;
 import android.location.Location;
+import android.text.StaticLayout;
 
 import com.ben.drivenbluetooth.util.LapData;
 import com.ben.drivenbluetooth.util.RunningAverage;
@@ -57,7 +58,7 @@ public final class Global {
 
     public static final int     PERMISSIONS_REQUEST     = 1;
 
-    public static String        UDPPassword = "";
+
 
     public static final BlockingQueue<byte[]> BTStreamQueue = 	new LinkedBlockingQueue<>();
 	public static volatile Double Volts 			    = 0.0;
@@ -130,8 +131,15 @@ public final class Global {
 	public static String BTDeviceName;
 	public static boolean EnableGraphs                  = true;
 	public static Double BatteryCapacityAh;
-    public static boolean UDPEnabled                    = false;
-    public static List<String> BTDeviceNames = new ArrayList<String>(248); //248 is the maximum number of devices it is possible to bond
+    public static boolean telemetryEnabled              = false;
+    public static List<String> BTDeviceNames            = new ArrayList<String>(248); //248 is the maximum number of devices it is possible to bond
+    public static String dataPin                        ="";
+    public static String dweetThingName                 = "";
+    public static boolean enableLocationUpload          = false;
+    public static boolean enableDweetPro                = false;
+    public static String dweetProPassword               ="";
+    public static String dweetProUsername               ="";
+    public static String dweetMasterKey                 ="";
 
 
     public static int MotorTeeth                        = 0;

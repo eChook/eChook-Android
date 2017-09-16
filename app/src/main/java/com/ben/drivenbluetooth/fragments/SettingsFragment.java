@@ -2,7 +2,6 @@ package com.ben.drivenbluetooth.fragments;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -16,12 +15,9 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import android.content.Intent;
 
 import com.ben.drivenbluetooth.Global;
@@ -32,9 +28,6 @@ import com.ben.drivenbluetooth.util.DrivenSettings;
 import org.acra.ACRA;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -78,6 +71,12 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             setListPreferenceData(btDevListPreference);
 
 
+            //Check if DweetPro Login worked
+            Preference dweetProPref = findPreference("prefDweetLocked");
+            if(Global.enableDweetPro != dweetProPref.isEnabled()) {
+                dweetProPref.setSummary("Error. Please check login info and internet connection");
+            }
+
             btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -107,12 +106,6 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                 }
             });
 
-            //Disable live data option if password incorrect
-            Preference dataPref = findPreference("prefUdpEnabled");
-            if (!Global.UDPPassword.equals("eChookLiveData")) {
-                dataPref.setEnabled(false);
-                Global.UDPEnabled = false;
-            }
         }catch (Exception e) {
             e.printStackTrace();
 
@@ -205,18 +198,18 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 	}
 
 	private void updateAllPreferenceSummary() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
-		Map<String,?> keys = sharedPreferences.getAll();
-
-		for (Map.Entry<String, ?> entry : keys.entrySet()) {
-			updatePreferenceSummary(entry.getKey());
-		}
+//		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
+//		Map<String,?> keys = sharedPreferences.getAll();
+//
+//		for (Map.Entry<String, ?> entry : keys.entrySet()) {
+//			//updatePreferenceSummary(entry.getKey());
+//		}
 	}
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		// UpdateLocationSetting the preference summaries
-		updatePreferenceSummary(key);
+		//updatePreferenceSummary(key);
 
 		try {
 			switch (key) {
@@ -254,20 +247,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 					Global.EnableGraphs = sharedPreferences.getBoolean("prefGraphsSwitch", false);
                     break;
                 case "prefUDP":
-                    Global.UDPPassword = sharedPreferences.getString("prefUDP", "");
-                    Preference pref = findPreference("prefUdpEnabled");
-                    if(Global.UDPPassword.equals("eChookLiveData"))
-                    {
-                        Toast.makeText(this.getContext(), "Password Correct :)", Toast.LENGTH_SHORT).show();
-                        pref.setEnabled(true);
-
-                    } else{
-
-                        Toast.makeText(this.getContext(), "Nice Guess... try again :p", Toast.LENGTH_SHORT).show();
-
-                        pref.setEnabled(false);
-                    }
-
+                    Global.dweetThingName = sharedPreferences.getString("prefUDP", "");
                     break;
                 case "prefMotorTeeth":
                     Global.MotorTeeth = DrivenSettings.parseMotorTeeth(sharedPreferences.getString("prefMotorTeeth", ""));
@@ -276,13 +256,24 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                     Global.WheelTeeth = DrivenSettings.parseWheelTeeth(sharedPreferences.getString("prefWheelTeeth", ""));
                     break;
                 case "prefUdpEnabled":
-                    if(sharedPreferences.getBoolean("prefUdpEnabled", false))
-                    {
-
-                    }else{
-                        Global.UDPEnabled = false;
-                    }
-
+                    Global.telemetryEnabled = sharedPreferences.getBoolean("prefUdpEnabled", false);
+                    break;
+                case "prefLocationUpload":
+                    Global.enableLocationUpload = sharedPreferences.getBoolean(key, false);
+                    break;
+                case "prefDweetPassword":
+                    Global.dweetProPassword = sharedPreferences.getString(key, "");
+                    //TODO make sure this hides the password!! setting inputType="textPassword" doesn't work.
+                    break;
+                case "prefDweetLocked":
+                    Global.enableDweetPro = sharedPreferences.getBoolean(key, false);
+                    break;
+                case "prefDweetUsername":
+                    Global.dweetProUsername = sharedPreferences.getString(key, "");
+                    break;
+                case "prefDweetMasterKey":
+                    Global.dweetMasterKey = sharedPreferences.getString(key, "");
+                    break;
 				default:
 					break;
 			}
@@ -293,6 +284,10 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             ACRA.getErrorReporter().handleException(e);
 		}
 	}
+
+
+
+
 
 	@Override
 	public void onResume() {
