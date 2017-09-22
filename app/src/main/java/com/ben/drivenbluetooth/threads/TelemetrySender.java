@@ -27,6 +27,8 @@ public class TelemetrySender extends Thread {
     private Timer telUpdateTimer = new Timer();
     private String dweetProToken = "";
     private boolean waitingForLogin = false;
+    private int currentLap = 0;
+    private boolean firstRun = true;
 
 
 
@@ -108,18 +110,6 @@ public class TelemetrySender extends Thread {
 
                 Log.d("eChook", "Token request response:"+sb.toString());
 
-                //Get token from response:
-
-//                try {
-//                    JSONObject receivedJson = new JSONObject(sb.toString());
-//                    dweetProToken = receivedJson.getString("");
-//                }catch (JSONException e)
-//                {
-//                    e.printStackTrace();
-//                    Log.d("eChook", "Token not Found - JSON exception");
-//                    success = false;
-//                }
-
                 try {
                     JSONObject receivedJson = new JSONObject(sb.toString());
                     Iterator iterator = receivedJson.keys();
@@ -165,7 +155,6 @@ public class TelemetrySender extends Thread {
     private JSONObject getLoginJson()
     {
         JSONObject loginJson = new JSONObject();
-        DecimalFormat format = new DecimalFormat("#.##");
         try{
             loginJson.put("username", Global.dweetProUsername);
             loginJson.put("password", Global.dweetProPassword);
@@ -203,11 +192,35 @@ public class TelemetrySender extends Thread {
                 dataJSON.put("Lon", Global.Longitude);
             }
 
+            if(currentLap != Global.Lap && Global.Lap > 0){
+                currentLap = Global.Lap;
+                dataJSON.put("LL_V", format.format(Global.LapDataList.get(currentLap-1).getAverageVolts()));
+                dataJSON.put("LL_I", format.format(Global.LapDataList.get(currentLap-1).getAverageAmps()));
+                dataJSON.put("LL_RPM", format.format(Global.LapDataList.get(currentLap-1).getAverageRPM()));
+                dataJSON.put("LL_Spd", format.format(Global.LapDataList.get(currentLap-1).getAverageSpeedMPS()));
+                dataJSON.put("LL_Ah", format.format(Global.LapDataList.get(currentLap-1).getAmpHours()));
+                dataJSON.put("LL_Time", format.format(Global.LapDataList.get(currentLap-1).getLapTimeString()));
+                dataJSON.put("LL_Eff", format.format(Global.LapDataList.get(currentLap-1).getWattHoursPerKM()));
+            }
+
+            if(firstRun){
+                firstRun = false;
+                dataJSON.put("LL_V", "0");
+                dataJSON.put("LL_I", "0");
+                dataJSON.put("LL_RPM", "0");
+                dataJSON.put("LL_Spd", "0");
+                dataJSON.put("LL_Ah", "0");
+                dataJSON.put("LL_Time", "0");
+                dataJSON.put("LL_Eff", "0");
+            }
+
             if(Global.enableDweetPro){
                 proJSON.put("thing", Global.dweetThingName);
                 proJSON.put("key", Global.dweetMasterKey);
                 proJSON.put("content", dataJSON);
             }
+
+
 
         }catch (JSONException e) {
             e.printStackTrace();

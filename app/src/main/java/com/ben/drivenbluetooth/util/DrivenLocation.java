@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
+import com.ben.drivenbluetooth.threads.TelemetrySender;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
