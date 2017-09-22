@@ -183,6 +183,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             }
         } catch (Exception e) {
             EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
         }
 	}
 
@@ -269,6 +270,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 		} catch (Exception e) {
             e.printStackTrace();
             EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
 		}
 	}
 
@@ -279,6 +281,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         }catch (Exception e) {
             EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
         }
 	}
 
@@ -289,6 +292,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
         }catch (Exception e) {
             EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
         }
 	}
 }

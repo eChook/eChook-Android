@@ -112,6 +112,7 @@ public class RandomGenerator extends Thread {
 				} catch (Exception e) {
 					e.printStackTrace();
 					EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
 				}
 
 				try {

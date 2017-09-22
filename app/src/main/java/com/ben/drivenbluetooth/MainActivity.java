@@ -531,6 +531,7 @@ public class MainActivity
     /** Starts the random generator */
     private void StartDemoMode() {
         StartRandomGenerator();
+        StartDataLogger();
     }
 
     /** Starts the data logger thread (if not already running). Re-initializes the thread if needed */
@@ -623,7 +624,7 @@ public class MainActivity
 
     /** Stops the data logger thread (if running) */
     private void StopDataLogger() {
-        if (mDataToCSVFile != null && mDataToCSVFile.getState() != Thread.State.TERMINATED) {
+        if (mDataToCSVFile != null && mDataToCSVFile.getState() != Thread.State.TERMINATED || mDataToCSVFile.getState() != Thread.State.NEW) {
             mDataToCSVFile.cancel();
         }
         UpdateLoggingStatus(false);

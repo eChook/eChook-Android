@@ -160,6 +160,7 @@ public class LapHistoryFragment extends Fragment {
 			}
 		} catch (Exception e) {
 			EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
 		}
 	}
 

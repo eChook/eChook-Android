@@ -199,9 +199,11 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 		} catch (SecurityException e) {
 			// this should never happen, but if it does...
 			EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
 			EventBus.getDefault().post(new SnackbarEvent("Permission denied to allow location services"));
 		} catch (Exception e) {
 			EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
 		}
 	}
 

@@ -74,6 +74,7 @@ public class BTStreamReader extends Thread {
 								BTDataParser.mHandler.sendEmptyMessage(0);
 							} catch (Exception e) {
 								EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
 							}
 
 							// reset the buffer pointer

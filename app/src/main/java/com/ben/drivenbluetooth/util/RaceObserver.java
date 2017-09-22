@@ -74,6 +74,7 @@ public class RaceObserver implements RaceStartMonitor.ThrottleListener{
 			EventBus.getDefault().post(new SnackbarEvent("Launch Mode Active - waiting for throttle input (minimum 20%)"));
 		} catch (Exception e) {
 			EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
 		}
 	}
 
