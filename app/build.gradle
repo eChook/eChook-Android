@@ -25,7 +25,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 24
         versionCode getVersionCodeTimestamp()
-        versionName "1.94"
+        versionName "1.95"
         multiDexEnabled true
     }
     buildTypes {
