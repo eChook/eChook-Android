@@ -4,8 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Android Code.iml" filepath="$PROJECT_DIR$/Android Code.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../../bnagy4/AndroidStudioProjects/nagyben_eChook_Android/eChook_Android.iml" filepath="$PROJECT_DIR$/../../../../bnagy4/AndroidStudioProjects/nagyben_eChook_Android/eChook_Android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/nagyben_eChook_Android.iml" filepath="$PROJECT_DIR$/nagyben_eChook_Android.iml" />
     </modules>
   </component>
 </project>

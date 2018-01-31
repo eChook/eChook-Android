@@ -25,7 +25,7 @@ import java.util.TimerTask;
 public class TelemetrySender extends Thread {
     private boolean telEnabled = false;
     private Timer telUpdateTimer = new Timer();
-    private String dweetProToken = "";
+    private String echookID = "";
     private boolean waitingForLogin = false;
     private int currentLap = 0;
     private boolean firstRun = true;
@@ -33,7 +33,7 @@ public class TelemetrySender extends Thread {
 
 
     public TelemetrySender() {
-        telEnabled = Global.telemetryEnabled;
+        telEnabled = Global.dweetEnabled || Global.eChookLiveEnabled;
     }
 
         @Override
@@ -42,12 +42,12 @@ public class TelemetrySender extends Thread {
 
             telUpdateTimer.schedule(sendJsonTask, 0, 1500);
 
-            boolean tokenRecieved = false;
+            boolean echookIdReceived;
 
-            if (telEnabled && Global.enableDweetPro && (!Global.dweetProUsername.equals("")) && !Global.dweetProPassword.equals("") && Global.dweetMasterKey.equals("")) {
-                Log.d("eChook", "Attempting to get dweet Auth Token");
-                tokenRecieved = getDweetProToken();
-                if(!tokenRecieved){
+            if (telEnabled && Global.eChookLiveEnabled && (!Global.eChookCarName.equals("")) && !Global.eChookPassword.equals("")) { //If echook live is selected and login details aren't empty
+                Log.d("eChook", "Attempting to get eChook Live ID");
+                echookIdReceived = getEchookId();
+                if(!echookIdReceived){
                     dweetLoginFailed();
                     //Global.enableDweetPro = false;
                 }
@@ -78,14 +78,14 @@ public class TelemetrySender extends Thread {
         Global.enableDweetPro = false;
     }
 
-    private boolean getDweetProToken()
+    private boolean getEchookId()
     {
         boolean success;
         HttpURLConnection urlConnection;
         try {
             URL url;
 
-            url = new URL("https://dweetpro.io:443/v2/users/login");
+            url = new URL("http://data.echook.uk/api/getid");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
             urlConnection.setChunkedStreamingMode(0);
@@ -108,21 +108,21 @@ public class TelemetrySender extends Thread {
                 }
                 br.close();
 
-                Log.d("eChook", "Token request response:"+sb.toString());
+                Log.d("eChook", "ID request response:"+sb.toString());
 
                 try {
                     JSONObject receivedJson = new JSONObject(sb.toString());
                     Iterator iterator = receivedJson.keys();
-                    String key = "";
+                    String id = "";
                     while(iterator.hasNext())
                     {
-                        key = (String)iterator.next();
-                        Log.d("eChook", "Keys Found " + key);
+                        id = (String)iterator.next();
+                        Log.d("eChook", "Keys Found " + id);
                     }
                     Log.d("eChook", "Opening object from key");
-                    JSONObject nestedJson = receivedJson.getJSONObject(key);
+                    JSONObject nestedJson = receivedJson.getJSONObject(id);
                     Log.d("eChook", "Looking in object:" + receivedJson.toString());
-                    dweetProToken = nestedJson.getString("token");
+                    echookID = nestedJson.getString("id");
                 }catch (JSONException e)
                 {
                     e.printStackTrace();
@@ -133,7 +133,7 @@ public class TelemetrySender extends Thread {
 
                 success = true;
 
-                Log.d("eChook", "Received Token:"+dweetProToken);
+                Log.d("eChook", "Received Token:"+ echookID);
 
                 //System.out.println("" + sb.toString());
             } else {
@@ -156,8 +156,8 @@ public class TelemetrySender extends Thread {
     {
         JSONObject loginJson = new JSONObject();
         try{
-            loginJson.put("username", Global.dweetProUsername);
-            loginJson.put("password", Global.dweetProPassword);
+            loginJson.put("username", Global.eChookCarName);
+            loginJson.put("password", Global.eChookPassword);
             
         }catch (JSONException e) {
             e.printStackTrace();
@@ -237,13 +237,13 @@ public class TelemetrySender extends Thread {
 
     private boolean sendJSONData()  throws IOException {
 
-        Log.d("eChook","Entering SendJSON data Token= "+ dweetProToken);
+        Log.d("eChook","Entering SendJSON data Token= "+ echookID);
         Log.d("eChook","waiting for login = "+ waitingForLogin);
-        if(Global.enableDweetPro && !waitingForLogin && dweetProToken.equals("")) //Catches the usecase when someone enables dweet pro once the thread is started and a login is needed.
+        if(Global.enableDweetPro && !waitingForLogin && echookID.equals("")) //Catches the usecase when someone enables dweet pro once the thread is started and a login is needed.
         {
-            Log.d("eChook","PRo enabled but no token. Token = "+ dweetProToken);
+            Log.d("eChook","PRo enabled but no token. Token = "+ echookID);
             waitingForLogin = true;
-            getDweetProToken();
+            getEchookId();
             return true;
         }else {
             HttpURLConnection urlConnection;
@@ -260,7 +260,7 @@ public class TelemetrySender extends Thread {
                 urlConnection.setChunkedStreamingMode(0);
                 urlConnection.setRequestProperty("content-type", "application/json");
                 if (Global.enableDweetPro)
-                    urlConnection.setRequestProperty("X-DWEET-AUTH", dweetProToken);
+                    urlConnection.setRequestProperty("X-DWEET-AUTH", echookID);
 
                 OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
 

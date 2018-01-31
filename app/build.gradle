@@ -10,13 +10,19 @@ def getVersionCodeTimestamp() {
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '25.0.0'
+    //buildToolsVersion '25.0.0'
 
-    applicationVariants.all { variant ->
+    /*applicationVariants.all { variant ->
         variant.outputs.each { output ->
-            output.outputFile = new File(
+            output.outputFileName = new File(
                     output.outputFile.parent,
                     output.outputFile.name.replace("app-release.apk", "echook-companion-release-${variant.versionName}_${variant.versionCode}.apk"))
+        }
+    }*/
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "echook-companion-release-${variant.name}-${variant.versionName}.apk"
         }
     }
 
