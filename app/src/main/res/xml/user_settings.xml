@@ -87,12 +87,12 @@
             android:summary="Upload live data to echook.uk"
             android:title="Enable eChook Live Data " />
         <EditTextPreference
-            android:key="echookCarName"
+            android:key="prefEchookCarName"
             android:summary="Car Name used for eChook.uk login"
             android:title="eChook Car Name" />
         <EditTextPreference
             android:inputType="textPassword"
-            android:key="echookPassword"
+            android:key="prefEchookPassword"
             android:summary="Password for eChook.uk"
             android:title="echook.uk Password" />
 

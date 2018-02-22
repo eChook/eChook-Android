@@ -33,8 +33,10 @@ public class TelemetrySender extends Thread {
 
 
     public TelemetrySender() {
-        telEnabled = Global.dweetEnabled || Global.eChookLiveEnabled;
+        telEnabled = (Global.dweetEnabled || Global.eChookLiveEnabled);
+        Log.d("eChook","TelemetrySender: telEnabled = " + telEnabled );
     }
+
 
         @Override
         public void run() {
@@ -48,8 +50,7 @@ public class TelemetrySender extends Thread {
                 Log.d("eChook", "Attempting to get eChook Live ID");
                 echookIdReceived = getEchookId();
                 if(!echookIdReceived){
-                    dweetLoginFailed();
-                    //Global.enableDweetPro = false;
+                    //TODO Toast popup?
                 }
                 waitingForLogin = false;
             }
@@ -71,15 +72,9 @@ public class TelemetrySender extends Thread {
             }
         };
 
-
-    private void dweetLoginFailed()
-    {
-        MainActivity.showDialog("Dweet Login Failed","Please check login details and internet connection" );
-        Global.enableDweetPro = false;
-    }
-
     private boolean getEchookId()
     {
+        Log.d("eChook", "Getting eChook Live Login");
         boolean success;
         HttpURLConnection urlConnection;
         try {
@@ -112,34 +107,24 @@ public class TelemetrySender extends Thread {
 
                 try {
                     JSONObject receivedJson = new JSONObject(sb.toString());
-                    Iterator iterator = receivedJson.keys();
-                    String id = "";
-                    while(iterator.hasNext())
-                    {
-                        id = (String)iterator.next();
-                        Log.d("eChook", "Keys Found " + id);
-                    }
-                    Log.d("eChook", "Opening object from key");
-                    JSONObject nestedJson = receivedJson.getJSONObject(id);
-                    Log.d("eChook", "Looking in object:" + receivedJson.toString());
-                    echookID = nestedJson.getString("id");
+                    echookID = receivedJson.getString("id");
                 }catch (JSONException e)
                 {
                     e.printStackTrace();
-                    Log.d("eChook", "Token not Found - JSON exception");
+                    Log.d("eChook", "ID not Found - JSON exception");
                     success = false;
                 }
 
 
                 success = true;
 
-                Log.d("eChook", "Received Token:"+ echookID);
+                Log.d("eChook", "Received ID:"+ echookID);
 
                 //System.out.println("" + sb.toString());
             } else {
                 System.out.println(urlConnection.getResponseMessage());
                 success = false;
-                Log.d("eChook", "Non OK response to dweet login request");
+                Log.d("eChook", "Non OK response to eChook Live login request");
             }
             urlConnection.disconnect();
 
@@ -167,10 +152,9 @@ public class TelemetrySender extends Thread {
         
     }
     
-    private JSONObject getDataJson()
+    private JSONObject getDataJson(boolean location)
     {
         JSONObject dataJSON = new JSONObject();
-        JSONObject proJSON = new JSONObject();
         DecimalFormat format = new DecimalFormat("#.##");
         try{
             dataJSON.put("Vt", format.format(Global.Volts));
@@ -187,7 +171,7 @@ public class TelemetrySender extends Thread {
             dataJSON.put("Gear", format.format(Global.Gear));
 
 
-            if(Global.enableDweetPro && Global.enableLocationUpload) {
+            if(location) {
                 dataJSON.put("Lat", Global.Latitude);
                 dataJSON.put("Lon", Global.Longitude);
             }
@@ -214,97 +198,125 @@ public class TelemetrySender extends Thread {
                 dataJSON.put("LL_Eff", "0");
             }
 
-            if(Global.enableDweetPro){
-                proJSON.put("thing", Global.dweetThingName);
-                proJSON.put("key", Global.dweetMasterKey);
-                proJSON.put("content", dataJSON);
-            }
-
-
-
         }catch (JSONException e) {
             e.printStackTrace();
         }
 
-        if(Global.enableDweetPro) {
-            Log.d("eChook", "Compiled JSON pro = " + proJSON.toString());
-            return proJSON;
-        }
-        else
-            return dataJSON;
+        return dataJSON;
     }
 
 
     private boolean sendJSONData()  throws IOException {
 
-        Log.d("eChook","Entering SendJSON data Token= "+ echookID);
-        Log.d("eChook","waiting for login = "+ waitingForLogin);
-        if(Global.enableDweetPro && !waitingForLogin && echookID.equals("")) //Catches the usecase when someone enables dweet pro once the thread is started and a login is needed.
-        {
-            Log.d("eChook","PRo enabled but no token. Token = "+ echookID);
-            waitingForLogin = true;
-            getEchookId();
-            return true;
-        }else {
-            HttpURLConnection urlConnection;
-            try {
-                URL url;
+        if(Global.dweetEnabled) {
 
-                if (Global.enableDweetPro) {
-                    url = new URL("https://dweetpro.io:443/v2/dweets");
-                } else {
+            Log.d("eChook", "Entering Send Dweet Data");
+
+                HttpURLConnection urlConnection;
+                try {
+                    URL url;
                     url = new URL("https://dweet.io/dweet/for/" + Global.dweetThingName + "?");
-                }
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setDoOutput(true);
-                urlConnection.setChunkedStreamingMode(0);
-                urlConnection.setRequestProperty("content-type", "application/json");
-                if (Global.enableDweetPro)
-                    urlConnection.setRequestProperty("X-DWEET-AUTH", echookID);
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setChunkedStreamingMode(0);
+                    urlConnection.setRequestProperty("content-type", "application/json");
+                    OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
 
-                OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-
-                out.write(getDataJson().toString().getBytes());
-                out.flush();
+                    out.write(getDataJson(false).toString().getBytes());
+                    out.flush();
 
 
-                StringBuilder sb = new StringBuilder();
-                int HttpResult = urlConnection.getResponseCode();
-                if (HttpResult == HttpURLConnection.HTTP_OK) {
-                    Log.d("SendData", "HTTP Response OK");
-                    BufferedReader br = new BufferedReader(
-                            new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line + "\n");
+                    StringBuilder sb = new StringBuilder();
+                    int HttpResult = urlConnection.getResponseCode();
+                    if (HttpResult == HttpURLConnection.HTTP_OK) {
+                        Log.d("SendData", "HTTP Response OK");
+                        BufferedReader br = new BufferedReader(
+                                new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line + "\n");
+                        }
+                        br.close();
+                        System.out.println("" + sb.toString());
+                    } else {
+                        System.out.println(urlConnection.getResponseMessage());
                     }
-                    br.close();
-                    System.out.println("" + sb.toString());
-                } else {
-                    System.out.println(urlConnection.getResponseMessage());
+
+                    urlConnection.disconnect();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
                 }
 
-                urlConnection.disconnect();
+                return true;
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-
-            return true;
         }
+
+        if(Global.eChookLiveEnabled){
+            Log.d("eChook", "Entering eChook Live SendJSON data, ID = " + echookID);
+            if (Global.eChookLiveEnabled && !waitingForLogin && echookID.equals("")) //Catches the usecase when someone enables dweet pro once the thread is started and a login is needed.
+            {
+                Log.d("eChook", "eChook Live enabled but no ID. ID = " + echookID);
+                waitingForLogin = true;
+                getEchookId();
+                return true;
+            } else {
+                HttpURLConnection urlConnection;
+                try {
+                    URL url = new URL("https://dweet.io/dweet/for/" + Global.dweetThingName + "?");
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setChunkedStreamingMode(0);
+                    urlConnection.setRequestProperty("content-type", "application/json");
+                    if (Global.enableDweetPro)
+                        urlConnection.setRequestProperty("X-DWEET-AUTH", echookID);
+
+                    OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+
+                    out.write(getDataJson(true).toString().getBytes());
+                    out.flush();
+
+
+                    StringBuilder sb = new StringBuilder();
+                    int HttpResult = urlConnection.getResponseCode();
+                    if (HttpResult == HttpURLConnection.HTTP_OK) {
+                        Log.d("SendData", "HTTP Response OK");
+                        BufferedReader br = new BufferedReader(
+                                new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line + "\n");
+                        }
+                        br.close();
+                        System.out.println("" + sb.toString());
+                    } else {
+                        System.out.println(urlConnection.getResponseMessage());
+                    }
+
+                    urlConnection.disconnect();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+
+                return true;
+            }
+        }
+        return false;
     }
 
 
     public void Enable() {
         telEnabled = true;
-        Global.telemetryEnabled = true;
+
 
     }
 
     public void Disable() {
         telEnabled = false;
-        //Global.telEnabled = telEnabled;
+
     }
 
     public void pause() {
@@ -312,7 +324,7 @@ public class TelemetrySender extends Thread {
     }
 
     public void restart() {
-        telEnabled = Global.telemetryEnabled;
+        telEnabled = Global.dweetEnabled || Global.eChookLiveEnabled;
 
     }
 }

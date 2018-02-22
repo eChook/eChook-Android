@@ -211,7 +211,7 @@ public class MainActivity
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
             //will need to restart/reconnect to bluetooth, and relevant threads
-            if(Global.telemetryEnabled == true)
+            if(Global.dweetEnabled || Global.eChookLiveEnabled)
                 StartUDPSender();
                 mTelemetrySender.restart();
 

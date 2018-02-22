@@ -133,11 +133,11 @@ public final class DrivenSettings {
 	}
 
 	private static void eChookCarName(SharedPreferences prefs){
-		Global.eChookCarName = prefs.getString("echookCarName", "");
+		Global.eChookCarName = prefs.getString("prefEchookCarName", "");
 	}
 
 	private static void eChookPassword(SharedPreferences prefs){
-		Global.eChookPassword = prefs.getString("echookPassword", "");
+		Global.eChookPassword = prefs.getString("prefEchookPassword", "");
 	}
 
 
