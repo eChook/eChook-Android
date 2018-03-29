@@ -80,7 +80,7 @@ public class TelemetrySender extends Thread {
         try {
             URL url;
 
-            url = new URL("http://data.echook.uk/api/getid");
+            url = new URL("https://data.echook.uk/api/getid");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
             urlConnection.setChunkedStreamingMode(0);
@@ -264,7 +264,7 @@ public class TelemetrySender extends Thread {
             } else {
                 HttpURLConnection urlConnection;
                 try {
-                    URL url = new URL("https://dweet.io/dweet/for/" + Global.dweetThingName + "?");
+                    URL url = new URL("https://data.echook.uk/api/send/" + echookID);
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setDoOutput(true);
                     urlConnection.setChunkedStreamingMode(0);
