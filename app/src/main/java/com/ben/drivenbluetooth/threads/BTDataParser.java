@@ -179,7 +179,7 @@ public class BTDataParser extends Thread {
         if (Global.Lap > 0) {
             Global.LapDataList.get(Global.Lap - 1).AddVolts(rawVolts);
         }
-        GraphData.AddVolts(rawVolts);
+        GraphData.AddToHistory(rawVolts, Global.VoltsHistory);
         EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Volts));
     }
 
@@ -204,14 +204,14 @@ public class BTDataParser extends Thread {
         if (Global.Lap > 0) {
             Global.LapDataList.get(Global.Lap - 1).AddAmps(rawAmps);
         }
-        GraphData.AddAmps(rawAmps);
+        GraphData.AddToHistory(rawAmps, Global.AmpsHistory);
 
         EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Amps));
     }
 
     private synchronized void SetInputThrottle(final double rawThrottle) {
         Global.InputThrottle = rawThrottle; // Apply conversion and offset
-        GraphData.AddInputThrottle(rawThrottle);
+        GraphData.AddToHistory(rawThrottle, Global.ThrottleHistory);
 
         EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.ThrottleInput));
     }
@@ -237,7 +237,7 @@ public class BTDataParser extends Thread {
             Global.LapDataList.get(Global.Lap - 1).AddSpeedMPS(Global.SpeedMPS);
         }
 
-        GraphData.AddSpeed(Global.SpeedMPS);
+        GraphData.AddToHistory(Global.Unit == Global.UNIT.KPH ? Global.SpeedMPS * 3.6 : Global.SpeedMPS * 2.2, Global.SpeedHistory);
 
         EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.WheelSpeedMPS));
     }
@@ -247,7 +247,7 @@ public class BTDataParser extends Thread {
         if (Global.Lap > 0) {
             Global.LapDataList.get(Global.Lap - 1).AddRPM(rawMotorRPM);
         }
-        GraphData.AddMotorRPM(rawMotorRPM);
+        GraphData.AddToHistory(rawMotorRPM, Global.MotorRPMHistory);
 
         EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.MotorSpeedRPM));
     }
@@ -256,7 +256,7 @@ public class BTDataParser extends Thread {
         switch (sensorId) {
             case 1:
                 Global.TempC1 = rawTemp;
-                GraphData.AddTemperature(rawTemp, sensorId);
+                GraphData.AddToHistory(rawTemp, Global.TempC1History);
                 EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.TemperatureA));
                 break;
             case 2:

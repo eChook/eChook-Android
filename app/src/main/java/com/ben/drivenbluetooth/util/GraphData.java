@@ -57,110 +57,12 @@ public final class GraphData {
         }
     }
 
-	public synchronized static void AddVolts(final double rawVolts) {
-		Global.VoltsHistory.addXValue(String.format("%d", Global.VoltsHistory.getXValCount()));
-		Global.VoltsHistory.addEntry(new Entry((float) rawVolts, Global.VoltsHistory.getXValCount() - 1), 0);
+	public static void AddToHistory(double rawVal, LineData lineData) {
+		lineData.addEntry(new Entry((float) rawVal, lineData.getEntryCount()), 0);
 
-		if (Global.VoltsHistory.getXValCount() > Global.MAX_GRAPH_DATA_POINTS) {
-			LineDataSet set = (LineDataSet) Global.VoltsHistory.getDataSetByIndex(0);
-			Global.VoltsHistory.getXVals().remove(0);
-			set.removeEntry(0);
-
-			for (Entry e : set.getYVals()) {
-				e.setXIndex(e.getXIndex() - 1);
-			}
-		}
-	}
-
-	public synchronized static void AddAmps(final double rawAmps) {
-		Global.AmpsHistory.addXValue("0");
-		Global.AmpsHistory.addEntry(new Entry((float) rawAmps, Global.AmpsHistory.getXValCount() - 1), 0);
-
-		if (Global.AmpsHistory.getXValCount() > Global.MAX_GRAPH_DATA_POINTS) {
-			LineDataSet set = (LineDataSet) Global.AmpsHistory.getDataSetByIndex(0);
-			Global.AmpsHistory.getXVals().remove(0);
-			set.removeEntry(0);
-
-			for (Entry e : set.getYVals()) {
-				e.setXIndex(e.getXIndex() - 1);
-			}
-		}
-	}
-
-	public synchronized static void AddInputThrottle(final double rawThrottle) {
-		Global.ThrottleHistory.addXValue("0");
-		Global.ThrottleHistory.addEntry(new Entry((float) rawThrottle, Global.ThrottleHistory.getXValCount() - 1), 0);
-
-		if (Global.ThrottleHistory.getXValCount() > Global.MAX_GRAPH_DATA_POINTS) {
-			LineDataSet set = (LineDataSet) Global.ThrottleHistory.getDataSetByIndex(0);
-			Global.ThrottleHistory.getXVals().remove(0);
-			set.removeEntry(0);
-
-			for (Entry e : set.getYVals()) {
-				e.setXIndex(e.getXIndex() - 1);
-			}
-		}
-	}
-
-	public synchronized static void AddSpeed(final double rawSpeedMPS) {
-        //Global.SpeedHistory.addXValue(String.format("%d", Global.SpeedHistory.getXValCount()));
-        Global.SpeedHistory.addXValue("0");
-		if (Global.Unit == Global.UNIT.MPH) {
-			Global.SpeedHistory.addEntry(new Entry((float) (rawSpeedMPS * 2.2), Global.SpeedHistory.getXValCount() - 1), 0);
-		} else if (Global.Unit == Global.UNIT.KPH) {
-			Global.SpeedHistory.addEntry(new Entry((float) (rawSpeedMPS * 3.6), Global.SpeedHistory.getXValCount() - 1), 0);
-		}
-
-		if (Global.SpeedHistory.getXValCount() > Global.MAX_GRAPH_DATA_POINTS) {
-			LineDataSet set = (LineDataSet) Global.SpeedHistory.getDataSetByIndex(0);
-			Global.SpeedHistory.getXVals().remove(0);
-			set.removeEntry(0);
-
-			for (Entry e : set.getYVals()) {
-				e.setXIndex(e.getXIndex() - 1);
-			}
-		}
-	}
-
-	public synchronized static void AddMotorRPM(final double rawMotorRPM) {
-		Global.MotorRPMHistory.addXValue("0");
-		Global.MotorRPMHistory.addEntry(new Entry((float) rawMotorRPM, Global.MotorRPMHistory.getXValCount() - 1), 0);
-
-		if (Global.MotorRPMHistory.getXValCount() > Global.MAX_GRAPH_DATA_POINTS) {
-			LineDataSet set = (LineDataSet) Global.MotorRPMHistory.getDataSetByIndex(0);
-			Global.MotorRPMHistory.getXVals().remove(0);
-			set.removeEntry(0);
-
-			for (Entry e : set.getYVals()) {
-				e.setXIndex(e.getXIndex() - 1);
-			}
-		}
-	}
-
-	public synchronized static void AddTemperature(double rawTemp, int sensorId) {
-		switch (sensorId) {
-			case 1:
-				Global.TempC1History.addXValue("0");
-				Global.TempC1History.addEntry(new Entry((float) rawTemp, Global.TempC1History.getXValCount() - 1), 0);
-
-				if (Global.TempC1History.getXValCount() > Global.MAX_GRAPH_DATA_POINTS) {
-					LineDataSet set = (LineDataSet) Global.TempC1History.getDataSetByIndex(0);
-					Global.TempC1History.getXVals().remove(0);
-					set.removeEntry(0);
-
-					for (Entry e : set.getYVals()) {
-						e.setXIndex(e.getXIndex() - 1);
-					}
-				}
-				break;
-			case 2:
-				Global.TempC2 = rawTemp;
-				break;
-			case 3:
-				Global.TempC3 = rawTemp;
-				break;
-			default:
-				break;
+		if (lineData.getEntryCount() > Global.MAX_GRAPH_DATA_POINTS) {
+			LineDataSet set = (LineDataSet) lineData.getDataSetByIndex(0);
+			set.removeFirst();
 		}
 	}
 }

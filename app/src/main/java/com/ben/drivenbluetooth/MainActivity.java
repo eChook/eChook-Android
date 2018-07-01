@@ -15,7 +15,6 @@ import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -112,6 +111,8 @@ public class MainActivity
 
         context = getApplicationContext();
 
+        GraphData.InitializeGraphDataSets(context);
+
         setContentView(R.layout.activity_main_v2);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
@@ -141,7 +142,7 @@ public class MainActivity
 
         myDrivenLocation = new DrivenLocation(LapTimer, prevLapTime, context); // must be initialized here or else null object ref error
 
-        GraphData.InitializeGraphDataSets(context);
+
 
         InitializeLongClickStart();
 
