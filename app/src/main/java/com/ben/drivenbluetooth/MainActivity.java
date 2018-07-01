@@ -179,7 +179,7 @@ public class MainActivity
     @Override
     protected void onDestroy() {
         //StopUIUpdater();
-        ForceStop(myDataFileName);
+        ForceStop();
         myMode			= null;
         myDataFileName	= null;
         myDataFileSize	= null;
@@ -318,7 +318,7 @@ public class MainActivity
         startButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                StartWithForcedLogging(v);
+                StartWithForcedLogging();
                 return true;
             }
         });
@@ -426,7 +426,7 @@ public class MainActivity
         }
     }
 
-    private void StartWithForcedLogging(View v) {
+    private void StartWithForcedLogging() {
         try {
             if (Global.Mode == Global.MODE.DEMO) {
                 StartDataLogger();
@@ -440,7 +440,7 @@ public class MainActivity
     }
 
     /** For testing purposes only. Stops all the threads immediately. Called when the user double-taps the data file name in the top-left corner of the app*/
-    private void ForceStop(View v) {
+    private void ForceStop() {
         try {
             StopRandomGenerator();
         } catch (Exception ignored) {}
@@ -647,10 +647,6 @@ public class MainActivity
     /* =========== */
 	/* OTHER STUFF */
     /* =========== */
-
-    private boolean checkIfUIThread() {
-        return Looper.getMainLooper().getThread() == Thread.currentThread();
-    }
 
     private void CycleView() {
         try {

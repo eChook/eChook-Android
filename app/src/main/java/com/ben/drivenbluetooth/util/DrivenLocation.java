@@ -18,6 +18,7 @@ import com.ben.drivenbluetooth.events.PreferenceEvent;
 import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -44,7 +45,7 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
     private TextView mPrevLapTime;
     private TextView mLapNumber;
 
-    public PolylineOptions pathHistory = new PolylineOptions();		// polyline for drawing paths on the map
+    private PolylineOptions pathHistory = new PolylineOptions();		// polyline for drawing paths on the map
 	public CircleOptions ObserverLocation = new CircleOptions();		// circle for showing the observer location
 	private RaceObserver myRaceObserver = null;
 	private LocationRequest mLocationRequest;
@@ -191,19 +192,18 @@ public class DrivenLocation implements 	GoogleApiClient.ConnectionCallbacks,
 
 	private void startLocationUpdates() {
 		try {
-			LocationServices.FusedLocationApi.requestLocationUpdates(
-					GoogleApi, mLocationRequest, this);
+			LocationServices.FusedLocationApi.requestLocationUpdates(GoogleApi, mLocationRequest, this);
 			currentLocation = LocationServices.FusedLocationApi.getLastLocation(GoogleApi);
 			Global.Latitude = currentLocation.getLatitude();
 			Global.Longitude = currentLocation.getLongitude();
 		} catch (SecurityException e) {
 			// this should never happen, but if it does...
 			EventBus.getDefault().post(new SnackbarEvent(e));
-e.printStackTrace();
+			e.printStackTrace();
 			EventBus.getDefault().post(new SnackbarEvent("Permission denied to allow location services"));
 		} catch (Exception e) {
 			EventBus.getDefault().post(new SnackbarEvent(e));
-e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 
