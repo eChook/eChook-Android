@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:\Users\bnagy4\AndroidStudioProjects\nagyben_eChook_Android\eChook_Android.iml" filepath="C:\Users\bnagy4\AndroidStudioProjects\nagyben_eChook_Android\eChook_Android.iml" />
+      <module fileurl="file://C:/Users/bnagy4/AndroidStudioProjects/nagyben_eChook_Android/eChook_Android.iml" filepath="C:/Users/bnagy4/AndroidStudioProjects/nagyben_eChook_Android/eChook_Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/nagyben_eChook_Android.iml" filepath="$PROJECT_DIR$/nagyben_eChook_Android.iml" />
     </modules>
   </component>
