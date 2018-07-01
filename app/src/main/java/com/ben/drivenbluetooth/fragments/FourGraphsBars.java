@@ -25,8 +25,8 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
-import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -108,7 +108,7 @@ public class FourGraphsBars extends Fragment {
 						Global.SpeedHistory
 		};
 
-		YAxisValueFormatter labelFormats[] = new YAxisValueFormatter[] {
+		IAxisValueFormatter labelFormats[] = new IAxisValueFormatter[] {
 						new CustomLabelFormatter("", "0", "V"),
 						new CustomLabelFormatter("", "0", "A"),
 						new LargeValueFormatter(),
@@ -126,14 +126,12 @@ public class FourGraphsBars extends Fragment {
 			LineChart chart = lineCharts[i];
 			if (Global.EnableGraphs) {
 				chart.setData(lineDatas[i]);
-				chart.setDescription("");
 				chart.setVisibleXRangeMaximum(Global.MAX_GRAPH_DATA_POINTS);
 				chart.setNoDataText("");
-				chart.setNoDataTextDescription("");
 
 				YAxis leftAxis = chart.getAxisLeft();
-				leftAxis.setAxisMinValue(minMax[i][0]);
-				leftAxis.setAxisMaxValue(minMax[i][1]);
+				leftAxis.setAxisMinimum(minMax[i][0]);
+				leftAxis.setAxisMaximum(minMax[i][1]);
 				leftAxis.setLabelCount(3, true);
 				leftAxis.setValueFormatter(labelFormats[i]);
 
@@ -171,13 +169,10 @@ public class FourGraphsBars extends Fragment {
 				// Disable legend
 				chart.getLegend().setEnabled(false);
 
-				// Disable description
-				chart.setDescription("");
-
 				// Set y-axis limits
 				YAxis yAxis = chart.getAxisLeft();
-				yAxis.setAxisMinValue(minMax[i][0]);
-				yAxis.setAxisMaxValue(minMax[i][1]);
+				yAxis.setAxisMinimum(minMax[i][0]);
+				yAxis.setAxisMaximum(minMax[i][1]);
 
 				// Create data
 				BarEntry entry = new BarEntry(0, 0);
@@ -354,7 +349,7 @@ e.printStackTrace();
 	}
 
 	private void UpdateBarChart(BarChart chart, Double value, int color) {
-		chart.getBarData().getDataSetByIndex(0).getEntryForIndex(0).setVal(value.floatValue());
+		chart.getBarData().getDataSetByIndex(0).getEntryForIndex(0).setY(value.floatValue());
 		DataSet set = (DataSet) chart.getData().getDataSetByIndex(0);
 		set.setColor(color);
 		chart.invalidate();
@@ -363,6 +358,6 @@ e.printStackTrace();
 	private void UpdateLineChart(LineChart graph) {
 		graph.notifyDataSetChanged();
 		graph.setVisibleXRangeMaximum(Global.MAX_GRAPH_DATA_POINTS);
-		graph.moveViewToX(graph.getXValCount() - Global.MAX_GRAPH_DATA_POINTS - 1);
+		graph.moveViewToX(graph.getData().getEntryCount() - Global.MAX_GRAPH_DATA_POINTS - 1);
 	}
 }
