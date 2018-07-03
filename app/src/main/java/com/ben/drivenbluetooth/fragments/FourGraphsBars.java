@@ -17,6 +17,7 @@ import com.ben.drivenbluetooth.util.CustomLabelFormatter;
 import com.ben.drivenbluetooth.util.UnitHelper;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -135,6 +136,9 @@ public class FourGraphsBars extends Fragment {
 				leftAxis.setLabelCount(3, true);
 				leftAxis.setValueFormatter(labelFormats[i]);
 
+				chart.setDescription(new Description());
+				chart.setDrawGridBackground(false);
+
 				YAxis rightAxis = chart.getAxisRight();
 				rightAxis.setEnabled(false);
 
@@ -168,6 +172,9 @@ public class FourGraphsBars extends Fragment {
 
 				// Disable legend
 				chart.getLegend().setEnabled(false);
+				chart.setDescription(new Description());
+
+				chart.setDrawGridBackground(false);
 
 				// Set y-axis limits
 				YAxis yAxis = chart.getAxisLeft();

@@ -49,7 +49,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:+'
     implementation 'com.google.android.gms:play-services-location:+'
 
-    implementation 'com.github.PhilJay:MPAndroidChart:+'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.0'
     implementation 'com.getbase:floatingactionbutton:+'
 
     implementation 'com.android.support:appcompat-v7:+'

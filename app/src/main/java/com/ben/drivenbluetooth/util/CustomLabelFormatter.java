@@ -20,4 +20,9 @@ public class CustomLabelFormatter implements IAxisValueFormatter {
 	public String getFormattedValue(float value, AxisBase axis) {
 		return _prefix + mFormat.format(value) + _suffix;
 	}
+
+	@Override
+	public int getDecimalDigits() {
+		return 0;
+	}
 }
