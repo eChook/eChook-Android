@@ -1,8 +1,9 @@
 package com.ben.drivenbluetooth.threads;
 
 import com.ben.drivenbluetooth.Global;
+import com.ben.drivenbluetooth.events.SnackbarEvent;
 
-import org.acra.ACRA;
+import org.greenrobot.eventbus.EventBus;
 
 public class RandomGenerator extends Thread {
 	private volatile boolean stopWorker = false;
@@ -110,7 +111,8 @@ public class RandomGenerator extends Thread {
 					BTDataParser.mHandler.sendEmptyMessage(0);
 				} catch (Exception e) {
 					e.printStackTrace();
-					ACRA.getErrorReporter().handleException(e);
+					EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
 				}
 
 				try {

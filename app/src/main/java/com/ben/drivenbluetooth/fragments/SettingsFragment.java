@@ -1,54 +1,43 @@
 package com.ben.drivenbluetooth.fragments;
 
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.AlertDialog;
-
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.content.Intent;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.R;
+import com.ben.drivenbluetooth.events.PreferenceEvent;
+import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.util.DrivenSettings;
 
-import org.acra.ACRA;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.util.Map;
 import java.util.Set;
 
 public class SettingsFragment 	extends PreferenceFragmentCompat
 								implements SharedPreferences.OnSharedPreferenceChangeListener
 {
-    private SettingsInterface mListener;
-
-    public interface SettingsInterface {
-
-        void onSettingChanged(SharedPreferences sharedPreferences, String key);
-    }
-
-    public void setSettingsListener(SettingsInterface settingsInterface) {
-        mListener = settingsInterface;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        view.setBackgroundColor(ContextCompat.getColor(MainActivity.getAppContext(), android.R.color.background_light));
+        view.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), android.R.color.background_light));
         return view;
     }
 
@@ -139,7 +128,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             public void onClick(DialogInterface dialog, int id) {
                 File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
                 logFile.delete();
-                MainActivity.UpdateDataFileInfo();
+                EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.DataFileSettingChange));
             }
         });
         warningBox.setNegativeButton("Don't Delete", new DialogInterface.OnClickListener() {
@@ -193,12 +182,13 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                 pref.setSummary(editTextPref.getText());
             }
         } catch (Exception e) {
-            ACRA.getErrorReporter().handleException(e);
+            EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
         }
 	}
 
 	private void updateAllPreferenceSummary() {
-//		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
+//		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 //		Map<String,?> keys = sharedPreferences.getAll();
 //
 //		for (Map.Entry<String, ?> entry : keys.entrySet()) {
@@ -217,7 +207,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                     //int mode = Integer.valueOf(sharedPreferences.getString("prefMode", ""));
                     int mode = sharedPreferences.getBoolean("prefModeSwitch", false)? 1:0;
 					Global.Mode = Global.MODE.values()[mode];
-					MainActivity.myMode.setText(Global.Mode.toString());
+					EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.ModeChange));
 					break;
 				case "prefSpeedUnits":
 					int units = Integer.valueOf(sharedPreferences.getString("prefSpeedUnits", ""));
@@ -226,7 +216,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 				case "prefLocationSwitch":
 					int location = sharedPreferences.getBoolean("prefLocationSwitch", false)? 1:0;
 					Global.LocationStatus = Global.LOCATION.values()[location];
-					MainActivity.myDrivenLocation.UpdateLocationSetting();
+					EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.LocationChange));
 					break;
 				case "prefAccelerometer":
 					int accelerometer = Integer.valueOf(sharedPreferences.getString("prefAccelerometer", ""));
@@ -236,12 +226,12 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 				case "prefBTDeviceName":
                     if(!Global.BTDeviceNames.isEmpty()) {
                         Global.BTDeviceName = sharedPreferences.getString("prefBTDeviceName", "");
-                        MainActivity.UpdateBTCarName();
+                        EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.BTDeviceNameChange));
                     }
 					break;
 				case "prefCarName":
 					Global.CarName = sharedPreferences.getString("prefCarName","");
-                    MainActivity.UpdateBTCarName();
+                    EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.BTDeviceNameChange));
 					break;
 				case "prefGraphsSwitch":
 					Global.EnableGraphs = sharedPreferences.getBoolean("prefGraphsSwitch", false);
@@ -277,26 +267,21 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 				default:
 					break;
 			}
-            mListener.onSettingChanged(sharedPreferences, key);
 		} catch (Exception e) {
-			MainActivity.showError(e);
             e.printStackTrace();
-            ACRA.getErrorReporter().handleException(e);
+            EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
 		}
 	}
-
-
-
-
 
 	@Override
 	public void onResume() {
 		try {
             super.onResume();
-            getPreferenceScreen().getSharedPreferences()
-                    .registerOnSharedPreferenceChangeListener(this);
+            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         }catch (Exception e) {
-
+            EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
         }
 	}
 
@@ -304,9 +289,10 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 	public void onPause() {
         try {
             super.onPause();
-            getPreferenceScreen().getSharedPreferences()
-                    .unregisterOnSharedPreferenceChangeListener(this);
+            getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
         }catch (Exception e) {
+            EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
         }
 	}
 }

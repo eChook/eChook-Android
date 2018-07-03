@@ -6,7 +6,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import com.ben.drivenbluetooth.Global;
-import com.ben.drivenbluetooth.MainActivity;
+import com.ben.drivenbluetooth.events.SnackbarEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -29,11 +31,11 @@ public class Accelerometer implements SensorEventListener {
 				mAccelerometer = gravSensors.get(0);
 				supportsAccelerometer = true;
 			} else {
-				MainActivity.showMessage("Device does not support accelerometer");
+				EventBus.getDefault().post(new SnackbarEvent("Device does not support accelerometer"));
 				supportsAccelerometer = false;
 			}
 		} else {
-			MainActivity.showMessage("Device does not support accelerometer");
+			EventBus.getDefault().post(new SnackbarEvent("Device does not support accelerometer"));
 			supportsAccelerometer = false;
 		}
 	}

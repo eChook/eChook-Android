@@ -1,5 +1,6 @@
 package com.ben.drivenbluetooth.fragments;
 
+import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,10 +10,11 @@ import android.widget.TextView;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.R;
+import com.ben.drivenbluetooth.events.ArduinoEvent;
+import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.util.ColorHelper;
 import com.ben.drivenbluetooth.util.CustomLabelFormatter;
 import com.ben.drivenbluetooth.util.UnitHelper;
-import com.ben.drivenbluetooth.util.UpdateFragment;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -23,39 +25,42 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
-import com.github.mikephil.charting.formatter.YAxisValueFormatter;
-import com.google.firebase.analytics.FirebaseAnalytics;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
 
-public class SixGraphsBars extends UpdateFragment {
+public class SixGraphsBars extends Fragment {
 
-  private static TextView Throttle;
-  private static TextView Amps;
-  private static TextView Volts;
-  private static TextView Temp1;
-  private static TextView RPM;
-  private static TextView Speed;
-  private static TextView Fan;
+  private TextView Throttle;
+  private TextView Amps;
+  private TextView Volts;
+  private TextView Temp1;
+  private TextView RPM;
+  private TextView Speed;
+  private TextView Fan;
 
-  private static BarChart ThrottleBarChart;
-  private static BarChart AmpsBarChart;
-  private static BarChart VoltsBarChart;
-  private static BarChart TempBarChart;
-  private static BarChart SpeedBarChart;
-  private static BarChart RPMBarChart;
+  private BarChart ThrottleBarChart;
+  private BarChart AmpsBarChart;
+  private BarChart VoltsBarChart;
+  private BarChart TempBarChart;
+  private BarChart SpeedBarChart;
+  private BarChart RPMBarChart;
 
-  private static LineChart ThrottleLineChart;
-  private static LineChart VoltsLineChart;
-  private static LineChart AmpsLineChart;
-  private static LineChart RPMLineChart;
-  private static LineChart SpeedLineChart;
-  private static LineChart TempLineChart;
+  private LineChart ThrottleLineChart;
+  private LineChart VoltsLineChart;
+  private LineChart AmpsLineChart;
+  private LineChart RPMLineChart;
+  private LineChart SpeedLineChart;
+  private LineChart TempLineChart;
 
-  private static TextView AmpHours;
-  private static TextView WattHours;
+  private TextView AmpHours;
+  private TextView WattHours;
 
   /*===================*/
 	/* SIXGRAPHSBARS
@@ -69,32 +74,32 @@ public class SixGraphsBars extends UpdateFragment {
 	/*===================*/
   private void InitializeDataFields() {
     View v = getView();
-    Throttle 	= (TextView) v.findViewById(R.id.throttle);
-    Amps      = (TextView) v.findViewById(R.id.current);
-    Volts     = (TextView) v.findViewById(R.id.voltage);
-    Temp1 		= (TextView) v.findViewById(R.id.temp1);
-    RPM 			= (TextView) v.findViewById(R.id.rpm);
-    Speed 		= (TextView) v.findViewById(R.id.speed);
-    AmpHours	= (TextView) v.findViewById(R.id.ampHours);
-    WattHours = (TextView) v.findViewById(R.id.wattHours);
-    Fan       = (TextView) v.findViewById(R.id.fan);
+    Throttle 	= v.findViewById(R.id.throttle);
+    Amps        = v.findViewById(R.id.current);
+    Volts       = v.findViewById(R.id.voltage);
+    Temp1 		= v.findViewById(R.id.temp1);
+    RPM 		= v.findViewById(R.id.rpm);
+    Speed 		= v.findViewById(R.id.speed);
+    AmpHours	= v.findViewById(R.id.ampHours);
+    WattHours   = v.findViewById(R.id.wattHours);
+    Fan         = v.findViewById(R.id.fan);
   }
 
   private void InitializeGraphs() {
     View v = getView();
-    ThrottleLineChart   = (LineChart) v.findViewById(R.id.ThrottleLineChart);
-    VoltsLineChart      = (LineChart) v.findViewById(R.id.VoltsLineChart);
-    AmpsLineChart       = (LineChart) v.findViewById(R.id.AmpsLineChart);
-    TempLineChart       = (LineChart) v.findViewById(R.id.TempLineChart);
-    RPMLineChart        = (LineChart) v.findViewById(R.id.RPMLineChart);
-    SpeedLineChart      = (LineChart) v.findViewById(R.id.SpeedLineChart);
+    ThrottleLineChart   = v.findViewById(R.id.ThrottleLineChart);
+    VoltsLineChart      = v.findViewById(R.id.VoltsLineChart);
+    AmpsLineChart       = v.findViewById(R.id.AmpsLineChart);
+    TempLineChart       = v.findViewById(R.id.TempLineChart);
+    RPMLineChart        = v.findViewById(R.id.RPMLineChart);
+    SpeedLineChart      = v.findViewById(R.id.SpeedLineChart);
 
-    ThrottleBarChart   = (BarChart) v.findViewById(R.id.ThrottleBarChart);
-    AmpsBarChart       = (BarChart) v.findViewById(R.id.AmpsBarChart);
-    VoltsBarChart      = (BarChart) v.findViewById(R.id.VoltsBarChart);
-    TempBarChart       = (BarChart) v.findViewById(R.id.TempBarChart);
-    SpeedBarChart      = (BarChart) v.findViewById(R.id.SpeedBarChart);
-    RPMBarChart        = (BarChart) v.findViewById(R.id.RPMBarChart);
+    ThrottleBarChart   = v.findViewById(R.id.ThrottleBarChart);
+    AmpsBarChart       = v.findViewById(R.id.AmpsBarChart);
+    VoltsBarChart      = v.findViewById(R.id.VoltsBarChart);
+    TempBarChart       = v.findViewById(R.id.TempBarChart);
+    SpeedBarChart      = v.findViewById(R.id.SpeedBarChart);
+    RPMBarChart        = v.findViewById(R.id.RPMBarChart);
 
     LineChart lineCharts[] = new LineChart[] {
             ThrottleLineChart,
@@ -123,7 +128,7 @@ public class SixGraphsBars extends UpdateFragment {
             SpeedBarChart
     };
 
-    YAxisValueFormatter labelFormats[] = new YAxisValueFormatter[] {
+    IAxisValueFormatter labelFormats[] = new IAxisValueFormatter[] {
             new CustomLabelFormatter("", "0", "%"),
             new CustomLabelFormatter("", "0", "V"),
             new CustomLabelFormatter("", "0", "A"),
@@ -145,14 +150,12 @@ public class SixGraphsBars extends UpdateFragment {
       LineChart chart = lineCharts[i];
       if (Global.EnableGraphs) {
         chart.setData(lineDatas[i]);
-        chart.setDescription("");
         chart.setVisibleXRangeMaximum(Global.MAX_GRAPH_DATA_POINTS);
         chart.setNoDataText("");
-        chart.setNoDataTextDescription("");
 
         YAxis leftAxis = chart.getAxisLeft();
-        leftAxis.setAxisMinValue(minMax[i][0]);
-        leftAxis.setAxisMaxValue(minMax[i][1]);
+        leftAxis.setAxisMinimum(minMax[i][0]);
+        leftAxis.setAxisMaximum(minMax[i][1]);
         leftAxis.setLabelCount(3, true);
         leftAxis.setValueFormatter(labelFormats[i]);
 
@@ -192,13 +195,10 @@ public class SixGraphsBars extends UpdateFragment {
         // Disable legend
         chart.getLegend().setEnabled(false);
 
-        // Disable description
-        chart.setDescription("");
-
         // Set y-axis limits
         YAxis yAxis = chart.getAxisLeft();
-        yAxis.setAxisMinValue(minMax[i][0]);
-        yAxis.setAxisMaxValue(minMax[i][1]);
+        yAxis.setAxisMinimum(minMax[i][0]);
+        yAxis.setAxisMaximum(minMax[i][1]);
 
         // Create data
         BarEntry entry = new BarEntry(0, 0);
@@ -228,7 +228,12 @@ public class SixGraphsBars extends UpdateFragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_six_graphs_bars, container, false);
+    try {
+      return inflater.inflate(R.layout.fragment_six_graphs_bars, container, false);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   @Override
@@ -237,13 +242,14 @@ public class SixGraphsBars extends UpdateFragment {
     InitializeDataFields();
     InitializeGraphs();
     UpdateFragmentUI();
+    EventBus.getDefault().register(this);
   }
 
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    Amps = null;
-    Volts = null;
+    Amps                = null;
+    Volts               = null;
     RPM					= null;
     Speed				= null;
     Temp1				= null;
@@ -256,13 +262,15 @@ public class SixGraphsBars extends UpdateFragment {
     SpeedBarChart   	= null;
     RPMBarChart     	= null;
 
-    VoltsLineChart = null;
-    AmpsLineChart = null;
-    RPMLineChart = null;
-    SpeedLineChart = null;
-    TempLineChart = null;
-    ThrottleLineChart = null;
+    VoltsLineChart      = null;
+    AmpsLineChart       = null;
+    RPMLineChart        = null;
+    SpeedLineChart      = null;
+    TempLineChart       = null;
+    ThrottleLineChart   = null;
     AmpHours			= null;
+
+    EventBus.getDefault().unregister(this);
   }
 
   /*===================*/
@@ -279,8 +287,49 @@ public class SixGraphsBars extends UpdateFragment {
     UpdateWattHours();
   }
 
-  @Override
-  public synchronized void UpdateThrottle() {
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  public void onArduinoEvent(ArduinoEvent event) {
+    try {
+      switch (event.eventType) {
+
+        case Volts:
+          UpdateVolts();
+          break;
+        case Amps:
+          UpdateAmps();
+          break;
+        case AmpHours:
+          UpdateAmpHours();
+          break;
+        case ThrottleInput:
+          UpdateThrottle();
+          break;
+        case ThrottleActual:
+          UpdateThrottle();
+          break;
+        case WheelSpeedMPS:
+          UpdateSpeed();
+          break;
+        case MotorSpeedRPM:
+          UpdateMotorRPM();
+          break;
+        case TemperatureA:
+          UpdateTemp();
+          break;
+        case FanDuty:
+          UpdateTemp();
+          break;
+        case WattHours:
+          UpdateWattHours();
+          break;
+      }
+    } catch (Exception e) {
+      EventBus.getDefault().post(new SnackbarEvent(e));
+e.printStackTrace();
+    }
+  }
+
+  private void UpdateThrottle() {
     try {
       if (Global.ActualThrottle < Global.InputThrottle) {
         Throttle.setText(String.format("%.0f", Global.InputThrottle) + " (" + String.format("%.0f", Global.ActualThrottle) + ")");
@@ -296,8 +345,7 @@ public class SixGraphsBars extends UpdateFragment {
     }
   }
 
-  @Override
-  public synchronized void UpdateVolts() {
+  private void UpdateVolts() {
     try {
       Volts.setText(String.format("%.2f", Global.Volts));
       Volts.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
@@ -310,8 +358,7 @@ public class SixGraphsBars extends UpdateFragment {
     }
   }
 
-  @Override
-  public synchronized void UpdateAmps() {
+  private void UpdateAmps() {
     try {
       Amps.setText(String.format("%.1f", Global.Amps));
       Amps.setTextColor(ColorHelper.GetVoltsColor(Global.Amps));
@@ -324,8 +371,7 @@ public class SixGraphsBars extends UpdateFragment {
     }
   }
 
-  @Override
-  public synchronized void UpdateAmpHours() {
+  private void UpdateAmpHours() {
     try {
       AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
     } catch (Exception e) {
@@ -333,8 +379,7 @@ public class SixGraphsBars extends UpdateFragment {
     }
   }
 
-  @Override
-  public synchronized void UpdateSpeed() {
+  private void UpdateSpeed() {
     try {
       Double speed = UnitHelper.getSpeed(Global.SpeedMPS, Global.Unit);
       Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.Unit));
@@ -349,8 +394,7 @@ public class SixGraphsBars extends UpdateFragment {
     }
   }
 
-  @Override
-  public synchronized void UpdateTemp() {
+  private void UpdateTemp() {
     try {
       Temp1.setText(String.format("%.1f", Global.TempC1));
       Temp1.setTextColor(ColorHelper.GetVoltsColor(Global.TempC1));
@@ -364,8 +408,7 @@ public class SixGraphsBars extends UpdateFragment {
     }
   }
 
-  @Override
-  public synchronized void UpdateMotorRPM() {
+  private void UpdateMotorRPM() {
     try {
       RPM.setText(String.format("%.0f", Global.MotorRPM));
       RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
@@ -379,23 +422,12 @@ public class SixGraphsBars extends UpdateFragment {
     }
   }
 
-  @Override
-  public synchronized void UpdateWattHours() {
+  private void UpdateWattHours() {
     WattHours.setText(String.format("%.2f Wh/km", Global.WattHoursPerMeter * 1000));
   }
 
-  @Override
-  public void UpdatePerformanceMetric() {
-
-  }
-
-  @Override
-  public void UpdateThrottleMode() {
-
-  }
-
   private void UpdateBarChart(BarChart chart, Double value, int color) {
-    chart.getBarData().getDataSetByIndex(0).getEntryForIndex(0).setVal(value.floatValue());
+    chart.getBarData().getDataSetByIndex(0).getEntryForIndex(0).setY(value.floatValue());
     DataSet set = (DataSet) chart.getData().getDataSetByIndex(0);
     set.setColor(color);
     chart.invalidate();
@@ -404,6 +436,6 @@ public class SixGraphsBars extends UpdateFragment {
   private void UpdateLineChart(LineChart graph) {
     graph.notifyDataSetChanged();
     graph.setVisibleXRangeMaximum(Global.MAX_GRAPH_DATA_POINTS);
-    graph.moveViewToX(graph.getXValCount() - Global.MAX_GRAPH_DATA_POINTS - 1);
+    graph.moveViewToX(graph.getData().getEntryCount() - Global.MAX_GRAPH_DATA_POINTS - 1);
   }
 }

@@ -1,11 +1,14 @@
 package com.ben.drivenbluetooth.util;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.ben.drivenbluetooth.Global;
-import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.R;
+import com.ben.drivenbluetooth.events.PreferenceEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 public final class DrivenSettings {
 
@@ -13,9 +16,9 @@ public final class DrivenSettings {
 		// required empty constructor
 	}
 
-	public static void InitializeSettings() {
-		PreferenceManager.setDefaultValues(MainActivity.getAppContext(), R.xml.user_settings, false);
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
+	public static void InitializeSettings(Context context) {
+		PreferenceManager.setDefaultValues(context, R.xml.user_settings, false);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         WheelTeeth(prefs);
         MotorTeeth(prefs);
@@ -34,9 +37,9 @@ public final class DrivenSettings {
         dweetMasterKey(prefs);
 	}
 
-	public static void QuickChangeMode() {
+	public static void QuickChangeMode(Context context) {
 		try {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.getAppContext());
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 			int mode = prefs.getBoolean("prefMode", false)? 1:0;
 
 			mode = mode == 0 ? 1 : 0; // flip it
@@ -46,7 +49,8 @@ public final class DrivenSettings {
 			editor.apply();
 
 			Global.Mode = Global.MODE.values()[mode];
-			MainActivity.myMode.setText(Global.MODE.values()[mode].name());
+//			MainActivity.myMode.setText(Global.MODE.values()[mode].name());
+			EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.ModeChange));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -72,11 +76,10 @@ public final class DrivenSettings {
 		try {
 			int mode = prefs.getBoolean("prefModeSwitch", false)? 1:0;
 			Global.Mode = Global.MODE.values()[mode];
-			MainActivity.myMode.setText(Global.MODE.values()[mode].name());
 		} catch (Exception e) {
 			Global.Mode = Global.MODE.DEMO;
-			MainActivity.myMode.setText("DEMO");
 		}
+		EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.ModeChange));
 	}
 
 	private static void Units(SharedPreferences prefs) {
@@ -100,6 +103,7 @@ public final class DrivenSettings {
 	private static void BTDevice(SharedPreferences prefs) {
 		try {
 			Global.BTDeviceName = prefs.getString("prefBTDeviceName", "");
+			EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.BTDeviceNameChange));
 		} catch (Exception e) {
 			// probably not needed
 		}
@@ -108,6 +112,7 @@ public final class DrivenSettings {
 	private static void CarName(SharedPreferences prefs) {
 		try {
 			Global.CarName = prefs.getString("prefCarName", "");
+			EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.CarNameChange));
 		} catch (Exception e) {
 			// probably not needed
 		}
@@ -131,12 +136,10 @@ public final class DrivenSettings {
 
 	private static void dweetProUsername(SharedPreferences prefs){
 		Global.dweetProUsername = prefs.getString("prefDweetUsername","");
-
 	}
 
 	private static void dweetProPassword(SharedPreferences prefs){
 		Global.dweetProPassword = prefs.getString("prefDweetPassword","");
-
 	}
 
 	private static void dweetThingName(SharedPreferences prefs){

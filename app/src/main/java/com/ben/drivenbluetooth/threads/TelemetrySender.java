@@ -5,8 +5,9 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.ben.drivenbluetooth.Global;
-import com.ben.drivenbluetooth.MainActivity;
+import com.ben.drivenbluetooth.events.DialogEvent;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -72,7 +73,7 @@ public class TelemetrySender extends Thread {
 
     private void dweetLoginFailed()
     {
-        MainActivity.showDialog("Dweet Login Failed","Please check login details and internet connection" );
+        EventBus.getDefault().post(new DialogEvent("Dweet Login Failed", "Please check login details and internet connection"));
         Global.enableDweetPro = false;
     }
 
