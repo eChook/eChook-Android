@@ -73,52 +73,42 @@
 		android:key="prefKeySensors">
         <SwitchPreference
             android:key="prefLocationSwitch"
-			android:title="Location tracking"
+			android:title="Enable GPS"
 			android:defaultValue="false"
-			android:summary="Required for lap counting"
+			android:summary="Required for lap counting and telemetry location"
 			/>
 	</PreferenceCategory>
+    <PreferenceCategory
+        android:key="prefKeyEchookLiveData"
+        android:title="eChook Live Data">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefEchookEnabled"
+            android:summary="Upload live data to echook.uk"
+            android:title="Enable eChook Live Data " />
+        <EditTextPreference
+            android:key="prefEchookCarName"
+            android:summary="Car Name used for eChook.uk login"
+            android:title="eChook Car Name" />
+        <EditTextPreference
+            android:inputType="textPassword"
+            android:key="prefEchookPassword"
+            android:summary="Password for eChook.uk"
+            android:title="echook.uk Password" />
+
+    </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Live Data Telemetry"
-        android:key="prefKeyLiveData">
+        android:key="prefKeyDweetLiveData"
+        android:title="dweet.io Live Data">
         <SwitchPreference
             android:defaultValue="false"
-            android:key="prefUdpEnabled"
-            android:summary="Upload live data to dweet or Dweet pro"
-            android:title="Enable Live Data Upload" />
+            android:key="prefDweetEnabled"
+            android:summary="Upload live data to dweet.io"
+            android:title="Enable dweet.io Live Data " />
         <EditTextPreference
-            android:key="prefUDP"
-            android:title="dweet 'Thing' name"
-            android:summary="Public 6+ digit data identifier. dweet.io/follow/{identifier}"
-            />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefDweetLocked"
-            android:title="Use DweetPro"
-            android:summaryOff="Please fill in login information below before enabling"
-            android:summaryOn="Using dweetPro"
-            />
-        <EditTextPreference
-            android:key="prefDweetUsername"
-            android:title="DweetPro Username"
-            android:summary="Email registered with dweetPro account"
-            />
-        <EditTextPreference
-            android:key="prefDweetPassword"
-            android:title="DweetPro Password"
-            android:summary="Password used to log into your dweetPro account"
-            android:inputType="textPassword"
-            />
-        <EditTextPreference
-            android:key="prefDweetMasterKey"
-            android:title="DweetPro Thing Master Key"
-            android:summary="Found in your dweet pro dashboard"
-            />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefLocationUpload"
-            android:summary="For security, Dweet Pro required for location upload"
-            android:title="Live Location Data" />
+            android:key="prefDweetName"
+            android:summary="Public 6+ digit data identifier. dweet.io/follow/identifier"
+            android:title="dweet.io 'Thing' name" />
     </PreferenceCategory>
 </PreferenceScreen>

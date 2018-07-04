@@ -24,283 +24,308 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class TelemetrySender extends Thread {
-    private boolean telEnabled = false;
-    private Timer telUpdateTimer = new Timer();
-    private String dweetProToken = "";
-    private boolean waitingForLogin = false;
+private boolean telEnabled = false;
+private Timer telUpdateTimer = new Timer();
+private String echookID = "";
+private boolean waitingForLogin = false;
+private int currentLap = 0;
+private boolean firstRun = true;
 
 
 
-    public TelemetrySender() {
-        telEnabled = Global.telemetryEnabled;
-    }
+public TelemetrySender() {
+        telEnabled = (Global.dweetEnabled || Global.eChookLiveEnabled);
+        Log.d("eChook","TelemetrySender: telEnabled = " + telEnabled );
+}
 
-        @Override
-        public void run() {
-            Looper.prepare();
 
-            telUpdateTimer.schedule(sendJsonTask, 0, 1500);
+@Override
+public void run() {
+        Looper.prepare();
 
-            boolean tokenRecieved = false;
+        telUpdateTimer.schedule(sendJsonTask, 0, 1500);
 
-            if (telEnabled && Global.enableDweetPro && (!Global.dweetProUsername.equals("")) && !Global.dweetProPassword.equals("") && Global.dweetMasterKey.equals("")) {
-                Log.d("eChook", "Attempting to get dweet Auth Token");
-                tokenRecieved = getDweetProToken();
-                if(!tokenRecieved){
-                    dweetLoginFailed();
-                    //Global.enableDweetPro = false;
+        boolean echookIdReceived;
+
+        if (telEnabled && Global.eChookLiveEnabled && (!Global.eChookCarName.equals("")) && !Global.eChookPassword.equals("")) {     //If echook live is selected and login details aren't empty
+                Log.d("eChook", "Attempting to get eChook Live ID");
+                echookIdReceived = getEchookId();
+                if(!echookIdReceived) {
+                        //TODO Toast popup?
                 }
                 waitingForLogin = false;
-            }
-
-            Looper.loop();
         }
 
-        private TimerTask sendJsonTask = new TimerTask(){
-            @Override
-            public void run() {
+        Looper.loop();
+}
+
+private TimerTask sendJsonTask = new TimerTask(){
+        @Override
+        public void run() {
                 if (telEnabled) {
-                    try {
-                        Log.d("SendData", "About to JSON Data Timer");
-                        Boolean success = sendJSONData();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                        try {
+                                Log.d("SendData", "About to JSON Data Timer");
+                                Boolean success = sendJSONData();
+                        } catch (IOException e) {
+                                e.printStackTrace();
+                        }
                 }
-            }
-        };
+        }
+};
 
-
-    private void dweetLoginFailed()
-    {
-        EventBus.getDefault().post(new DialogEvent("Dweet Login Failed", "Please check login details and internet connection"));
-        Global.enableDweetPro = false;
-    }
-
-    private boolean getDweetProToken()
-    {
+private boolean getEchookId()
+{
+        Log.d("eChook", "Getting eChook Live Login");
         boolean success;
         HttpURLConnection urlConnection;
         try {
-            URL url;
-
-            url = new URL("https://dweetpro.io:443/v2/users/login");
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setDoOutput(true);
-            urlConnection.setChunkedStreamingMode(0);
-            urlConnection.setRequestProperty("content-type","application/json");
-
-            OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-            out.write(getLoginJson().toString().getBytes());
-            out.flush();
-
-
-            StringBuilder sb = new StringBuilder();
-            int HttpResult = urlConnection.getResponseCode();
-            if (HttpResult == HttpURLConnection.HTTP_OK) {
-                Log.d("SendData", "HTTP Response OK");
-                BufferedReader br = new BufferedReader(
-                        new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                br.close();
-
-                Log.d("eChook", "Token request response:"+sb.toString());
-
-                //Get token from response:
-
-//                try {
-//                    JSONObject receivedJson = new JSONObject(sb.toString());
-//                    dweetProToken = receivedJson.getString("");
-//                }catch (JSONException e)
-//                {
-//                    e.printStackTrace();
-//                    Log.d("eChook", "Token not Found - JSON exception");
-//                    success = false;
-//                }
-
-                try {
-                    JSONObject receivedJson = new JSONObject(sb.toString());
-                    Iterator iterator = receivedJson.keys();
-                    String key = "";
-                    while(iterator.hasNext())
-                    {
-                        key = (String)iterator.next();
-                        Log.d("eChook", "Keys Found " + key);
-                    }
-                    Log.d("eChook", "Opening object from key");
-                    JSONObject nestedJson = receivedJson.getJSONObject(key);
-                    Log.d("eChook", "Looking in object:" + receivedJson.toString());
-                    dweetProToken = nestedJson.getString("token");
-                }catch (JSONException e)
-                {
-                    e.printStackTrace();
-                    Log.d("eChook", "Token not Found - JSON exception");
-                    success = false;
-                }
-
-
-                success = true;
-
-                Log.d("eChook", "Received Token:"+dweetProToken);
-
-                //System.out.println("" + sb.toString());
-            } else {
-                System.out.println(urlConnection.getResponseMessage());
-                success = false;
-                Log.d("eChook", "Non OK response to dweet login request");
-            }
-            urlConnection.disconnect();
-
-        }catch (IOException e) {
-            e.printStackTrace();
-            success = false;
-        }
-
-        return success;
-    }
-
-
-    private JSONObject getLoginJson()
-    {
-        JSONObject loginJson = new JSONObject();
-        DecimalFormat format = new DecimalFormat("#.##");
-        try{
-            loginJson.put("username", Global.dweetProUsername);
-            loginJson.put("password", Global.dweetProPassword);
-            
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return loginJson;
-        
-    }
-    
-    private JSONObject getDataJson()
-    {
-        JSONObject dataJSON = new JSONObject();
-        JSONObject proJSON = new JSONObject();
-        DecimalFormat format = new DecimalFormat("#.##");
-        try{
-            dataJSON.put("Vt", format.format(Global.Volts));
-            dataJSON.put("V1", format.format(Global.VoltsAux));
-            dataJSON.put("A", format.format(Global.Amps));
-            dataJSON.put("RPM", format.format(Global.MotorRPM));
-            dataJSON.put("Spd", format.format(Global.SpeedMPS));
-            dataJSON.put("Thrtl", format.format(Global.InputThrottle));
-            dataJSON.put("AH", format.format(Global.AmpHours));
-            dataJSON.put("Lap", format.format(Global.Lap));
-            dataJSON.put("Tmp1", format.format(Global.TempC1));
-            dataJSON.put("Tmp2", format.format(Global.TempC2));
-            dataJSON.put("Brk", format.format(Global.Brake));
-            dataJSON.put("Gear", format.format(Global.Gear));
-
-
-            if(Global.enableDweetPro && Global.enableLocationUpload) {
-                dataJSON.put("Lat", Global.Latitude);
-                dataJSON.put("Lon", Global.Longitude);
-            }
-
-            if(Global.enableDweetPro){
-                proJSON.put("thing", Global.dweetThingName);
-                proJSON.put("key", Global.dweetMasterKey);
-                proJSON.put("content", dataJSON);
-            }
-
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        if(Global.enableDweetPro) {
-            Log.d("eChook", "Compiled JSON pro = " + proJSON.toString());
-            return proJSON;
-        }
-        else
-            return dataJSON;
-    }
-
-
-    private boolean sendJSONData()  throws IOException {
-
-        Log.d("eChook","Entering SendJSON data Token= "+ dweetProToken);
-        Log.d("eChook","waiting for login = "+ waitingForLogin);
-        if(Global.enableDweetPro && !waitingForLogin && dweetProToken.equals("")) //Catches the usecase when someone enables dweet pro once the thread is started and a login is needed.
-        {
-            Log.d("eChook","PRo enabled but no token. Token = "+ dweetProToken);
-            waitingForLogin = true;
-            getDweetProToken();
-            return true;
-        }else {
-            HttpURLConnection urlConnection;
-            try {
                 URL url;
 
-                if (Global.enableDweetPro) {
-                    url = new URL("https://dweetpro.io:443/v2/dweets");
-                } else {
-                    url = new URL("https://dweet.io/dweet/for/" + Global.dweetThingName + "?");
-                }
+                url = new URL("https://data.echook.uk/api/getid");
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setChunkedStreamingMode(0);
-                urlConnection.setRequestProperty("content-type", "application/json");
-                if (Global.enableDweetPro)
-                    urlConnection.setRequestProperty("X-DWEET-AUTH", dweetProToken);
+                urlConnection.setRequestProperty("content-type","application/json");
 
                 OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-
-                out.write(getDataJson().toString().getBytes());
+                out.write(getLoginJson().toString().getBytes());
                 out.flush();
 
 
                 StringBuilder sb = new StringBuilder();
                 int HttpResult = urlConnection.getResponseCode();
                 if (HttpResult == HttpURLConnection.HTTP_OK) {
-                    Log.d("SendData", "HTTP Response OK");
-                    BufferedReader br = new BufferedReader(
-                            new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-                    br.close();
-                    System.out.println("" + sb.toString());
-                } else {
-                    System.out.println(urlConnection.getResponseMessage());
-                }
+                        Log.d("SendData", "HTTP Response OK");
+                        BufferedReader br = new BufferedReader(
+                                new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                                sb.append(line + "\n");
+                        }
+                        br.close();
 
+                        Log.d("eChook", "ID request response:"+sb.toString());
+
+                        try {
+                                JSONObject receivedJson = new JSONObject(sb.toString());
+                                echookID = receivedJson.getString("id");
+                        }catch (JSONException e)
+                        {
+                                e.printStackTrace();
+                                Log.d("eChook", "ID not Found - JSON exception");
+                                success = false;
+                        }
+
+
+                        success = true;
+
+                        Log.d("eChook", "Received ID:"+ echookID);
+
+                        //System.out.println("" + sb.toString());
+                } else {
+                        System.out.println(urlConnection.getResponseMessage());
+                        success = false;
+                        Log.d("eChook", "Non OK response to eChook Live login request");
+                }
                 urlConnection.disconnect();
 
-            } catch (IOException e) {
+        }catch (IOException e) {
                 e.printStackTrace();
-                return false;
-            }
-
-            return true;
+                success = false;
         }
-    }
+
+        return success;
+}
 
 
-    public void Enable() {
+private JSONObject getLoginJson()
+{
+        JSONObject loginJson = new JSONObject();
+        try{
+                loginJson.put("username", Global.eChookCarName);
+                loginJson.put("password", Global.eChookPassword);
+
+        }catch (JSONException e) {
+                e.printStackTrace();
+        }
+
+        return loginJson;
+
+}
+
+private JSONObject getDataJson(boolean location)
+{
+        JSONObject dataJSON = new JSONObject();
+        DecimalFormat format = new DecimalFormat("#.##");
+        try{
+                dataJSON.put("Vt", format.format(Global.Volts));
+                dataJSON.put("V1", format.format(Global.VoltsAux));
+                dataJSON.put("A", format.format(Global.Amps));
+                dataJSON.put("RPM", format.format(Global.MotorRPM));
+                dataJSON.put("Spd", format.format(Global.SpeedMPS));
+                dataJSON.put("Thrtl", format.format(Global.InputThrottle));
+                dataJSON.put("AH", format.format(Global.AmpHours));
+                dataJSON.put("Lap", format.format(Global.Lap));
+                dataJSON.put("Tmp1", format.format(Global.TempC1));
+                dataJSON.put("Tmp2", format.format(Global.TempC2));
+                dataJSON.put("Brk", format.format(Global.Brake));
+                dataJSON.put("Gear", format.format(Global.Gear));
+
+
+                if(location) {
+                        dataJSON.put("Lat", Global.Latitude);
+                        dataJSON.put("Lon", Global.Longitude);
+                }
+
+                if(currentLap != Global.Lap && Global.Lap > 0) {
+                        currentLap = Global.Lap;
+                        dataJSON.put("LL_V", format.format(Global.LapDataList.get(currentLap-1).getAverageVolts()));
+                        dataJSON.put("LL_I", format.format(Global.LapDataList.get(currentLap-1).getAverageAmps()));
+                        dataJSON.put("LL_RPM", format.format(Global.LapDataList.get(currentLap-1).getAverageRPM()));
+                        dataJSON.put("LL_Spd", format.format(Global.LapDataList.get(currentLap-1).getAverageSpeedMPS()));
+                        dataJSON.put("LL_Ah", format.format(Global.LapDataList.get(currentLap-1).getAmpHours()));
+                        dataJSON.put("LL_Time", format.format(Global.LapDataList.get(currentLap-1).getLapTimeString()));
+                        dataJSON.put("LL_Eff", format.format(Global.LapDataList.get(currentLap-1).getWattHoursPerKM()));
+                }
+
+                if(firstRun) {
+                        firstRun = false;
+                        dataJSON.put("LL_V", "0");
+                        dataJSON.put("LL_I", "0");
+                        dataJSON.put("LL_RPM", "0");
+                        dataJSON.put("LL_Spd", "0");
+                        dataJSON.put("LL_Ah", "0");
+                        dataJSON.put("LL_Time", "0");
+                        dataJSON.put("LL_Eff", "0");
+                }
+
+        }catch (JSONException e) {
+                e.printStackTrace();
+        }
+
+        return dataJSON;
+}
+
+
+private boolean sendJSONData()  throws IOException {
+
+        if(Global.dweetEnabled) {
+
+                Log.d("eChook", "Entering Send Dweet Data");
+
+                HttpURLConnection urlConnection;
+                try {
+                        URL url;
+                        url = new URL("https://dweet.io/dweet/for/" + Global.dweetThingName + "?");
+                        urlConnection = (HttpURLConnection) url.openConnection();
+                        urlConnection.setDoOutput(true);
+                        urlConnection.setChunkedStreamingMode(0);
+                        urlConnection.setRequestProperty("content-type", "application/json");
+                        OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+
+                        out.write(getDataJson(false).toString().getBytes());
+                        out.flush();
+
+
+                        StringBuilder sb = new StringBuilder();
+                        int HttpResult = urlConnection.getResponseCode();
+                        if (HttpResult == HttpURLConnection.HTTP_OK) {
+                                Log.d("SendData", "HTTP Response OK");
+                                BufferedReader br = new BufferedReader(
+                                        new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                                String line;
+                                while ((line = br.readLine()) != null) {
+                                        sb.append(line + "\n");
+                                }
+                                br.close();
+                                System.out.println("" + sb.toString());
+                        } else {
+                                System.out.println(urlConnection.getResponseMessage());
+                        }
+
+                        urlConnection.disconnect();
+
+                } catch (IOException e) {
+                        e.printStackTrace();
+                        return false;
+                }
+
+                return true;
+
+        }
+
+        if(Global.eChookLiveEnabled) {
+                Log.d("eChook", "Entering eChook Live SendJSON data, ID = " + echookID);
+                if (Global.eChookLiveEnabled && !waitingForLogin && echookID.equals("")) //Catches the usecase when someone enables dweet pro once the thread is started and a login is needed.
+                {
+                        Log.d("eChook", "eChook Live enabled but no ID. ID = " + echookID);
+                        waitingForLogin = true;
+                        getEchookId();
+                        return true;
+                } else {
+                        HttpURLConnection urlConnection;
+                        try {
+                                URL url = new URL("https://data.echook.uk/api/send/" + echookID);
+                                urlConnection = (HttpURLConnection) url.openConnection();
+                                urlConnection.setDoOutput(true);
+                                urlConnection.setChunkedStreamingMode(0);
+                                urlConnection.setRequestProperty("content-type", "application/json");
+                                if (Global.enableDweetPro)
+                                        urlConnection.setRequestProperty("X-DWEET-AUTH", echookID);
+
+                                OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+
+                                out.write(getDataJson(true).toString().getBytes());
+                                out.flush();
+
+
+                                StringBuilder sb = new StringBuilder();
+                                int HttpResult = urlConnection.getResponseCode();
+                                if (HttpResult == HttpURLConnection.HTTP_OK) {
+                                        Log.d("SendData", "HTTP Response OK");
+                                        BufferedReader br = new BufferedReader(
+                                                new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                                        String line;
+                                        while ((line = br.readLine()) != null) {
+                                                sb.append(line + "\n");
+                                        }
+                                        br.close();
+                                        System.out.println("" + sb.toString());
+                                } else {
+                                        System.out.println(urlConnection.getResponseMessage());
+                                }
+
+                                urlConnection.disconnect();
+
+                        } catch (IOException e) {
+                                e.printStackTrace();
+                                return false;
+                        }
+
+                        return true;
+                }
+        }
+        return false;
+}
+
+
+public void Enable() {
         telEnabled = true;
-        Global.telemetryEnabled = true;
 
-    }
 
-    public void Disable() {
+}
+
+public void Disable() {
         telEnabled = false;
-        //Global.telEnabled = telEnabled;
-    }
 
-    public void pause() {
+}
+
+public void pause() {
         telEnabled = false;
-    }
+}
 
-    public void restart() {
-        telEnabled = Global.telemetryEnabled;
+public void restart() {
+        telEnabled = Global.dweetEnabled || Global.eChookLiveEnabled;
 
-    }
+}
 }

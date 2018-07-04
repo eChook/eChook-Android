@@ -236,36 +236,28 @@ e.printStackTrace();
 				case "prefGraphsSwitch":
 					Global.EnableGraphs = sharedPreferences.getBoolean("prefGraphsSwitch", false);
                     break;
-                case "prefUDP":
-                    Global.dweetThingName = sharedPreferences.getString("prefUDP", "");
-                    break;
                 case "prefMotorTeeth":
                     Global.MotorTeeth = DrivenSettings.parseMotorTeeth(sharedPreferences.getString("prefMotorTeeth", ""));
                     break;
                 case "prefWheelTeeth":
                     Global.WheelTeeth = DrivenSettings.parseWheelTeeth(sharedPreferences.getString("prefWheelTeeth", ""));
                     break;
-                case "prefUdpEnabled":
-                    Global.telemetryEnabled = sharedPreferences.getBoolean("prefUdpEnabled", false);
+                case "prefDweetEnabled":
+                    Global.dweetEnabled = sharedPreferences.getBoolean("prefDweetEnabled", false);
                     break;
-                case "prefLocationUpload":
-                    Global.enableLocationUpload = sharedPreferences.getBoolean(key, false);
+                case "prefDweetName":
+                    Global.dweetThingName = sharedPreferences.getString("prefDweetName", "");
                     break;
-                case "prefDweetPassword":
-                    Global.dweetProPassword = sharedPreferences.getString(key, "");
-                    //TODO make sure this hides the password!! setting inputType="textPassword" doesn't work.
+                case "prefEchookEnabled":
+                    Global.eChookLiveEnabled = sharedPreferences.getBoolean("prefEchookEnabled", false);
                     break;
-                case "prefDweetLocked":
-                    Global.enableDweetPro = sharedPreferences.getBoolean(key, false);
+                case "prefEchookCarName":
+                    Global.eChookCarName = sharedPreferences.getString("prefEchookCarName", "");
                     break;
-                case "prefDweetUsername":
-                    Global.dweetProUsername = sharedPreferences.getString(key, "");
+                case "prefEchookPassword":
+                    Global.eChookPassword = sharedPreferences.getString("prefEchookPassword", "");
                     break;
-                case "prefDweetMasterKey":
-                    Global.dweetMasterKey = sharedPreferences.getString(key, "");
-                    break;
-				default:
-					break;
+
 			}
 		} catch (Exception e) {
             e.printStackTrace();
