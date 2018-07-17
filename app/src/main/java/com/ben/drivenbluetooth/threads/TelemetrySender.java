@@ -35,14 +35,13 @@ private boolean firstRun = true;
 
 public TelemetrySender() {
         telEnabled = (Global.dweetEnabled || Global.eChookLiveEnabled);
-        Log.d("eChook","TelemetrySender: telEnabled = " + telEnabled );
+        //Log.d("eChook","TelemetrySender: telEnabled = " + telEnabled );
 }
 
 
 @Override
 public void run() {
         Looper.prepare();
-
         telUpdateTimer.schedule(sendJsonTask, 0, 1500);
 
         boolean echookIdReceived;
@@ -51,7 +50,7 @@ public void run() {
                 Log.d("eChook", "Attempting to get eChook Live ID");
                 echookIdReceived = getEchookId();
                 if(!echookIdReceived) {
-                        //TODO Toast popup?
+                    EventBus.getDefault().post(new DialogEvent("eChook Login Failed", ""));
                 }
                 waitingForLogin = false;
         }
@@ -64,7 +63,7 @@ private TimerTask sendJsonTask = new TimerTask(){
         public void run() {
                 if (telEnabled) {
                         try {
-                                Log.d("SendData", "About to JSON Data Timer");
+                                Log.d("eChook", "About to trigger JSON Data");
                                 Boolean success = sendJSONData();
                         } catch (IOException e) {
                                 e.printStackTrace();
@@ -95,7 +94,7 @@ private boolean getEchookId()
                 StringBuilder sb = new StringBuilder();
                 int HttpResult = urlConnection.getResponseCode();
                 if (HttpResult == HttpURLConnection.HTTP_OK) {
-                        Log.d("SendData", "HTTP Response OK");
+                        Log.d("eChook", "HTTP Response OK to Login Request");
                         BufferedReader br = new BufferedReader(
                                 new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
                         String line;
@@ -120,11 +119,14 @@ private boolean getEchookId()
                         success = true;
 
                         Log.d("eChook", "Received ID:"+ echookID);
+                        EventBus.getDefault().post(new DialogEvent("eChook Login Successful", ""));
+
 
                         //System.out.println("" + sb.toString());
                 } else {
                         System.out.println(urlConnection.getResponseMessage());
                         success = false;
+                        EventBus.getDefault().post(new DialogEvent("eChook Login Failed", "Bad Response from Server"));
                         Log.d("eChook", "Non OK response to eChook Live login request");
                 }
                 urlConnection.disconnect();
@@ -256,7 +258,7 @@ private boolean sendJSONData()  throws IOException {
 
         if(Global.eChookLiveEnabled) {
                 Log.d("eChook", "Entering eChook Live SendJSON data, ID = " + echookID);
-                if (Global.eChookLiveEnabled && !waitingForLogin && echookID.equals("")) //Catches the usecase when someone enables dweet pro once the thread is started and a login is needed.
+                if (Global.eChookLiveEnabled && !waitingForLogin && echookID.equals("")) //Catches the usecase when someone enables eChook live data once the thread is started and a login is needed.
                 {
                         Log.d("eChook", "eChook Live enabled but no ID. ID = " + echookID);
                         waitingForLogin = true;
@@ -311,13 +313,10 @@ private boolean sendJSONData()  throws IOException {
 
 public void Enable() {
         telEnabled = true;
-
-
 }
 
 public void Disable() {
         telEnabled = false;
-
 }
 
 public void pause() {

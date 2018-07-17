@@ -16,12 +16,6 @@ android {
         variant.outputs.all {
             outputFileName = "echook-companion-release-${variant.versionName}_${variant.versionCode}.apk"
         }
-    }*/
-
-    applicationVariants.all { variant ->
-        variant.outputs.all {
-            outputFileName = "echook-companion-release-${variant.name}-${variant.versionName}.apk"
-        }
     }
 
     defaultConfig {
@@ -46,7 +40,7 @@ android {
 }
 
 repositories {
-    maven { url "https://jitpack.io" }
+    maven { url "https://jitpack.io"}
 }
 
 dependencies {
