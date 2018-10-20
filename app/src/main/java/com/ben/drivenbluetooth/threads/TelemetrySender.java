@@ -19,9 +19,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
+
+//import java.util.Iterator;
 
 public class TelemetrySender extends Thread {
 private boolean telEnabled = false;
@@ -99,7 +100,7 @@ private boolean getEchookId()
                                 new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
                         String line;
                         while ((line = br.readLine()) != null) {
-                                sb.append(line + "\n");
+                                sb.append(line).append("\n");
                         }
                         br.close();
 
@@ -112,7 +113,6 @@ private boolean getEchookId()
                         {
                                 e.printStackTrace();
                                 Log.d("eChook", "ID not Found - JSON exception");
-                                success = false;
                         }
 
 
@@ -122,7 +122,6 @@ private boolean getEchookId()
                         EventBus.getDefault().post(new DialogEvent("eChook Login Successful", ""));
 
 
-                        //System.out.println("" + sb.toString());
                 } else {
                         System.out.println(urlConnection.getResponseMessage());
                         success = false;
@@ -209,7 +208,7 @@ private JSONObject getDataJson(boolean location)
 }
 
 
-private boolean sendJSONData()  throws IOException {
+        private boolean sendJSONData() {
 
         if(Global.dweetEnabled) {
 
@@ -237,7 +236,7 @@ private boolean sendJSONData()  throws IOException {
                                         new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
                                 String line;
                                 while ((line = br.readLine()) != null) {
-                                        sb.append(line + "\n");
+                                        sb.append(line).append("\n");
                                 }
                                 br.close();
                                 System.out.println("" + sb.toString());
@@ -289,7 +288,7 @@ private boolean sendJSONData()  throws IOException {
                                                 new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
                                         String line;
                                         while ((line = br.readLine()) != null) {
-                                                sb.append(line + "\n");
+                                                sb.append(line).append("\n");
                                         }
                                         br.close();
                                         System.out.println("" + sb.toString());

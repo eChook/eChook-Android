@@ -133,7 +133,7 @@ public final class BluetoothManager {
 
     /** Closes the Bluetooth connection if open
      *
-     * @throws IOException
+	 *  throws IOException
      */
     public void closeBT() throws IOException {
 		if (Global.BTState != Global.BTSTATE.DISCONNECTED) {

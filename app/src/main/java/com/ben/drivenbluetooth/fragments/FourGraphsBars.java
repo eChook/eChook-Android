@@ -14,7 +14,6 @@ import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.util.ColorHelper;
 import com.ben.drivenbluetooth.util.CustomLabelFormatter;
 import com.ben.drivenbluetooth.util.UnitHelper;
-import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -28,6 +27,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+//import com.github.mikephil.charting.charts.BarChart;
+
 
 public class FourGraphsBars extends Fragment {
 
@@ -37,11 +38,6 @@ public class FourGraphsBars extends Fragment {
 	private TextView Speed;
 	private TextView WattHours;
 	private TextView AmpHours;
-
-	private BarChart AmpsBarChart;
-	private BarChart VoltsBarChart;
-	private BarChart SpeedBarChart;
-	private BarChart RPMBarChart;
 
 	private LineChart VoltsLineChart;
 	private LineChart AmpsLineChart;
@@ -113,7 +109,7 @@ public class FourGraphsBars extends Fragment {
 						new float[] {0, 30},	// volts
 						new float[] {0, 50},	// amps
 						new float[] {0, 2100},	// motor rpm
-						new float[] {0, UnitHelper.getMaxSpeed(Global.Unit)}	// speed
+                new float[]{0, UnitHelper.getMaxSpeed(Global.SpeedUnit)}    // speed
 		};
 
 		for (int i = 0; i < lineCharts.length; i++) {
@@ -153,7 +149,7 @@ public class FourGraphsBars extends Fragment {
 						"Volts",
 						"Amps",
 						"RPM",
-						Global.Unit == Global.UNIT.KPH ? "kph" : "mph"
+                Global.SpeedUnit == Global.UNIT.KPH ? "kph" : "mph"
 		};
 
 //		for (int i = 0; i < barCharts.length; i++) {
@@ -313,8 +309,8 @@ e.printStackTrace();
 
     private void UpdateSpeed() {
 		try {
-			Double speed = UnitHelper.getSpeed(Global.SpeedMPS, Global.Unit);
-			Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.Unit));
+            Double speed = UnitHelper.getSpeed(Global.SpeedMPS, Global.SpeedUnit);
+            Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.SpeedUnit));
 
 			if (Global.EnableGraphs) {
 //				UpdateBarChart(SpeedBarChart, speed, Color.BLACK);

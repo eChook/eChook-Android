@@ -157,19 +157,19 @@ public class DataToCsvFile extends Thread {
      * @return a string formatted as "timestamp,x,y,z,..."
      */
     private String GetLatestDataAsString() {
-        String data_string = String.valueOf(System.currentTimeMillis()) + ",";
+        StringBuilder data_string = new StringBuilder(String.valueOf(System.currentTimeMillis()) + ",");
 
         for (String value : this.ArrayOfVariables) {
-            data_string += value + ",";
+            data_string.append(value).append(",");
         }
 
         //remove last comma
-        data_string = data_string.substring(0, data_string.length() - 1);
+        data_string = new StringBuilder(data_string.substring(0, data_string.length() - 1));
 
         // add newline
-        data_string += "\n";
+        data_string.append("\n");
 
-        return data_string;
+        return data_string.toString();
     }
 
     private void WriteToFile(String data) {
@@ -182,18 +182,18 @@ public class DataToCsvFile extends Thread {
 					/* 	|	timestamp	|	t 	| 	v	|	i	|  ...	|
 						|				|		|		|		|		|
 					*/
-                    String headers = "timestamp,";
+                    StringBuilder headers = new StringBuilder("timestamp,");
                     for (int i = 0; i <= this.variable_identifiers.length - 1; i++) {
-                        headers += variable_identifiers[i] + ",";
+                        headers.append(variable_identifiers[i]).append(",");
                     }
                     // remove the last comma
-                    headers = headers.substring(0, headers.length() - 1);
+                    headers = new StringBuilder(headers.substring(0, headers.length() - 1));
 
                     // add newline
-                    headers += "\n";
+                    headers.append("\n");
 
                     // write to file
-                    oStream.write(headers.getBytes());
+                    oStream.write(headers.toString().getBytes());
 
                     resetValues();
                 }

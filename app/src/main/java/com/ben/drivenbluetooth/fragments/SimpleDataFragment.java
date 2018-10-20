@@ -10,23 +10,18 @@ import android.widget.TextView;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.R;
 import com.ben.drivenbluetooth.events.ArduinoEvent;
+import com.ben.drivenbluetooth.events.LocationEvent;
 import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.util.ColorHelper;
-import com.ben.drivenbluetooth.util.CustomLabelFormatter;
 import com.ben.drivenbluetooth.util.UnitHelper;
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.github.mikephil.charting.formatter.LargeValueFormatter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Locale;
+
+import static com.ben.drivenbluetooth.events.LocationEvent.EventType.NewLap;
 
 
 public class SimpleDataFragment extends Fragment {
@@ -38,6 +33,14 @@ public class SimpleDataFragment extends Fragment {
 	private TextView Speed;
 	private TextView WattHours;
 	private TextView AmpHours;
+    private TextView LapVolts;
+    private TextView LapAmps;
+    private TextView LapRPM;
+    private TextView LapSpeed;
+    private TextView DiffVolts;
+    private TextView DiffAmps;
+    private TextView DiffRPM;
+    private TextView DiffSpeed;
 
 	/*===================*/
 	/* FOURGRAPHSBARS
@@ -57,7 +60,16 @@ public class SimpleDataFragment extends Fragment {
 		Speed 		= v.findViewById(R.id.speed);
 		AmpHours	= v.findViewById(R.id.ampHours);
 		WattHours 	= v.findViewById(R.id.wattHours);
-		SpeedLabel = v.findViewById(R.id.SpeedLabel);
+        SpeedLabel = v.findViewById(R.id.SpeedLabel);
+        LapVolts = v.findViewById(R.id.voltage_ll);
+        LapAmps = v.findViewById(R.id.current_ll);
+        LapRPM = v.findViewById(R.id.rpm_ll);
+        LapSpeed = v.findViewById(R.id.speed_ll);
+        DiffVolts = v.findViewById(R.id.voltage_ll_diff);
+        DiffAmps = v.findViewById(R.id.current_ll_diff);
+        DiffRPM = v.findViewById(R.id.rpm_ll_diff);
+        DiffSpeed = v.findViewById(R.id.speed_ll_diff);
+
 	}
 
 
@@ -76,7 +88,7 @@ public class SimpleDataFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		InitializeDataFields();
 		UpdateFragmentUI();
-		SpeedLabel.setText("Speed ("+Global.Unit+")");
+        SpeedLabel.setText("Speed (" + Global.SpeedUnit + ")");
 
 
 		EventBus.getDefault().register(this);
@@ -105,6 +117,13 @@ public class SimpleDataFragment extends Fragment {
 		UpdateMotorRPM();
 		UpdateWattHours();
 	}
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLocationEvent(LocationEvent event) {
+        if (event.eventType == NewLap) {
+            UpdateLap();
+        }
+    }
 
 	@Subscribe(threadMode = ThreadMode.MAIN)
 	public void onArduinoEvent(ArduinoEvent event) {
@@ -135,7 +154,7 @@ e.printStackTrace();
 
 	private void UpdateVolts() {
 		try {
-			Volts.setText(String.format("%.1f", Global.Volts));
+            Volts.setText(String.format(Locale.ENGLISH, "%.1f", Global.Volts));
 			Volts.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -144,7 +163,7 @@ e.printStackTrace();
 
 	private void UpdateAmps() {
 		try {
-			Amps.setText(String.format("%.1f", Global.Amps));
+            Amps.setText(String.format(Locale.ENGLISH, "%.1f", Global.Amps));
 			Amps.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -153,7 +172,7 @@ e.printStackTrace();
 
     private void UpdateAmpHours() {
 		try {
-			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
+            AmpHours.setText(String.format(Locale.ENGLISH, "%.2f Ah", Global.AmpHours));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -161,7 +180,7 @@ e.printStackTrace();
 
     private void UpdateSpeed() {
 		try {
-			Speed.setText(String.format("%.1f", UnitHelper.getSpeed(Global.SpeedMPS, Global.Unit)));
+            Speed.setText(String.format(Locale.ENGLISH, "%.1f", UnitHelper.getSpeed(Global.SpeedMPS, Global.SpeedUnit)));
 			} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -169,7 +188,7 @@ e.printStackTrace();
 
     private void UpdateMotorRPM() {
 		try {
-			RPM.setText(String.format("%.0f", Global.MotorRPM));
+            RPM.setText(String.format(Locale.ENGLISH, "%.0f", Global.MotorRPM));
 			RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -178,10 +197,36 @@ e.printStackTrace();
 
     private void UpdateWattHours() {
 		try {
-			WattHours.setText(String.format("%.2f Wh/km", Global.WattHoursPerMeter * 1000));
+            WattHours.setText(String.format(Locale.ENGLISH, "%.2f Wh/km", Global.WattHoursPerMeter * 1000));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
+    private void UpdateLap() {
+        if (Global.Lap > 2) { //have data to calc diff
+            double tempDiff = Double.valueOf(LapVolts.getText().toString()) - Global.LapDataList.get(Global.Lap - 1).getAverageVolts();
+            DiffVolts.setText(String.format(Locale.ENGLISH, "(%.2f)", tempDiff));
+            LapVolts.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(Global.Lap - 1).getAverageVolts()));
+
+            tempDiff = Double.valueOf(LapAmps.getText().toString()) - Global.LapDataList.get(Global.Lap - 1).getAverageAmps();
+            DiffAmps.setText(String.format(Locale.ENGLISH, "(%.2f)", tempDiff));
+            LapAmps.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(Global.Lap - 1).getAverageAmps()));
+
+            tempDiff = Double.valueOf(LapRPM.getText().toString()) - Global.LapDataList.get(Global.Lap - 1).getAverageRPM();
+            DiffRPM.setText(String.format(Locale.ENGLISH, "(%.0f)", tempDiff));
+
+            tempDiff = Double.valueOf(LapVolts.getText().toString()) - Global.LapDataList.get(Global.Lap - 1).getAverageSpeed();
+            DiffSpeed.setText(String.format(Locale.ENGLISH, "(%.2f)", tempDiff));
+
+        }
+
+        if (Global.Lap > 1) { // have data to fill last lap
+            LapVolts.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(Global.Lap - 1).getAverageVolts()));
+            LapAmps.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(Global.Lap - 1).getAverageAmps()));
+            LapRPM.setText(String.format(Locale.ENGLISH, "%.0f", Global.LapDataList.get(Global.Lap - 1).getAverageRPM()));
+            LapSpeed.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(Global.Lap - 1).getAverageSpeed()));
+        }
+    }
 
 }

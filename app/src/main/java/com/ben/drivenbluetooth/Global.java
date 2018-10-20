@@ -2,7 +2,6 @@ package com.ben.drivenbluetooth;
 
 import android.bluetooth.BluetoothSocket;
 import android.location.Location;
-import android.text.StaticLayout;
 
 import com.ben.drivenbluetooth.util.LapData;
 import com.ben.drivenbluetooth.util.RunningAverage;
@@ -132,7 +131,7 @@ public final class Global {
     public static volatile int IdealGear                = 0;
 
     public static MODE Mode;
-	public static UNIT Unit;
+    public static UNIT SpeedUnit;
 	public static LOCATION LocationStatus;
 	public static ACCELEROMETER Accelerometer;
     public static THROTTLEMODE ThrottleMode;
@@ -141,7 +140,7 @@ public final class Global {
 	public static boolean EnableGraphs                  = true;
 	public static Double BatteryCapacityAh;
 
-	public static List<String> BTDeviceNames            = new ArrayList<String>(248); //248 is the maximum number of devices it is possible to bond
+    public static List<String> BTDeviceNames = new ArrayList<>(248); //248 is the maximum number of devices it is possible to bond
     public static String dataPin                        = "";
     public static boolean dweetEnabled                  = false;
     public static String dweetThingName                 = "";

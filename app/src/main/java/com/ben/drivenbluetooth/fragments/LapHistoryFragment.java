@@ -23,6 +23,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,11 +46,14 @@ public class LapHistoryFragment extends Fragment {
 
 	private void InitializeDataFields() {
 		View v = getView();
-		Current 		= v.findViewById(R.id.current);
-		Voltage 		= v.findViewById(R.id.voltage);
-		RPM 			= v.findViewById(R.id.rpm);
-		Speed 			= v.findViewById(R.id.speed);
-		AmpHours		= v.findViewById(R.id.ampHours);
+
+        assert v != null;
+        Current = v.findViewById(R.id.current);
+        Voltage = v.findViewById(R.id.voltage);
+        RPM = v.findViewById(R.id.rpm);
+        Speed = v.findViewById(R.id.speed);
+        AmpHours = v.findViewById(R.id.ampHours);
+
 	}
 
 	/*===================*/
@@ -64,7 +69,7 @@ public class LapHistoryFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		LapTable =  getView().findViewById(R.id.laptable);
+        LapTable = Objects.requireNonNull(getView()).findViewById(R.id.laptable);
 		InitializeDataFields();
 		StartFragmentUpdater();
         EventBus.getDefault().register(this);
@@ -95,13 +100,13 @@ public class LapHistoryFragment extends Fragment {
 
 			for (int i = 0; i < Global.LapDataList.size(); i++) {
 				String[] values = new String[]{
-						String.format("%d", i + 1),
-						String.format("%.1f", Global.LapDataList.get(i).getAverageAmps()),
-						String.format("%.1f", Global.LapDataList.get(i).getAverageVolts()),
-                        String.format("%.1f", Global.Unit == Global.UNIT.KPH ? Global.LapDataList.get(i).getAverageSpeedKPH() : Global.LapDataList.get(i).getAverageSpeedMPH()),
-                        String.format("%.0f", Global.LapDataList.get(i).getAverageRPM()),
-                        String.format("%.2f", Global.LapDataList.get(i).getAmpHours()),
-                        String.format("%.2f", Global.LapDataList.get(i).getWattHoursPerKM()),
+                        String.format(Locale.ENGLISH, "%d", i + 1),
+                        String.format(Locale.ENGLISH, "%.1f", Global.LapDataList.get(i).getAverageAmps()),
+                        String.format(Locale.ENGLISH, "%.1f", Global.LapDataList.get(i).getAverageVolts()),
+                        String.format(Locale.ENGLISH, "%.1f", Global.SpeedUnit == Global.UNIT.KPH ? Global.LapDataList.get(i).getAverageSpeedKPH() : Global.LapDataList.get(i).getAverageSpeedMPH()),
+                        String.format(Locale.ENGLISH, "%.0f", Global.LapDataList.get(i).getAverageRPM()),
+                        String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(i).getAmpHours()),
+                        String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(i).getWattHoursPerKM()),
                         Global.LapDataList.get(i).getLapTimeString()
                 };
 
@@ -164,48 +169,40 @@ e.printStackTrace();
 		}
 	}
 
-    public synchronized void UpdateVolts() {
-        try {
-			this.Voltage.setText(String.format("%.2f", Global.Volts) + " V");
-		} catch (Exception e) {
-			e.getMessage();
-		}
-	}
+    private synchronized void UpdateVolts() {
+        this.Voltage.setText(String.format(Locale.ENGLISH, "%.2f V", Global.Volts));
+    }
 
-    public synchronized void UpdateAmps() {
-        try {
-			this.Current.setText(String.format("%.1f", Global.Amps) + " A");
-		} catch (Exception e) {
-			e.getMessage();
-		}
-	}
+    private synchronized void UpdateAmps() {
+        this.Current.setText(String.format(Locale.ENGLISH, "%.1f A", Global.Amps));
+    }
 
-    public synchronized void UpdateAmpHours() {
+    private synchronized void UpdateAmpHours() {
         try {
-			AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
+            AmpHours.setText(String.format(Locale.ENGLISH, "%.2f Ah", Global.AmpHours));
 		} catch (Exception e) {
 			e.toString();
 		}
 	}
 
-    public synchronized void UpdateSpeed() {
+    private synchronized void UpdateSpeed() {
         try {
-            Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.Unit));
+            Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.SpeedUnit));
 
 		} catch (Exception e) {
 			e.getMessage();
 		}
 	}
 
-    public synchronized void UpdateMotorRPM() {
+    private synchronized void UpdateMotorRPM() {
         try {
-			this.RPM.setText(String.format("%.0f", Global.MotorRPM) + " RPM");
+            this.RPM.setText(String.format(Locale.ENGLISH, "%.0f RPM", Global.MotorRPM));
 		} catch (Exception e) {
 			e.getMessage();
 		}
 	}
 
-    public synchronized void UpdateWattHours() {
+    private synchronized void UpdateWattHours() {
         // TODO: implement method
     }
 
@@ -219,7 +216,7 @@ e.printStackTrace();
 				"Lap",
 				"Avg Amps (A)",
 				"Avg Volts (V)",
-                Global.Unit == Global.UNIT.KPH ? "Avg Spd (kph)" : "Avg Spd (mph)",
+                Global.SpeedUnit == Global.UNIT.KPH ? "Avg Spd (kph)" : "Avg Spd (mph)",
                 "Avg RPM",
 				"Amp hours (Ah)",
                 "Avg Wh/km",

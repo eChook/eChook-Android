@@ -142,7 +142,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
     }
 
     //OnClck callback to generate list of BT devices
-    protected static void setListPreferenceData(ListPreference lp) {
+    private static void setListPreferenceData(ListPreference lp) {
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -211,7 +211,7 @@ e.printStackTrace();
 					break;
 				case "prefSpeedUnits":
 					int units = Integer.valueOf(sharedPreferences.getString("prefSpeedUnits", ""));
-					Global.Unit = Global.UNIT.values()[units];
+                    Global.SpeedUnit = Global.UNIT.values()[units];
 					break;
 				case "prefLocationSwitch":
 					int location = sharedPreferences.getBoolean("prefLocationSwitch", false)? 1:0;

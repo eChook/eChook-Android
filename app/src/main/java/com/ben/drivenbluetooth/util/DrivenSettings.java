@@ -83,9 +83,9 @@ private static void Mode(SharedPreferences prefs) {
 private static void Units(SharedPreferences prefs) {
 								try {
 																int units = Integer.valueOf(prefs.getString("prefSpeedUnits", "0"));
-																Global.Unit = Global.UNIT.values()[units];
+                                    Global.SpeedUnit = Global.UNIT.values()[units];
 								} catch (Exception e) {
-																Global.Unit = Global.UNIT.MPH;
+                                    Global.SpeedUnit = Global.UNIT.MPH;
 								}
 }
 

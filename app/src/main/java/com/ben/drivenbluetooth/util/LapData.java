@@ -1,5 +1,7 @@
 package com.ben.drivenbluetooth.util;
 
+import com.ben.drivenbluetooth.Global;
+
 import java.util.concurrent.TimeUnit;
 
 public class LapData {
@@ -62,7 +64,32 @@ public class LapData {
 		return RPMAvg.getAverage();
 	}
 
-	public Double getAverageSpeedMPH() {
+    public Double getAverageSpeed() //Gets the Average speed for the globally declared speed unit
+    {
+        double ret = 0;
+        switch (Global.SpeedUnit) {
+            case MPH:
+                ret = SpeedMPSAvg.getAverage() * 2.23694;
+                break;
+            case KPH:
+                ret = SpeedMPSAvg.getAverage() * 3.6;
+                break;
+            case FFF:
+                ret = SpeedMPSAvg.getAverage() * 6012.88;
+                break;
+            case MPS:
+                ret = SpeedMPSAvg.getAverage();
+                break;
+            case KNOT:
+                ret = SpeedMPSAvg.getAverage() * 1.9438;
+                break;
+            default:
+                break;
+        }
+        return ret;
+    }
+
+    public Double getAverageSpeedMPH() {
         return SpeedMPSAvg.getAverage() * 2.2;
     }
 

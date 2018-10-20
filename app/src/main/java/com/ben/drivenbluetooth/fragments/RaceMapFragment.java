@@ -1,13 +1,16 @@
 package com.ben.drivenbluetooth.fragments;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,10 +49,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class RaceMapFragment extends Fragment
-        implements 	OnMapReadyCallback,
+        implements OnMapReadyCallback,
         GoogleMap.OnMapClickListener,
-        GoogleMap.OnInfoWindowClickListener
-{
+        GoogleMap.OnInfoWindowClickListener {
     private static Timer FragmentUpdateTimer;
     private GoogleMap map;
     private MapFragment mFragment;
@@ -84,19 +86,29 @@ public class RaceMapFragment extends Fragment
 	/*===================*/
     private void InitializeDataFields() {
         View v = getView();
-        Current 		= v.findViewById(R.id.current);
-        Voltage 		= v.findViewById(R.id.voltage);
-        RPM 			= v.findViewById(R.id.rpm);
-        Speed 			= v.findViewById(R.id.speed);
-        AmpHours		= v.findViewById(R.id.ampHours);
+        Current = v.findViewById(R.id.current);
+        Voltage = v.findViewById(R.id.voltage);
+        RPM = v.findViewById(R.id.rpm);
+        Speed = v.findViewById(R.id.speed);
+        AmpHours = v.findViewById(R.id.ampHours);
 
-        CurBearing		= v.findViewById(R.id.txtCurBearing);
-        SFLBearing		= v.findViewById(R.id.txtSFLBearing);
-        Accuracy		= v.findViewById(R.id.txtAccuracy);
+        CurBearing = v.findViewById(R.id.txtCurBearing);
+        SFLBearing = v.findViewById(R.id.txtSFLBearing);
+        Accuracy = v.findViewById(R.id.txtAccuracy);
     }
 
     private void InitializeMap(GoogleMap googleMap) {
         map = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling Permission Request Here
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         map.setMyLocationEnabled(true);
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(Global.Latitude, Global.Longitude))
@@ -352,7 +364,7 @@ e.printStackTrace();
                     AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
                     break;
                 case WheelSpeedMPS:
-                    Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.Unit));
+                    Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.SpeedUnit));
                     break;
                 case MotorSpeedRPM:
                     RPM.setText(String.format("%.0f", Global.MotorRPM) + " RPM");

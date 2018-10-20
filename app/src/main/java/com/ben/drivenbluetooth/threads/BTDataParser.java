@@ -237,7 +237,7 @@ public class BTDataParser extends Thread {
             Global.LapDataList.get(Global.Lap - 1).AddSpeedMPS(Global.SpeedMPS);
         }
 
-        GraphData.AddToHistory(Global.Unit == Global.UNIT.KPH ? Global.SpeedMPS * 3.6 : Global.SpeedMPS * 2.2, Global.SpeedHistory);
+        GraphData.AddToHistory(Global.SpeedUnit == Global.UNIT.KPH ? Global.SpeedMPS * 3.6 : Global.SpeedMPS * 2.2, Global.SpeedHistory);
 
         EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.WheelSpeedMPS));
     }

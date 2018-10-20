@@ -143,7 +143,7 @@ public class SixGraphsBars extends Fragment {
             new float[] {0, 50},	// amps
             new float[] {0, 50},	// temp
             new float[] {0, 2100},	// motor rpm
-            new float[] {0, UnitHelper.getMaxSpeed(Global.Unit)}	// speed
+            new float[]{0, UnitHelper.getMaxSpeed(Global.SpeedUnit)}    // speed
     };
 
     for (int i = 0; i < lineCharts.length; i++) {
@@ -182,7 +182,7 @@ public class SixGraphsBars extends Fragment {
             "Amps",
             "Temp",
             "RPM",
-            Global.Unit == Global.UNIT.KPH ? "kph" : "mph"
+            Global.SpeedUnit == Global.UNIT.KPH ? "kph" : "mph"
     };
 
     for (int i = 0; i < barCharts.length; i++) {
@@ -276,7 +276,7 @@ public class SixGraphsBars extends Fragment {
   /*===================*/
 	/* FRAGMENT UPDATE
 	/*===================*/
-  public void UpdateFragmentUI() {
+  private void UpdateFragmentUI() {
     UpdateVolts();
     UpdateAmps();
     UpdateThrottle();
@@ -381,8 +381,8 @@ e.printStackTrace();
 
   private void UpdateSpeed() {
     try {
-      Double speed = UnitHelper.getSpeed(Global.SpeedMPS, Global.Unit);
-      Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.Unit));
+      Double speed = UnitHelper.getSpeed(Global.SpeedMPS, Global.SpeedUnit);
+      Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.SpeedUnit));
 
       if (Global.EnableGraphs) {
         UpdateBarChart(SpeedBarChart, speed, Color.BLACK);

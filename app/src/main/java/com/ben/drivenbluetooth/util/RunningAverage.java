@@ -1,5 +1,7 @@
 package com.ben.drivenbluetooth.util;
 
+import android.support.annotation.NonNull;
+
 public class RunningAverage {
 	private long count;
 	private Double average;
@@ -36,6 +38,7 @@ public class RunningAverage {
 		return average;
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return String.format("%." + acc + "f", average);

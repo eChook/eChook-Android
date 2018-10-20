@@ -11,6 +11,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class AppUpgradeReceiver extends BroadcastReceiver {
 
@@ -28,7 +29,7 @@ public class AppUpgradeReceiver extends BroadcastReceiver {
 
         if (previousFile.exists()) {
             Date currentDate = Calendar.getInstance().getTime();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
             File backupFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), String.format("%s.%s.backup", Global.DATA_FILE, simpleDateFormat.format(currentDate)));
             previousFile.renameTo(backupFile);
         }
