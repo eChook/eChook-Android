@@ -10,7 +10,7 @@ def getVersionCodeTimestamp() {
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
 
     applicationVariants.all { variant ->
         variant.outputs.all {
@@ -20,8 +20,8 @@ android {
 
     defaultConfig {
         applicationId "com.ben.drivenbluetooth"
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion 26
+        targetSdkVersion 26
         versionCode getVersionCodeTimestamp()
         versionName "1.97e"
         multiDexEnabled true
