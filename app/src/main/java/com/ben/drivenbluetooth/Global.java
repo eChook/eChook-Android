@@ -39,11 +39,22 @@ public final class Global {
     public static final byte    GEAR_RATIO_ID           = 114; // r
     public static final byte    CYCLE_VIEW_ID           = 67;  // C
     public static final byte    LOOP_COUNTER_ID         = 108; // l
-    public static final byte    THROTTLE_MODE_ID        = 110; // n
+    public static final byte    THROTTLE_MODE_ID        = 110; // n - TODO Depreciated
     public static final byte    BRAKE_ID                = 66;  // B
-    public static final byte    FAN_STATUS_ID           = 70;  // F
-    public static final byte    FAN_DUTY_ID             = 102; // f
+    public static final byte    FAN_STATUS_ID           = 70;  // F - TODO Depreciated
+    public static final byte    FAN_DUTY_ID             = 102; // f - TODO Depreciated
     public static final byte    STEERING_ID             = 122; // z
+    public static final byte    CUSTOM_0                = 48;  // 0
+    public static final byte    CUSTOM_1                = 49;  // 1
+    public static final byte    CUSTOM_2                = 50;  // 2
+    public static final byte    CUSTOM_3                = 51;  // 3
+    public static final byte    CUSTOM_4                = 52;  // 4
+    public static final byte    CUSTOM_5                = 53;  // 5
+    public static final byte    CUSTOM_6                = 54;  // 6
+    public static final byte    CUSTOM_7                = 55;  // 7
+    public static final byte    CUSTOM_8                = 56;  // 8
+    public static final byte    CUSTOM_9                = 57;  // 9
+
 
     public static final int     DATA_SAVE_INTERVAL      = 250; // save interval in milliseconds
 
@@ -53,8 +64,6 @@ public final class Global {
     public static final int     LOCATION_FAST_INTERVAL  = 1000;     // High speed location UpdateLocationSetting interval in ms
     public static final float   LAP_TRIGGER_RANGE       = 20f;      // locus around the start location to trigger a lap
     public static final int     MAP_UPDATE_INTERVAL     = 5000;
-    public static final String  SOCKETADDRESS           = "exantas.me";
-    public static final int     SOCKETPORT              = 8081;
 
     public static final int     PERMISSIONS_REQUEST     = 1;
 

@@ -1,7 +1,6 @@
 package com.ben.drivenbluetooth.fragments;
 
 import android.app.Fragment;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +20,6 @@ import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
@@ -32,8 +27,6 @@ import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.ArrayList;
 
 
 public class FourGraphsBars extends Fragment {
@@ -88,12 +81,12 @@ public class FourGraphsBars extends Fragment {
 		RPMLineChart    = v.findViewById(R.id.RPMGraph);
 		SpeedLineChart  = v.findViewById(R.id.SpeedGraph);
 
-		BarChart barCharts[] = new BarChart[] {
-						VoltsBarChart,
-						AmpsBarChart,
-						RPMBarChart,
-						SpeedBarChart
-		};
+//		BarChart barCharts[] = new BarChart[] {
+//						VoltsBarChart,
+//						AmpsBarChart,
+//						RPMBarChart,
+//						SpeedBarChart
+//		};
 
 		LineChart lineCharts[] = new LineChart[] {
 						VoltsLineChart,
@@ -163,43 +156,43 @@ public class FourGraphsBars extends Fragment {
 						Global.Unit == Global.UNIT.KPH ? "kph" : "mph"
 		};
 
-		for (int i = 0; i < barCharts.length; i++) {
-			BarChart chart = barCharts[i];
-
-			if (Global.EnableGraphs) {
-				// Disable right-hand y-axis
-				chart.getAxisRight().setEnabled(false);
-
-				// Disable legend
-				chart.getLegend().setEnabled(false);
-				chart.setDescription(new Description());
-
-				chart.setDrawGridBackground(false);
-
-				// Set y-axis limits
-				YAxis yAxis = chart.getAxisLeft();
-				yAxis.setAxisMinimum(minMax[i][0]);
-				yAxis.setAxisMaximum(minMax[i][1]);
-
-				// Create data
-				BarEntry entry = new BarEntry(0, 0);
-				BarDataSet dataSet = new BarDataSet(new ArrayList<BarEntry>(), legend[i]);
-				BarData data = new BarData();
-				data.setDrawValues(false);
-
-				// Attach data
-				dataSet.addEntry(entry);
-				data.addDataSet(dataSet);
-				chart.setData(data);
-
-				chart.setHardwareAccelerationEnabled(true);
-			} else {
-				chart.setNoDataText("");
-			}
-
-			// Refresh chart
-			chart.invalidate();
-		}
+//		for (int i = 0; i < barCharts.length; i++) {
+//			BarChart chart = barCharts[i];
+//
+//			if (Global.EnableGraphs) {
+//				// Disable right-hand y-axis
+//				chart.getAxisRight().setEnabled(false);
+//
+//				// Disable legend
+//				chart.getLegend().setEnabled(false);
+//				chart.setDescription(new Description());
+//
+//				chart.setDrawGridBackground(false);
+//
+//				// Set y-axis limits
+//				YAxis yAxis = chart.getAxisLeft();
+//				yAxis.setAxisMinimum(minMax[i][0]);
+//				yAxis.setAxisMaximum(minMax[i][1]);
+//
+//				// Create data
+//				BarEntry entry = new BarEntry(0, 0);
+//				BarDataSet dataSet = new BarDataSet(new ArrayList<BarEntry>(), legend[i]);
+//				BarData data = new BarData();
+//				data.setDrawValues(false);
+//
+//				// Attach data
+//				dataSet.addEntry(entry);
+//				data.addDataSet(dataSet);
+//				chart.setData(data);
+//
+//				chart.setHardwareAccelerationEnabled(true);
+//			} else {
+//				chart.setNoDataText("");
+//			}
+//
+//			// Refresh chart
+//			chart.invalidate();
+//		}
 	}
 
 	/*===================*/
@@ -230,10 +223,10 @@ public class FourGraphsBars extends Fragment {
 		RPM					= null;
 		Speed				= null;
 
-		AmpsBarChart		= null;
-		VoltsBarChart		= null;
-		SpeedBarChart	    = null;
-		RPMBarChart 	    = null;
+//		AmpsBarChart		= null;
+//		VoltsBarChart		= null;
+//		SpeedBarChart	    = null;
+//		RPMBarChart 	    = null;
 
 		VoltsLineChart      = null;
 		AmpsLineChart       = null;
@@ -289,7 +282,7 @@ e.printStackTrace();
 			Volts.setText(String.format("%.2f", Global.Volts));
 			Volts.setTextColor(ColorHelper.GetVoltsColor(Global.Volts));
 			if (Global.EnableGraphs) {
-				UpdateBarChart(VoltsBarChart, Global.Volts, ColorHelper.GetVoltsColor(Global.Volts));
+//				UpdateBarChart(VoltsBarChart, Global.Volts, ColorHelper.GetVoltsColor(Global.Volts));
 				UpdateLineChart(VoltsLineChart);
 			}
 		} catch (Exception e) {
@@ -302,7 +295,7 @@ e.printStackTrace();
 			Amps.setText(String.format("%.1f", Global.Amps));
 			Amps.setTextColor(ColorHelper.GetAmpsColor(Global.Amps));
 			if (Global.EnableGraphs) {
-				UpdateBarChart(AmpsBarChart, Global.Amps, ColorHelper.GetAmpsColor(Global.Amps));
+//				UpdateBarChart(AmpsBarChart, Global.Amps, ColorHelper.GetAmpsColor(Global.Amps));
 				UpdateLineChart(AmpsLineChart);
 			}
 		} catch (Exception e) {
@@ -324,7 +317,7 @@ e.printStackTrace();
 			Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.Unit));
 
 			if (Global.EnableGraphs) {
-				UpdateBarChart(SpeedBarChart, speed, Color.BLACK);
+//				UpdateBarChart(SpeedBarChart, speed, Color.BLACK);
 				UpdateLineChart(SpeedLineChart);
 			}
 
@@ -338,7 +331,7 @@ e.printStackTrace();
 			RPM.setText(String.format("%.0f", Global.MotorRPM));
 			RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
 			if (Global.EnableGraphs) {
-				UpdateBarChart(RPMBarChart, Global.MotorRPM, ColorHelper.GetRPMColor(Global.MotorRPM));
+//				UpdateBarChart(RPMBarChart, Global.MotorRPM, ColorHelper.GetRPMColor(Global.MotorRPM));
 				UpdateLineChart(RPMLineChart);
 			}
 
@@ -355,12 +348,12 @@ e.printStackTrace();
 		}
 	}
 
-	private void UpdateBarChart(BarChart chart, Double value, int color) {
-		chart.getBarData().getDataSetByIndex(0).getEntryForIndex(0).setY(value.floatValue());
-		DataSet set = (DataSet) chart.getData().getDataSetByIndex(0);
-		set.setColor(color);
-		chart.invalidate();
-	}
+//	private void UpdateBarChart(BarChart chart, Double value, int color) {
+//		chart.getBarData().getDataSetByIndex(0).getEntryForIndex(0).setY(value.floatValue());
+//		DataSet set = (DataSet) chart.getData().getDataSetByIndex(0);
+//		set.setColor(color);
+//		chart.invalidate();
+//	}
 
 	private void UpdateLineChart(LineChart graph) {
 		graph.notifyDataSetChanged();

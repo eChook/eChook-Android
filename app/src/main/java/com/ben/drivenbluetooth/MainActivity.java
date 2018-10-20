@@ -39,6 +39,7 @@ import com.ben.drivenbluetooth.events.PreferenceEvent;
 import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.events.UpdateUIEvent;
 import com.ben.drivenbluetooth.fragments.FourGraphsBars;
+import com.ben.drivenbluetooth.fragments.SimpleDataFragment;
 import com.ben.drivenbluetooth.fragments.LapHistoryFragment;
 import com.ben.drivenbluetooth.fragments.RaceMapFragment;
 import com.ben.drivenbluetooth.fragments.SettingsFragment;
@@ -306,7 +307,7 @@ private void InitializeAllTheThings() {
 private void InitializeFragmentList() {
         RaceMapFragment rmf = new RaceMapFragment();
         rmf.initialize(myDrivenLocation);
-
+        FragmentList.add(new SimpleDataFragment());
         FragmentList.add(new SixGraphsBars());
         FragmentList.add(new FourGraphsBars());
         FragmentList.add(rmf);

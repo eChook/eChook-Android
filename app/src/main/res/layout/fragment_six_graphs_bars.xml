@@ -144,7 +144,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Current"
         android:gravity="center"
-        android:id="@+id/textView3"
+        android:id="@+id/CurrentLabel"
         android:textSize="20sp"
         custom:layout_constraintRight_toLeftOf="@+id/textView9"
         custom:layout_constraintLeft_toLeftOf="@+id/guideline2"
@@ -164,7 +164,7 @@
         custom:layout_constraintLeft_toLeftOf="@+id/guideline2"
         custom:layout_constraintRight_toLeftOf="@+id/guideline3"
         custom:layout_constraintHorizontal_bias="0.0"
-        custom:layout_constraintTop_toBottomOf="@+id/textView3"/>
+        custom:layout_constraintTop_toBottomOf="@+id/CurrentLabel"/>
 
     <com.github.mikephil.charting.charts.BarChart
         android:layout_width="0dp"
@@ -236,14 +236,14 @@
         android:text="####"
         custom:layout_constraintRight_toLeftOf="@+id/guideline9"
         custom:layout_constraintLeft_toLeftOf="@+id/guideline8"
-        custom:layout_constraintTop_toBottomOf="@+id/textView5"/>
+        custom:layout_constraintTop_toBottomOf="@+id/RPMLabel"/>
 
     <TextView
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="RPM"
         android:gravity="center"
-        android:id="@+id/textView5"
+        android:id="@+id/RPMLabel"
         android:textSize="20sp"
         custom:layout_constraintLeft_toLeftOf="@+id/guideline8"
         custom:layout_constraintRight_toLeftOf="@+id/guideline9"
@@ -265,7 +265,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Speed"
         android:gravity="center"
-        android:id="@+id/textView7"
+        android:id="@+id/SpeedLabel"
         android:textSize="20sp"
         custom:layout_constraintRight_toRightOf="parent"
         custom:layout_constraintLeft_toLeftOf="@+id/guideline9"
@@ -284,7 +284,7 @@
         android:text="##.# mph"
         custom:layout_constraintRight_toRightOf="parent"
         custom:layout_constraintLeft_toLeftOf="@+id/guideline9"
-        custom:layout_constraintTop_toBottomOf="@+id/textView7"/>
+        custom:layout_constraintTop_toBottomOf="@+id/SpeedLabel"/>
 
     <com.github.mikephil.charting.charts.BarChart
         android:layout_width="0dp"

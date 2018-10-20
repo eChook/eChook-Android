@@ -1,0 +1,412 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/CenterView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@+id/open"
+    android:layout_below="@+id/textView8"
+    android:layout_alignEnd="@+id/txt_Mode"
+    android:gravity="center">
+
+    <!-- TEXT -->
+
+
+    <LinearLayout
+        android:id="@+id/VoltageColumn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/guideline16"
+        app:layout_constraintEnd_toStartOf="@+id/guideline11"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/VoltageLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:text="Voltage"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/voltage"
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:width="150dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/asap"
+            android:gravity="center"
+            android:inputType="none"
+            android:singleLine="false"
+            android:text="##.#"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/LLV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Last Lap" />
+
+        <TextView
+            android:id="@+id/voltage_ll"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:width="150dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/asap"
+            android:gravity="center"
+            android:inputType="none"
+            android:singleLine="false"
+            android:text="---"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/voltage_ll_diff"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:width="150dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/asap"
+            android:gravity="center"
+            android:inputType="none"
+            android:singleLine="false"
+            android:text="(---)"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/CurrentColumn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/guideline16"
+        app:layout_constraintEnd_toStartOf="@+id/guideline13"
+        app:layout_constraintStart_toStartOf="@+id/guideline11"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/CurrentLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:text="Current"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/current"
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:width="150dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/asap"
+            android:gravity="center"
+            android:inputType="none"
+            android:singleLine="false"
+            android:text="##.#"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/LLV2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Last Lap" />
+
+        <TextView
+            android:id="@+id/current_ll"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:width="150dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/asap"
+            android:gravity="center"
+            android:inputType="none"
+            android:singleLine="false"
+            android:text="---"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/current_ll_diff"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:width="150dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/asap"
+            android:gravity="center"
+            android:inputType="none"
+            android:singleLine="false"
+            android:text="(---)"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/RMPColumn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/guideline16"
+        app:layout_constraintEnd_toStartOf="@+id/guideline14"
+        app:layout_constraintHorizontal_bias="0.898"
+        app:layout_constraintStart_toStartOf="@+id/guideline13"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.49">
+
+        <TextView
+            android:id="@+id/RPMLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:text="RPM"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/rpm"
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:width="150dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/asap"
+            android:gravity="center"
+            android:inputType="none"
+            android:singleLine="false"
+            android:text="####"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/LLV3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Last Lap" />
+
+        <TextView
+            android:id="@+id/rpm_ll"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:width="150dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/asap"
+            android:gravity="center"
+            android:inputType="none"
+            android:singleLine="false"
+            android:text="---"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/rpm_ll_diff"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:width="150dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/asap"
+            android:gravity="center"
+            android:inputType="none"
+            android:singleLine="false"
+            android:text="(---)"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/ampHours"
+        android:layout_width="145dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="##.## Ah"
+        android:textIsSelectable="false"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/guideline17"
+        app:layout_constraintEnd_toStartOf="@+id/guideline13"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline16" />
+
+    <TextView
+        android:id="@+id/wattHours"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="##.## Wh/km"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/guideline17"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline13"
+        app:layout_constraintTop_toTopOf="@+id/guideline16" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.25" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="263dp"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/SpeedColumn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/guideline16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline14"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/SpeedLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:text="Speed"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/speed"
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:width="150dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/asap"
+            android:gravity="center"
+            android:inputType="none"
+            android:singleLine="false"
+            android:text="##.#"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/LLV4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Last Lap" />
+
+        <TextView
+            android:id="@+id/speed_ll"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:width="150dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/asap"
+            android:gravity="center"
+            android:inputType="none"
+            android:singleLine="false"
+            android:text="---"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/speed_ll_diff"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:width="150dp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/asap"
+            android:gravity="center"
+            android:inputType="none"
+            android:singleLine="false"
+            android:text="(---)"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="301dp" />
+
+</android.support.constraint.ConstraintLayout>
