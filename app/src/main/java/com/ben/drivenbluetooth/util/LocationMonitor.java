@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
-import com.ben.drivenbluetooth.events.LocationEvent;
+import com.ben.drivenbluetooth.events.NewLapEvent;
 import com.ben.drivenbluetooth.events.PreferenceEvent;
 import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.google.android.gms.common.ConnectionResult;
@@ -32,7 +32,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
-public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks,
+public class LocationMonitor implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         RaceObserver.RaceObserverListener {
@@ -56,7 +56,7 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks,
     /*===================*/
 /* DRIVENLOCATION
    /*===================*/
-    public DrivenLocation(Chronometer timer, TextView prevLapTime, Context ctx) {
+    public LocationMonitor(Chronometer timer, TextView prevLapTime, Context ctx) {
         context = ctx;
         mTimer = timer;
         mPrevLapTime = prevLapTime;
@@ -351,7 +351,7 @@ public class DrivenLocation implements GoogleApiClient.ConnectionCallbacks,
             Global.Lap++;
 
             // Update the lap text
-            EventBus.getDefault().post(new LocationEvent(LocationEvent.EventType.NewLap));
+            EventBus.getDefault().post(new NewLapEvent());
 
             // reset the lap timer
             resetLapTimer();

@@ -34,7 +34,6 @@ public class BTStreamReader extends Thread {
     @Override
     public void run() {
 		byte[] buffer = new byte[1024];
-	    int bytes;
 		long latestMillis = System.currentTimeMillis();
 
 	    this.stopWorker = false;

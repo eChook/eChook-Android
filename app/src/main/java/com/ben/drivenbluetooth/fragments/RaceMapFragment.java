@@ -19,7 +19,7 @@ import com.ben.drivenbluetooth.R;
 import com.ben.drivenbluetooth.events.ArduinoEvent;
 import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.util.Bezier;
-import com.ben.drivenbluetooth.util.DrivenLocation;
+import com.ben.drivenbluetooth.util.LocationMonitor;
 import com.ben.drivenbluetooth.util.RaceObserver;
 import com.ben.drivenbluetooth.util.UnitHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -66,7 +66,7 @@ public class RaceMapFragment extends Fragment
     private Polyline ObserverToCarLine;
     private Circle ObserverLocation;
 
-    private DrivenLocation myDrivenLocation;
+    private LocationMonitor myLocationMonitor;
 
     /*===================*/
 	/* RACEMAPFRAGMENT
@@ -75,8 +75,8 @@ public class RaceMapFragment extends Fragment
         // Required empty public constructor
     }
 
-    public void initialize(DrivenLocation dl) {
-        myDrivenLocation = dl;
+    public void initialize(LocationMonitor dl) {
+        myLocationMonitor = dl;
     }
 
     /*===================*/
@@ -197,7 +197,7 @@ e.printStackTrace();
     private void GetObserver() {
         if (ObserverLocation != null) {
             try {
-                ObserverLocation = map.addCircle(myDrivenLocation.ObserverLocation);
+                ObserverLocation = map.addCircle(myLocationMonitor.ObserverLocation);
             } catch (NullPointerException ignored) {}
         }
     }
@@ -226,17 +226,17 @@ e.printStackTrace();
         builder.setMessage("Track orientation");
         builder.setPositiveButton("Clockwise", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                myDrivenLocation.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.CLOCKWISE);
-                myDrivenLocation.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.CLOCKWISE);
+                myLocationMonitor.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.CLOCKWISE);
+                myLocationMonitor.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.CLOCKWISE);
                 map.clear();
-                ObserverLocation = map.addCircle(myDrivenLocation.ObserverLocation);
+                ObserverLocation = map.addCircle(myLocationMonitor.ObserverLocation);
             }
         });
         builder.setNegativeButton("Anticlockwise", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                myDrivenLocation.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.ANTICLOCKWISE);
+                myLocationMonitor.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.ANTICLOCKWISE);
                 map.clear();
-                ObserverLocation = map.addCircle(myDrivenLocation.ObserverLocation);
+                ObserverLocation = map.addCircle(myLocationMonitor.ObserverLocation);
             }
         });
         builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
@@ -294,17 +294,17 @@ e.printStackTrace();
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
             if (pathHistory != null) {
-//                pathHistory.setPoints(myDrivenLocation.pathHistory.getPoints());
+//                pathHistory.setPoints(myLocationMonitor.pathHistory.getPoints());
             }
 
             // debugger lines
-            if (ObserverLocation != null && myDrivenLocation.getCurrentLocation() != null) {
+            if (ObserverLocation != null && myLocationMonitor.getCurrentLocation() != null) {
                 ObserverToCarLine.setPoints(new ArrayList<>(
                         Arrays.asList(
                                 ObserverLocation.getCenter(),
                                 new LatLng(
-                                        myDrivenLocation.getCurrentLocation().getLatitude(),
-                                        myDrivenLocation.getCurrentLocation().getLongitude()
+                                        myLocationMonitor.getCurrentLocation().getLatitude(),
+                                        myLocationMonitor.getCurrentLocation().getLongitude()
                                 )
                         )
                 ));
@@ -323,7 +323,7 @@ e.printStackTrace();
             }
 
             try {
-                ObserverLocation.setCenter(myDrivenLocation.ObserverLocation.getCenter());
+                ObserverLocation.setCenter(myLocationMonitor.ObserverLocation.getCenter());
             } catch (NullPointerException ignored) {
             }            // Observerlocation has not been initialized yet so do nothing
 
@@ -364,8 +364,8 @@ e.printStackTrace();
     }
 
     private void UpdateMapText() {
-        CurBearing.setText("car: " + String.format("%.1f", myDrivenLocation.GetRaceObserverBearing_Current()));
-        SFLBearing.setText("sfl: " + String.format("%.1f", myDrivenLocation.GetRaceObserverBearing_SFL()));
+        CurBearing.setText("car: " + String.format("%.1f", myLocationMonitor.GetRaceObserverBearing_Current()));
+        SFLBearing.setText("sfl: " + String.format("%.1f", myLocationMonitor.GetRaceObserverBearing_SFL()));
         Accuracy.setText("acc: " + String.format("%.1f", Global.GPSAccuracy));
     }
 

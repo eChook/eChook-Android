@@ -67,22 +67,11 @@ public class FourGraphsBars extends Fragment {
 
 	private void InitializeGraphs() {
 		View v = getView();
-//		VoltsBarChart   = v.findViewById(R.id.VoltsBarChart);
-//		AmpsBarChart    = v.findViewById(R.id.AmpsBarChart);
-//		RPMBarChart     = v.findViewById(R.id.RPMBarChart);
-//		SpeedBarChart   = v.findViewById(R.id.SpeedBarChart);
 
 		VoltsLineChart  = v.findViewById(R.id.VoltsLineChart);
 		AmpsLineChart   = v.findViewById(R.id.AmpsLineChart);
 		RPMLineChart    = v.findViewById(R.id.RPMGraph);
 		SpeedLineChart  = v.findViewById(R.id.SpeedGraph);
-
-//		BarChart barCharts[] = new BarChart[] {
-//						VoltsBarChart,
-//						AmpsBarChart,
-//						RPMBarChart,
-//						SpeedBarChart
-//		};
 
 		LineChart lineCharts[] = new LineChart[] {
 						VoltsLineChart,
@@ -152,43 +141,6 @@ public class FourGraphsBars extends Fragment {
                 Global.SpeedUnit == Global.UNIT.KPH ? "kph" : "mph"
 		};
 
-//		for (int i = 0; i < barCharts.length; i++) {
-//			BarChart chart = barCharts[i];
-//
-//			if (Global.EnableGraphs) {
-//				// Disable right-hand y-axis
-//				chart.getAxisRight().setEnabled(false);
-//
-//				// Disable legend
-//				chart.getLegend().setEnabled(false);
-//				chart.setDescription(new Description());
-//
-//				chart.setDrawGridBackground(false);
-//
-//				// Set y-axis limits
-//				YAxis yAxis = chart.getAxisLeft();
-//				yAxis.setAxisMinimum(minMax[i][0]);
-//				yAxis.setAxisMaximum(minMax[i][1]);
-//
-//				// Create data
-//				BarEntry entry = new BarEntry(0, 0);
-//				BarDataSet dataSet = new BarDataSet(new ArrayList<BarEntry>(), legend[i]);
-//				BarData data = new BarData();
-//				data.setDrawValues(false);
-//
-//				// Attach data
-//				dataSet.addEntry(entry);
-//				data.addDataSet(dataSet);
-//				chart.setData(data);
-//
-//				chart.setHardwareAccelerationEnabled(true);
-//			} else {
-//				chart.setNoDataText("");
-//			}
-//
-//			// Refresh chart
-//			chart.invalidate();
-//		}
 	}
 
 	/*===================*/

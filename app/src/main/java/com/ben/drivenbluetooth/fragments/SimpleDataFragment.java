@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.R;
 import com.ben.drivenbluetooth.events.ArduinoEvent;
-import com.ben.drivenbluetooth.events.LocationEvent;
+import com.ben.drivenbluetooth.events.NewLapEvent;
 import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.util.ColorHelper;
 import com.ben.drivenbluetooth.util.UnitHelper;
@@ -20,8 +20,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Locale;
-
-import static com.ben.drivenbluetooth.events.LocationEvent.EventType.NewLap;
 
 
 public class SimpleDataFragment extends Fragment {
@@ -119,10 +117,8 @@ public class SimpleDataFragment extends Fragment {
 	}
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLocationEvent(LocationEvent event) {
-        if (event.eventType == NewLap) {
+	public void onLocationEvent(NewLapEvent event) {
             UpdateLap();
-        }
     }
 
 	@Subscribe(threadMode = ThreadMode.MAIN)

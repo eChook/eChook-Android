@@ -23,9 +23,13 @@ public class ArduinoEvent {
         WattHours
     }
 
+    public double data;
+
     public final EventType eventType;
 
-    public ArduinoEvent(EventType e) {
+    public ArduinoEvent(EventType e, double _data) {
+
         eventType = e;
+        data = _data;
     }
 }

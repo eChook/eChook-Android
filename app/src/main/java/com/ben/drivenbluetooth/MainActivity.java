@@ -34,7 +34,7 @@ import android.widget.TextView;
 
 import com.ben.drivenbluetooth.events.ArduinoEvent;
 import com.ben.drivenbluetooth.events.DialogEvent;
-import com.ben.drivenbluetooth.events.LocationEvent;
+import com.ben.drivenbluetooth.events.NewLapEvent;
 import com.ben.drivenbluetooth.events.PreferenceEvent;
 import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.events.UpdateUIEvent;
@@ -52,9 +52,9 @@ import com.ben.drivenbluetooth.threads.TelemetrySender;
 import com.ben.drivenbluetooth.util.Accelerometer;
 import com.ben.drivenbluetooth.util.BluetoothManager;
 import com.ben.drivenbluetooth.util.CyclingArrayList;
-import com.ben.drivenbluetooth.util.DrivenLocation;
 import com.ben.drivenbluetooth.util.DrivenSettings;
 import com.ben.drivenbluetooth.util.GraphData;
+import com.ben.drivenbluetooth.util.LocationMonitor;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -92,7 +92,7 @@ public class MainActivity
 
     public static final Handler MainActivityHandler = new Handler();
 
-    public DrivenLocation myDrivenLocation;     // must be initialized below or else null object ref error
+    public LocationMonitor myLocationMonitor;     // must be initialized below or else null object ref error
 
     public static Accelerometer myAccelerometer;
 
@@ -141,7 +141,7 @@ public class MainActivity
 
         DrivenSettings.InitializeSettings(context);
 
-        myDrivenLocation = new DrivenLocation(LapTimer, prevLapTime, context); // must be initialized here or else null object ref error
+        myLocationMonitor = new LocationMonitor(LapTimer, prevLapTime, context); // must be initialized here or else null object ref error
 
 
         InitializeLongClickStart();
@@ -162,7 +162,7 @@ public class MainActivity
     @Override
     protected void onStart() {
         super.onStart();
-        myDrivenLocation.connect();
+        myLocationMonitor.connect();
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
@@ -172,7 +172,7 @@ public class MainActivity
     protected void onStop() {
         super.onStop();
         try {
-            myDrivenLocation.disconnect();
+            myLocationMonitor.disconnect();
         } catch (Exception ignored) {
         }
     }
@@ -193,7 +193,7 @@ public class MainActivity
 
 
         myAccelerometer = null;
-        myDrivenLocation = null;
+        myLocationMonitor = null;
         myBluetoothManager.unregisterListeners();
 
         FragmentList.clear();
@@ -305,7 +305,7 @@ public class MainActivity
 
     private void InitializeFragmentList() {
         RaceMapFragment rmf = new RaceMapFragment();
-        rmf.initialize(myDrivenLocation);
+        rmf.initialize(myLocationMonitor);
         FragmentList.add(new SimpleDataFragment());
         FragmentList.add(new SixGraphsBars());
         FragmentList.add(new FourGraphsBars());
@@ -512,7 +512,7 @@ public class MainActivity
      */
     @Deprecated
     public void CrossFinishLine(View v) {
-        myDrivenLocation.SimulateCrossStartFinishLine();
+        myLocationMonitor.SimulateCrossStartFinishLine();
     }
 
     /**
@@ -723,7 +723,7 @@ public class MainActivity
 
         LapTimer.stop();
         LapTimer.setBase(SystemClock.elapsedRealtime());
-        myDrivenLocation.ActivateLaunchMode();
+        myLocationMonitor.ActivateLaunchMode();
     }
 
     /**
@@ -875,12 +875,8 @@ public class MainActivity
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLocationEvent(LocationEvent e) {
-        switch (e.eventType) {
-            case NewLap:
+    public void onLocationEvent(NewLapEvent e) {
                 UpdateLap();
-                break;
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
