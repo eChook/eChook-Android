@@ -63,12 +63,8 @@ private TimerTask sendJsonTask = new TimerTask(){
         @Override
         public void run() {
                 if (telEnabled) {
-                        try {
                                 Log.d("eChook", "About to trigger JSON Data");
                                 Boolean success = sendJSONData();
-                        } catch (IOException e) {
-                                e.printStackTrace();
-                        }
                 }
         }
 };

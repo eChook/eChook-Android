@@ -67,10 +67,10 @@ public class FourGraphsBars extends Fragment {
 
 	private void InitializeGraphs() {
 		View v = getView();
-		VoltsBarChart   = v.findViewById(R.id.VoltsBarChart);
-		AmpsBarChart    = v.findViewById(R.id.AmpsBarChart);
-		RPMBarChart     = v.findViewById(R.id.RPMBarChart);
-		SpeedBarChart   = v.findViewById(R.id.SpeedBarChart);
+//		VoltsBarChart   = v.findViewById(R.id.VoltsBarChart);
+//		AmpsBarChart    = v.findViewById(R.id.AmpsBarChart);
+//		RPMBarChart     = v.findViewById(R.id.RPMBarChart);
+//		SpeedBarChart   = v.findViewById(R.id.SpeedBarChart);
 
 		VoltsLineChart  = v.findViewById(R.id.VoltsLineChart);
 		AmpsLineChart   = v.findViewById(R.id.AmpsLineChart);
