@@ -25,7 +25,7 @@ import java.util.TimerTask;
 //import java.util.Iterator;
 
 public class TelemetrySender extends Thread {
-private boolean telEnabled = false;
+private boolean telEnabled;
 private Timer telUpdateTimer = new Timer();
 private String echookID = "";
 private boolean waitingForLogin = false;

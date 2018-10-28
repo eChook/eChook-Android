@@ -46,7 +46,6 @@ public class BTStreamReader extends Thread {
 
 				if (bytesAvailable > 0) {
 					byte[] packetBytes = new byte[bytesAvailable];
-					bytes = mmInStream.read(packetBytes);
 
 					// UpdateLocationSetting the timekeeping variable
 					latestMillis = System.currentTimeMillis();
