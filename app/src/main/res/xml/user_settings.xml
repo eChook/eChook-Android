@@ -28,8 +28,8 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="prefGraphsSwitch"
-            android:summaryOff="Reduces performance and increased battery drain if enabled."
-            android:summaryOn="Reduces performance and increased battery drain if enabled. Looks nice though."
+            android:summaryOff="Reduced performance and increased battery drain if enabled."
+            android:summaryOn="Reduced performance and increased battery drain if enabled. Looks nice though."
             android:title="Enable Graphs"
 
             />
@@ -73,11 +73,17 @@
 		android:key="prefKeySensors">
         <SwitchPreference
             android:key="prefLocationSwitch"
-			android:title="Enable GPS"
+            android:title="Use Location (GPS)"
 			android:defaultValue="false"
 			android:summary="Required for lap counting and telemetry location"
 			/>
+        <SwitchPreference
+            android:key="prefSpeedDisplaySwitch"
+            android:title="Display GPS Speed"
+            android:defaultValue="false"
+            android:summary="App displays GPS Speed instead of wheel sensor speed" />
 	</PreferenceCategory>
+
     <PreferenceCategory
         android:key="prefKeyEchookLiveData"
         android:title="eChook Live Data">

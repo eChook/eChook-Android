@@ -133,6 +133,7 @@ public final class Global {
     public static MODE Mode;
     public static UNIT SpeedUnit;
 	public static LOCATION LocationStatus;
+    public static boolean dispalyGpsSpeed;
 	public static ACCELEROMETER Accelerometer;
     public static THROTTLEMODE ThrottleMode;
 

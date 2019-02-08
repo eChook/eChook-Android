@@ -14,6 +14,7 @@ import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,8 +58,14 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             final ListPreference btDevListPreference = (ListPreference) findPreference("prefBTDeviceName");
 
             // This is required if you don't have 'entries' and 'entryValues' in your XML - which can't be hard coded for BT devices
-            setListPreferenceData(btDevListPreference);
 
+            String[] defaultEntries = {"Unable to find devices"};
+            CharSequence[] entryValues = defaultEntries;
+
+            btDevListPreference.setEntries(defaultEntries);
+//            btDevListPreference.setDefaultValue("1");
+            btDevListPreference.setEntryValues(entryValues);
+            setListPreferenceData(btDevListPreference);
 
             //Check if DweetPro Login worked
             Preference dweetProPref = findPreference("prefDweetLocked");
@@ -96,12 +103,13 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             });
 
         }catch (Exception e) {
+            Log.d("eChook", "Error occurred in Settings onCreatePreference.");
             e.printStackTrace();
 
             final AlertDialog.Builder errorBox = new AlertDialog.Builder(this.getActivity());
             errorBox.setMessage("That wasn't supposed to happen. Please clear app cache and try again")
                     .setTitle("Oops! Sorry.");
-            AlertDialog dialog = errorBox.show();
+            // AlertDialog dialog = errorBox.show();
         }
 
     }
@@ -141,7 +149,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
     }
 
-    //OnClck callback to generate list of BT devices
+    //OnClick callback to generate list of BT devices
     private static void setListPreferenceData(ListPreference lp) {
 
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -152,6 +160,8 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         for(BluetoothDevice bt : pairedDevices) {
             devTotalCount ++;
         }
+
+        Log.d("BT", "BT Device Count:" + devTotalCount);
 
         CharSequence[] entries = new CharSequence[devTotalCount];
 
@@ -218,6 +228,20 @@ e.printStackTrace();
 					Global.LocationStatus = Global.LOCATION.values()[location];
 					EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.LocationChange));
 					break;
+                case "prefSpeedDisplaySwitch":
+                    Global.dispalyGpsSpeed = sharedPreferences.getBoolean("prefSpeedDisplaySwitch", false);
+                    //Now enable GPS Location if Disabled
+                    if (Global.dispalyGpsSpeed) {
+                        if (sharedPreferences.getBoolean("prefLocationSwitch", false)) {
+                            //Use GPS is Not Enabled, enable it
+                            Log.d("eChook", "Attempting to enable GPS");
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putBoolean("prefLocationSwitch", true);
+                            editor.apply();
+
+                        }
+                    }
+                    break;
 				case "prefAccelerometer":
 					int accelerometer = Integer.valueOf(sharedPreferences.getString("prefAccelerometer", ""));
 					Global.Accelerometer = Global.ACCELEROMETER.values()[accelerometer];
@@ -227,11 +251,14 @@ e.printStackTrace();
                     if(!Global.BTDeviceNames.isEmpty()) {
                         Global.BTDeviceName = sharedPreferences.getString("prefBTDeviceName", "");
                         EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.BTDeviceNameChange));
+                        Log.d("eChook", "Updated Global Bluetooth Name to " + Global.BTDeviceName);
+                        final ListPreference lp = (ListPreference) findPreference("prefBTDeviceName");
+                        lp.setSummary(Global.BTDeviceName);
                     }
 					break;
 				case "prefCarName":
 					Global.CarName = sharedPreferences.getString("prefCarName","");
-                    EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.BTDeviceNameChange));
+                    EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.CarNameChange));
 					break;
 				case "prefGraphsSwitch":
 					Global.EnableGraphs = sharedPreferences.getBoolean("prefGraphsSwitch", false);

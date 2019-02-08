@@ -223,7 +223,9 @@ public class DataToCsvFile extends Thread {
     public void cancel() {
         this.stopWorker = true;
         try {
-            oStream.close();
+            if (oStream != null) {
+                oStream.close();
+            }
         } catch (Exception e) {
             EventBus.getDefault().post(new SnackbarEvent(e));
             e.printStackTrace();

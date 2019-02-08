@@ -809,6 +809,7 @@ public class MainActivity
         });
     }
 
+
     public void UpdateGear(final int shift) {
         MainActivityHandler.post(new Runnable() {
             @Override
@@ -861,9 +862,11 @@ public class MainActivity
                 break;
             case BTDeviceNameChange:
                 UpdateBTStatus();
+                myBTCarName.setText(Global.BTDeviceName + " :: " + Global.CarName);
                 break;
             case CarNameChange:
                 UpdateBTCarName();
+                myBTCarName.setText(Global.BTDeviceName + " :: " + Global.CarName);
                 break;
             case UDPChange:
                 break;
