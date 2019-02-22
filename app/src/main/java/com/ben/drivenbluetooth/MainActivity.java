@@ -308,7 +308,7 @@ public class MainActivity
         rmf.initialize(myLocationMonitor);
         FragmentList.add(new SimpleDataFragment());
         FragmentList.add(new SixGraphsBars());
-        FragmentList.add(new FourGraphsBars());
+//        FragmentList.add(new FourGraphsBars());
         FragmentList.add(rmf);
         FragmentList.add(new LapHistoryFragment());
     }

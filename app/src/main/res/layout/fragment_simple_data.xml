@@ -49,7 +49,9 @@
             android:inputType="none"
             android:singleLine="false"
             android:text="##.#"
+            android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textSize="36sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -130,6 +132,8 @@
             android:inputType="none"
             android:singleLine="false"
             android:text="##.#"
+            android:textAlignment="center"
+            android:textSize="36sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -212,6 +216,7 @@
             android:singleLine="false"
             android:text="####"
             android:textAlignment="center"
+            android:textSize="36sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -359,6 +364,8 @@
             android:inputType="none"
             android:singleLine="false"
             android:text="##.#"
+            android:textAlignment="center"
+            android:textSize="36sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

@@ -10,316 +10,320 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto">
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/ThrottleLineChart"
-        custom:layout_constraintBottom_toTopOf="@+id/ampHours"
-        custom:layout_constraintTop_toTopOf="@+id/guideline10"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline"
-        custom:layout_constraintLeft_toLeftOf="parent"/>
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/VoltsLineChart"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline2"
-        custom:layout_constraintBottom_toTopOf="@+id/ampHours"
-        custom:layout_constraintTop_toTopOf="@+id/guideline10"/>
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/AmpsLineChart"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline2"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline3"
-        custom:layout_constraintBottom_toTopOf="@+id/ampHours"
-        custom:layout_constraintTop_toTopOf="@+id/guideline10"/>
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/TempLineChart"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline3"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline8"
-        custom:layout_constraintBottom_toTopOf="@+id/wattHours"
-        custom:layout_constraintTop_toTopOf="@+id/guideline10"/>
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/RPMLineChart"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline8"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline9"
-        custom:layout_constraintBottom_toTopOf="@+id/wattHours"
-        custom:layout_constraintTop_toTopOf="@+id/guideline10"/>
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/SpeedLineChart"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline9"
-        custom:layout_constraintRight_toRightOf="parent"
-        custom:layout_constraintTop_toTopOf="@+id/guideline10"
-        custom:layout_constraintBottom_toTopOf="@+id/wattHours"/>
-
     <TextView
+        android:id="@+id/temp2"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Throttle"
-        android:id="@+id/textView"
-        android:gravity="center"
-        android:textSize="20sp"
-        custom:layout_constraintTop_toTopOf="parent"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline"
-        custom:layout_constraintLeft_toLeftOf="parent"/>
-
-    <TextView
-        android:layout_width="0dp"
-        android:id="@+id/throttle"
-        android:inputType="none"
+        android:layout_height="50dp"
         android:width="90dp"
-        android:gravity="center"
-        android:textSize="@dimen/view6_field_text_size"
-        android:textStyle="bold"
-        android:text="###"
-        custom:layout_constraintTop_toBottomOf="@+id/textView"
-        custom:layout_constraintLeft_toLeftOf="parent"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline"
-        android:layout_height="50dp"
-        custom:layout_constraintHorizontal_bias="1.0"/>
-
-    <com.github.mikephil.charting.charts.BarChart
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/ThrottleBarChart"
-        custom:layout_constraintTop_toBottomOf="@+id/throttle"
-        custom:layout_constraintBottom_toTopOf="@+id/guideline10"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline"
-        custom:layout_constraintLeft_toLeftOf="parent"
-        custom:layout_constraintHorizontal_bias="1.0"
-        custom:layout_constraintVertical_bias="0.0"/>
-
-    <TextView
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Voltage"
-        android:gravity="center"
-        android:id="@+id/textView2"
-        android:textSize="20sp"
-        custom:layout_constraintTop_toTopOf="parent"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline2"
-        android:layout_width="0dp"/>
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:id="@+id/voltage"
-        android:gravity="center"
-        android:singleLine="false"
-        android:inputType="none"
-        android:width="90dp"
-        android:textSize="@dimen/view6_field_text_size"
-        android:textStyle="bold"
-        android:text="##.##"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline2"
-        custom:layout_constraintTop_toBottomOf="@+id/textView2"/>
-
-    <com.github.mikephil.charting.charts.BarChart
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/VoltsBarChart"
-        custom:layout_constraintBottom_toTopOf="@+id/guideline10"
-        custom:layout_constraintTop_toBottomOf="@+id/voltage"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline2"/>
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Current"
-        android:gravity="center"
-        android:id="@+id/CurrentLabel"
-        android:textSize="20sp"
-        custom:layout_constraintRight_toLeftOf="@+id/textView9"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline2"
-        custom:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:id="@+id/current"
-        android:gravity="center"
-        android:singleLine="false"
-        android:inputType="none"
-        android:width="90dp"
-        android:textSize="@dimen/view6_field_text_size"
-        android:textStyle="bold"
-        android:text="##.#"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline2"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline3"
-        custom:layout_constraintHorizontal_bias="0.0"
-        custom:layout_constraintTop_toBottomOf="@+id/CurrentLabel"/>
-
-    <com.github.mikephil.charting.charts.BarChart
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/AmpsBarChart"
-        custom:layout_constraintTop_toBottomOf="@+id/current"
-        custom:layout_constraintBottom_toTopOf="@+id/guideline10"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline3"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline2"/>
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Temp"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:id="@+id/textView9"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline3"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline8"
-        custom:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:id="@+id/temp1"
         android:gravity="top|center"
-        android:singleLine="false"
         android:inputType="none"
-        android:width="90dp"
-        android:textSize="@dimen/view6_field_text_size"
-        android:textStyle="bold"
+        android:singleLine="false"
         android:text="##.#"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline8"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline3"
-        custom:layout_constraintTop_toBottomOf="@+id/textView9"/>
-
-    <TextView
-        android:text="###"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/fan"
-        custom:layout_constraintLeft_toLeftOf="@+id/temp1"
-        custom:layout_constraintRight_toRightOf="@+id/temp1"
-        custom:layout_constraintBottom_toBottomOf="@+id/temp1"
-        android:gravity="bottom|center_horizontal"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
-
-    <com.github.mikephil.charting.charts.BarChart
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/TempBarChart"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline8"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline3"
-        custom:layout_constraintBottom_toTopOf="@+id/guideline10"
-        custom:layout_constraintTop_toBottomOf="@+id/temp1"/>
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:id="@+id/rpm"
-        android:gravity="center"
-        android:singleLine="false"
-        android:inputType="none"
-        android:width="90dp"
         android:textSize="@dimen/view6_field_text_size"
         android:textStyle="bold"
-        android:text="####"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline9"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline8"
-        custom:layout_constraintTop_toBottomOf="@+id/RPMLabel"/>
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline3"
+        custom:layout_constraintRight_toLeftOf="@+id/guideline8"
+        custom:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <TextView
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="RPM"
-        android:gravity="center"
-        android:id="@+id/RPMLabel"
-        android:textSize="20sp"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline8"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline9"
-        android:layout_width="0dp"
-        custom:layout_constraintTop_toTopOf="parent"/>
-
-    <com.github.mikephil.charting.charts.BarChart
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/RPMBarChart"
-        custom:layout_constraintTop_toBottomOf="@+id/rpm"
-        custom:layout_constraintBottom_toTopOf="@+id/guideline10"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline8"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline9"/>
-
-    <TextView
+        android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Speed"
         android:gravity="center"
-        android:id="@+id/SpeedLabel"
+        android:text="Throttle"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="20sp"
-        custom:layout_constraintRight_toRightOf="parent"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline9"
-        custom:layout_constraintTop_toTopOf="parent"/>
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="parent"
+        custom:layout_constraintRight_toLeftOf="@+id/guideline"
+        custom:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/throttle"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:id="@+id/speed"
-        android:gravity="center"
-        android:singleLine="false"
-        android:inputType="none"
+        android:layout_marginTop="4dp"
         android:width="90dp"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:text="##.# mph"
-        custom:layout_constraintRight_toRightOf="parent"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline9"
-        custom:layout_constraintTop_toBottomOf="@+id/SpeedLabel"/>
-
-    <com.github.mikephil.charting.charts.BarChart
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/SpeedBarChart"
-        custom:layout_constraintTop_toBottomOf="@+id/speed"
-        custom:layout_constraintBottom_toTopOf="@+id/guideline10"
-        custom:layout_constraintRight_toRightOf="parent"
-        custom:layout_constraintLeft_toLeftOf="@+id/guideline9"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ampHours"
         android:gravity="center"
+        android:inputType="none"
+        android:text="###"
+        android:textSize="@dimen/view6_field_text_size"
         android:textStyle="bold"
-        android:textSize="20sp"
-        android:text="##.## Ah"
+        custom:layout_constraintHorizontal_bias="0.0"
         custom:layout_constraintLeft_toLeftOf="parent"
-        custom:layout_constraintRight_toLeftOf="@+id/guideline3"
-        custom:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"/>
+        custom:layout_constraintRight_toLeftOf="@+id/guideline"
+        custom:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/wattHours"
-        android:textSize="20sp"
-        android:text="##.## Wh/km"
+        android:id="@+id/VoltB1"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:width="90dp"
+        android:gravity="center"
+        android:inputType="none"
+        android:text="##.##"
+        android:textSize="@dimen/view6_field_text_size"
         android:textStyle="bold"
-        android:gravity="center_horizontal"
-        custom:layout_constraintRight_toRightOf="parent"
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="parent"
+        custom:layout_constraintRight_toLeftOf="@+id/guideline"
+        custom:layout_constraintTop_toBottomOf="@+id/Batt1V" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Voltage"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="20sp"
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline"
+        custom:layout_constraintRight_toLeftOf="@+id/guideline2"
+        custom:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="0dp"
+        android:layout_height="27dp"
+        android:gravity="center"
+        android:text="Voltage B2"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="20sp"
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline"
+        custom:layout_constraintRight_toLeftOf="@+id/guideline2"
+        custom:layout_constraintTop_toBottomOf="@+id/voltage" />
+
+    <TextView
+        android:id="@+id/Batt1V"
+        android:layout_width="0dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="Voltage B1"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="20sp"
+        custom:layout_constraintEnd_toStartOf="@+id/guideline"
+        custom:layout_constraintStart_toStartOf="parent"
+        custom:layout_constraintTop_toBottomOf="@+id/throttle" />
+
+    <TextView
+        android:id="@+id/voltage"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="4dp"
+        android:width="90dp"
+        android:gravity="center"
+        android:inputType="none"
+        android:singleLine="false"
+        android:text="##.##"
+        android:textSize="@dimen/view6_field_text_size"
+        android:textStyle="bold"
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline"
+        custom:layout_constraintRight_toLeftOf="@+id/guideline2"
+        custom:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/VoltB2"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:width="90dp"
+        android:gravity="center"
+        android:inputType="none"
+        android:singleLine="false"
+        android:text="##.##"
+        android:textSize="@dimen/view6_field_text_size"
+        android:textStyle="bold"
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline"
+        custom:layout_constraintRight_toLeftOf="@+id/guideline2"
+        custom:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/CurrentLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Current"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="20sp"
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline2"
+        custom:layout_constraintRight_toLeftOf="@+id/textView9"
+        custom:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/currentLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Ah Used"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="20sp"
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline2"
+        custom:layout_constraintRight_toLeftOf="@+id/textView9"
+        custom:layout_constraintTop_toBottomOf="@+id/current" />
+
+    <TextView
+        android:id="@+id/current"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="4dp"
+        android:width="90dp"
+        android:gravity="center"
+        android:inputType="none"
+        android:singleLine="false"
+        android:text="##.#"
+        android:textSize="@dimen/view6_field_text_size"
+        android:textStyle="bold"
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline2"
+        custom:layout_constraintRight_toLeftOf="@+id/guideline3"
+        custom:layout_constraintTop_toBottomOf="@+id/CurrentLabel" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Temp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="20sp"
+        custom:layout_constraintHorizontal_bias="0.0"
         custom:layout_constraintLeft_toLeftOf="@+id/guideline3"
-        custom:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"/>
+        custom:layout_constraintRight_toLeftOf="@+id/guideline8"
+        custom:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Temp2"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="20sp"
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline3"
+        custom:layout_constraintRight_toLeftOf="@+id/guideline8"
+        custom:layout_constraintTop_toBottomOf="@+id/temp1" />
+
+    <TextView
+        android:id="@+id/temp1"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="4dp"
+        android:width="90dp"
+        android:gravity="top|center"
+        android:inputType="none"
+        android:singleLine="false"
+        android:text="##.#"
+        android:textSize="@dimen/view6_field_text_size"
+        android:textStyle="bold"
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline3"
+        custom:layout_constraintRight_toLeftOf="@+id/guideline8"
+        custom:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+    <TextView
+        android:id="@+id/rpm"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="4dp"
+        android:width="90dp"
+        android:gravity="center"
+        android:inputType="none"
+        android:singleLine="false"
+        android:text="####"
+        android:textSize="@dimen/view6_field_text_size"
+        android:textStyle="bold"
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline8"
+        custom:layout_constraintRight_toLeftOf="@+id/guideline9"
+        custom:layout_constraintTop_toBottomOf="@+id/RPMLabel" />
+
+    <TextView
+        android:id="@+id/RPMLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="RPM"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="20sp"
+        custom:layout_constraintHorizontal_bias="0.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline8"
+        custom:layout_constraintRight_toLeftOf="@+id/guideline9"
+        custom:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/RPMLabel2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Efficiency"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="20sp"
+        custom:layout_constraintEnd_toEndOf="parent"
+        custom:layout_constraintStart_toEndOf="@+id/textView3"
+        custom:layout_constraintTop_toBottomOf="@+id/rpm" />
+
+    <TextView
+        android:id="@+id/SpeedLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Speed"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="20sp"
+        custom:layout_constraintHorizontal_bias="1.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline9"
+        custom:layout_constraintRight_toRightOf="parent"
+        custom:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/speed"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="4dp"
+        android:width="90dp"
+        android:gravity="center"
+        android:inputType="none"
+        android:singleLine="false"
+        android:text="##.#"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        custom:layout_constraintHorizontal_bias="1.0"
+        custom:layout_constraintLeft_toLeftOf="@+id/guideline9"
+        custom:layout_constraintRight_toRightOf="parent"
+        custom:layout_constraintTop_toBottomOf="@+id/SpeedLabel" />
+
+    <TextView
+        android:id="@+id/ampHours"
+        android:layout_width="0dp"
+        android:layout_height="51dp"
+        android:gravity="center"
+        android:text="##.##"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        custom:layout_constraintEnd_toStartOf="@+id/temp2"
+        custom:layout_constraintStart_toEndOf="@+id/VoltB2"
+        custom:layout_constraintTop_toBottomOf="@+id/currentLabel" />
+
+    <TextView
+        android:id="@+id/wattHours"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="##.##"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        custom:layout_constraintEnd_toEndOf="parent"
+        custom:layout_constraintStart_toEndOf="@+id/temp2"
+        custom:layout_constraintTop_toBottomOf="@+id/RPMLabel2" />
 
     <android.support.constraint.Guideline
         android:layout_width="wrap_content"

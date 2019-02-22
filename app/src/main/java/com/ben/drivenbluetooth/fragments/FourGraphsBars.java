@@ -65,83 +65,6 @@ public class FourGraphsBars extends Fragment {
 		WattHours 	= v.findViewById(R.id.wattHours);
 	}
 
-	private void InitializeGraphs() {
-		View v = getView();
-
-		VoltsLineChart  = v.findViewById(R.id.VoltsLineChart);
-		AmpsLineChart   = v.findViewById(R.id.AmpsLineChart);
-		RPMLineChart    = v.findViewById(R.id.RPMGraph);
-		SpeedLineChart  = v.findViewById(R.id.SpeedGraph);
-
-		LineChart lineCharts[] = new LineChart[] {
-						VoltsLineChart,
-						AmpsLineChart,
-						RPMLineChart,
-						SpeedLineChart
-		};
-
-		LineData lineDatas[] = new LineData[] {
-						Global.VoltsHistory,
-						Global.AmpsHistory,
-						Global.MotorRPMHistory,
-						Global.SpeedHistory
-		};
-
-		IAxisValueFormatter labelFormats[] = new IAxisValueFormatter[] {
-						new CustomLabelFormatter("", "0", "V"),
-						new CustomLabelFormatter("", "0", "A"),
-						new LargeValueFormatter(),
-						new CustomLabelFormatter("", "0", "")
-		};
-
-		float minMax[][] = new float[][] {
-						new float[] {0, 30},	// volts
-						new float[] {0, 50},	// amps
-						new float[] {0, 2100},	// motor rpm
-                new float[]{0, UnitHelper.getMaxSpeed(Global.SpeedUnit)}    // speed
-		};
-
-		for (int i = 0; i < lineCharts.length; i++) {
-			LineChart chart = lineCharts[i];
-			if (Global.EnableGraphs) {
-				chart.setData(lineDatas[i]);
-				chart.setVisibleXRangeMaximum(Global.MAX_GRAPH_DATA_POINTS);
-				chart.setNoDataText("");
-
-				YAxis leftAxis = chart.getAxisLeft();
-				leftAxis.setAxisMinimum(minMax[i][0]);
-				leftAxis.setAxisMaximum(minMax[i][1]);
-				leftAxis.setLabelCount(3, true);
-				leftAxis.setValueFormatter(labelFormats[i]);
-
-				chart.setDescription(new Description());
-				chart.setDrawGridBackground(false);
-
-				YAxis rightAxis = chart.getAxisRight();
-				rightAxis.setEnabled(false);
-
-				Legend l = chart.getLegend();
-				l.setEnabled(false);
-
-				XAxis bottomAxis = chart.getXAxis();
-				bottomAxis.setEnabled(false);
-
-				// Remove padding
-				chart.setViewPortOffsets(0f, 0f, 0f, 0f);
-			} else {
-				chart.setNoDataText("");
-			}
-			chart.invalidate();
-		}
-
-		String legend[] = new String[] {
-						"Volts",
-						"Amps",
-						"RPM",
-                Global.SpeedUnit == Global.UNIT.KPH ? "kph" : "mph"
-		};
-
-	}
 
 	/*===================*/
 	/* LIFECYCLE
@@ -157,7 +80,6 @@ public class FourGraphsBars extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		InitializeDataFields();
-		InitializeGraphs();
 		UpdateFragmentUI();
 
 		EventBus.getDefault().register(this);

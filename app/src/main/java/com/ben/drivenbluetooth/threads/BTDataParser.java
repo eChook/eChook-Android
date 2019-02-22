@@ -185,7 +185,7 @@ public class BTDataParser extends Thread {
 
     private synchronized void SetVoltsAux(final double rawVolts) {
         Global.VoltsAux = rawVolts; // Apply conversion and offset
-        EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Volts, rawVolts));
+        EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.VoltsAux, rawVolts));
     }
 
     private synchronized void SetAmps(final double rawAmps) {
