@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -93,7 +94,7 @@ private boolean getEchookId()
                 if (HttpResult == HttpURLConnection.HTTP_OK) {
                         Log.d("eChook", "HTTP Response OK to Login Request");
                         BufferedReader br = new BufferedReader(
-                                new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                                new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
                         String line;
                         while ((line = br.readLine()) != null) {
                                 sb.append(line).append("\n");
@@ -229,7 +230,7 @@ private JSONObject getDataJson(boolean location)
                         if (HttpResult == HttpURLConnection.HTTP_OK) {
                                 Log.d("SendData", "HTTP Response OK");
                                 BufferedReader br = new BufferedReader(
-                                        new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                                        new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
                                 String line;
                                 while ((line = br.readLine()) != null) {
                                         sb.append(line).append("\n");
@@ -281,7 +282,7 @@ private JSONObject getDataJson(boolean location)
                                 if (HttpResult == HttpURLConnection.HTTP_OK) {
                                         Log.d("SendData", "HTTP Response OK");
                                         BufferedReader br = new BufferedReader(
-                                                new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                                                new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
                                         String line;
                                         while ((line = br.readLine()) != null) {
                                                 sb.append(line).append("\n");
