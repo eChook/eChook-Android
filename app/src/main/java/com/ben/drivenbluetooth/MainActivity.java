@@ -16,14 +16,14 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -38,7 +38,6 @@ import com.ben.drivenbluetooth.events.NewLapEvent;
 import com.ben.drivenbluetooth.events.PreferenceEvent;
 import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.events.UpdateUIEvent;
-import com.ben.drivenbluetooth.fragments.FourGraphsBars;
 import com.ben.drivenbluetooth.fragments.LapHistoryFragment;
 import com.ben.drivenbluetooth.fragments.RaceMapFragment;
 import com.ben.drivenbluetooth.fragments.SettingsFragment;
@@ -354,7 +353,7 @@ public class MainActivity
     private void showSnackbar(String msg, int length) {
         try {
             Snackbar sb = Snackbar.make(SnackbarPosition, msg, length);
-            TextView tv = (sb.getView()).findViewById(android.support.design.R.id.snackbar_text);
+            TextView tv = (sb.getView()).findViewById(com.google.android.material.R.id.snackbar_text);
             tv.setTextSize(20);
             sb.show();
         } catch (Exception ignored) {
