@@ -209,7 +209,7 @@
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
             android:text="4"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textAppearance="@android:style/TextAppearance.Material.Headline"
             android:textColor="?android:attr/textColorTertiary"
             android:textSize="30sp"
             android:textStyle="normal|bold"
