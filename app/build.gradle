@@ -23,7 +23,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 26
         versionCode getVersionCodeTimestamp()
-        versionName "1.97e"
+        versionName "1.97e-kr"
         multiDexEnabled true
     }
     buildTypes {
@@ -46,8 +46,10 @@ repositories {
 dependencies {
     // https://developers.google.com/android/guides/setup#split
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.android.gms:play-services-maps:+'
-    implementation 'com.google.android.gms:play-services-location:+'
+    //implementation 'com.google.android.gms:play-services-maps:+'
+    //implementation 'com.google.android.gms:play-services-location:+'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.0'
     implementation 'com.getbase:floatingactionbutton:+'
