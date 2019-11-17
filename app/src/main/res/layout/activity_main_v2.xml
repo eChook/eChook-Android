@@ -319,7 +319,7 @@
 
     </FrameLayout>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <android.support.design.widget.CoordinatorLayout
         android:id="@+id/snackbarPosition"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -328,6 +328,6 @@
         app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent">
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
 </android.support.constraint.ConstraintLayout>

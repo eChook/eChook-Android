@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import androidx.annotation.NonNull;
+import android.support.annotation.NonNull;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
