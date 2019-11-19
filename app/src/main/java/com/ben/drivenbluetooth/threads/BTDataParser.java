@@ -153,6 +153,36 @@ public class BTDataParser extends Thread {
                             case Global.STEERING_ID:
                                 SetSteeringAngle(value);
                                 break;
+                            case Global.CUSTOM_0:
+                                SetCustomData(value, 0);
+                                break;
+                            case Global.CUSTOM_1:
+                                SetCustomData(value, 1);
+                                break;
+                            case Global.CUSTOM_2:
+                                SetCustomData(value, 2);
+                                break;
+                            case Global.CUSTOM_3:
+                                SetCustomData(value, 3);
+                                break;
+                            case Global.CUSTOM_4:
+                                SetCustomData(value, 4);
+                                break;
+                            case Global.CUSTOM_5:
+                                SetCustomData(value, 5);
+                                break;
+                            case Global.CUSTOM_6:
+                                SetCustomData(value, 6);
+                                break;
+                            case Global.CUSTOM_7:
+                                SetCustomData(value, 7);
+                                break;
+                            case Global.CUSTOM_8:
+                                SetCustomData(value, 8);
+                                break;
+                            case Global.CUSTOM_9:
+                                SetCustomData(value, 9);
+                                break;
                             default:
                                 Global.MangledDataCount++;
                                 return false;
@@ -308,6 +338,53 @@ public class BTDataParser extends Thread {
         }
 
         EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.AmpHours, ah));
+    }
+
+    private synchronized void SetCustomData(double rawData, final int dataId) {
+        switch (dataId) {
+            case 0:
+                Global.Custom0 = rawData;
+                EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Custom0, rawData));
+                break;
+            case 1:
+                Global.Custom1 = rawData;
+                EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Custom1, rawData));
+                break;
+            case 2:
+                Global.Custom2 = rawData;
+                EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Custom2, rawData));
+                break;
+            case 3:
+                Global.Custom3 = rawData;
+                EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Custom3, rawData));
+                break;
+            case 4:
+                Global.Custom4 = rawData;
+                EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Custom4, rawData));
+                break;
+            case 5:
+                Global.Custom5 = rawData;
+                EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Custom5, rawData));
+                break;
+            case 6:
+                Global.Custom6 = rawData;
+                EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Custom6, rawData));
+                break;
+            case 7:
+                Global.Custom7 = rawData;
+                EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Custom7, rawData));
+                break;
+            case 8:
+                Global.Custom8 = rawData;
+                EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Custom8, rawData));
+                break;
+            case 9:
+                Global.Custom9 = rawData;
+                EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Custom9, rawData));
+                break;
+            default:
+                break;
+        }
     }
 
     private synchronized void CalculateWattHours(double volts, double amps, long dt_millis) {
