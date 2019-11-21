@@ -67,11 +67,13 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             btDevListPreference.setEntryValues(entryValues);
             setListPreferenceData(btDevListPreference);
 
+            /* Use of DweetPro deprecated.
             //Check if DweetPro Login worked
             Preference dweetProPref = findPreference("prefDweetLocked");
             if(Global.enableDweetPro != dweetProPref.isEnabled()) {
                 dweetProPref.setSummary("Error. Please check login info and internet connection");
             }
+            */
 
             btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
