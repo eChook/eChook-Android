@@ -4,7 +4,7 @@ def getVersionCodeTimestamp() {
     def date = new Date()
     def formattedDate = date.format('yyyyMMdd')
     def code = formattedDate.toInteger()
-    println sprintf("VersionCode: %d", code + 2)
+    println sprintf("VersionCode: %d", code)
     return code
 }
 
@@ -23,7 +23,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode getVersionCodeTimestamp()
-        versionName "2.0.0b"
+        versionName "2.0.2b"
         multiDexEnabled true
     }
     buildTypes {

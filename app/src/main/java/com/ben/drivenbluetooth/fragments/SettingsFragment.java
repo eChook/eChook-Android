@@ -59,7 +59,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
             // This is required if you don't have 'entries' and 'entryValues' in your XML - which can't be hard coded for BT devices
 
-            String[] defaultEntries = {""};
+            String[] defaultEntries = {"Is Bluetooth Enabled?"};
             CharSequence[] entryValues = defaultEntries;
 
             btDevListPreference.setEntries(defaultEntries);

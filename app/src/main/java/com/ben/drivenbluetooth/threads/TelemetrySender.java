@@ -175,7 +175,7 @@ private JSONObject getDataJson(boolean location)
                         dataJSON.put("Lon", Global.Longitude);
                 }
 
-                if(currentLap != Global.Lap && Global.Lap > 0) {
+                if(currentLap != Global.Lap && Global.Lap > 1) {
                         currentLap = Global.Lap;
                         dataJSON.put("LL_V", format.format(Global.LapDataList.get(currentLap-1).getAverageVolts()));
                         dataJSON.put("LL_I", format.format(Global.LapDataList.get(currentLap-1).getAverageAmps()));
