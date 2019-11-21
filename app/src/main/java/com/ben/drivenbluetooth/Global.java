@@ -69,28 +69,41 @@ public final class Global {
 
 
     public static final BlockingQueue<byte[]> BTStreamQueue = 	new LinkedBlockingQueue<>();
+    
 	public static volatile Double Volts 			    = 0.0;
     public static volatile Double VoltsAux			    = 0.0;
 	public static volatile Double Amps 				    = 0.0;
+    public static volatile Double MotorRPM 			    = 0.0;
 	public static volatile Double InputThrottle 	    = 0.0;
 	public static volatile Double ActualThrottle 	    = 0.0;
-	public static volatile Double MotorRPM 			    = 0.0;
 	public static volatile Double SpeedMPS              = 0.0;
 	public static volatile Double TempC1 			    = 0.0;
 	public static volatile Double TempC2 			    = 0.0;
 	public static volatile Double TempC3 			    = 0.0;
 	public static volatile Double GearRatio			    = 0.0;
+    public static volatile int Brake                    = 0;
+    public static volatile int FanStatus                = 0;
+    public static volatile Double FanDuty               = 0.0;
+    public static volatile Double SteeringAngle         = 0.0;
+
+    public static volatile Double Custom0               = 0.0;
+    public static volatile Double Custom1               = 0.0;
+    public static volatile Double Custom2               = 0.0;
+    public static volatile Double Custom3               = 0.0;
+    public static volatile Double Custom4               = 0.0;
+    public static volatile Double Custom5               = 0.0;
+    public static volatile Double Custom6               = 0.0;
+    public static volatile Double Custom7               = 0.0;
+    public static volatile Double Custom8               = 0.0;
+    public static volatile Double Custom9               = 0.0;
+
 	public static volatile Double AmpHours 			    = 0.0;
     public static volatile Double WattHours             = 0.0;
     public static volatile Double WattHoursPerMeter     = 0.0;
     public static volatile Double DistanceMeters        = 0.0;
     public static volatile Double SlopeGradient         = 0.0;
     public static long RaceStartTime                    = 0L;
-    public static volatile Double SteeringAngle         = 0.0;
     public static volatile Double PerformanceMetric     = 0.0;
-    public static volatile int Brake                    = 0;
-    public static volatile int FanStatus                = 0;
-    public static volatile Double FanDuty               = 0.0;
     public static final ArrayList<LapData> LapDataList  = new ArrayList<>();
 	public static final RunningAverage AverageAmps 		= new RunningAverage(2); // 2 = number of decimal places
     public static final RunningAverage AverageSpeedMPS  = new RunningAverage(1);

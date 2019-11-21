@@ -60,8 +60,19 @@ public class DataToCsvFile extends Thread {
                     "SFLBearing (deg)",
                     "ObserverBearing (deg)",
                     "Slope (deg)",
-                    "PerformanceMetric",		// Arduino performance metric - higher is better
-                    "Mangled data"          // mangled data count (Bluetooth)
+                    "PerformanceMetric",	    // Arduino performance metric - higher is better
+                    "Mangled data",             // mangled data count (Bluetooth)
+
+                    "Custom 0",
+                    "Custom 1",
+                    "Custom 2",
+                    "Custom 3",
+                    "Custom 4",
+                    "Custom 5",
+                    "Custom 6",
+                    "Custom 7",
+                    "Custom 8",
+                    "Custom 9"
             };
         } catch (Exception e) {
             EventBus.getDefault().post(new SnackbarEvent(e));
@@ -115,7 +126,18 @@ public class DataToCsvFile extends Thread {
                             String.format("%.0f", Global.BearingFromObserverToCar),
                             String.format("%.1f", Global.SlopeGradient),
                             String.format("%.1f", Global.PerformanceMetric),
-                            String.format("%d", Global.MangledDataCount)
+                            String.format("%d", Global.MangledDataCount),
+
+                            String.format("%.3f", Global.Custom0),
+                            String.format("%.3f", Global.Custom1),
+                            String.format("%.3f", Global.Custom2),
+                            String.format("%.3f", Global.Custom3),
+                            String.format("%.3f", Global.Custom4),
+                            String.format("%.3f", Global.Custom5),
+                            String.format("%.3f", Global.Custom6),
+                            String.format("%.3f", Global.Custom7),
+                            String.format("%.3f", Global.Custom8),
+                            String.format("%.3f", Global.Custom9)
                     };
 
                     WriteToFile(GetLatestDataAsString());

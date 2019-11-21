@@ -153,21 +153,33 @@ private JSONObject getLoginJson()
 private JSONObject getDataJson(boolean location)
 {
         JSONObject dataJSON = new JSONObject();
-        DecimalFormat format = new DecimalFormat("#.##");
+        DecimalFormat format2 = new DecimalFormat("#.##");
+        DecimalFormat format3 = new DecimalFormat("#.###");
         try{
-                dataJSON.put("Vt", format.format(Global.Volts));
-                dataJSON.put("V1", format.format(Global.VoltsAux));
-                dataJSON.put("A", format.format(Global.Amps));
-                dataJSON.put("RPM", format.format(Global.MotorRPM));
-                dataJSON.put("Spd", format.format(Global.SpeedMPS));
-                dataJSON.put("Thrtl", format.format(Global.InputThrottle));
-                dataJSON.put("AH", format.format(Global.AmpHours));
-                dataJSON.put("Lap", format.format(Global.Lap));
-                dataJSON.put("Tmp1", format.format(Global.TempC1));
-                dataJSON.put("Tmp2", format.format(Global.TempC2));
-                dataJSON.put("Brk", format.format(Global.Brake));
-                dataJSON.put("Gear", format.format(Global.Gear));
+                dataJSON.put("Vt", format2.format(Global.Volts));
+                dataJSON.put("V1", format2.format(Global.VoltsAux));
+                dataJSON.put("A", format2.format(Global.Amps));
+                dataJSON.put("RPM", format2.format(Global.MotorRPM));
+                dataJSON.put("Spd", format2.format(Global.SpeedMPS));
+                dataJSON.put("Thrtl", format2.format(Global.InputThrottle));
+                dataJSON.put("AH", format2.format(Global.AmpHours));
+                dataJSON.put("Lap", format2.format(Global.Lap));
+                dataJSON.put("Tmp1", format2.format(Global.TempC1));
+                dataJSON.put("Tmp2", format2.format(Global.TempC2));
+                dataJSON.put("Brk", format2.format(Global.Brake));
+                dataJSON.put("Gear", format2.format(Global.Gear));
+                dataJSON.put("Distance", format2.format(Global.DistanceMeters));
 
+                dataJSON.put("Custom0", format3.format(Global.Custom0));
+                dataJSON.put("Custom1", format3.format(Global.Custom1));
+                dataJSON.put("Custom2", format3.format(Global.Custom2));
+                dataJSON.put("Custom3", format3.format(Global.Custom3));
+                dataJSON.put("Custom4", format3.format(Global.Custom4));
+                dataJSON.put("Custom5", format3.format(Global.Custom5));
+                dataJSON.put("Custom6", format3.format(Global.Custom6));
+                dataJSON.put("Custom7", format3.format(Global.Custom7));
+                dataJSON.put("Custom8", format3.format(Global.Custom8));
+                dataJSON.put("Custom9", format3.format(Global.Custom9));
 
                 if(location) {
                         dataJSON.put("Lat", Global.Latitude);
@@ -176,13 +188,13 @@ private JSONObject getDataJson(boolean location)
 
                 if(currentLap != Global.Lap && Global.Lap > 0) {
                         currentLap = Global.Lap;
-                        dataJSON.put("LL_V", format.format(Global.LapDataList.get(currentLap-1).getAverageVolts()));
-                        dataJSON.put("LL_I", format.format(Global.LapDataList.get(currentLap-1).getAverageAmps()));
-                        dataJSON.put("LL_RPM", format.format(Global.LapDataList.get(currentLap-1).getAverageRPM()));
-                        dataJSON.put("LL_Spd", format.format(Global.LapDataList.get(currentLap-1).getAverageSpeedMPS()));
-                        dataJSON.put("LL_Ah", format.format(Global.LapDataList.get(currentLap-1).getAmpHours()));
-                        dataJSON.put("LL_Time", format.format(Global.LapDataList.get(currentLap-1).getLapTimeString()));
-                        dataJSON.put("LL_Eff", format.format(Global.LapDataList.get(currentLap-1).getWattHoursPerKM()));
+                        dataJSON.put("LL_V", format2.format(Global.LapDataList.get(currentLap-1).getAverageVolts()));
+                        dataJSON.put("LL_I", format2.format(Global.LapDataList.get(currentLap-1).getAverageAmps()));
+                        dataJSON.put("LL_RPM", format2.format(Global.LapDataList.get(currentLap-1).getAverageRPM()));
+                        dataJSON.put("LL_Spd", format2.format(Global.LapDataList.get(currentLap-1).getAverageSpeedMPS()));
+                        dataJSON.put("LL_Ah", format2.format(Global.LapDataList.get(currentLap-1).getAmpHours()));
+                        dataJSON.put("LL_Time", format2.format(Global.LapDataList.get(currentLap-1).getLapTimeString()));
+                        dataJSON.put("LL_Eff", format2.format(Global.LapDataList.get(currentLap-1).getWattHoursPerKM()));
                 }
 
                 if(firstRun) {
