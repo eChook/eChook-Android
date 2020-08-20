@@ -78,32 +78,21 @@ public final class BluetoothManager {
 		EventBus.getDefault().post(new SnackbarEvent(Global.BTDeviceName + " is not paired with this phone. Please open Settings and pair the device first"));
     }
 
-    /** Attempts to open a connection to the Bluetooth device by using a background thread.
-     *
-     * @param wait  If set to true, this function will block until the background thread finishes. This is used for the Bluetooth reconnect routine if the connection fails during a race
-     */
+    /**
+	 * Attempts to open a connection to the Bluetooth device by using a background thread.
+	 *
+	 * @param wait If set to true, this function will block until the background thread finishes. This is used for the Bluetooth reconnect routine if the connection fails during a race
+	 */
 
-    public void toggleBT(){
-		if (Global.BTState != Global.BTSTATE.DISCONNECTED){
-			openBT(false);
-		} else{
-			try {
-				closeBT();
-			}catch(IOException e){
-				e.printStackTrace();
-			}
-		}
-	}
-
-    public void openBT(boolean wait) {
+	public void openBT(boolean wait) {
 		if (matchingDeviceFound && !isConnecting) {
 			Global.BTState = Global.BTSTATE.CONNECTING;
-            if (wait) {
-                // usually wait is only true when we are in a reconnect loop...
-                mListener.onBluetoothReconnecting();
-            } else {
-                mListener.onBluetoothConnecting();
-            }
+			if (wait) {
+				// usually wait is only true when we are in a reconnect loop...
+				mListener.onBluetoothReconnecting();
+			} else {
+				mListener.onBluetoothConnecting();
+			}
 			Thread connectToBTDevice = new Thread(new Runnable() {
 				@Override
 				public void run() {

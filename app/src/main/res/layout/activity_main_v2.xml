@@ -129,10 +129,11 @@
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
             android:onClick="QuickChangeMode"
-            android:text="DEMO"
+            android:text="RACE"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/start"
+            android:layout_margin="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/start" />
 
         <TextView
@@ -221,68 +222,52 @@
             android:id="@+id/open"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_margin="8dp"
             android:cropToPadding="false"
             android:onClick="OpenBT"
             android:src="@drawable/ic_bluetooth_connected_black_24dp"
             android:text="Open BT"
-            app:backgroundTint="@color/bt_connect"
+            app:background="@color/bt_connect"
             app:fab_size="mini"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:onClick="CloseBT"
-            android:src="@drawable/ic_bluetooth_disabled_black_24dp"
-            android:text="Close BT"
-            app:backgroundTint="@color/bt_disconnect"
-            app:fab_size="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/open"
-            app:layout_constraintLeft_toRightOf="@+id/open" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/btnSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-
+            android:layout_margin="8dp"
+            android:cropToPadding="false"
             android:onClick="LaunchSettings"
             android:src="@drawable/ic_settings_black_24dp"
             android:text="Settings"
             app:backgroundTint="@color/settings"
             app:fab_size="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/close"
-            app:layout_constraintLeft_toRightOf="@+id/close" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/open"
+
+            />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_margin="8dp"
             android:longClickable="true"
-
             android:onClick="Start"
             android:src="@drawable/ic_play_arrow_black_24dp"
             android:text="Log"
             android:textStyle="bold"
             app:backgroundTint="@color/play"
             app:fab_size="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/stop"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/stop" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:layout_marginEnd="8dp"
-
-            android:layout_marginBottom="8dp"
+            android:layout_margin="8dp"
             android:onClick="Stop"
             android:src="@drawable/ic_stop_black_24dp"
             android:text="Stop"
@@ -295,25 +280,25 @@
             android:id="@+id/cycle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:onClick="Cycle"
-            android:src="@drawable/ic_autorenew_black_24dp"
+            android:src="@drawable/carousel_24"
             android:text="Cycle"
             app:backgroundTint="@color/cycle"
             app:fab_size="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/btnSettings"
+            android:layout_margin="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/btnSettings" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/launchmode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:onClick="LaunchMode"
-            android:src="@drawable/ic_navigation_black_24dp"
+            android:src="@drawable/launch_flag_24"
             app:backgroundTint="@color/launchmode"
             app:fab_size="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/cycle"
+            android:layout_margin="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/cycle" />
 
     </android.support.constraint.ConstraintLayout>

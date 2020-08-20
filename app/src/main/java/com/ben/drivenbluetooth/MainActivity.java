@@ -38,7 +38,6 @@ import com.ben.drivenbluetooth.events.NewLapEvent;
 import com.ben.drivenbluetooth.events.PreferenceEvent;
 import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.events.UpdateUIEvent;
-import com.ben.drivenbluetooth.fragments.FourGraphsBars;
 import com.ben.drivenbluetooth.fragments.LapHistoryFragment;
 import com.ben.drivenbluetooth.fragments.RaceMapFragment;
 import com.ben.drivenbluetooth.fragments.SettingsFragment;
@@ -77,6 +76,8 @@ public class MainActivity
 
     private ImageView myBTState;
     private ImageView myLogging;
+
+    private android.support.design.widget.FloatingActionButton myBluetoothButton;
 
     private Chronometer LapTimer;
     private TextView prevLapTime;
@@ -127,6 +128,9 @@ public class MainActivity
 
         myBTState = findViewById(R.id.btStatusSymbol);
         myLogging = findViewById(R.id.logStatusSymbol);
+
+        myBluetoothButton = findViewById(R.id.open);
+
 
         LapTimer = findViewById(R.id.LapTimer);
         prevLapTime = findViewById(R.id.previousLapTime);
@@ -381,6 +385,28 @@ public class MainActivity
     /* ================ */
     /* BUTTON LISTENERS */
     /* ================ */
+
+    public void ToggleBT(View v) {
+        if (Global.BTState != Global.BTSTATE.DISCONNECTED) { //Disconnect BT
+            try {
+                StopStreamReader();
+                myBluetoothManager.closeBT();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else { //Connect BT
+            if (!Objects.equals(Global.BTDeviceName, "")) { // annoying Java string comparators...
+                try {
+                    myBluetoothManager.findBT();
+                    myBluetoothManager.openBT(false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                showMessage("Error: Bluetooth device name not given in Settings. Please go to Settings and enter the device name");
+            }
+        }
+    }
 
     public void OpenBT(View v) {
         if (!Objects.equals(Global.BTDeviceName, "")) { // annoying Java string comparators...
@@ -762,18 +788,30 @@ public class MainActivity
                     case DISCONNECTED:
                         myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_cancel_black_24dp, null));
                         myBTState.setColorFilter(ContextCompat.getColor(context, R.color.negative));
+                        //Button Updates
+                        myBluetoothButton.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_bluetooth_disabled_black_24dp, null));
+                        myBluetoothButton.setBackgroundColor(ContextCompat.getColor(context, R.color.grey));
                         break;
                     case CONNECTING:
                         myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_group_work_black_24dp, null));
                         myBTState.setColorFilter(ContextCompat.getColor(context, R.color.neutral));
+                        //Button Updates
+                        myBluetoothButton.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_bluetooth_disabled_black_24dp, null));
+                        myBluetoothButton.setBackgroundColor(ContextCompat.getColor(context, R.color.amber));
                         break;
                     case CONNECTED:
                         myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_check_circle_black_24dp, null));
                         myBTState.setColorFilter(ContextCompat.getColor(context, R.color.positive));
+                        //Button Updates
+                        myBluetoothButton.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_bluetooth_connected_black_24dp, null));
+                        myBluetoothButton.setBackgroundColor(ContextCompat.getColor(context, R.color.green));
                         break;
                     case RECONNECTING:
                         myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_warning_black_24dp, null));
                         myBTState.setColorFilter(ContextCompat.getColor(context, R.color.neutral));
+                        //Button Updates
+                        myBluetoothButton.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_bluetooth_connected_black_24dp, null));
+                        myBluetoothButton.setBackgroundColor(ContextCompat.getColor(context, R.color.amber));
                         break;
                 }
             }
