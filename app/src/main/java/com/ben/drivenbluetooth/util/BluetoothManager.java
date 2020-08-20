@@ -82,6 +82,19 @@ public final class BluetoothManager {
      *
      * @param wait  If set to true, this function will block until the background thread finishes. This is used for the Bluetooth reconnect routine if the connection fails during a race
      */
+
+    public void toggleBT(){
+		if (Global.BTState != Global.BTSTATE.DISCONNECTED){
+			openBT(false);
+		} else{
+			try {
+				closeBT();
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+		}
+	}
+
     public void openBT(boolean wait) {
 		if (matchingDeviceFound && !isConnecting) {
 			Global.BTState = Global.BTSTATE.CONNECTING;

@@ -143,7 +143,7 @@ public final class Global {
     public static volatile int Gear                     = 0;
     public static volatile int IdealGear                = 0;
 
-    public static MODE Mode;
+    public static MODE Mode = MODE.RACE;
     public static UNIT SpeedUnit;
 	public static LOCATION LocationStatus;
     public static boolean dispalyGpsSpeed;
