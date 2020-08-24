@@ -1,4 +1,4 @@
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -325,7 +325,7 @@
         custom:layout_constraintStart_toEndOf="@+id/temp2"
         custom:layout_constraintTop_toBottomOf="@+id/RPMLabel2" />
 
-    <android.support.constraint.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/guideline"
@@ -334,7 +334,7 @@
         tools:layout_editor_absoluteX="102dp"
         custom:layout_constraintGuide_percent="0.1722973"/>
 
-    <android.support.constraint.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/guideline2"
@@ -343,7 +343,7 @@
         tools:layout_editor_absoluteX="197dp"
         custom:layout_constraintGuide_percent="0.33277026"/>
 
-    <android.support.constraint.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/guideline3"
@@ -352,7 +352,7 @@
         tools:layout_editor_absoluteX="296dp"
         custom:layout_constraintGuide_percent="0.5"/>
 
-    <android.support.constraint.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/guideline8"
@@ -361,7 +361,7 @@
         tools:layout_editor_absoluteX="398dp"
         custom:layout_constraintGuide_percent="0.6722973"/>
 
-    <android.support.constraint.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/guideline9"
@@ -370,7 +370,7 @@
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="496dp"/>
 
-    <android.support.constraint.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -378,4 +378,4 @@
         tools:layout_editor_absoluteY="314dp"
         tools:layout_editor_absoluteX="0dp"/>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

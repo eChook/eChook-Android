@@ -16,14 +16,14 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -77,7 +77,7 @@ public class MainActivity
     private ImageView myBTState;
     private ImageView myLogging;
 
-    private android.support.design.widget.FloatingActionButton myBluetoothButton;
+    private FloatingActionButton myBluetoothButton;
 
     private Chronometer LapTimer;
     private TextView prevLapTime;
@@ -360,8 +360,8 @@ public class MainActivity
     private void showSnackbar(String msg, int length) {
         try {
             Snackbar sb = Snackbar.make(SnackbarPosition, msg, length);
-            TextView tv = (sb.getView()).findViewById(android.support.design.R.id.snackbar_text);
-            tv.setTextSize(20);
+//            TextView tv = (sb.getView()).findViewById(android.support.design.R.id.snackbar_text);
+//            tv.setTextSize(20);
             sb.show();
         } catch (Exception ignored) {
         }
