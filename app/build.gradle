@@ -9,8 +9,8 @@ def getVersionCodeTimestamp() {
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.2'
 
     applicationVariants.all { variant ->
         variant.outputs.all {
@@ -55,6 +55,7 @@ dependencies {
     implementation 'com.getbase:floatingactionbutton:+'
 
     implementation 'com.android.support:appcompat-v7:+'
+//    implementation 'com.android.support:appcompat:29.0.2'
     implementation 'com.android.support:preference-v14:+'
     implementation 'com.android.support:design:+'
     implementation 'com.android.support.constraint:constraint-layout:+'

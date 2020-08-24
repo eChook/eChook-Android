@@ -115,7 +115,7 @@ public class MainActivity
 
         GraphData.InitializeGraphDataSets(context);
 
-        setContentView(R.layout.activity_main_v2);
+        setContentView(R.layout.activity_main_v2); // sets the main screen.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
 
@@ -145,7 +145,7 @@ public class MainActivity
 
         DrivenSettings.InitializeSettings(context);
 
-        myLocationMonitor = new LocationMonitor(LapTimer, prevLapTime, context); // must be initialized here or else null object ref error
+        myLocationMonitor = new LocationMonitor(LapTimer, prevLapTime, context);
 
 
         InitializeLongClickStart();
@@ -493,10 +493,12 @@ public class MainActivity
      */
     public void LaunchSettings(View v) {
         SettingsFragment settingsFragment = new SettingsFragment();
+        Log.d("MainActivity", "LaunchSettings: Settings fragment created, launching");
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.overlay, settingsFragment)
                 .addToBackStack(null)
                 .commit();
+        Log.d("MainActivity", "LaunchSettings: fragment Loaded");
     }
 
     /**
@@ -933,7 +935,7 @@ public class MainActivity
 
 
     /* =============================== */
-    /* BLUETOOTHMANAGER IMPLEMENTATION */
+    /* BLUETOOTH MANAGER IMPLEMENTATION */
     /* =============================== */
 
     /**
