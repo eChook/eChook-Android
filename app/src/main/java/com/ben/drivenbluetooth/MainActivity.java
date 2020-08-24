@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.hardware.SensorManager;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
@@ -160,6 +161,9 @@ public class MainActivity
         UpdateBTStatus();
         UpdateBTCarName();
         UpdateGear(0);
+
+        //Finally - attempt to connect to Bluetooth device
+        OpenBTSilent();
     }
 
 
@@ -423,6 +427,16 @@ public class MainActivity
         }
     }
 
+    public void OpenBTSilent() {
+        if (!Objects.equals(Global.BTDeviceName, "")) { // annoying Java string comparators...
+            try {
+                myBluetoothManager.findBT();
+                myBluetoothManager.openBT(false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
     public void CloseBT(View v) {
         try {
             StopStreamReader();
@@ -493,12 +507,10 @@ public class MainActivity
      */
     public void LaunchSettings(View v) {
         SettingsFragment settingsFragment = new SettingsFragment();
-        Log.d("MainActivity", "LaunchSettings: Settings fragment created, launching");
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.overlay, settingsFragment)
                 .addToBackStack(null)
                 .commit();
-        Log.d("MainActivity", "LaunchSettings: fragment Loaded");
     }
 
     /**
@@ -794,28 +806,28 @@ public class MainActivity
                         myBTState.setColorFilter(ContextCompat.getColor(context, R.color.negative));
                         //Button Updates
                         myBluetoothButton.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_bluetooth_disabled_black_24dp, null));
-                        myBluetoothButton.setBackgroundColor(ContextCompat.getColor(context, R.color.grey));
+                        myBluetoothButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.grey)));
                         break;
                     case CONNECTING:
                         myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_group_work_black_24dp, null));
                         myBTState.setColorFilter(ContextCompat.getColor(context, R.color.neutral));
                         //Button Updates
                         myBluetoothButton.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_bluetooth_disabled_black_24dp, null));
-                        myBluetoothButton.setBackgroundColor(ContextCompat.getColor(context, R.color.amber));
+                        myBluetoothButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.amber)));
                         break;
                     case CONNECTED:
                         myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_check_circle_black_24dp, null));
                         myBTState.setColorFilter(ContextCompat.getColor(context, R.color.positive));
                         //Button Updates
                         myBluetoothButton.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_bluetooth_connected_black_24dp, null));
-                        myBluetoothButton.setBackgroundColor(ContextCompat.getColor(context, R.color.green));
+                        myBluetoothButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
                         break;
                     case RECONNECTING:
                         myBTState.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_warning_black_24dp, null));
                         myBTState.setColorFilter(ContextCompat.getColor(context, R.color.neutral));
                         //Button Updates
                         myBluetoothButton.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_bluetooth_connected_black_24dp, null));
-                        myBluetoothButton.setBackgroundColor(ContextCompat.getColor(context, R.color.amber));
+                        myBluetoothButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.amber)));
                         break;
                 }
             }

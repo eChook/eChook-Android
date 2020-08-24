@@ -3,6 +3,7 @@ package com.ben.drivenbluetooth.threads;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.events.ArduinoEvent;

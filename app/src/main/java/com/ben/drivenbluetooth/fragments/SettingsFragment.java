@@ -40,17 +40,15 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-//        view.setBackgroundColor(ContextCompat.getColor(Objects.requireNonNull(getActivity()).getApplicationContext(), android.R.color.background_light));
+        view.setBackgroundColor(ContextCompat.getColor(Objects.requireNonNull(getActivity()).getApplicationContext(), android.R.color.background_light));
         return view;
     }
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
-        Log.d(TAG, "onCreatePreferences: Entering Function");
         try{
             try {
                 addPreferencesFromResource(R.xml.user_settings);
-                Log.d(TAG, "onCreatePreferences: Added settings from Resource");
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -58,25 +56,24 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
             //Added to support BT device list generation
 
-//            final ListPreference btDevListPreference = (ListPreference) findPreference("prefBTDeviceName");
-//            // This is required if you don't have 'entries' and 'entryValues' in your XML - which naturally can't be hard coded for BT devices
-//            String[] defaultEntries = {"Is Bluetooth Enabled?"};
-//            CharSequence[] entryValues = defaultEntries;
-//
-//            btDevListPreference.setEntries(defaultEntries);
+            final ListPreference btDevListPreference = (ListPreference) findPreference("prefBTDeviceName");
+            // This is required if you don't have 'entries' and 'entryValues' in your XML - which naturally can't be hard coded for BT devices
+            String[] defaultEntries = {"Is Bluetooth Enabled?"};
+            CharSequence[] entryValues = defaultEntries;
+
+            btDevListPreference.setEntries(defaultEntries);
 //            btDevListPreference.setDefaultValue("1");
-//            btDevListPreference.setEntryValues(entryValues);
-//            setListPreferenceData(btDevListPreference);
-//
-//
-//            btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//                @Override
-//                public boolean onPreferenceClick(Preference preference) {
-//
-//                    setListPreferenceData(btDevListPreference);
-//                    return false;
-//                }
-//            });
+            btDevListPreference.setEntryValues(entryValues);
+            setListPreferenceData(btDevListPreference);
+
+            btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+
+                    setListPreferenceData(btDevListPreference);
+                    return false;
+                }
+            });
 
 
         }catch (Exception e) {
@@ -89,7 +86,6 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             // AlertDialog dialog = errorBox.show();
         }
 
-        Log.d(TAG, "onCreatePreferences: Exiting Function");
     }
 
     private void registerSettingsListeners(){
