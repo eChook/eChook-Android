@@ -1,7 +1,6 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -25,15 +24,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context="com.ben.drivenbluetooth.MainActivity">
+        tools:context="com.ben.drivenbluetooth.MainActivity"
+        tools:ignore="PrivateResource">
 
         <Chronometer
             android:id="@+id/LapTimer"
             android:layout_width="49dp"
             android:layout_height="21dp"
             android:layout_marginEnd="8dp"
-            android:gravity="center_vertical|right"
-            android:text="00:00"
+            android:gravity="center_vertical|end"
+            android:text="@string/_00_00"
             android:textColor="@color/secondary_text_default_material_light"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -110,7 +110,6 @@
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/textClock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -129,10 +128,12 @@
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
             android:onClick="QuickChangeMode"
-            android:text="RACE"
+            android:text="@string/race"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
+            android:layout_marginBottom="12dp"
             android:layout_margin="8dp"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/start" />
 
@@ -140,7 +141,7 @@
             android:id="@+id/txtDataFileName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="arduino.csv"
+            android:text="@string/arduino_csv"
             android:textAppearance="?android:attr/textAppearanceSmall"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -151,7 +152,7 @@
             android:layout_height="21dp"
             android:gravity="center_vertical"
             android:onClick="CrossFinishLine"
-            android:text="##"
+            android:text="@string/double_hash"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/LapTimer"
@@ -162,7 +163,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="middle"
-            android:text="BTDEVICE :: VEHICLE"
+            android:text="@string/btdevice_vehicle"
             android:textAppearance="?android:attr/textAppearanceSmall"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtDataFileName" />
@@ -173,7 +174,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
-            android:text="4"
+            android:text="@string/_4"
             android:textAppearance="@android:style/TextAppearance.Material.Headline"
             android:textColor="?android:attr/textColorTertiary"
             android:textSize="30sp"
@@ -189,7 +190,7 @@
             android:layout_marginEnd="8dp"
             android:gravity="bottom"
             android:rotation="270"
-            android:text="GEAR"
+            android:text="@string/gear"
             android:textAlignment="center"
             android:textSize="12sp"
             android:textStyle="normal|italic"
@@ -201,8 +202,8 @@
             android:id="@+id/previousLapTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="##:##"
+            android:gravity="end"
+            android:text="@string/TimerPlaceholder"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/CenterView"
@@ -213,7 +214,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="##kb"
+            android:text="@string/PlaceholderFileSize"
             android:textAppearance="?android:attr/textAppearanceSmall"
             app:layout_constraintLeft_toRightOf="@+id/txtDataFileName"
             app:layout_constraintTop_toTopOf="parent" />
@@ -226,7 +227,6 @@
             android:cropToPadding="false"
             android:onClick="OpenBT"
             android:src="@drawable/ic_bluetooth_connected_black_24dp"
-            android:text="Open BT"
             app:background="@color/bt_connect"
             app:fab_size="mini"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -240,7 +240,6 @@
             android:cropToPadding="false"
             android:onClick="LaunchSettings"
             android:src="@drawable/ic_settings_black_24dp"
-            android:text="Settings"
             app:backgroundTint="@color/settings"
             app:fab_size="mini"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -256,7 +255,6 @@
             android:longClickable="true"
             android:onClick="Start"
             android:src="@drawable/ic_play_arrow_black_24dp"
-            android:text="Log"
             android:textStyle="bold"
             app:backgroundTint="@color/play"
             app:fab_size="mini"
@@ -270,7 +268,6 @@
             android:layout_margin="8dp"
             android:onClick="Stop"
             android:src="@drawable/ic_stop_black_24dp"
-            android:text="Stop"
             app:backgroundTint="@color/pause"
             app:fab_size="mini"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -282,7 +279,6 @@
             android:layout_height="wrap_content"
             android:onClick="Cycle"
             android:src="@drawable/carousel_24"
-            android:text="Cycle"
             app:backgroundTint="@color/cycle"
             app:fab_size="mini"
             android:layout_margin="8dp"
@@ -290,7 +286,6 @@
             app:layout_constraintLeft_toRightOf="@+id/btnSettings" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/launchmode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="LaunchMode"

@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
@@ -29,16 +30,18 @@ import com.ben.drivenbluetooth.util.DrivenSettings;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.Set;
 
 public class SettingsFragment 	extends PreferenceFragmentCompat
-								implements SharedPreferences.OnSharedPreferenceChangeListener
+                                implements SharedPreferences.OnSharedPreferenceChangeListener
 {
+    static final String TAG = "Settings Fragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        view.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), android.R.color.background_light));
+        view.setBackgroundColor(ContextCompat.getColor(Objects.requireNonNull(getActivity()).getApplicationContext(), android.R.color.background_light));
         return view;
     }
 
@@ -49,31 +52,21 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                 addPreferencesFromResource(R.xml.user_settings);
             }catch (Exception e) {
                 e.printStackTrace();
-
             }
-            updateAllPreferenceSummary();
+//            updateAllPreferenceSummary();
 
             //Added to support BT device list generation
 
             final ListPreference btDevListPreference = (ListPreference) findPreference("prefBTDeviceName");
-
-            // This is required if you don't have 'entries' and 'entryValues' in your XML - which can't be hard coded for BT devices
-
+            // This is required if you don't have 'entries' and 'entryValues' in your XML - which naturally can't be hard coded for BT devices
             String[] defaultEntries = {"Is Bluetooth Enabled?"};
             CharSequence[] entryValues = defaultEntries;
 
             btDevListPreference.setEntries(defaultEntries);
-//            btDevListPreference.setDefaultValue("1");
+            btDevListPreference.setDefaultValue("1");
             btDevListPreference.setEntryValues(entryValues);
             setListPreferenceData(btDevListPreference);
 
-            /* Use of DweetPro deprecated.
-            //Check if DweetPro Login worked
-            Preference dweetProPref = findPreference("prefDweetLocked");
-            if(Global.enableDweetPro != dweetProPref.isEnabled()) {
-                dweetProPref.setSummary("Error. Please check login info and internet connection");
-            }
-            */
 
             btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
@@ -123,7 +116,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         sendIntent.setAction(Intent.ACTION_SEND);
         //Open file
         File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
-        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(logFile));
+        sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(Objects.requireNonNull(getContext()), "com.ben.drivenbluetooth.fileprovider",logFile)); //TODO check if the new share implementation works
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
     }
@@ -153,33 +146,45 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
     //OnClick callback to generate list of BT devices
     private static void setListPreferenceData(ListPreference lp) {
-
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-
-        //Count the number of paired devices - Must be a more elegant solution!!
-        int devTotalCount = 0;
-        for(BluetoothDevice bt : pairedDevices) {
-            devTotalCount ++;
+        BluetoothAdapter mBluetoothAdapter = null;
+        try {
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        }catch (Exception e){
+            Log.d(TAG, "setListPreferenceData: No Access to Bluetooth Module ");
         }
+        if(mBluetoothAdapter != null) {
+//       Log.d("eChook", "setListPreferenceData: "+  mBluetoothAdapter.getName());
+            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 
-        Log.d("BT", "BT Device Count:" + devTotalCount);
+            //Count the number of paired devices - Must be a more elegant solution!!
+            int devTotalCount = 0;
+            for (BluetoothDevice bt : pairedDevices) {
+                devTotalCount++;
+            }
 
-        CharSequence[] entries = new CharSequence[devTotalCount];
+            Log.d("BT", "BT Device Count:" + devTotalCount);
 
-        int devCount = 0;
-        Global.BTDeviceNames.add(0, "null"); //pre fill the 0 index of the list to keep everything else in sync
-        for(BluetoothDevice bt : pairedDevices) {
-            entries[devCount] = bt.getName();
-            devCount ++;
+            CharSequence[] entries = new CharSequence[devTotalCount];
 
+            int devCount = 0;
+            Global.BTDeviceNames.add(0, "null"); //pre fill the 0 index of the list to keep everything else in sync
+            for (BluetoothDevice bt : pairedDevices) {
+                entries[devCount] = bt.getName();
+                devCount++;
+
+            }
+
+
+            lp.setEntries(entries);
+            lp.setEntryValues(entries);
+            lp.setSummary(Global.BTDeviceName);
+        }else{// Purely for ADV testing purposes
+            CharSequence[] entries = new CharSequence[1];
+            entries[0] = "None";
+            lp.setEntries(entries);
+            lp.setEntryValues(entries);
+            lp.setSummary("Bluetooth Device Not Found");
         }
-
-
-        lp.setEntries(entries);
-        lp.setEntryValues(entries);
-        lp.setSummary(Global.BTDeviceName);
-
 
     }
 
@@ -199,14 +204,14 @@ e.printStackTrace();
         }
 	}
 
-	private void updateAllPreferenceSummary() {
-//		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-//		Map<String,?> keys = sharedPreferences.getAll();
-//
-//		for (Map.Entry<String, ?> entry : keys.entrySet()) {
-//			//updatePreferenceSummary(entry.getKey());
-//		}
-	}
+//	private void updateAllPreferenceSummary() {
+////		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+////		Map<String,?> keys = sharedPreferences.getAll();
+////
+////		for (Map.Entry<String, ?> entry : keys.entrySet()) {
+////			//updatePreferenceSummary(entry.getKey());
+////		}
+//	}
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {

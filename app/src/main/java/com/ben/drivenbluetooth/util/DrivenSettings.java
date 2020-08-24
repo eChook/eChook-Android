@@ -78,7 +78,7 @@ public final class DrivenSettings {
             int mode = prefs.getBoolean("prefModeSwitch", false) ? 1 : 0;
             Global.Mode = Global.MODE.values()[mode];
         } catch (Exception e) {
-//            Global.Mode = Global.MODE.DEMO;
+            Global.Mode = Global.MODE.DEMO;
         }
         EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.ModeChange));
     }

@@ -232,12 +232,14 @@ public class MainActivity
                 try {
                     StopStreamReader();
                     myBluetoothManager.closeBT();
+                    mDataToCSVFile.cancel();
+                    mTelemetrySender.Disable();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            mDataToCSVFile.cancel();
-            mTelemetrySender.Disable();
+//            mDataToCSVFile.cancel();
+//            mTelemetrySender.Disable();
 
         }
 

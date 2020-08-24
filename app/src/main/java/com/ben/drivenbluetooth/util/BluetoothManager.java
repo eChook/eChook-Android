@@ -54,10 +54,10 @@ public final class BluetoothManager {
 
         if(!mBluetoothAdapter.isEnabled()) {
             mListener.onBluetoothDisabled();
-			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); // Why are we redefining it here?
 
 			if(!mBluetoothAdapter.isEnabled()) {
-				EventBus.getDefault().post(new SnackbarEvent("Bluetooth adapter not enabled"));
+				EventBus.getDefault().post(new SnackbarEvent("Bluetooth is turned off - Please enable bluetooth"));
 				return;
 			}
         }

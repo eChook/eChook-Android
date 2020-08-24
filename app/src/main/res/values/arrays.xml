@@ -16,29 +16,4 @@
         <item>3</item>
         <item>4</item>
     </string-array>
-	<string-array name="prefMode">
-		<item>Demo</item>
-		<item>Race</item>
-	</string-array>
-	<string-array name="prefModeValues">
-		<item>0</item>
-		<item>1</item>
-	</string-array>
-	<string-array name="prefLocation">
-		<item>Disabled</item>
-		<item>Enabled</item>
-	</string-array>
-	<string-array name="prefLocationValues">
-		<item>0</item>
-		<item>1</item>
-	</string-array>
-    <string-array name="prefGraphs">
-		<item>Disabled</item>
-		<item>Enabled</item>
-	</string-array>
-	<string-array name="prefGraphsValues">
-		<item>0</item>
-		<item>1</item>
-	</string-array>
-	<string-array name="btDevList">devicesList</string-array>
 </resources>

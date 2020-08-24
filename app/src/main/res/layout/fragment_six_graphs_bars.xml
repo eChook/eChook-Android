@@ -373,7 +373,6 @@
     <android.support.constraint.Guideline
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/guideline10"
         android:orientation="horizontal"
         custom:layout_constraintGuide_percent="0.8177083"
         tools:layout_editor_absoluteY="314dp"

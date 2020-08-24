@@ -12,7 +12,6 @@
 
 
     <LinearLayout
-        android:id="@+id/VoltageColumn"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -28,7 +27,6 @@
         app:layout_constraintVertical_bias="0.0">
 
         <TextView
-            android:id="@+id/VoltageLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autoSizeTextType="uniform"
@@ -57,7 +55,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/LLV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
@@ -97,7 +94,6 @@
 
 
     <LinearLayout
-        android:id="@+id/CurrentColumn"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -139,7 +135,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/LLV2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
@@ -177,7 +172,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/RMPColumn"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -222,7 +216,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/LLV3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
@@ -328,7 +321,6 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
-        android:id="@+id/SpeedColumn"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -371,7 +363,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/LLV4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"

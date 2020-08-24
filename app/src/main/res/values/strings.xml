@@ -1,6 +1,15 @@
 <resources>
     <string name="app_name">eChook Companion</string>
     <string name="google_maps_api_key">AIzaSyBpcKddfAxD9ESmg4lLPLOmbzguagX5_pY</string>
+    <string name="race">RACE</string>
+    <string name="_00_00">00:00</string>
+    <string name="arduino_csv">arduino.csv</string>
+    <string name="double_hash">##</string>
+    <string name="btdevice_vehicle">BTDEVICE :: VEHICLE</string>
+    <string name="_4">4</string>
+    <string name="gear">GEAR</string>
+    <string name="TimerPlaceholder">##:##</string>
+    <string name="PlaceholderFileSize">##kb</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 </resources>
