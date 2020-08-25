@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import androidx.core.content.ContextCompat;
@@ -75,6 +76,8 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                 }
             });
 
+            registerSettingsListeners();
+
 
         }catch (Exception e) {
             Log.d("eChook", "Error occurred in Settings onCreatePreference.");
@@ -118,9 +121,16 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         sendIntent.setAction(Intent.ACTION_SEND);
         //Open file
         File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
-        sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(Objects.requireNonNull(getContext()), "com.ben.drivenbluetooth.fileprovider",logFile)); //TODO check if the new share implementation works
+        Uri logFileUri = FileProvider.getUriForFile(getContext(), "com.ben.drivenbluetooth.fileprovider",logFile);
+        sendIntent.putExtra(Intent.EXTRA_STREAM, logFileUri);
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
+
+//        Old Method, Doesn't work in Nougat +
+//        File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
+//        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(logFile));
+//        sendIntent.setType("text/plain");
+//        startActivity(sendIntent);
     }
 
     //OnClick callback for deleting data log
