@@ -148,9 +148,9 @@ public class BTDataParser extends Thread {
                             case Global.BRAKE_ID:
                                 SetBrake(value);
                                 break;
-                            case Global.FAN_DUTY_ID:
-                                SetFanDuty(value);
-                                break;
+//                            case Global.FAN_DUTY_ID:
+//                                SetFanDuty(value);
+//                                break;
                             case Global.STEERING_ID:
                                 SetSteeringAngle(value);
                                 break;

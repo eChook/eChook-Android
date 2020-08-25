@@ -36,9 +36,9 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="prefModeSwitch"
-            android:title="Demo Mode"
+            android:title="Test Mode"
             android:summaryOff="Data from Bluetooth is displayed"
-            android:summaryOn="Generated data displayed for demo purposes"
+            android:summaryOn="Generated data displayed for test or demo purposes"
             />
         <ListPreference
             android:key="prefSpeedUnits"
@@ -117,4 +117,22 @@
             android:summary="Public 6+ digit data identifier. dweet.io/follow/identifier"
             android:title="dweet.io 'Thing' name" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="prefKeyCustomURL"
+        android:title="Live Data to Custom URL"
+        android:summary="Sends a JSON packet containing latest data to a URL of your choice">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefCustomUrlEnabled"
+            android:summary="Upload live data to a custom URL"
+            android:title="Enable Live Data upload to a custom URL" />
+        <EditTextPreference
+            android:key="prefCustomUrl"
+            android:summary="URL to upload data to"
+            android:title="Custom URL" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

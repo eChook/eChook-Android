@@ -15,10 +15,14 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreference;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
@@ -30,6 +34,9 @@ import com.ben.drivenbluetooth.util.DrivenSettings;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
 import java.util.Set;
 
@@ -120,17 +127,15 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         //Open file
+
         File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
         Uri logFileUri = FileProvider.getUriForFile(getContext(), "com.ben.drivenbluetooth.fileprovider",logFile);
         sendIntent.putExtra(Intent.EXTRA_STREAM, logFileUri);
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
 
-//        Old Method, Doesn't work in Nougat +
-//        File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
-//        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(logFile));
-//        sendIntent.setType("text/plain");
-//        startActivity(sendIntent);
+
+
     }
 
     //OnClick callback for deleting data log
@@ -147,10 +152,10 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             }
         });
         warningBox.setNegativeButton("Don't Delete", new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int id) {
-            dialog.dismiss();
-        }
-    });
+            public void onClick(DialogInterface dialog, int id) {
+              dialog.dismiss();
+            }
+        });
         AlertDialog dialog = warningBox.show();
 
 
@@ -246,26 +251,42 @@ e.printStackTrace();
 					int location = sharedPreferences.getBoolean("prefLocationSwitch", false)? 1:0;
 					Global.LocationStatus = Global.LOCATION.values()[location];
 					EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.LocationChange));
+					if(!sharedPreferences.getBoolean("prefLocationSwitch", false)&&sharedPreferences.getBoolean("prefSpeedDisplaySwitch", false)){
+                        final SwitchPreference sp = (SwitchPreference) findPreference("prefSpeedDisplaySwitch");
+                        sp.setChecked(false);
+                    }
+
 					break;
                 case "prefSpeedDisplaySwitch":
                     Global.dispalyGpsSpeed = sharedPreferences.getBoolean("prefSpeedDisplaySwitch", false);
                     //Now enable GPS Location if Disabled
                     if (Global.dispalyGpsSpeed) {
-                        if (sharedPreferences.getBoolean("prefLocationSwitch", false)) {
-                            //Use GPS is Not Enabled, enable it
-                            Log.d("eChook", "Attempting to enable GPS");
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putBoolean("prefLocationSwitch", true);
-                            editor.apply();
+                        if (!sharedPreferences.getBoolean("prefLocationSwitch", false)) {
 
+                            final AlertDialog.Builder warningBox = new AlertDialog.Builder(this.getActivity());
+                            warningBox.setMessage("GPS is required for this feature, enable it?")
+                                    .setTitle("GPS Disabled");
+                            warningBox.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    final SwitchPreference sp = (SwitchPreference) findPreference("prefLocationSwitch");
+                                    sp.setChecked(true);
+                                }
+                            });
+                            warningBox.setNegativeButton("Don't Enable", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    final SwitchPreference sp = (SwitchPreference) findPreference("prefSpeedDisplaySwitch");
+                                    sp.setChecked(false);
+                                }
+                            });
+                            AlertDialog dialog = warningBox.show();
                         }
                     }
                     break;
-				case "prefAccelerometer":
-					int accelerometer = Integer.valueOf(sharedPreferences.getString("prefAccelerometer", ""));
-					Global.Accelerometer = Global.ACCELEROMETER.values()[accelerometer];
-					MainActivity.myAccelerometer.update();
-					break;
+//				case "prefAccelerometer":
+//					int accelerometer = Integer.valueOf(sharedPreferences.getString("prefAccelerometer", ""));
+//					Global.Accelerometer = Global.ACCELEROMETER.values()[accelerometer];
+//					MainActivity.myAccelerometer.update();
+//					break;
 				case "prefBTDeviceName":
                     if(!Global.BTDeviceNames.isEmpty()) {
                         Global.BTDeviceName = sharedPreferences.getString("prefBTDeviceName", "");
@@ -302,6 +323,38 @@ e.printStackTrace();
                     break;
                 case "prefEchookPassword":
                     Global.eChookPassword = sharedPreferences.getString("prefEchookPassword", "");
+                    break;
+                case "prefCustomUrlEnabled":
+                    if(sharedPreferences.getBoolean("prefCustomUrlEnabled", false)){
+                        if(!URLUtil.isValidUrl(sharedPreferences.getString("prefCustomUrl", ""))){
+
+                            final SwitchPreference sp = (SwitchPreference) findPreference("prefCustomUrlEnabled");
+                            sp.setChecked(false);
+
+                            final AlertDialog.Builder warningBox = new AlertDialog.Builder(this.getActivity());
+                            warningBox.setMessage("Please enter a valid URL, including http:// or https:// before enabling this feature")
+                                    .setTitle("Invalid URL");
+                            warningBox.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog dialog = warningBox.show();
+
+                        }
+                    }
+
+                    Global.customUrlEnabled = sharedPreferences.getBoolean("prefCustomUrlEnabled", false);
+                    break;
+                case "prefCustomUrl":
+                    Global.customUrl = sharedPreferences.getString("prefCustomUrl", "");
+                    if(!Objects.equals(Global.customUrl, "")) {
+                        final EditTextPreference lp = (EditTextPreference) findPreference("prefCustomUrl");
+                        lp.setSummary(Global.customUrl);
+                    }else{
+                        final EditTextPreference lp = (EditTextPreference) findPreference("prefCustomUrl");
+                        lp.setSummary("Enter URL");
+                    }
                     break;
 
 			}

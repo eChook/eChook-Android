@@ -38,10 +38,10 @@ public final class Global {
     public static final byte    GEAR_RATIO_ID           = 114; // r
     public static final byte    CYCLE_VIEW_ID           = 67;  // C
     public static final byte    LOOP_COUNTER_ID         = 108; // l
-    public static final byte    THROTTLE_MODE_ID        = 110; // n - TODO Depreciated
+//    public static final byte    THROTTLE_MODE_ID        = 110; // n - TODO Depreciated
     public static final byte    BRAKE_ID                = 66;  // B
-    public static final byte    FAN_STATUS_ID           = 70;  // F - TODO Depreciated
-    public static final byte    FAN_DUTY_ID             = 102; // f - TODO Depreciated
+//    public static final byte    FAN_STATUS_ID           = 70;  // F - TODO Depreciated
+//    public static final byte    FAN_DUTY_ID             = 102; // f - TODO Depreciated
     public static final byte    STEERING_ID             = 122; // z
     public static final byte    CUSTOM_0                = 48;  // 0
     public static final byte    CUSTOM_1                = 49;  // 1
@@ -148,20 +148,22 @@ public final class Global {
 	public static LOCATION LocationStatus;
     public static boolean dispalyGpsSpeed;
 	public static ACCELEROMETER Accelerometer;
-    public static THROTTLEMODE ThrottleMode;
+//    public static THROTTLEMODE ThrottleMode;
 
 	public static String BTDeviceName;
 	public static boolean EnableGraphs                  = true;
-	public static Double BatteryCapacityAh;
+//	public static Double BatteryCapacityAh;
 
     public static List<String> BTDeviceNames = new ArrayList<>(248); //248 is the maximum number of devices it is possible to bond
-    public static String dataPin                        = "";
+//    public static String dataPin                        = "";
     public static boolean dweetEnabled                  = false;
     public static String dweetThingName                 = "";
     public static boolean eChookLiveEnabled             = false;
     public static String eChookCarName                  = "";
     public static String eChookPassword                 = "";
-    public static String eChookID                       = "";
+//    public static String eChookID                       = "";
+    public static boolean customUrlEnabled              = false;
+    public static String customUrl                      = "";
 
 
     //Depreciated - remove once code is updated.
@@ -188,7 +190,7 @@ public final class Global {
 
     public enum BTSTATE {DISCONNECTED, CONNECTING, CONNECTED, RECONNECTING}
 
-    public enum MODE {RACE, DEMO}
+    public enum MODE {RACE, TEST}
 
     public enum UNIT {MPH, KPH, MPS, FFF, KNOT}
 

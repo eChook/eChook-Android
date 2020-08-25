@@ -36,6 +36,9 @@ public final class DrivenSettings {
         eChookCarName(prefs);
         eChookPassword(prefs);
         dweetThingName(prefs);
+        customUrlEnabled(prefs);
+        customUrl(prefs);
+
     }
 
     public static void QuickChangeMode(Context context) {
@@ -78,7 +81,7 @@ public final class DrivenSettings {
             int mode = prefs.getBoolean("prefModeSwitch", false) ? 1 : 0;
             Global.Mode = Global.MODE.values()[mode];
         } catch (Exception e) {
-            Global.Mode = Global.MODE.DEMO;
+            Global.Mode = Global.MODE.TEST;
         }
         EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.ModeChange));
     }
@@ -168,6 +171,14 @@ public final class DrivenSettings {
 
     private static void eChookPassword(SharedPreferences prefs) {
         Global.eChookPassword = prefs.getString("prefEchookPassword", "");
+    }
+
+    private static void customUrlEnabled(SharedPreferences prefs){
+        Global.customUrlEnabled = prefs.getBoolean("prefCustomUrlEnabled", false);
+    }
+
+    private static void customUrl(SharedPreferences prefs){
+        Global.customUrl = prefs.getString("prefCustomUrl", "");
     }
 
 

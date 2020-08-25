@@ -448,7 +448,7 @@ public class MainActivity
 
     public void Start(View v) {
         try {
-            if (Global.Mode == Global.MODE.DEMO) {
+            if (Global.Mode == Global.MODE.TEST) {
                 StartDemoMode();
             } else if (Global.Mode == Global.MODE.RACE) {
                 StartRaceMode();
@@ -472,7 +472,7 @@ public class MainActivity
 
     private void StartWithForcedLogging() {
         try {
-            if (Global.Mode == Global.MODE.DEMO) {
+            if (Global.Mode == Global.MODE.TEST) {
                 StartDataLogger();
                 StartDemoMode();
             } else if (Global.Mode == Global.MODE.RACE) {

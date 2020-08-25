@@ -92,7 +92,7 @@ private boolean getEchookId()
                 StringBuilder sb = new StringBuilder();
                 int HttpResult = urlConnection.getResponseCode();
                 if (HttpResult == HttpURLConnection.HTTP_OK) {
-                        Log.d("eChook", "HTTP Response OK to Login Request");
+//                        Log.d("eChook", "HTTP Response OK to Login Request");
                         BufferedReader br = new BufferedReader(
                                 new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
                         String line;
@@ -101,7 +101,7 @@ private boolean getEchookId()
                         }
                         br.close();
 
-                        Log.d("eChook", "ID request response:"+sb.toString());
+//                        Log.d("eChook", "ID request response:"+sb.toString());
 
                         try {
                                 JSONObject receivedJson = new JSONObject(sb.toString());
@@ -155,7 +155,6 @@ private JSONObject getDataJson(boolean location)
 {
         JSONObject dataJSON = new JSONObject();
         DecimalFormat format2 = new DecimalFormat("#.##");
-        DecimalFormat format3 = new DecimalFormat("#.###");
         try{
                 dataJSON.put("Vt", format2.format(Global.Volts));
                 dataJSON.put("V1", format2.format(Global.VoltsAux));
@@ -171,16 +170,16 @@ private JSONObject getDataJson(boolean location)
                 dataJSON.put("Gear", format2.format(Global.Gear));
                 dataJSON.put("Distance", format2.format(Global.DistanceMeters));
 
-                dataJSON.put("Custom0", format3.format(Global.Custom0));
-                dataJSON.put("Custom1", format3.format(Global.Custom1));
-                dataJSON.put("Custom2", format3.format(Global.Custom2));
-                dataJSON.put("Custom3", format3.format(Global.Custom3));
-                dataJSON.put("Custom4", format3.format(Global.Custom4));
-                dataJSON.put("Custom5", format3.format(Global.Custom5));
-                dataJSON.put("Custom6", format3.format(Global.Custom6));
-                dataJSON.put("Custom7", format3.format(Global.Custom7));
-                dataJSON.put("Custom8", format3.format(Global.Custom8));
-                dataJSON.put("Custom9", format3.format(Global.Custom9));
+                dataJSON.put("Custom0", format2.format(Global.Custom0));
+                dataJSON.put("Custom1", format2.format(Global.Custom1));
+                dataJSON.put("Custom2", format2.format(Global.Custom2));
+                dataJSON.put("Custom3", format2.format(Global.Custom3));
+                dataJSON.put("Custom4", format2.format(Global.Custom4));
+                dataJSON.put("Custom5", format2.format(Global.Custom5));
+                dataJSON.put("Custom6", format2.format(Global.Custom6));
+                dataJSON.put("Custom7", format2.format(Global.Custom7));
+                dataJSON.put("Custom8", format2.format(Global.Custom8));
+                dataJSON.put("Custom9", format2.format(Global.Custom9));
 
                 if(location) {
                         dataJSON.put("Lat", Global.Latitude);
