@@ -79,6 +79,7 @@ public class MainActivity
     private ImageView myLogging;
 
     private FloatingActionButton myBluetoothButton;
+    private FloatingActionButton myLoggingToggleButton;
 
     private Chronometer LapTimer;
     private TextView prevLapTime;
@@ -131,6 +132,7 @@ public class MainActivity
         myLogging = findViewById(R.id.logStatusSymbol);
 
         myBluetoothButton = findViewById(R.id.open);
+        myLoggingToggleButton = findViewById(R.id.start);
 
 
         LapTimer = findViewById(R.id.LapTimer);
@@ -446,7 +448,16 @@ public class MainActivity
         }
     }
 
-    public void Start(View v) {
+    public void toggleLogging(View v){
+        if(Global.isLogging){
+            Stop();
+        }
+        else{
+            Start();
+        }
+    }
+
+    public void Start() {
         try {
             if (Global.Mode == Global.MODE.TEST) {
                 StartDemoMode();
@@ -458,7 +469,7 @@ public class MainActivity
         }
     }
 
-    public void Stop(View v) {
+    public void Stop() {
         try {
             StopRandomGenerator();
             StopDataLogger();
@@ -612,6 +623,7 @@ public class MainActivity
                     mDataToCSVFile = new DataToCsvFile();
                 }
                 mDataToCSVFile.start();
+                Global.isLogging = true;
                 UpdateLoggingStatus(true);
             }
         } catch (Exception e) {
@@ -704,6 +716,7 @@ public class MainActivity
         if (mDataToCSVFile != null && mDataToCSVFile.getState() != Thread.State.TERMINATED || mDataToCSVFile.getState() != Thread.State.NEW) {
             mDataToCSVFile.cancel();
         }
+        Global.isLogging = false;
         UpdateLoggingStatus(false);
     }
 
@@ -838,9 +851,13 @@ public class MainActivity
         if (logging) {
             myLogging.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_check_circle_black_24dp, null));
             myLogging.setColorFilter(ContextCompat.getColor(context, R.color.positive));
+            myLoggingToggleButton.setBackgroundTintList(ColorStateList.valueOf((getResources().getColor(R.color.pause))));
+            myLoggingToggleButton.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_stop_black_24dp, null));
         } else {
             myLogging.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_cancel_black_24dp, null));
             myLogging.setColorFilter(ContextCompat.getColor(context, R.color.negative));
+            myLoggingToggleButton.setBackgroundTintList(ColorStateList.valueOf((getResources().getColor(R.color.play))));
+            myLoggingToggleButton.setImageDrawable(ResourcesCompat.getDrawable(getAppContext().getResources(), R.drawable.ic_play_arrow_black_24dp, null));
         }
     }
 
@@ -990,7 +1007,7 @@ public class MainActivity
         MainActivityHandler.post(new Runnable() {
             @Override
             public void run() {
-                showMessage("Could not connect to " + Global.BTDeviceName + ". Please try again");
+                showMessage("Could not connect to BT device " + Global.BTDeviceName);
                 Global.BTState = Global.BTSTATE.DISCONNECTED;
                 UpdateBTStatus();
             }

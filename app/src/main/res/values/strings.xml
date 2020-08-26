@@ -9,6 +9,7 @@
     <string name="gear">GEAR</string>
     <string name="TimerPlaceholder">##:##</string>
     <string name="PlaceholderFileSize">##kb</string>
+    <string name="loggingLabel">Logging:</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

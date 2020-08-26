@@ -176,6 +176,7 @@ public final class Global {
 
     public static int MotorTeeth                        = 0;
     public static int[] WheelTeeth;
+    public static boolean isLogging                     = false;
 
     /**********************/
     private Global() {

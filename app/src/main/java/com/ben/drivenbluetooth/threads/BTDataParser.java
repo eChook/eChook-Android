@@ -100,6 +100,7 @@ public class BTDataParser extends Thread {
                             firstByte -= 128;
                             value = (double) (firstByte & 0xff) * 100 + (double) (secondByte & 0xff);
                         }
+                        //TODO - Stop BT data coming through in Test Mode
 
                         // Check the ID
                         switch (poppedData[1]) {
