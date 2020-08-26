@@ -216,7 +216,8 @@ private JSONObject getDataJson(boolean location)
 }
 
 
-        private boolean sendJSONData() {
+private boolean sendJSONData() {
+
 
         if(Global.dweetEnabled) {
 
@@ -259,15 +260,15 @@ private JSONObject getDataJson(boolean location)
                         return false;
                 }
 
-                return true;
+//                return true;
 
         }
 
         if(Global.eChookLiveEnabled) {
-                Log.d("eChook", "Entering eChook Live SendJSON data, ID = " + echookID);
+//                Log.d("eChook", "Entering eChook Live SendJSON data, ID = " + echookID);
                 if (Global.eChookLiveEnabled && !waitingForLogin && echookID.equals("")) //Catches the usecase when someone enables eChook live data once the thread is started and a login is needed.
                 {
-                        Log.d("eChook", "eChook Live enabled but no ID. ID = " + echookID);
+//                        Log.d("eChook", "eChook Live enabled but no ID. ID = " + echookID);
                         waitingForLogin = true;
                         getEchookId();
                         return true;
@@ -279,11 +280,8 @@ private JSONObject getDataJson(boolean location)
                                 urlConnection.setDoOutput(true);
                                 urlConnection.setChunkedStreamingMode(0);
                                 urlConnection.setRequestProperty("content-type", "application/json");
-                                if (Global.enableDweetPro)
-                                        urlConnection.setRequestProperty("X-DWEET-AUTH", echookID);
 
                                 OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-
                                 out.write(getDataJson(true).toString().getBytes());
                                 out.flush();
 
@@ -311,10 +309,55 @@ private JSONObject getDataJson(boolean location)
                                 return false;
                         }
 
-                        return true;
+//                        return true;
                 }
         }
-        return false;
+
+        if(Global.customUrlEnabled) {
+                Log.d("eChook", "Entering Custom URL Upload");
+
+                HttpURLConnection urlConnection;
+                try {
+                        //URL is checked for validity in settings
+                        URL url = new URL(Global.customUrl);
+                        urlConnection = (HttpURLConnection) url.openConnection();
+                        urlConnection.setDoOutput(true);
+                        urlConnection.setChunkedStreamingMode(0);
+                        urlConnection.setRequestProperty("content-type", "application/json");
+
+                        OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+
+                        out.write(getDataJson(true).toString().getBytes());
+                        out.flush();
+
+
+                        StringBuilder sb = new StringBuilder();
+                        int HttpResult = urlConnection.getResponseCode();
+                        if (HttpResult == HttpURLConnection.HTTP_OK) {
+                                Log.d("SendData", "HTTP Response OK");
+                                BufferedReader br = new BufferedReader(
+                                        new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
+                                String line;
+                                while ((line = br.readLine()) != null) {
+                                        sb.append(line).append("\n");
+                                }
+                                br.close();
+                                System.out.println("" + sb.toString());
+                        } else {
+                                System.out.println(urlConnection.getResponseMessage());
+                        }
+
+                        urlConnection.disconnect();
+
+                } catch (IOException e) {
+                        e.printStackTrace();
+                        return false;
+                }
+
+//                        return true;
+
+        }
+        return true;
 }
 
 

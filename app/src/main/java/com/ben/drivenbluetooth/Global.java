@@ -155,13 +155,11 @@ public final class Global {
 //	public static Double BatteryCapacityAh;
 
     public static List<String> BTDeviceNames = new ArrayList<>(248); //248 is the maximum number of devices it is possible to bond
-//    public static String dataPin                        = "";
     public static boolean dweetEnabled                  = false;
     public static String dweetThingName                 = "";
     public static boolean eChookLiveEnabled             = false;
     public static String eChookCarName                  = "";
     public static String eChookPassword                 = "";
-//    public static String eChookID                       = "";
     public static boolean customUrlEnabled              = false;
     public static String customUrl                      = "";
 
