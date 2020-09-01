@@ -5,7 +5,7 @@ import android.location.Location;
 
 import com.ben.drivenbluetooth.util.LapData;
 import com.ben.drivenbluetooth.util.RunningAverage;
-import com.github.mikephil.charting.data.LineData;
+//import com.github.mikephil.charting.data.LineData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,15 +107,15 @@ public final class Global {
     public static final ArrayList<LapData> LapDataList  = new ArrayList<>();
 	public static final RunningAverage AverageAmps 		= new RunningAverage(2); // 2 = number of decimal places
     public static final RunningAverage AverageSpeedMPS  = new RunningAverage(1);
-    public static final	int MAX_GRAPH_DATA_POINTS       = 4 * 50; // 50 seconds of history on graphs assuming Arduino spews every 250ms
+//    public static final	int MAX_GRAPH_DATA_POINTS       = 4 * 50; // 50 seconds of history on graphs assuming Arduino spews every 250ms
 
 
-	public static final LineData ThrottleHistory	    = new LineData();
-	public static final LineData AmpsHistory		    = new LineData();
-    public static final LineData VoltsHistory		    = new LineData();
-    public static final LineData MotorRPMHistory	    = new LineData();
-    public static final LineData SpeedHistory		    = new LineData();
-    public static final LineData TempC1History		    = new LineData();
+//	public static final LineData ThrottleHistory	    = new LineData();
+//	public static final LineData AmpsHistory		    = new LineData();
+//    public static final LineData VoltsHistory		    = new LineData();
+//    public static final LineData MotorRPMHistory	    = new LineData();
+//    public static final LineData SpeedHistory		    = new LineData();
+//    public static final LineData TempC1History		    = new LineData();
 
 
 	public static volatile Location StartFinishLineLocation;
@@ -164,14 +164,6 @@ public final class Global {
     public static String customUrl                      = "";
 
 
-    //Depreciated - remove once code is updated.
-    public static boolean enableLocationUpload          = false;
-    public static boolean enableDweetPro                = false;
-    public static String dweetProPassword               ="";
-    public static String dweetProUsername               ="";
-    public static String dweetMasterKey                 ="";
-
-
     public static int MotorTeeth                        = 0;
     public static int[] WheelTeeth;
     public static boolean isLogging                     = false;
@@ -197,5 +189,5 @@ public final class Global {
 
     public enum ACCELEROMETER {DISABLED, ENABLED}
 
-    public enum THROTTLEMODE {THROTTLE, CURRENT}
+//    public enum THROTTLEMODE {THROTTLE, CURRENT}
 }

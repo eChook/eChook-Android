@@ -300,10 +300,7 @@ e.printStackTrace();
 					Global.CarName = sharedPreferences.getString("prefCarName","");
                     EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.CarNameChange));
 					break;
-				case "prefGraphsSwitch":
-					Global.EnableGraphs = sharedPreferences.getBoolean("prefGraphsSwitch", false);
-                    break;
-                case "prefMotorTeeth":
+				case "prefMotorTeeth":
                     Global.MotorTeeth = DrivenSettings.parseMotorTeeth(sharedPreferences.getString("prefMotorTeeth", ""));
                     break;
                 case "prefWheelTeeth":

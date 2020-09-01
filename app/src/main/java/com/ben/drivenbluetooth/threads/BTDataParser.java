@@ -8,7 +8,7 @@ import android.util.Log;
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.events.ArduinoEvent;
 import com.ben.drivenbluetooth.util.GearHelper;
-import com.ben.drivenbluetooth.util.GraphData;
+//import com.ben.drivenbluetooth.util.GraphData;
 import com.ben.drivenbluetooth.util.RunningAverage;
 
 import org.greenrobot.eventbus.EventBus;
@@ -211,7 +211,7 @@ public class BTDataParser extends Thread {
         if (Global.Lap > 0) {
             Global.LapDataList.get(Global.Lap - 1).AddVolts(rawVolts);
         }
-        GraphData.AddToHistory(rawVolts, Global.VoltsHistory);
+//        GraphData.AddToHistory(rawVolts, Global.VoltsHistory);
         EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Volts, rawVolts));
     }
 
@@ -236,14 +236,14 @@ public class BTDataParser extends Thread {
         if (Global.Lap > 0) {
             Global.LapDataList.get(Global.Lap - 1).AddAmps(rawAmps);
         }
-        GraphData.AddToHistory(rawAmps, Global.AmpsHistory);
+//        GraphData.AddToHistory(rawAmps, Global.AmpsHistory);
 
         EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.Amps, rawAmps));
     }
 
     private synchronized void SetInputThrottle(final double rawThrottle) {
         Global.InputThrottle = rawThrottle; // Apply conversion and offset
-        GraphData.AddToHistory(rawThrottle, Global.ThrottleHistory);
+//        GraphData.AddToHistory(rawThrottle, Global.ThrottleHistory);
 
         EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.ThrottleInput, rawThrottle));
     }
@@ -269,7 +269,7 @@ public class BTDataParser extends Thread {
             Global.LapDataList.get(Global.Lap - 1).AddSpeedMPS(Global.SpeedMPS);
         }
 
-        GraphData.AddToHistory(Global.SpeedUnit == Global.UNIT.KPH ? Global.SpeedMPS * 3.6 : Global.SpeedMPS * 2.2, Global.SpeedHistory);
+//        GraphData.AddToHistory(Global.SpeedUnit == Global.UNIT.KPH ? Global.SpeedMPS * 3.6 : Global.SpeedMPS * 2.2, Global.SpeedHistory);
 
         EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.WheelSpeedMPS, rawSpeedMPS));
     }
@@ -279,7 +279,7 @@ public class BTDataParser extends Thread {
         if (Global.Lap > 0) {
             Global.LapDataList.get(Global.Lap - 1).AddRPM(rawMotorRPM);
         }
-        GraphData.AddToHistory(rawMotorRPM, Global.MotorRPMHistory);
+//        GraphData.AddToHistory(rawMotorRPM, Global.MotorRPMHistory);
 
         EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.MotorSpeedRPM, rawMotorRPM));
     }
@@ -288,7 +288,7 @@ public class BTDataParser extends Thread {
         switch (sensorId) {
             case 1:
                 Global.TempC1 = rawTemp;
-                GraphData.AddToHistory(rawTemp, Global.TempC1History);
+//                GraphData.AddToHistory(rawTemp, Global.TempC1History);
                 EventBus.getDefault().post(new ArduinoEvent(ArduinoEvent.EventType.TemperatureA, rawTemp));
                 break;
             case 2:

@@ -43,7 +43,7 @@ import com.ben.drivenbluetooth.fragments.LapHistoryFragment;
 import com.ben.drivenbluetooth.fragments.RaceMapFragment;
 import com.ben.drivenbluetooth.fragments.SettingsFragment;
 import com.ben.drivenbluetooth.fragments.SimpleDataFragment;
-import com.ben.drivenbluetooth.fragments.SixGraphsBars;
+import com.ben.drivenbluetooth.fragments.AllDataFragment;
 import com.ben.drivenbluetooth.threads.BTDataParser;
 import com.ben.drivenbluetooth.threads.BTStreamReader;
 import com.ben.drivenbluetooth.threads.DataToCsvFile;
@@ -53,7 +53,7 @@ import com.ben.drivenbluetooth.util.Accelerometer;
 import com.ben.drivenbluetooth.util.BluetoothManager;
 import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenSettings;
-import com.ben.drivenbluetooth.util.GraphData;
+//import com.ben.drivenbluetooth.util.GraphData;
 import com.ben.drivenbluetooth.util.LocationMonitor;
 
 import org.greenrobot.eventbus.EventBus;
@@ -115,7 +115,7 @@ public class MainActivity
 
         context = getApplicationContext();
 
-        GraphData.InitializeGraphDataSets(context);
+//        GraphData.InitializeGraphDataSets(context);
 
         setContentView(R.layout.activity_main_v2); // sets the main screen.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -152,6 +152,7 @@ public class MainActivity
 
 
         InitializeLongClickStart();
+        InitializeLongClickMode();
 
         InitializeFragmentList();
         CycleView();
@@ -319,7 +320,7 @@ public class MainActivity
         RaceMapFragment rmf = new RaceMapFragment();
         rmf.initialize(myLocationMonitor);
         FragmentList.add(new SimpleDataFragment());
-        FragmentList.add(new SixGraphsBars());
+        FragmentList.add(new AllDataFragment());
 //        FragmentList.add(new FourGraphsBars());
         FragmentList.add(rmf);
         FragmentList.add(new LapHistoryFragment());
@@ -332,6 +333,17 @@ public class MainActivity
             @Override
             public boolean onLongClick(View v) {
                 StartWithForcedLogging();
+                return true;
+            }
+        });
+    }
+    private void InitializeLongClickMode() {
+        // We can't do this in XML so must do it programatically
+        TextView modeText = findViewById(R.id.txt_Mode);
+        modeText.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                QuickChangeMode(v);
                 return true;
             }
         });

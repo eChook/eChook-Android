@@ -127,7 +127,6 @@
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:gravity="center_vertical"
-            android:onClick="QuickChangeMode"
             android:text="@string/race"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
@@ -136,7 +135,7 @@
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/start" />
-
+        <!--            android:onClick="QuickChangeMode"-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="20dp"

@@ -30,7 +30,6 @@ public final class DrivenSettings {
         Units(prefs);
         BTDevice(prefs);
         CarName(prefs);
-        Graphs(prefs);
         dweetEnabled(prefs);
         echookEnabled(prefs);
         eChookCarName(prefs);
@@ -144,13 +143,6 @@ public final class DrivenSettings {
         }
     }
 
-    private static void Graphs(SharedPreferences prefs) {
-        try {
-            Global.EnableGraphs = prefs.getBoolean("prefGraphsSwitch", false);
-        } catch (Exception e) {
-            // probably not needed
-        }
-    }
 
     private static void dweetEnabled(SharedPreferences prefs) {
         Global.dweetEnabled = prefs.getBoolean("prefDweetEnabled", false);

@@ -26,14 +26,6 @@
         android:title="App Settings"
         android:key="prefAppSettings">
         <SwitchPreference
-            android:defaultValue="true"
-            android:key="prefGraphsSwitch"
-            android:summaryOff="Reduced performance and increased battery drain if enabled."
-            android:summaryOn="Reduced performance and increased battery drain if enabled. Looks nice though."
-            android:title="Enable Graphs"
-
-            />
-        <SwitchPreference
             android:defaultValue="false"
             android:key="prefModeSwitch"
             android:title="Test Mode"
