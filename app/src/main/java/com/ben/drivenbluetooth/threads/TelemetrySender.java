@@ -36,7 +36,7 @@ private boolean firstRun = true;
 
 
 public TelemetrySender() {
-        telEnabled = (Global.dweetEnabled || Global.eChookLiveEnabled);
+        telEnabled = (Global.dweetEnabled || Global.eChookLiveEnabled || Global.customUrlEnabled);
         //Log.d("eChook","TelemetrySender: telEnabled = " + telEnabled );
 }
 
@@ -64,7 +64,7 @@ private TimerTask sendJsonTask = new TimerTask(){
         @Override
         public void run() {
                 if (telEnabled) {
-                                Log.d("eChook", "About to trigger JSON Data");
+//                                Log.d("eChook", "About to trigger JSON Data");
                                 Boolean success = sendJSONData();
                 }
         }
@@ -354,8 +354,6 @@ private boolean sendJSONData() {
                         return false;
                 }
 
-//                        return true;
-
         }
         return true;
 }
@@ -374,7 +372,7 @@ public void pause() {
 }
 
 public void restart() {
-        telEnabled = Global.dweetEnabled || Global.eChookLiveEnabled;
+        telEnabled = (Global.dweetEnabled || Global.eChookLiveEnabled || Global.customUrlEnabled);
 
 }
 }
