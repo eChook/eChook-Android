@@ -22,14 +22,10 @@
     <string name="lastLapPlaceholder">(---)</string>
     <string name="current">Current</string>
     <string name="oneDpPlaceholder">##.#</string>
-    <string name="last_lap">Last Lap</string>
-    <string name="Placeholder">---</string>
     <string name="rpm">RPM</string>
     <string name="FourDigitPlaceholder">####</string>
-    <string name="last_lap">Last Lap</string>
-    <string name="placeholder">---</string>
     <string name="ahPlaceholder">##.## Ah</string>
     <string name="wh_km_placeholder">##.## Wh/km</string>
     <string name="speed">Speed</string>
-    <string name="last_lap">Last Lap</string>
+
 </resources>
