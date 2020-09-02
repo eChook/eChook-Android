@@ -65,7 +65,7 @@ private TimerTask sendJsonTask = new TimerTask(){
         public void run() {
                 if (telEnabled) {
 //                                Log.d("eChook", "About to trigger JSON Data");
-                                Boolean success = sendJSONData();
+                                Boolean success = sendLiveData();
                 }
         }
 };
@@ -81,11 +81,13 @@ private boolean getEchookId()
                 url = new URL("https://data.echook.uk/api/getid");
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
-                urlConnection.setChunkedStreamingMode(0);
+                byte[] jsonBytes = getLoginJson().toString().getBytes(StandardCharsets.UTF_8);
+//                urlConnection.setChunkedStreamingMode(0);
+                urlConnection.setFixedLengthStreamingMode(jsonBytes.length);
                 urlConnection.setRequestProperty("content-type","application/json");
 
                 OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-                out.write(getLoginJson().toString().getBytes());
+                out.write(jsonBytes);
                 out.flush();
 
 
@@ -151,7 +153,7 @@ private JSONObject getLoginJson()
 
 }
 
-private JSONObject getDataJson(boolean location)
+private JSONObject getDataJson(boolean location, boolean customData)
 {
         JSONObject dataJSON = new JSONObject();
         DecimalFormat format2 = new DecimalFormat("#.##");
@@ -170,16 +172,18 @@ private JSONObject getDataJson(boolean location)
                 dataJSON.put("Gear", format2.format(Global.Gear));
                 dataJSON.put("Distance", format2.format(Global.DistanceMeters));
 
-                dataJSON.put("Custom0", format2.format(Global.Custom0));
-                dataJSON.put("Custom1", format2.format(Global.Custom1));
-                dataJSON.put("Custom2", format2.format(Global.Custom2));
-                dataJSON.put("Custom3", format2.format(Global.Custom3));
-                dataJSON.put("Custom4", format2.format(Global.Custom4));
-                dataJSON.put("Custom5", format2.format(Global.Custom5));
-                dataJSON.put("Custom6", format2.format(Global.Custom6));
-                dataJSON.put("Custom7", format2.format(Global.Custom7));
-                dataJSON.put("Custom8", format2.format(Global.Custom8));
-                dataJSON.put("Custom9", format2.format(Global.Custom9));
+                if (customData) {
+                        dataJSON.put("Custom0", format2.format(Global.Custom0));
+                        dataJSON.put("Custom1", format2.format(Global.Custom1));
+                        dataJSON.put("Custom2", format2.format(Global.Custom2));
+                        dataJSON.put("Custom3", format2.format(Global.Custom3));
+                        dataJSON.put("Custom4", format2.format(Global.Custom4));
+                        dataJSON.put("Custom5", format2.format(Global.Custom5));
+                        dataJSON.put("Custom6", format2.format(Global.Custom6));
+                        dataJSON.put("Custom7", format2.format(Global.Custom7));
+                        dataJSON.put("Custom8", format2.format(Global.Custom8));
+                        dataJSON.put("Custom9", format2.format(Global.Custom9));
+                }
 
                 if(location) {
                         dataJSON.put("Lat", Global.Latitude);
@@ -216,145 +220,144 @@ private JSONObject getDataJson(boolean location)
 }
 
 
-private boolean sendJSONData() {
+private boolean sendLiveData() {
 
+
+        boolean success = true;
 
         if(Global.dweetEnabled) {
-
                 Log.d("eChook", "Entering Send Dweet Data");
 
-                HttpURLConnection urlConnection;
-                try {
-                        URL url;
-                        url = new URL("https://dweet.io/dweet/for/" + Global.dweetThingName + "?");
-                        urlConnection = (HttpURLConnection) url.openConnection();
-                        urlConnection.setDoOutput(true);
-                        urlConnection.setChunkedStreamingMode(0);
-                        urlConnection.setRequestProperty("content-type", "application/json");
-                        OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+                boolean b = HttpSend("https://dweet.io/dweet/for/" + Global.dweetThingName,
+                        null, null, null,null, null,
+                        getDataJson(Global.dweetLocation, Global.sendCustomData).toString());
 
-                        out.write(getDataJson(false).toString().getBytes());
-                        out.flush();
-
-
-                        StringBuilder sb = new StringBuilder();
-                        int HttpResult = urlConnection.getResponseCode();
-                        if (HttpResult == HttpURLConnection.HTTP_OK) {
-                                Log.d("SendData", "HTTP Response OK");
-                                BufferedReader br = new BufferedReader(
-                                        new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
-                                String line;
-                                while ((line = br.readLine()) != null) {
-                                        sb.append(line).append("\n");
-                                }
-                                br.close();
-                                System.out.println("" + sb.toString());
-                        } else {
-                                System.out.println(urlConnection.getResponseMessage());
-                        }
-
-                        urlConnection.disconnect();
-
-                } catch (IOException e) {
-                        e.printStackTrace();
-                        return false;
-                }
-
-//                return true;
-
+                success = success && b;
         }
 
         if(Global.eChookLiveEnabled) {
-//                Log.d("eChook", "Entering eChook Live SendJSON data, ID = " + echookID);
+                Log.d("eChook", "Entering eChook Live SendJSON data, ID = " + echookID);
                 if (Global.eChookLiveEnabled && !waitingForLogin && echookID.equals("")) //Catches the usecase when someone enables eChook live data once the thread is started and a login is needed.
                 {
-//                        Log.d("eChook", "eChook Live enabled but no ID. ID = " + echookID);
+                        Log.d("eChook", "eChook Live enabled but no ID. ID = " + echookID);
                         waitingForLogin = true;
                         getEchookId();
                         return true;
                 } else {
-                        HttpURLConnection urlConnection;
-                        try {
-                                URL url = new URL("https://data.echook.uk/api/send/" + echookID);
-                                urlConnection = (HttpURLConnection) url.openConnection();
-                                urlConnection.setDoOutput(true);
-                                urlConnection.setChunkedStreamingMode(0);
-                                urlConnection.setRequestProperty("content-type", "application/json");
 
-                                OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-                                out.write(getDataJson(true).toString().getBytes());
-                                out.flush();
+                        boolean b =  HttpSend("https://data.echook.uk/api/send/" + echookID,
+                                null, null, null,"X-DWEET-AUTH", echookID,
+                                getDataJson(true, Global.sendCustomData).toString());
 
-
-                                StringBuilder sb = new StringBuilder();
-                                int HttpResult = urlConnection.getResponseCode();
-                                if (HttpResult == HttpURLConnection.HTTP_OK) {
-                                        Log.d("SendData", "HTTP Response OK");
-                                        BufferedReader br = new BufferedReader(
-                                                new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
-                                        String line;
-                                        while ((line = br.readLine()) != null) {
-                                                sb.append(line).append("\n");
-                                        }
-                                        br.close();
-                                        System.out.println("" + sb.toString());
-                                } else {
-                                        System.out.println(urlConnection.getResponseMessage());
-                                }
-
-                                urlConnection.disconnect();
-
-                        } catch (IOException e) {
-                                e.printStackTrace();
-                                return false;
-                        }
-
-//                        return true;
+                        success = success && b;
                 }
         }
 
         if(Global.customUrlEnabled) {
-                Log.d("eChook", "Entering Custom URL Upload");
+                Log.d("eChook", "Entering SendJSON data to user defined URL");
 
-                HttpURLConnection urlConnection;
-                try {
-                        //URL is checked for validity in settings
-                        URL url = new URL(Global.customUrl);
-                        urlConnection = (HttpURLConnection) url.openConnection();
-                        urlConnection.setDoOutput(true);
-                        urlConnection.setChunkedStreamingMode(0);
-                        urlConnection.setRequestProperty("content-type", "application/json");
+                JSONObject dataJSON = getDataJson(true, Global.sendCustomData);
 
-                        OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+                boolean b = HttpSend(Global.customUrl,
+                        "POST", Global.customURLUsername, Global.customURLPassword,null, null,
+                        dataJSON.toString());
 
-                        out.write(getDataJson(true).toString().getBytes());
-                        out.flush();
+                success = success && b;
+        }
+//        if(Global.customUrlEnabled) {
+//                Log.d("eChook", "Entering Custom URL Upload");
+//
+//                HttpURLConnection urlConnection;
+//                try {
+//                        //URL is checked for validity in settings
+//                        URL url = new URL(Global.customUrl);
+//                        urlConnection = (HttpURLConnection) url.openConnection();
+//                        urlConnection.setDoOutput(true);
+//                        urlConnection.setChunkedStreamingMode(0);
+//                        urlConnection.setRequestProperty("content-type", "application/json");
+//
+//                        OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+//
+//                        out.write(getDataJson(true).toString().getBytes());
+//                        out.flush();
+//
+//
+//                        StringBuilder sb = new StringBuilder();
+//                        int HttpResult = urlConnection.getResponseCode();
+//                        if (HttpResult == HttpURLConnection.HTTP_OK) {
+//                                Log.d("SendData", "HTTP Response OK");
+//                                BufferedReader br = new BufferedReader(
+//                                        new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
+//                                String line;
+//                                while ((line = br.readLine()) != null) {
+//                                        sb.append(line).append("\n");
+//                                }
+//                                br.close();
+//                                System.out.println("" + sb.toString());
+//                        } else {
+//                                System.out.println(urlConnection.getResponseMessage());
+//                        }
+//
+//                        urlConnection.disconnect();
+//
+//                } catch (IOException e) {
+//                        e.printStackTrace();
+//                        return false;
+//                }
+//
+//        }
+        return true;
+}
 
+private boolean HttpSend(String urlString, String method, String username, String password, String requestPropertyKey, String requestPropertyValue, String json) {
+        try {
+                //urlString = "http://192.168.1.43:45455/api/test";       // TESTING
 
-                        StringBuilder sb = new StringBuilder();
-                        int HttpResult = urlConnection.getResponseCode();
-                        if (HttpResult == HttpURLConnection.HTTP_OK) {
-                                Log.d("SendData", "HTTP Response OK");
-                                BufferedReader br = new BufferedReader(
-                                        new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
-                                String line;
-                                while ((line = br.readLine()) != null) {
-                                        sb.append(line).append("\n");
-                                }
-                                br.close();
-                                System.out.println("" + sb.toString());
-                        } else {
-                                System.out.println(urlConnection.getResponseMessage());
-                        }
-
-                        urlConnection.disconnect();
-
-                } catch (IOException e) {
-                        e.printStackTrace();
-                        return false;
+                URL url = new URL(urlString);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                if (method != null) {
+                        urlConnection.setRequestMethod(method);
+                }
+                if ((username != null) && !(username.equals("")) && (password != null)) {
+                        String userpass = username + ":" + password;
+                        String header = "Basic " + new String(android.util.Base64.encode(userpass.getBytes(), android.util.Base64.NO_WRAP));
+                        urlConnection.addRequestProperty("Authorization", header);
+                }
+                urlConnection.setDoOutput(true);
+                byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
+                urlConnection.setFixedLengthStreamingMode(jsonBytes.length);
+                urlConnection.setRequestProperty("Content-Type", "application/json");
+                if (requestPropertyKey != null) {
+                        urlConnection.setRequestProperty(requestPropertyKey, requestPropertyValue);
                 }
 
+                OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+                out.write(json.getBytes(StandardCharsets.UTF_8));
+                out.flush();
+
+                StringBuilder sb = new StringBuilder();
+                int HttpResult = urlConnection.getResponseCode();
+                if (HttpResult == HttpURLConnection.HTTP_OK) {
+                        Log.d("SendData", "HTTP Response OK");
+                        BufferedReader br = new BufferedReader(
+                                new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                                sb.append(line).append("\n");
+                        }
+                        br.close();
+                        System.out.println("" + sb.toString());
+                } else {
+                        System.out.println(urlConnection.getResponseMessage());
+                }
+
+                urlConnection.disconnect();
+
+        } catch (IOException e) {
+                e.printStackTrace();
+                return false;
         }
+
         return true;
 }
 

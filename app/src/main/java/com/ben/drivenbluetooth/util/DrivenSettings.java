@@ -31,12 +31,16 @@ public final class DrivenSettings {
         BTDevice(prefs);
         CarName(prefs);
         dweetEnabled(prefs);
+        dweetThingName(prefs);
+        dweetLocation(prefs);
         echookEnabled(prefs);
         eChookCarName(prefs);
         eChookPassword(prefs);
-        dweetThingName(prefs);
+
         customUrlEnabled(prefs);
         customUrl(prefs);
+        customURLUsername(prefs);
+        customURLPassword(prefs);
 
     }
 
@@ -153,6 +157,10 @@ public final class DrivenSettings {
         Global.dweetThingName = prefs.getString("prefDweetName", "");
     }
 
+    private static void dweetLocation(SharedPreferences prefs) {
+        Global.dweetEnabled = prefs.getBoolean("prefDweetLocation", false);
+    }
+
     private static void echookEnabled(SharedPreferences prefs) {
         Global.eChookLiveEnabled = prefs.getBoolean("prefEchookEnabled", false);
     }
@@ -190,5 +198,13 @@ public final class DrivenSettings {
     public static int parseMotorTeeth(String motorTeethString) {
         motorTeethString = motorTeethString.replaceAll("\\s+", ""); // remove spaces
         return Integer.parseInt(motorTeethString);
+    }
+
+    private static void customURLUsername(SharedPreferences prefs) {
+        Global.customURLUsername = prefs.getString("prefCustomURLUsername", "");
+    }
+
+    private static void customURLPassword(SharedPreferences prefs) {
+        Global.customURLPassword = prefs.getString("prefCustomURLPassword", "");
     }
 }

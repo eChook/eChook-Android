@@ -9,15 +9,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.preference.EditTextPreference;
-import androidx.preference.ListPreference;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
-import androidx.preference.SwitchPreference;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +16,6 @@ import android.view.ViewGroup;
 import android.webkit.URLUtil;
 
 import com.ben.drivenbluetooth.Global;
-import com.ben.drivenbluetooth.MainActivity;
 import com.ben.drivenbluetooth.R;
 import com.ben.drivenbluetooth.events.PreferenceEvent;
 import com.ben.drivenbluetooth.events.SnackbarEvent;
@@ -34,11 +24,16 @@ import com.ben.drivenbluetooth.util.DrivenSettings;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
 import java.util.Objects;
 import java.util.Set;
+
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreference;
 
 public class SettingsFragment 	extends PreferenceFragmentCompat
                                 implements SharedPreferences.OnSharedPreferenceChangeListener
@@ -48,6 +43,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        assert view != null;
         view.setBackgroundColor(ContextCompat.getColor(Objects.requireNonNull(getActivity()).getApplicationContext(), android.R.color.background_light));
         return view;
     }
@@ -66,12 +62,11 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
             final ListPreference btDevListPreference = (ListPreference) findPreference("prefBTDeviceName");
             // This is required if you don't have 'entries' and 'entryValues' in your XML - which naturally can't be hard coded for BT devices
-            String[] defaultEntries = {"Is Bluetooth Enabled?"};
-            CharSequence[] entryValues = defaultEntries;
+            String[] defaultEntries = new String[]{"Is Bluetooth Enabled?"};
 
             btDevListPreference.setEntries(defaultEntries);
 //            btDevListPreference.setDefaultValue("1");
-            btDevListPreference.setEntryValues(entryValues);
+            btDevListPreference.setEntryValues(defaultEntries);
             setListPreferenceData(btDevListPreference);
 
             btDevListPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -127,9 +122,8 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         //Open file
-
         File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
-        Uri logFileUri = FileProvider.getUriForFile(getContext(), "com.ben.drivenbluetooth.fileprovider",logFile);
+        Uri logFileUri = FileProvider.getUriForFile(Objects.requireNonNull(getContext()), "com.ben.drivenbluetooth.fileprovider",logFile);
         sendIntent.putExtra(Intent.EXTRA_STREAM, logFileUri);
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
@@ -147,8 +141,8 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
         warningBox.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
-                logFile.delete();
-                EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.DataFileSettingChange));
+                final boolean delete = logFile.delete();
+                if(delete) EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.DataFileSettingChange));
             }
         });
         warningBox.setNegativeButton("Don't Delete", new DialogInterface.OnClickListener() {
@@ -156,7 +150,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
               dialog.dismiss();
             }
         });
-        AlertDialog dialog = warningBox.show();
+        warningBox.show();
 
 
     }
@@ -175,9 +169,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
             //Count the number of paired devices - Must be a more elegant solution!!
             int devTotalCount = 0;
-            for (BluetoothDevice bt : pairedDevices) {
-                devTotalCount++;
-            }
+            for (BluetoothDevice ignored : pairedDevices) devTotalCount++;
 
             Log.d("BT", "BT Device Count:" + devTotalCount);
 
@@ -205,21 +197,21 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
     }
 
-    private void updatePreferenceSummary(String key) {
-        try {
-            Preference pref = findPreference(key);
-            if (pref instanceof ListPreference) {
-                ListPreference listPref = (ListPreference) pref;
-                pref.setSummary(listPref.getEntry());
-            } else if (pref instanceof EditTextPreference) {
-                EditTextPreference editTextPref = (EditTextPreference) pref;
-                pref.setSummary(editTextPref.getText());
-            }
-        } catch (Exception e) {
-            EventBus.getDefault().post(new SnackbarEvent(e));
-e.printStackTrace();
-        }
-	}
+//    private void updatePreferenceSummary(String key) {
+//        try {
+//            Preference pref = findPreference(key);
+//            if (pref instanceof ListPreference) {
+//                ListPreference listPref = (ListPreference) pref;
+//                pref.setSummary(listPref.getEntry());
+//            } else if (pref instanceof EditTextPreference) {
+//                EditTextPreference editTextPref = (EditTextPreference) pref;
+//                pref.setSummary(editTextPref.getText());
+//            }
+//        } catch (Exception e) {
+//            EventBus.getDefault().post(new SnackbarEvent(e));
+//            e.printStackTrace();
+//        }
+//	}
 
 //	private void updateAllPreferenceSummary() {
 ////		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
@@ -244,7 +236,7 @@ e.printStackTrace();
 					EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.ModeChange));
 					break;
 				case "prefSpeedUnits":
-					int units = Integer.valueOf(sharedPreferences.getString("prefSpeedUnits", ""));
+					int units = Integer.parseInt(Objects.requireNonNull(sharedPreferences.getString("prefSpeedUnits", "")));
                     Global.SpeedUnit = Global.UNIT.values()[units];
 					break;
 				case "prefLocationSwitch":
@@ -252,8 +244,10 @@ e.printStackTrace();
 					Global.LocationStatus = Global.LOCATION.values()[location];
 					EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.LocationChange));
 					if(!sharedPreferences.getBoolean("prefLocationSwitch", false)&&sharedPreferences.getBoolean("prefSpeedDisplaySwitch", false)){
-                        final SwitchPreference sp = (SwitchPreference) findPreference("prefSpeedDisplaySwitch");
-                        sp.setChecked(false);
+                        final SwitchPreference spSpeed = (SwitchPreference) findPreference("prefSpeedDisplaySwitch");
+                        spSpeed.setChecked(false);
+                        final SwitchPreference spDweet = (SwitchPreference) findPreference("prefDweetEnabled");
+                        spDweet.setChecked(false);
                     }
 
 					break;
@@ -264,8 +258,8 @@ e.printStackTrace();
                         if (!sharedPreferences.getBoolean("prefLocationSwitch", false)) {
 
                             final AlertDialog.Builder warningBox = new AlertDialog.Builder(this.getActivity());
-                            warningBox.setMessage("GPS is required for this feature, enable it?")
-                                    .setTitle("GPS Disabled");
+                            warningBox.setMessage("eChook requires Location to be enabled for this feature")
+                                    .setTitle("Location Disabled");
                             warningBox.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     final SwitchPreference sp = (SwitchPreference) findPreference("prefLocationSwitch");
@@ -278,7 +272,7 @@ e.printStackTrace();
                                     sp.setChecked(false);
                                 }
                             });
-                            AlertDialog dialog = warningBox.show();
+                            warningBox.show();
                         }
                     }
                     break;
@@ -312,6 +306,30 @@ e.printStackTrace();
                 case "prefDweetName":
                     Global.dweetThingName = sharedPreferences.getString("prefDweetName", "");
                     break;
+                case "prefDweetLocation":
+                    Global.dweetLocation = sharedPreferences.getBoolean("prefDweetEnabled", false);
+                    if (Global.dweetLocation) {
+                        if (!sharedPreferences.getBoolean("prefLocationSwitch", false)) {
+
+                            final AlertDialog.Builder warningBox = new AlertDialog.Builder(this.getActivity());
+                            warningBox.setMessage("eChook requires Location to be enabled for this feature")
+                                    .setTitle("Location Disabled");
+                            warningBox.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    final SwitchPreference sp = (SwitchPreference) findPreference("prefLocationSwitch");
+                                    sp.setChecked(true);
+                                }
+                            });
+                            warningBox.setNegativeButton("Don't Enable", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    final SwitchPreference sp = (SwitchPreference) findPreference("prefDweetEnabled");
+                                    sp.setChecked(false);
+                                }
+                            });
+                            warningBox.show();
+                        }
+                    }
+                    break;
                 case "prefEchookEnabled":
                     Global.eChookLiveEnabled = sharedPreferences.getBoolean("prefEchookEnabled", false);
                     break;
@@ -336,7 +354,7 @@ e.printStackTrace();
                                     dialog.dismiss();
                                 }
                             });
-                            AlertDialog dialog = warningBox.show();
+                            warningBox.show();
 
                         }
                     }
@@ -345,16 +363,19 @@ e.printStackTrace();
                     break;
                 case "prefCustomUrl":
                     Global.customUrl = sharedPreferences.getString("prefCustomUrl", "");
-                    if(!Objects.equals(Global.customUrl, "")) {
-                        final EditTextPreference lp = (EditTextPreference) findPreference("prefCustomUrl");
-                        lp.setSummary(Global.customUrl);
-                    }else{
-                        final EditTextPreference lp = (EditTextPreference) findPreference("prefCustomUrl");
-                        lp.setSummary("Enter URL");
-                    }
+                    final EditTextPreference lp = (EditTextPreference) findPreference("prefCustomUrl");
+                    lp.setSummary(Objects.equals(Global.customUrl, "") ? "Enter URL" : Global.customUrl);
+                    break;
+                case "prefCustomURLUsername":
+                    Global.customURLUsername = sharedPreferences.getString("prefUserDefinedURLUsername", "");
+                    break;
+                case "prefCustomURLPassword":
+                    Global.customURLPassword = sharedPreferences.getString("prefUserDefinedURLPassword", "");
                     break;
 
-			}
+                default:
+                    throw new IllegalStateException("Unexpected value: " + key);
+            }
 		} catch (Exception e) {
             e.printStackTrace();
             EventBus.getDefault().post(new SnackbarEvent(e));

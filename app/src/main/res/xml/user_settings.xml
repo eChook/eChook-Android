@@ -78,7 +78,7 @@
 
     <PreferenceCategory
         android:key="prefKeyEchookLiveData"
-        android:title="eChook Live Data">
+        android:title="eChook Private Live Data">
         <SwitchPreference
             android:defaultValue="false"
             android:key="prefEchookEnabled"
@@ -98,7 +98,7 @@
 
     <PreferenceCategory
         android:key="prefKeyDweetLiveData"
-        android:title="dweet.io Live Data">
+        android:title="dweet.io Live Data (Publicly Visible on dweet)">
         <SwitchPreference
             android:defaultValue="false"
             android:key="prefDweetEnabled"
@@ -108,12 +108,17 @@
             android:key="prefDweetName"
             android:summary="Public 6+ digit data identifier. dweet.io/follow/identifier"
             android:title="dweet.io 'Thing' name" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefDweetLoaction"
+            android:summary="Warning: This makes your location public!"
+            android:title="Send location to dweet.io" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="prefKeyCustomURL"
         android:title="Live Data to Custom URL"
-        android:summary="Sends a JSON packet containing latest data to a URL of your choice">
+        android:summary="POSTs JSON live data to a URL of your choice">
 
         <SwitchPreference
             android:defaultValue="false"
@@ -124,6 +129,15 @@
             android:key="prefCustomUrl"
             android:summary="URL to upload data to"
             android:title="Custom URL" />
+        <EditTextPreference
+            android:key="prefCustomURLUsername"
+            android:summary="Optional username for user defined URL login"
+            android:title="Custom URL Username" />
+        <EditTextPreference
+            android:inputType="textPassword"
+            android:key="prefCustomURLPassword"
+            android:summary="Optional password for user defined URL login"
+            android:title="Custom URL Password" />
 
     </PreferenceCategory>
 

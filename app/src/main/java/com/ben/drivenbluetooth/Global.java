@@ -107,15 +107,6 @@ public final class Global {
     public static final ArrayList<LapData> LapDataList  = new ArrayList<>();
 	public static final RunningAverage AverageAmps 		= new RunningAverage(2); // 2 = number of decimal places
     public static final RunningAverage AverageSpeedMPS  = new RunningAverage(1);
-//    public static final	int MAX_GRAPH_DATA_POINTS       = 4 * 50; // 50 seconds of history on graphs assuming Arduino spews every 250ms
-
-
-//	public static final LineData ThrottleHistory	    = new LineData();
-//	public static final LineData AmpsHistory		    = new LineData();
-//    public static final LineData VoltsHistory		    = new LineData();
-//    public static final LineData MotorRPMHistory	    = new LineData();
-//    public static final LineData SpeedHistory		    = new LineData();
-//    public static final LineData TempC1History		    = new LineData();
 
 
 	public static volatile Location StartFinishLineLocation;
@@ -157,16 +148,20 @@ public final class Global {
     public static List<String> BTDeviceNames = new ArrayList<>(248); //248 is the maximum number of devices it is possible to bond
     public static boolean dweetEnabled                  = false;
     public static String dweetThingName                 = "";
+    public static boolean dweetLocation                  = false;
     public static boolean eChookLiveEnabled             = false;
     public static String eChookCarName                  = "";
     public static String eChookPassword                 = "";
     public static boolean customUrlEnabled              = false;
     public static String customUrl                      = "";
+    public static String customURLUsername         = "";
+    public static String customURLPassword         = "";
 
 
     public static int MotorTeeth                        = 0;
     public static int[] WheelTeeth;
     public static boolean isLogging                     = false;
+    public static boolean sendCustomData                = false;
 
     /**********************/
     private Global() {
@@ -177,6 +172,9 @@ public final class Global {
         } catch (Error e) {
             // Do nothing
         }
+    }
+
+    public static void restartTelemetry() {
     }
 
     public enum BTSTATE {DISCONNECTED, CONNECTING, CONNECTED, RECONNECTING}
