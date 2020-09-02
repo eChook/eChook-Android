@@ -10,4 +10,26 @@
     <string name="TimerPlaceholder">##:##</string>
     <string name="PlaceholderFileSize">##kb</string>
     <string name="loggingLabel">Logging:</string>
+    <string name="logging_status_indicator">Logging Status Indicator</string>
+    <string name="shift_indicator_sprite">Shift Indicator Sprite</string>
+    <string name="bluetooth_status_indicator_sprite">Bluetooth Status Indicator Sprite</string>
+    <string name="log_status_indicator_sprite">Log Status Indicator Sprite</string>
+    <string name="bluetooth_symbol_sprite">Bluetooth Symbol Sprite</string>
+    <string name="voltage">Voltage</string>
+    <string name="format2point1">##.#</string>
+    <string name="last_lap">Last Lap</string>
+    <string name="placeholder">---</string>
+    <string name="lastLapPlaceholder">(---)</string>
+    <string name="current">Current</string>
+    <string name="oneDpPlaceholder">##.#</string>
+    <string name="last_lap">Last Lap</string>
+    <string name="Placeholder">---</string>
+    <string name="rpm">RPM</string>
+    <string name="FourDigitPlaceholder">####</string>
+    <string name="last_lap">Last Lap</string>
+    <string name="placeholder">---</string>
+    <string name="ahPlaceholder">##.## Ah</string>
+    <string name="wh_km_placeholder">##.## Wh/km</string>
+    <string name="speed">Speed</string>
+    <string name="last_lap">Last Lap</string>
 </resources>

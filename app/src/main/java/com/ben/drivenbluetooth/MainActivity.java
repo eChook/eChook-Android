@@ -1,13 +1,13 @@
 package com.ben.drivenbluetooth;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -17,14 +17,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
-import androidx.annotation.NonNull;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -34,16 +26,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ben.drivenbluetooth.events.ArduinoEvent;
-import com.ben.drivenbluetooth.events.DialogEvent;
 import com.ben.drivenbluetooth.events.NewLapEvent;
 import com.ben.drivenbluetooth.events.PreferenceEvent;
-import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.events.UpdateUIEvent;
+import com.ben.drivenbluetooth.fragments.AllDataFragment;
 import com.ben.drivenbluetooth.fragments.LapHistoryFragment;
 import com.ben.drivenbluetooth.fragments.RaceMapFragment;
 import com.ben.drivenbluetooth.fragments.SettingsFragment;
 import com.ben.drivenbluetooth.fragments.SimpleDataFragment;
-import com.ben.drivenbluetooth.fragments.AllDataFragment;
 import com.ben.drivenbluetooth.threads.BTDataParser;
 import com.ben.drivenbluetooth.threads.BTStreamReader;
 import com.ben.drivenbluetooth.threads.DataToCsvFile;
@@ -53,56 +43,54 @@ import com.ben.drivenbluetooth.util.Accelerometer;
 import com.ben.drivenbluetooth.util.BluetoothManager;
 import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenSettings;
-//import com.ben.drivenbluetooth.util.GraphData;
 import com.ben.drivenbluetooth.util.LocationMonitor;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Objects;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 
 public class MainActivity
         extends AppCompatActivity
         implements BluetoothManager.BluetoothEvents {
 
-    public TextView myMode;
-
-    private TextView myDataFileSize;
-    private TextView myDataFileName;
-
-    private TextView myBTCarName;
-
-    private ImageView myBTState;
-    private ImageView myLogging;
-
-    private FloatingActionButton myBluetoothButton;
-    private FloatingActionButton myLoggingToggleButton;
-
-    private Chronometer LapTimer;
-    private TextView prevLapTime;
-    private TextView LapNumber;
-    public TextView myGear;
-    public ImageView myShiftIndicator;
-
+    public static final Handler MainActivityHandler = new Handler();
+    public static final BluetoothManager myBluetoothManager = new BluetoothManager();
+    private static final CyclingArrayList<Fragment> FragmentList = new CyclingArrayList<>();
+    public static TelemetrySender mTelemetrySender;     // initialize below
+    public static Accelerometer myAccelerometer;
     private static RandomGenerator mRandomGenerator = new RandomGenerator();
     private static BTDataParser mBTDataParser = new BTDataParser();     // can't be static because of (this)
     private static DataToCsvFile mDataToCSVFile = new DataToCsvFile();
     private static BTStreamReader mBTStreamReader;     // initialize below
-    public static TelemetrySender mTelemetrySender;     // initialize below
-
-    public static final Handler MainActivityHandler = new Handler();
-
+    public TextView myMode;
+    public TextView myGear;
+    public ImageView myShiftIndicator;
     public LocationMonitor myLocationMonitor;     // must be initialized below or else null object ref error
-
-    public static Accelerometer myAccelerometer;
-
+    private TextView myDataFileSize;
+    private TextView myDataFileName;
+    private TextView myBTCarName;
+    private ImageView myBTState;
+    private ImageView myLogging;
+    private FloatingActionButton myBluetoothButton;
+    private FloatingActionButton myLoggingToggleButton;
+    private Chronometer LapTimer;
+    private TextView prevLapTime;
+    private TextView LapNumber;
     private Context context;
-    public static final BluetoothManager myBluetoothManager = new BluetoothManager();
-
-    private static final CyclingArrayList<Fragment> FragmentList = new CyclingArrayList<>();
     private View SnackbarPosition;
 
     /* ========= */
@@ -226,11 +214,12 @@ public class MainActivity
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
             //will need to restart/reconnect to bluetooth, and relevant threads
-            if (Global.dweetEnabled || Global.eChookLiveEnabled)
+            if (Global.dweetEnabled || Global.eChookLiveEnabled) {
                 StartUDPSender();
+            }
             mTelemetrySender.restart();
 
-            //myBluetoothManager.reconnectBT();
+//            myBluetoothManager.reconnectBT(); //TODO -understand if needed
 
 
         } else //window has lost focus - lets stop tracking/logging/uploading
@@ -279,7 +268,7 @@ public class MainActivity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == Global.PERMISSIONS_REQUEST) {
             boolean allPermissionsGranted = true;
 
@@ -337,6 +326,7 @@ public class MainActivity
             }
         });
     }
+
     private void InitializeLongClickMode() {
         // We can't do this in XML so must do it programatically
         TextView modeText = findViewById(R.id.txt_Mode);
@@ -353,38 +343,24 @@ public class MainActivity
     /* TOASTER */
     /* ======= */
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void showError(SnackbarEvent e) {
-        showMessage(e.message);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void showDialog(DialogEvent e) {
-        final android.app.AlertDialog.Builder dweetLoginFailBox = new android.app.AlertDialog.Builder(context);
-        dweetLoginFailBox.setMessage(e.message)
-                .setTitle(e.title);
-        dweetLoginFailBox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.dismiss();
-            }
-        });
-        dweetLoginFailBox.show();
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void showError(SnackbarEvent e) {
+//        showMessage(e.message);
+//    }
 
     public void showMessage(String string) {
-        showSnackbar(string, Snackbar.LENGTH_LONG);
+        showSnackbar(string);
     }
 
-    private void showSnackbar(String msg, int length) {
+    private void showSnackbar(String msg) {
         try {
-            Snackbar sb = Snackbar.make(SnackbarPosition, msg, length);
-//            TextView tv = (sb.getView()).findViewById(android.support.design.R.id.snackbar_text);
-//            tv.setTextSize(20);
+            Snackbar sb = Snackbar.make(SnackbarPosition, msg, com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG);
             sb.show();
         } catch (Exception ignored) {
         }
     }
 
+    @Deprecated
     public void showLapSummary(String message, int duration) {
         final AlertDialog lapSummary = new AlertDialog.Builder(getAppContext())
                 .setMessage(message)
@@ -409,26 +385,16 @@ public class MainActivity
     public void ToggleBT(View v) {
         if (Global.BTState != Global.BTSTATE.DISCONNECTED) { //Disconnect BT
             try {
-                StopStreamReader();
-                myBluetoothManager.closeBT();
+                CloseBT();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else { //Connect BT
-            if (!Objects.equals(Global.BTDeviceName, "")) { // annoying Java string comparators...
-                try {
-                    myBluetoothManager.findBT();
-                    myBluetoothManager.openBT(false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                showMessage("Error: Bluetooth device name not given in Settings. Please go to Settings and enter the device name");
-            }
+            OpenBT();
         }
     }
 
-    public void OpenBT(View v) {
+    public void OpenBT() {
         if (!Objects.equals(Global.BTDeviceName, "")) { // annoying Java string comparators...
             try {
                 myBluetoothManager.findBT();
@@ -451,7 +417,8 @@ public class MainActivity
             }
         }
     }
-    public void CloseBT(View v) {
+
+    public void CloseBT() {
         try {
             StopStreamReader();
             myBluetoothManager.closeBT();
@@ -460,11 +427,10 @@ public class MainActivity
         }
     }
 
-    public void toggleLogging(View v){
-        if(Global.isLogging){
+    public void toggleLogging(View v) {
+        if (Global.isLogging) {
             Stop();
-        }
-        else{
+        } else {
             Start();
         }
     }
@@ -575,7 +541,6 @@ public class MainActivity
     /**
      * For testing purposes. Simulates crossing the finish line
      */
-    @Deprecated
     public void CrossFinishLine(View v) {
         myLocationMonitor.SimulateCrossStartFinishLine();
     }
@@ -725,7 +690,8 @@ public class MainActivity
      * Stops the data logger thread (if running)
      */
     private void StopDataLogger() {
-        if (mDataToCSVFile != null && mDataToCSVFile.getState() != Thread.State.TERMINATED || mDataToCSVFile.getState() != Thread.State.NEW) {
+        assert mDataToCSVFile != null;
+        if (mDataToCSVFile.getState() != Thread.State.TERMINATED || mDataToCSVFile.getState() != Thread.State.NEW) {
             mDataToCSVFile.cancel();
         }
         Global.isLogging = false;
@@ -767,14 +733,10 @@ public class MainActivity
     }
 
     private void CycleViewReverse() {
-        try {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.CenterView, FragmentList.reverseCycle());
-            fragmentTransaction.commit();
-        } catch (Exception e) {
-            e.getMessage();
-        }
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.CenterView, FragmentList.reverseCycle());
+        fragmentTransaction.commit();
     }
 
     private void ActivateLaunchMode() {
@@ -805,16 +767,17 @@ public class MainActivity
     /**
      * Updates the TextView in the top-left corner of the app with the csv file name and size
      */
+    @SuppressLint("SetTextI18n")
     private void UpdateDataFileInfo() {
         File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
         MediaScannerConnection.scanFile(context, new String[]{f.getAbsolutePath()}, null, null);
         Global.DataFileLength = f.length();
         if (Global.DataFileLength < 1024) {
-            myDataFileSize.setText(String.valueOf(Global.DataFileLength) + " B");
+            myDataFileSize.setText(Global.DataFileLength + " B");
         } else if (Global.DataFileLength < 1048576) {
-            myDataFileSize.setText(String.format("%.2f", (float) Global.DataFileLength / 1024.0) + " KB");
+            myDataFileSize.setText(String.format(Locale.ENGLISH, "%.2f", (float) Global.DataFileLength / 1024.0) + " KB");
         } else {
-            myDataFileSize.setText(String.format("%.2f", (float) Global.DataFileLength / 1048576) + " MB");
+            myDataFileSize.setText(String.format(Locale.ENGLISH, "%.2f", (float) Global.DataFileLength / 1048576) + " MB");
         }
         myDataFileName.setText(Global.DATA_FILE);
     }
@@ -876,6 +839,7 @@ public class MainActivity
     /**
      * Updates the TextView at the bottom of the UI showing the lap number
      */
+    @SuppressLint("SetTextI18n")
     public void UpdateLap() {
         LapNumber.setText("L" + Global.Lap);
     }
@@ -885,6 +849,7 @@ public class MainActivity
      */
     public void UpdateBTCarName() {
         MainActivityHandler.post(new Runnable() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void run() {
                 myBTCarName.setText(Global.BTDeviceName + " :: " + Global.CarName);
@@ -936,6 +901,7 @@ public class MainActivity
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPreferenceEvent(PreferenceEvent e) {
         switch (e.eventType) {
@@ -952,6 +918,7 @@ public class MainActivity
                 myBTCarName.setText(Global.BTDeviceName + " :: " + Global.CarName);
                 break;
             case UDPChange:
+                //TODO - restart telemetry senders here if any enabled.
                 break;
             case LocationChange:
                 break;
@@ -962,15 +929,13 @@ public class MainActivity
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLocationEvent(NewLapEvent e) {
-                UpdateLap();
+        UpdateLap();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateUIEvent(UpdateUIEvent e) {
-        switch (e.eventType) {
-            case DataFile:
-                UpdateDataFileInfo();
-                break;
+        if (e.eventType == UpdateUIEvent.EventType.DataFile) {
+            UpdateDataFileInfo();
         }
     }
 

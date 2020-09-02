@@ -21,10 +21,11 @@ android {
     defaultConfig {
         applicationId "com.ben.drivenbluetooth"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode getVersionCodeTimestamp()
-        versionName "2.0.2b"
+        versionName "2.0.3b"
         multiDexEnabled true
+        versionNameSuffix 'alpha0'
     }
     buildTypes {
         release {

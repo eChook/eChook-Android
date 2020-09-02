@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import androidx.annotation.NonNull;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
@@ -31,23 +30,24 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Locale;
+
+import androidx.annotation.NonNull;
 
 public class LocationMonitor implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         RaceObserver.RaceObserverListener {
     private static GoogleApiClient GoogleApi;
+    private final ArrayList<Location> InitialRaceDataPoints = new ArrayList<>();  // store the first few location points to calculate start position and bearing
+    public CircleOptions ObserverLocation = new CircleOptions();   // circle for showing the observer location
     private Location currentLocation;
-
+//    private TextView mLapNumber;
     private Chronometer mTimer;
     private TextView mPrevLapTime;
-    private TextView mLapNumber;
-
     private PolylineOptions pathHistory = new PolylineOptions();      // polyline for drawing paths on the map
-    public CircleOptions ObserverLocation = new CircleOptions();   // circle for showing the observer location
     private RaceObserver myRaceObserver = null;
     private LocationRequest mLocationRequest;
-    private final ArrayList<Location> InitialRaceDataPoints = new ArrayList<>();  // store the first few location points to calculate start position and bearing
     private boolean storePointsIntoInitialArray = false;  // flag to write locations to the above array or not
     private boolean CrossStartFinishLineTriggerEnabled = true;  // used for the timeout to make sure we don't get excessive triggers firing if the location is slightly erratic
 
@@ -114,7 +114,7 @@ public class LocationMonitor implements GoogleApiClient.ConnectionCallbacks,
 //			MainActivity.mTelemetrySender.LocationHandler.sendMessage(msg);
 //		}
 
-        if (currentLocation != null && previousLocation != null) {
+        if (currentLocation != null) {
             Global.DeltaDistance = calculateDistanceBetween(previousLocation, currentLocation);
         }
 
@@ -215,6 +215,7 @@ public class LocationMonitor implements GoogleApiClient.ConnectionCallbacks,
         return location1.distanceTo(location2);
     }
 
+    @Deprecated
     private void calculateInitialBearing() {
         Location start = null;
         // sync not required as this function and onRaceStart() run on the same thread
@@ -230,6 +231,7 @@ public class LocationMonitor implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
+    @Deprecated
     private void calculateTrackOrientation() {
         // Linear regression time!
         // We need to calculate the bearing to each location point and throw them into an array
@@ -295,13 +297,13 @@ public class LocationMonitor implements GoogleApiClient.ConnectionCallbacks,
                 if (myRaceObserver != null) {
                     myRaceObserver.ActivateLaunchMode(Global.StartFinishLineLocation);
                 } else {
-                    EventBus.getDefault().post(new SnackbarEvent("Observer not defined - cannot activate launch mode!"));
+                    EventBus.getDefault().post(new SnackbarEvent("Observer not defined - cannot activate 'Race Start''"));
                 }
             } else {
                 EventBus.getDefault().post(new SnackbarEvent("Could not obtain your location. Please try again"));
             }
         } else {
-            EventBus.getDefault().post(new SnackbarEvent("Location updates are not enabled on your device. Please go to settings and enable it!"));
+            EventBus.getDefault().post(new SnackbarEvent("'Race Start' requires Location to be enabled in your app settings."));
         }
     }
 
@@ -348,7 +350,7 @@ public class LocationMonitor implements GoogleApiClient.ConnectionCallbacks,
 
             // add new lap
             Global.LapDataList.add(new LapData());
-            Global.Lap++;
+            Global.Lap += 1;
 
             // Update the lap text
             EventBus.getDefault().post(new NewLapEvent());
@@ -370,7 +372,7 @@ public class LocationMonitor implements GoogleApiClient.ConnectionCallbacks,
             // show lap summary message
             if (Global.Lap > 1) {
                 EventBus.getDefault().post(new SnackbarEvent(
-                        String.format("Lap %s - %s (%+02.3fs)",
+                        String.format(Locale.ENGLISH, "Lap %s - %s (%+02.3fs)",
                                 Global.Lap - 1,
                                 Global.LapDataList.get(Global.Lap - 2).getLapTimeString(),
                                 (float) deltaMillis / 1000.0)));

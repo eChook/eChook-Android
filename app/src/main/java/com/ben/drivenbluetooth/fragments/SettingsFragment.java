@@ -35,10 +35,51 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
 
-public class SettingsFragment 	extends PreferenceFragmentCompat
-                                implements SharedPreferences.OnSharedPreferenceChangeListener
-{
+public class SettingsFragment extends PreferenceFragmentCompat
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
     static final String TAG = "Settings Fragment";
+
+    //OnClick callback to generate list of BT devices
+    private static void setListPreferenceData(ListPreference lp) {
+        BluetoothAdapter mBluetoothAdapter = null;
+        try {
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        } catch (Exception e) {
+            Log.d(TAG, "setListPreferenceData: No Access to Bluetooth Module ");
+        }
+        if (mBluetoothAdapter != null) {
+//       Log.d("eChook", "setListPreferenceData: "+  mBluetoothAdapter.getName());
+            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+
+            //Count the number of paired devices - Must be a more elegant solution!!
+            int devTotalCount = 0;
+            for (BluetoothDevice ignored : pairedDevices) devTotalCount++;
+
+            Log.d("BT", "BT Device Count:" + devTotalCount);
+
+            CharSequence[] entries = new CharSequence[devTotalCount];
+
+            int devCount = 0;
+            Global.BTDeviceNames.add(0, "null"); //pre fill the 0 index of the list to keep everything else in sync
+            for (BluetoothDevice bt : pairedDevices) {
+                entries[devCount] = bt.getName();
+                devCount++;
+
+            }
+
+
+            lp.setEntries(entries);
+            lp.setEntryValues(entries);
+            lp.setSummary(Global.BTDeviceName);
+        } else {// Purely for ADV testing purposes
+            CharSequence[] entries = new CharSequence[1];
+            entries[0] = "None";
+            lp.setEntries(entries);
+            lp.setEntryValues(entries);
+            lp.setSummary("Bluetooth Device Not Found");
+        }
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,10 +91,10 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
-        try{
+        try {
             try {
                 addPreferencesFromResource(R.xml.user_settings);
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 //            updateAllPreferenceSummary();
@@ -81,7 +122,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             registerSettingsListeners();
 
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             Log.d("eChook", "Error occurred in Settings onCreatePreference.");
             e.printStackTrace();
 
@@ -93,7 +134,7 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 
     }
 
-    private void registerSettingsListeners(){
+    private void registerSettingsListeners() {
         //On click event for Sharing Log
         Preference sharePref = findPreference("prefShareLog");
         sharePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -117,24 +158,21 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
     }
 
     // Share function for onClick preference
-    private void shareDataLog ()
-    {
+    private void shareDataLog() {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         //Open file
         File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
-        Uri logFileUri = FileProvider.getUriForFile(Objects.requireNonNull(getContext()), "com.ben.drivenbluetooth.fileprovider",logFile);
+        Uri logFileUri = FileProvider.getUriForFile(Objects.requireNonNull(getContext()), "com.ben.drivenbluetooth.fileprovider", logFile);
         sendIntent.putExtra(Intent.EXTRA_STREAM, logFileUri);
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
 
 
-
     }
 
     //OnClick callback for deleting data log
-    private void clearDataLog()
-    {
+    private void clearDataLog() {
         final AlertDialog.Builder warningBox = new AlertDialog.Builder(this.getActivity());
         warningBox.setMessage("This will delete all logged data")
                 .setTitle("Are you sure?");
@@ -142,58 +180,17 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
             public void onClick(DialogInterface dialog, int id) {
                 File logFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Global.DATA_FILE);
                 final boolean delete = logFile.delete();
-                if(delete) EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.DataFileSettingChange));
+                if (delete)
+                    EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.DataFileSettingChange));
             }
         });
         warningBox.setNegativeButton("Don't Delete", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-              dialog.dismiss();
+                dialog.dismiss();
             }
         });
         warningBox.show();
 
-
-    }
-
-    //OnClick callback to generate list of BT devices
-    private static void setListPreferenceData(ListPreference lp) {
-        BluetoothAdapter mBluetoothAdapter = null;
-        try {
-            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        }catch (Exception e){
-            Log.d(TAG, "setListPreferenceData: No Access to Bluetooth Module ");
-        }
-        if(mBluetoothAdapter != null) {
-//       Log.d("eChook", "setListPreferenceData: "+  mBluetoothAdapter.getName());
-            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-
-            //Count the number of paired devices - Must be a more elegant solution!!
-            int devTotalCount = 0;
-            for (BluetoothDevice ignored : pairedDevices) devTotalCount++;
-
-            Log.d("BT", "BT Device Count:" + devTotalCount);
-
-            CharSequence[] entries = new CharSequence[devTotalCount];
-
-            int devCount = 0;
-            Global.BTDeviceNames.add(0, "null"); //pre fill the 0 index of the list to keep everything else in sync
-            for (BluetoothDevice bt : pairedDevices) {
-                entries[devCount] = bt.getName();
-                devCount++;
-
-            }
-
-
-            lp.setEntries(entries);
-            lp.setEntryValues(entries);
-            lp.setSummary(Global.BTDeviceName);
-        }else{// Purely for ADV testing purposes
-            CharSequence[] entries = new CharSequence[1];
-            entries[0] = "None";
-            lp.setEntries(entries);
-            lp.setEntryValues(entries);
-            lp.setSummary("Bluetooth Device Not Found");
-        }
 
     }
 
@@ -222,35 +219,35 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 ////		}
 //	}
 
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		// UpdateLocationSetting the preference summaries
-		//updatePreferenceSummary(key);
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        // UpdateLocationSetting the preference summaries
+        //updatePreferenceSummary(key);
 
-		try {
-			switch (key) {
-				case "prefModeSwitch":
+        try {
+            switch (key) {
+                case "prefModeSwitch":
                     //int mode = Integer.valueOf(sharedPreferences.getString("prefMode", ""));
-                    int mode = sharedPreferences.getBoolean("prefModeSwitch", false)? 1:0;
-					Global.Mode = Global.MODE.values()[mode];
-					EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.ModeChange));
-					break;
-				case "prefSpeedUnits":
-					int units = Integer.parseInt(Objects.requireNonNull(sharedPreferences.getString("prefSpeedUnits", "")));
+                    int mode = sharedPreferences.getBoolean("prefModeSwitch", false) ? 1 : 0;
+                    Global.Mode = Global.MODE.values()[mode];
+                    EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.ModeChange));
+                    break;
+                case "prefSpeedUnits":
+                    int units = Integer.parseInt(Objects.requireNonNull(sharedPreferences.getString("prefSpeedUnits", "")));
                     Global.SpeedUnit = Global.UNIT.values()[units];
-					break;
-				case "prefLocationSwitch":
-					int location = sharedPreferences.getBoolean("prefLocationSwitch", false)? 1:0;
-					Global.LocationStatus = Global.LOCATION.values()[location];
-					EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.LocationChange));
-					if(!sharedPreferences.getBoolean("prefLocationSwitch", false)&&sharedPreferences.getBoolean("prefSpeedDisplaySwitch", false)){
+                    break;
+                case "prefLocationSwitch":
+                    int location = sharedPreferences.getBoolean("prefLocationSwitch", false) ? 1 : 0;
+                    Global.LocationStatus = Global.LOCATION.values()[location];
+                    EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.LocationChange));
+                    if (!sharedPreferences.getBoolean("prefLocationSwitch", false) && sharedPreferences.getBoolean("prefSpeedDisplaySwitch", false)) {
                         final SwitchPreference spSpeed = (SwitchPreference) findPreference("prefSpeedDisplaySwitch");
                         spSpeed.setChecked(false);
                         final SwitchPreference spDweet = (SwitchPreference) findPreference("prefDweetEnabled");
                         spDweet.setChecked(false);
                     }
 
-					break;
+                    break;
                 case "prefSpeedDisplaySwitch":
                     Global.dispalyGpsSpeed = sharedPreferences.getBoolean("prefSpeedDisplaySwitch", false);
                     //Now enable GPS Location if Disabled
@@ -281,20 +278,20 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
 //					Global.Accelerometer = Global.ACCELEROMETER.values()[accelerometer];
 //					MainActivity.myAccelerometer.update();
 //					break;
-				case "prefBTDeviceName":
-                    if(!Global.BTDeviceNames.isEmpty()) {
+                case "prefBTDeviceName":
+                    if (!Global.BTDeviceNames.isEmpty()) {
                         Global.BTDeviceName = sharedPreferences.getString("prefBTDeviceName", "");
                         EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.BTDeviceNameChange));
                         Log.d("eChook", "Updated Global Bluetooth Name to " + Global.BTDeviceName);
                         final ListPreference lp = (ListPreference) findPreference("prefBTDeviceName");
                         lp.setSummary(Global.BTDeviceName);
                     }
-					break;
-				case "prefCarName":
-					Global.CarName = sharedPreferences.getString("prefCarName","");
+                    break;
+                case "prefCarName":
+                    Global.CarName = sharedPreferences.getString("prefCarName", "");
                     EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.CarNameChange));
-					break;
-				case "prefMotorTeeth":
+                    break;
+                case "prefMotorTeeth":
                     Global.MotorTeeth = DrivenSettings.parseMotorTeeth(sharedPreferences.getString("prefMotorTeeth", ""));
                     break;
                 case "prefWheelTeeth":
@@ -340,8 +337,8 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                     Global.eChookPassword = sharedPreferences.getString("prefEchookPassword", "");
                     break;
                 case "prefCustomUrlEnabled":
-                    if(sharedPreferences.getBoolean("prefCustomUrlEnabled", false)){
-                        if(!URLUtil.isValidUrl(sharedPreferences.getString("prefCustomUrl", ""))){
+                    if (sharedPreferences.getBoolean("prefCustomUrlEnabled", false)) {
+                        if (!URLUtil.isValidUrl(sharedPreferences.getString("prefCustomUrl", ""))) {
 
                             final SwitchPreference sp = (SwitchPreference) findPreference("prefCustomUrlEnabled");
                             sp.setChecked(false);
@@ -376,32 +373,32 @@ public class SettingsFragment 	extends PreferenceFragmentCompat
                 default:
                     throw new IllegalStateException("Unexpected value: " + key);
             }
-		} catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             EventBus.getDefault().post(new SnackbarEvent(e));
-e.printStackTrace();
-		}
-	}
+            e.printStackTrace();
+        }
+    }
 
-	@Override
-	public void onResume() {
-		try {
+    @Override
+    public void onResume() {
+        try {
             super.onResume();
             getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        }catch (Exception e) {
+        } catch (Exception e) {
             EventBus.getDefault().post(new SnackbarEvent(e));
-e.printStackTrace();
+            e.printStackTrace();
         }
-	}
+    }
 
-	@Override
-	public void onPause() {
+    @Override
+    public void onPause() {
         try {
             super.onPause();
             getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-        }catch (Exception e) {
+        } catch (Exception e) {
             EventBus.getDefault().post(new SnackbarEvent(e));
-e.printStackTrace();
+            e.printStackTrace();
         }
-	}
+    }
 }

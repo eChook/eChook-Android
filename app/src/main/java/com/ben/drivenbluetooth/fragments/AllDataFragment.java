@@ -19,6 +19,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Locale;
+
 
 public class AllDataFragment extends Fragment {
 
@@ -37,15 +39,16 @@ public class AllDataFragment extends Fragment {
     /*===================*/
 	/* SIXGRAPHSBARS
 	/*===================*/
-    public AllDataFragment() {
-        // Required empty public constructor
-    }
+//    public AllDataFragment() {
+//        // Required empty public constructor
+//    }
 
     /*===================*/
 	/* INITIALIZERS
 	/*===================*/
     private void InitializeDataFields() {
         View v = getView();
+        assert v != null;
         Throttle = v.findViewById(R.id.throttle);
         Amps = v.findViewById(R.id.current);
         Volts = v.findViewById(R.id.voltage);
@@ -158,12 +161,13 @@ public class AllDataFragment extends Fragment {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void UpdateThrottle() {
         try {
             if (Global.ActualThrottle < Global.InputThrottle) {
-                Throttle.setText(String.format("%.0f", Global.InputThrottle) + " (" + String.format("%.0f", Global.ActualThrottle) + ")");
+                Throttle.setText(String.format(Locale.ENGLISH, "%.0f", Global.InputThrottle) + " (" + String.format(Locale.ENGLISH, "%.0f", Global.ActualThrottle) + ")");
             } else {
-                Throttle.setText(String.format("%.0f", Global.InputThrottle));
+                Throttle.setText(String.format(Locale.ENGLISH, "%.0f", Global.InputThrottle));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,7 +188,7 @@ public class AllDataFragment extends Fragment {
 
     private void UpdateAmps() {
         try {
-            Amps.setText(String.format("%.1f", Global.Amps));
+            Amps.setText(String.format(Locale.ENGLISH, "%.1f", Global.Amps));
             Amps.setTextColor(ColorHelper.GetVoltsColor(Global.Amps));
         } catch (Exception e) {
             e.printStackTrace();
@@ -193,7 +197,7 @@ public class AllDataFragment extends Fragment {
 
     private void UpdateAmpHours() {
         try {
-            AmpHours.setText(String.format("%.2f", Global.AmpHours));
+            AmpHours.setText(String.format(Locale.ENGLISH, "%.2f", Global.AmpHours));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -202,7 +206,7 @@ public class AllDataFragment extends Fragment {
     private void UpdateSpeed() {
         try {
             Double speed = UnitHelper.getSpeed(Global.SpeedMPS, Global.SpeedUnit);
-            Speed.setText(String.format("%.1f", speed));
+            Speed.setText(String.format(Locale.ENGLISH, "%.1f", speed));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -210,7 +214,7 @@ public class AllDataFragment extends Fragment {
 
     private void UpdateTemp() {
         try {
-            Temp1.setText(String.format("%.1f", Global.TempC1));
+            Temp1.setText(String.format(Locale.ENGLISH, "%.1f", Global.TempC1));
             Temp1.setTextColor(ColorHelper.GetVoltsColor(Global.TempC1));
         } catch (Exception e) {
             e.printStackTrace();
@@ -219,7 +223,7 @@ public class AllDataFragment extends Fragment {
 
     private void UpdateTemp2() {
         try {
-            Temp2.setText(String.format("%.1f", Global.TempC2));
+            Temp2.setText(String.format(Locale.ENGLISH, "%.1f", Global.TempC2));
             Temp2.setTextColor(ColorHelper.GetVoltsColor(Global.TempC2));
         } catch (Exception e) {
             e.printStackTrace();
@@ -228,7 +232,7 @@ public class AllDataFragment extends Fragment {
 
     private void UpdateMotorRPM() {
         try {
-            RPM.setText(String.format("%.0f", Global.MotorRPM));
+            RPM.setText(String.format(Locale.ENGLISH, "%.0f", Global.MotorRPM));
             RPM.setTextColor(ColorHelper.GetRPMColor(Global.MotorRPM));
         } catch (Exception e) {
             e.printStackTrace();
@@ -236,7 +240,7 @@ public class AllDataFragment extends Fragment {
     }
 
     private void UpdateWattHours() {
-        WattHours.setText(String.format("%.2f", Global.WattHoursPerMeter * 1000));
+        WattHours.setText(String.format(Locale.ENGLISH, "%.2f", Global.WattHoursPerMeter * 1000));
     }
 
 }

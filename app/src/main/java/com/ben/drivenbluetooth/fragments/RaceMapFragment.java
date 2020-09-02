@@ -42,6 +42,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -277,10 +278,10 @@ e.printStackTrace();
 	/* FRAGMENT UPDATING
 	/*===================*/
     public void UpdateFragmentUI() {
-        Voltage.setText(String.format("%.2f", Global.Volts) + " V");
-        Current.setText(String.format("%.1f", Global.Amps) + " A");
-        AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
-        RPM.setText(String.format("%.0f", Global.MotorRPM) + " RPM");
+        Voltage.setText(String.format(Locale.ENGLISH,"%.2f", Global.Volts) + " V");
+        Current.setText(String.format(Locale.ENGLISH,"%.1f", Global.Amps) + " A");
+        AmpHours.setText(String.format(Locale.ENGLISH,"%.2f", Global.AmpHours) + " Ah");
+        RPM.setText(String.format(Locale.ENGLISH,"%.0f", Global.MotorRPM) + " RPM");
     }
 
     private void UpdateMap() {
@@ -343,19 +344,19 @@ e.printStackTrace();
             switch (event.eventType) {
 
                 case Volts:
-                    Voltage.setText(String.format("%.2f", Global.Volts) + " V");
+                    Voltage.setText(String.format(Locale.ENGLISH,"%.2f", Global.Volts) + " V");
                     break;
                 case Amps:
-                    Current.setText(String.format("%.1f", Global.Amps) + " A");
+                    Current.setText(String.format(Locale.ENGLISH,"%.1f", Global.Amps) + " A");
                     break;
                 case AmpHours:
-                    AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
+                    AmpHours.setText(String.format(Locale.ENGLISH,"%.2f", Global.AmpHours) + " Ah");
                     break;
                 case WheelSpeedMPS:
                     Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.SpeedUnit));
                     break;
                 case MotorSpeedRPM:
-                    RPM.setText(String.format("%.0f", Global.MotorRPM) + " RPM");
+                    RPM.setText(String.format(Locale.ENGLISH,"%.0f", Global.MotorRPM) + " RPM");
                     break;
             }
         } catch (Exception e) {
@@ -364,9 +365,9 @@ e.printStackTrace();
     }
 
     private void UpdateMapText() {
-        CurBearing.setText("car: " + String.format("%.1f", myLocationMonitor.GetRaceObserverBearing_Current()));
-        SFLBearing.setText("sfl: " + String.format("%.1f", myLocationMonitor.GetRaceObserverBearing_SFL()));
-        Accuracy.setText("acc: " + String.format("%.1f", Global.GPSAccuracy));
+        CurBearing.setText("car: " + String.format(Locale.ENGLISH,"%.1f", myLocationMonitor.GetRaceObserverBearing_Current()));
+        SFLBearing.setText("sfl: " + String.format(Locale.ENGLISH,"%.1f", myLocationMonitor.GetRaceObserverBearing_SFL()));
+        Accuracy.setText("acc: " + String.format(Locale.ENGLISH,"%.1f", Global.GPSAccuracy));
     }
 
     private void StartFragmentUpdater() {

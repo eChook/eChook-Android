@@ -1,4 +1,4 @@
-<!--<resources>-->
+<resources>
 <!--	&lt;!&ndash;-->
 <!--    To get one, follow this link, follow the directions and press "Create" at the end:-->
 
@@ -13,4 +13,4 @@
 <!--	<string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">-->
 <!--		YOUR_KEY_HERE-->
 <!--	</string>-->
-<!--</resources>-->
+</resources>
