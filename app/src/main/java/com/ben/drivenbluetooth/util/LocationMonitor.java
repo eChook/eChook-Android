@@ -124,30 +124,35 @@ public class LocationMonitor implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
-    @NonNull
-    private Double CalculateSlopeGradientInDegrees(Location previousLocation, Location currentLocation) {
-        // calculate distance between points
-        double deltaDistance = previousLocation.distanceTo(currentLocation);
+    private double CalculateSlopeGradientInDegrees(Location previousLocation, Location currentLocation) {
+        if (previousLocation != null) {
+            // calculate distance between points
+            double deltaDistance = previousLocation.distanceTo(currentLocation);
 
-        // calculate altitude difference
-        double deltaAltitude = currentLocation.getAltitude() - previousLocation.getAltitude();
+            // calculate altitude difference
+            double deltaAltitude = currentLocation.getAltitude() - previousLocation.getAltitude();
 
-        // calculate slope
-        // slope = arctan(deltaAltitude / deltaDistance)
-        return Math.toDegrees(Math.atan(deltaAltitude / deltaDistance));
+            // calculate slope
+            // slope = arctan(deltaAltitude / deltaDistance)
+            return Math.toDegrees(Math.atan(deltaAltitude / deltaDistance));
+        } else {
+            return 0;
+        }
     }
 
     private void _updateLocations(Location location) {
-        if (location.getAccuracy() <= Global.MinGPSAccuracy) {
-            Global.Latitude = location.getLatitude();
-            Global.Longitude = location.getLongitude();
-            Global.Altitude = location.getAltitude();
-            if (location.hasBearing()) {
-                Global.Bearing = (double) location.getBearing();
+        if (location != null) {
+            if (location.getAccuracy() <= Global.MinGPSAccuracy) {
+                Global.Latitude = location.getLatitude();
+                Global.Longitude = location.getLongitude();
+                Global.Altitude = location.getAltitude();
+                if (location.hasBearing()) {
+                    Global.Bearing = (double) location.getBearing();
+                }
+                Global.SpeedGPS = (double) location.getSpeed();
+                Global.GPSTime = (double) location.getTime();
+                Global.GPSAccuracy = (double) location.getAccuracy();
             }
-            Global.SpeedGPS = (double) location.getSpeed();
-            Global.GPSTime = (double) location.getTime();
-            Global.GPSAccuracy = (double) location.getAccuracy();
         }
     }
 
