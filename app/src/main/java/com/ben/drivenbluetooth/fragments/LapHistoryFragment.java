@@ -120,11 +120,7 @@ public class LapHistoryFragment extends Fragment {
                     hv.setLayoutParams(textViewParams);
                     tr.addView(hv);
                 }
-				TextView laptime = new TextView(ctx);
-				laptime.setText(Global.LapDataList.get(i).getLapTimeString());
-				laptime.setGravity(Gravity.CENTER);
-				laptime.setLayoutParams(textViewParams);
-				tr.addView(laptime);
+//
 				LapTable.addView(tr);
 			}
 		}
