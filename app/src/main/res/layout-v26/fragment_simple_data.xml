@@ -46,7 +46,7 @@
             android:gravity="center"
             android:inputType="none"
             android:singleLine="false"
-            android:text="@string/format2point1"
+            android:text="@string/oneDpPlaceholder"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
             android:textSize="36sp"

@@ -16,7 +16,6 @@
     <string name="log_status_indicator_sprite">Log Status Indicator Sprite</string>
     <string name="bluetooth_symbol_sprite">Bluetooth Symbol Sprite</string>
     <string name="voltage">Voltage</string>
-    <string name="format2point1">##.#</string>
     <string name="last_lap">Last Lap</string>
     <string name="placeholder">---</string>
     <string name="lastLapPlaceholder">(---)</string>
