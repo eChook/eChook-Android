@@ -180,7 +180,7 @@ public class DataToCsvFile extends Thread {
      * @return a string formatted as "timestamp,x,y,z,..."
      */
     private String GetLatestDataAsString() {
-        StringBuilder data_string = new StringBuilder(String.valueOf(System.currentTimeMillis()) + ",");
+        StringBuilder data_string = new StringBuilder(System.currentTimeMillis() + ",");
 
         for (String value : this.ArrayOfVariables) {
             data_string.append(value).append(",");
