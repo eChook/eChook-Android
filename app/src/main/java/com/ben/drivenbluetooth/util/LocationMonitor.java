@@ -125,7 +125,7 @@ public class LocationMonitor implements GoogleApiClient.ConnectionCallbacks,
     }
 
     private double CalculateSlopeGradientInDegrees(Location previousLocation, Location currentLocation) {
-        if (previousLocation != null) {
+        if (previousLocation != null && currentLocation != null) {
             // calculate distance between points
             double deltaDistance = previousLocation.distanceTo(currentLocation);
 

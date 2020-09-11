@@ -440,7 +440,7 @@ public class MainActivity
             if (Global.Mode == Global.MODE.TEST) {
                 StartDemoMode();
             } else if (Global.Mode == Global.MODE.RACE) {
-                StartRaceMode();
+                StartRaceMode(); //TODO Need to check if a device is connected before trying to start a stream.
             }
         } catch (Exception e) {
             e.printStackTrace();

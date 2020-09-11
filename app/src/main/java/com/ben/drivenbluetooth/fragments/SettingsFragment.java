@@ -240,10 +240,10 @@ public class SettingsFragment extends PreferenceFragmentCompat
                     int location = sharedPreferences.getBoolean("prefLocationSwitch", false) ? 1 : 0;
                     Global.LocationStatus = Global.LOCATION.values()[location];
                     EventBus.getDefault().post(new PreferenceEvent(PreferenceEvent.EventType.LocationChange));
-                    if (!sharedPreferences.getBoolean("prefLocationSwitch", false) && sharedPreferences.getBoolean("prefSpeedDisplaySwitch", false)) {
+                    if (!sharedPreferences.getBoolean("prefLocationSwitch", false)) {
                         final SwitchPreference spSpeed = (SwitchPreference) findPreference("prefSpeedDisplaySwitch");
                         spSpeed.setChecked(false);
-                        final SwitchPreference spDweet = (SwitchPreference) findPreference("prefDweetEnabled");
+                        final SwitchPreference spDweet = (SwitchPreference) findPreference("prefDweetLocation");
                         spDweet.setChecked(false);
                     }
 
@@ -304,7 +304,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
                     Global.dweetThingName = sharedPreferences.getString("prefDweetName", "");
                     break;
                 case "prefDweetLocation":
-                    Global.dweetLocation = sharedPreferences.getBoolean("prefDweetEnabled", false);
+                    Global.dweetLocation = sharedPreferences.getBoolean("prefDweetLocation", false);
                     if (Global.dweetLocation) {
                         if (!sharedPreferences.getBoolean("prefLocationSwitch", false)) {
 
@@ -319,7 +319,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
                             });
                             warningBox.setNegativeButton("Don't Enable", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    final SwitchPreference sp = (SwitchPreference) findPreference("prefDweetEnabled");
+                                    final SwitchPreference sp = (SwitchPreference) findPreference("prefDweetLocation");
                                     sp.setChecked(false);
                                 }
                             });
