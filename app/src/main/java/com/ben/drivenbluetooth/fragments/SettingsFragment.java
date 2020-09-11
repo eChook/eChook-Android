@@ -370,6 +370,10 @@ public class SettingsFragment extends PreferenceFragmentCompat
                     Global.customURLPassword = sharedPreferences.getString("prefUserDefinedURLPassword", "");
                     break;
 
+                case "prefCustomData":
+                    Global.sendCustomData = sharedPreferences.getBoolean("prefCustomData", false);
+                    break;
+
                 default:
                     throw new IllegalStateException("Unexpected value: " + key);
             }

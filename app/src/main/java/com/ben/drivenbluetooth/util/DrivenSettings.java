@@ -11,6 +11,8 @@ import com.ben.drivenbluetooth.events.PreferenceEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Objects;
+
 public final class DrivenSettings {
 
     private DrivenSettings() {
@@ -41,6 +43,8 @@ public final class DrivenSettings {
         customUrl(prefs);
         customURLUsername(prefs);
         customURLPassword(prefs);
+
+        customDataFields(prefs);
 
     }
 
@@ -91,7 +95,7 @@ public final class DrivenSettings {
 
     private static void Units(SharedPreferences prefs) {
         try {
-            int units = Integer.valueOf(prefs.getString("prefSpeedUnits", "0"));
+            int units = Integer.parseInt(Objects.requireNonNull(prefs.getString("prefSpeedUnits", "0")));
             Global.SpeedUnit = Global.UNIT.values()[units];
             Log.d("eChook", "Units Changed");
         } catch (Exception e) {
@@ -103,9 +107,9 @@ public final class DrivenSettings {
         try {
             int location = prefs.getBoolean("prefLocationSwitch", false) ? 1 : 0;
             Global.LocationStatus = Global.LOCATION.values()[location];
-            if (location == 1) {
-                //Enable or disable GPS speed preference here.
-            }
+//            if (location == 1) {
+//                //Enable or disable GPS speed preference here.
+//            }
         } catch (Exception e) {
             Global.LocationStatus = Global.LOCATION.DISABLED;
         }
@@ -179,6 +183,10 @@ public final class DrivenSettings {
 
     private static void customUrl(SharedPreferences prefs){
         Global.customUrl = prefs.getString("prefCustomUrl", "");
+    }
+
+    private static void customDataFields(SharedPreferences prefs){
+        Global.sendCustomData = prefs.getBoolean("prefCustomData", false);
     }
 
 

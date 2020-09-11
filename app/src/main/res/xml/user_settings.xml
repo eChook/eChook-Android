@@ -132,5 +132,14 @@
             android:title="Enable Live Data upload to a custom URL" />
 
     </PreferenceCategory>
-
+    <PreferenceCategory
+        android:key="prefCustomDataCategory"
+        android:title="Listen for custom data identifiers from the eChook">
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="prefCustomData"
+        android:summary="Listen for, log and upload custom data identifiers 0-9 for customised eChook boards"
+        android:title="Listen for Custom Data"
+        />
+    </PreferenceCategory>
 </PreferenceScreen>
