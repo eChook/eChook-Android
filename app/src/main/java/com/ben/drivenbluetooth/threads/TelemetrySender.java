@@ -56,7 +56,7 @@ public class TelemetrySender extends Thread {
         boolean echookIdReceived;
 
         if (telEnabled && Global.eChookLiveEnabled && (!Global.eChookCarName.equals("")) && !Global.eChookPassword.equals("")) {     //If echook live is selected and login details aren't empty
-            Log.d("eChook", "Attempting to get eChook Live ID");
+//            Log.d("eChook", "Attempting to get eChook Live ID");
             echookIdReceived = getEchookId();
             if (!echookIdReceived) {
                 EventBus.getDefault().post(new DialogEvent("eChook Login Failed", ""));
@@ -68,7 +68,7 @@ public class TelemetrySender extends Thread {
     }
 
     private boolean getEchookId() {
-        Log.d("eChook", "Getting eChook Live Login");
+//        Log.d("eChook", "Getting eChook Live Login");
         boolean success;
         HttpURLConnection urlConnection;
         try {
@@ -106,13 +106,13 @@ public class TelemetrySender extends Thread {
                     echookID = receivedJson.getString("id");
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Log.d("eChook", "ID not Found - JSON exception");
+//                    Log.d("eChook", "ID not Found - JSON exception");
                 }
 
 
                 success = true;
 
-                Log.d("eChook", "Received ID:" + echookID);
+//                Log.d("eChook", "Received ID:" + echookID);
                 EventBus.getDefault().post(new DialogEvent("eChook Login Successful", ""));
 
 
@@ -120,7 +120,7 @@ public class TelemetrySender extends Thread {
                 System.out.println(urlConnection.getResponseMessage());
                 success = false;
                 EventBus.getDefault().post(new DialogEvent("eChook Login Failed", "Bad Response from Server"));
-                Log.d("eChook", "Non OK response to eChook Live login request");
+//                Log.d("eChook", "Non OK response to eChook Live login request");
             }
             urlConnection.disconnect();
 
@@ -183,14 +183,14 @@ public class TelemetrySender extends Thread {
                 dataJSON.put("Lon", Global.Longitude);
             }
 
-            if (currentLap != Global.Lap && Global.Lap > 1) {
+            if (currentLap != Global.Lap && Global.Lap > 0) {
                 currentLap = Global.Lap;
                 dataJSON.put("LL_V", format2.format(Global.LapDataList.get(currentLap - 1).getAverageVolts()));
                 dataJSON.put("LL_I", format2.format(Global.LapDataList.get(currentLap - 1).getAverageAmps()));
                 dataJSON.put("LL_RPM", format2.format(Global.LapDataList.get(currentLap - 1).getAverageRPM()));
                 dataJSON.put("LL_Spd", format2.format(Global.LapDataList.get(currentLap - 1).getAverageSpeedMPS()));
                 dataJSON.put("LL_Ah", format2.format(Global.LapDataList.get(currentLap - 1).getAmpHours()));
-                dataJSON.put("LL_Time", format2.format(Global.LapDataList.get(currentLap - 1).getLapTimeString()));
+                dataJSON.put("LL_Time", Global.LapDataList.get(currentLap - 1).getLapTimeString());
                 dataJSON.put("LL_Eff", format2.format(Global.LapDataList.get(currentLap - 1).getWattHoursPerKM()));
             }
 
@@ -219,7 +219,7 @@ public class TelemetrySender extends Thread {
         boolean success = true;
 
         if (Global.dweetEnabled) {
-            Log.d("eChook", "Entering Send Dweet Data");
+//            Log.d("eChook", "Entering Send Dweet Data");
 
             boolean b = HttpSend("https://dweet.io/dweet/for/" + Global.dweetThingName,
                     null, null, null, null, null,
@@ -229,10 +229,10 @@ public class TelemetrySender extends Thread {
         }
 
         if (Global.eChookLiveEnabled) {
-            Log.d("eChook", "Entering eChook Live SendJSON data, ID = " + echookID);
+//            Log.d("eChook", "Entering eChook Live SendJSON data, ID = " + echookID);
             if (Global.eChookLiveEnabled && !waitingForLogin && echookID.equals("")) //Catches the usecase when someone enables eChook live data once the thread is started and a login is needed.
             {
-                Log.d("eChook", "eChook Live enabled but no ID. ID = " + echookID);
+//                Log.d("eChook", "eChook Live enabled but no ID. ID = " + echookID);
                 waitingForLogin = true;
                 getEchookId();
                 return true;
@@ -247,7 +247,7 @@ public class TelemetrySender extends Thread {
         }
 
         if (Global.customUrlEnabled) {
-            Log.d("eChook", "Entering SendJSON data to user defined URL");
+//            Log.d("eChook", "Entering SendJSON data to user defined URL");
 
             JSONObject dataJSON = getDataJson(true, Global.sendCustomData);
 
@@ -331,7 +331,7 @@ public class TelemetrySender extends Thread {
             StringBuilder sb = new StringBuilder();
             int HttpResult = urlConnection.getResponseCode();
             if (HttpResult == HttpURLConnection.HTTP_OK) {
-                Log.d("SendData", "HTTP Response OK");
+//                Log.d("SendData", "HTTP Response OK");
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
                 String line;

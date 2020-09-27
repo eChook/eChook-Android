@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-//import com.github.mikephil.charting.data.LineData;
-
 /**
  * GLOBAL
  * <p>

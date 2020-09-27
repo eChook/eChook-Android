@@ -1,8 +1,10 @@
 package com.ben.drivenbluetooth.fragments;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
@@ -46,11 +48,12 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.core.app.ActivityCompat;
+
 public class RaceMapFragment extends Fragment
-        implements 	OnMapReadyCallback,
+        implements OnMapReadyCallback,
         GoogleMap.OnMapClickListener,
-        GoogleMap.OnInfoWindowClickListener
-{
+        GoogleMap.OnInfoWindowClickListener {
     private static Timer FragmentUpdateTimer;
     private GoogleMap map;
     private MapFragment mFragment;
@@ -85,15 +88,15 @@ public class RaceMapFragment extends Fragment
 	/*===================*/
     private void InitializeDataFields() {
         View v = getView();
-        Current 		= v.findViewById(R.id.current);
-        Voltage 		= v.findViewById(R.id.voltage);
-        RPM 			= v.findViewById(R.id.rpm);
-        Speed 			= v.findViewById(R.id.speed);
-        AmpHours		= v.findViewById(R.id.ampHours);
+        Current = v.findViewById(R.id.current);
+        Voltage = v.findViewById(R.id.voltage);
+        RPM = v.findViewById(R.id.rpm);
+        Speed = v.findViewById(R.id.speed);
+        AmpHours = v.findViewById(R.id.ampHours);
 
-        CurBearing		= v.findViewById(R.id.txtCurBearing);
-        SFLBearing		= v.findViewById(R.id.txtSFLBearing);
-        Accuracy		= v.findViewById(R.id.txtAccuracy);
+        CurBearing = v.findViewById(R.id.txtCurBearing);
+        SFLBearing = v.findViewById(R.id.txtSFLBearing);
+        Accuracy = v.findViewById(R.id.txtAccuracy);
     }
 
     private void InitializeMap(GoogleMap googleMap) {
@@ -289,7 +292,7 @@ e.printStackTrace();
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(Global.Latitude, Global.Longitude))
                     .zoom(16)                   // Sets the zoom
-                    .bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
+//                    .bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
                     //.tilt(30)                   // Sets the tilt of the camera to 30 degrees
                     .build();
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));

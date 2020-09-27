@@ -7,8 +7,10 @@
     android:layout_alignEnd="@+id/txt_Mode"
     android:gravity="center"
     android:id="@+id/CenterView"
+    android:background="#F9F9F9"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto">
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:elevation="2dp">
 
     <TextView
         android:id="@+id/temp2"

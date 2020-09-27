@@ -6,6 +6,7 @@
     android:layout_above="@+id/open"
     android:layout_below="@+id/textView8"
     android:layout_alignEnd="@+id/txt_Mode"
+    android:background="#F9F9F9"
     android:gravity="center">
 
     <!-- TEXT -->

@@ -217,7 +217,10 @@ public class LocationMonitor implements GoogleApiClient.ConnectionCallbacks,
     }
 
     private float calculateDistanceBetween(Location location1, Location location2) {
-        return location1.distanceTo(location2);
+        if(location1 != null && location2 != null)
+            return location1.distanceTo(location2);
+        else
+            return(0);
     }
 
     @Deprecated

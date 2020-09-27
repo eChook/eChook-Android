@@ -43,6 +43,7 @@ import com.ben.drivenbluetooth.util.Accelerometer;
 import com.ben.drivenbluetooth.util.BluetoothManager;
 import com.ben.drivenbluetooth.util.CyclingArrayList;
 import com.ben.drivenbluetooth.util.DrivenSettings;
+import com.ben.drivenbluetooth.util.LapData;
 import com.ben.drivenbluetooth.util.LocationMonitor;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -141,6 +142,7 @@ public class MainActivity
 
         InitializeLongClickStart();
         InitializeLongClickMode();
+        InitializeLongClickLap();
 
         InitializeFragmentList();
         CycleView();
@@ -339,6 +341,28 @@ public class MainActivity
         });
     }
 
+    private void InitializeLongClickLap() {
+        // We can't do this in XML so must do it programatically
+        TextView modeText = findViewById(R.id.lap);
+        modeText.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                lapIncrement();
+                return true;
+            }
+        });
+    }
+
+    //DEBUG PURPOSES
+    void lapIncrement(){
+        // add new lap
+        Global.LapDataList.add(new LapData());
+        Global.Lap += 1;
+
+        // Update the lap text
+        EventBus.getDefault().post(new NewLapEvent());
+    }
+
     /* ======= */
     /* TOASTER */
     /* ======= */
@@ -496,6 +520,8 @@ public class MainActivity
      */
     public void LaunchSettings(View v) {
         SettingsFragment settingsFragment = new SettingsFragment();
+
+        Log.d("MainActivity", "Launching Settings");
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.overlay, settingsFragment)
                 .addToBackStack(null)

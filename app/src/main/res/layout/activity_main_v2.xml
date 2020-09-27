@@ -2,7 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:elevation="0dp">
 
     <FrameLayout
         android:id="@+id/overlay"
@@ -106,12 +107,19 @@
             android:id="@+id/CenterView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:gravity="center"
+            android:gravity="center"            
             app:layout_constraintBottom_toTopOf="@+id/btnSettings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtBTCarName">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="50dp"
+                android:textAlignment="center"
+                android:text="If you are stuck on this screen and can't load settings, please force close and re launch the app. If this doesn't fix it exit the app, go to the main Android settings > apps > eChook > Storage and clear the cache\n\nApologies for the bug, we're working on it!"/>
 
         </RelativeLayout>
 

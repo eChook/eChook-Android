@@ -71,6 +71,11 @@
     <PreferenceCategory
         android:key="prefKeyEchookLiveData"
         android:title="eChook Private Live Data">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefEchookEnabled"
+            android:summary="Upload live data to echook.uk"
+            android:title="Enable eChook Live Data " />
         <EditTextPreference
             android:key="prefEchookCarName"
             android:summary="Car Name used for eChook.uk login"
@@ -80,17 +85,18 @@
             android:key="prefEchookPassword"
             android:summary="Password for eChook.uk"
             android:title="echook.uk Password" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefEchookEnabled"
-            android:summary="Upload live data to echook.uk"
-            android:title="Enable eChook Live Data " />
+
 
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="prefKeyDweetLiveData"
         android:title="dweet.io Live Data (Publicly Visible on dweet)">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefDweetLocation"
+            android:summary="Warning: This makes your location public!"
+            android:title="Send location to dweet.io" />
         <EditTextPreference
             android:key="prefDweetName"
             android:summary="Public 6+ digit data identifier. dweet.io/follow/identifier"
@@ -100,11 +106,7 @@
             android:key="prefDweetEnabled"
             android:summary="Upload live data to dweet.io"
             android:title="Enable dweet.io Live Data " />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefDweetLocation"
-            android:summary="Warning: This makes your location public!"
-            android:title="Send location to dweet.io" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -112,6 +114,11 @@
         android:summary="POSTs JSON live data to a URL of your choice"
         android:title="Live Data to Custom URL">
 
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefCustomUrlEnabled"
+            android:summary="Upload live data to a custom URL"
+            android:title="Enable Live Data upload to a custom URL" />
         <EditTextPreference
             android:key="prefCustomUrl"
             android:summary="URL to upload data to"
@@ -125,11 +132,7 @@
             android:key="prefCustomURLPassword"
             android:summary="Optional password for user defined URL login"
             android:title="Custom URL Password" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefCustomUrlEnabled"
-            android:summary="Upload live data to a custom URL"
-            android:title="Enable Live Data upload to a custom URL" />
+
 
     </PreferenceCategory>
     <PreferenceCategory
