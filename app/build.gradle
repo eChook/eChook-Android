@@ -9,8 +9,16 @@ def getVersionCodeTimestamp() {
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '27.0.3'
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\rgriffi5\\Downloads\\android.jks')
+            storePassword 'echook'
+            keyAlias 'jlrdrivenbluetooth'
+            keyPassword 'echook'
+        }
+    }
+    compileSdkVersion 29
+    buildToolsVersion '29.0.2'
 
     applicationVariants.all { variant ->
         variant.outputs.all {
@@ -21,10 +29,12 @@ android {
     defaultConfig {
         applicationId "com.ben.drivenbluetooth"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode getVersionCodeTimestamp()
-        versionName "1.97e"
+        versionName "2.0.3b"
         multiDexEnabled true
+        versionNameSuffix 'alpha0'
+        signingConfig signingConfigs.debug
     }
     buildTypes {
         release {
@@ -35,6 +45,7 @@ android {
         debug {
             versionNameSuffix "dev"
             debuggable true
+            signingConfig signingConfigs.debug
         }
     }
 }
@@ -46,18 +57,22 @@ repositories {
 dependencies {
     // https://developers.google.com/android/guides/setup#split
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.android.gms:play-services-maps:+'
-    implementation 'com.google.android.gms:play-services-location:+'
+    //implementation 'com.google.android.gms:play-services-maps:+'
+    //implementation 'com.google.android.gms:play-services-location:+'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.0'
-    implementation 'com.getbase:floatingactionbutton:+'
+//    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.0'
+    implementation 'com.getbase:floatingactionbutton:1.10.1'
 
-    implementation 'com.android.support:appcompat-v7:+'
-    implementation 'com.android.support:preference-v14:+'
-    implementation 'com.android.support:design:+'
-    implementation 'com.android.support.constraint:constraint-layout:+'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+//    implementation 'com.android.support:appcompat:29.0.2'
+    implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
+    implementation 'com.google.android.material:material:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
 
-    implementation 'org.apache.commons:commons-math3:+'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
 
-    implementation 'org.greenrobot:eventbus:+'
+    implementation 'org.greenrobot:eventbus:3.2.0'
+    implementation 'org.jetbrains:annotations-java5:15.0'
 }

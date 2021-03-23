@@ -1,12 +1,23 @@
-<android.support.constraint.ConstraintLayout
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/activity">
+    android:elevation="0dp">
 
-    <android.support.constraint.ConstraintLayout
+    <FrameLayout
+        android:id="@+id/overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -15,136 +26,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context="com.ben.drivenbluetooth.MainActivity">
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/open"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
-            android:cropToPadding="false"
-            android:onClick="OpenBT"
-            android:src="@drawable/ic_bluetooth_connected_black_24dp"
-            android:text="Open BT"
-            app:backgroundTint="@color/bt_connect"
-            app:fab_size="mini"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:onClick="CloseBT"
-            android:src="@drawable/ic_bluetooth_disabled_black_24dp"
-            android:text="Close BT"
-            app:backgroundTint="@color/bt_disconnect"
-            app:fab_size="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/open"
-            app:layout_constraintLeft_toRightOf="@+id/open" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/btnSettings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-
-            android:onClick="LaunchSettings"
-            android:src="@drawable/ic_settings_black_24dp"
-            android:text="Settings"
-            app:backgroundTint="@color/settings"
-            app:fab_size="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/close"
-            app:layout_constraintLeft_toRightOf="@+id/close" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:longClickable="true"
-
-            android:onClick="Start"
-            android:src="@drawable/ic_play_arrow_black_24dp"
-            android:text="Log"
-            android:textStyle="bold"
-            app:backgroundTint="@color/play"
-            app:fab_size="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/stop"
-            app:layout_constraintRight_toLeftOf="@+id/stop" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_marginBottom="8dp"
-
-            android:layout_marginEnd="8dp"
-            android:onClick="Stop"
-            android:src="@drawable/ic_stop_black_24dp"
-            android:text="Stop"
-            app:backgroundTint="@color/pause"
-            app:fab_size="mini"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/cycle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:onClick="Cycle"
-            android:src="@drawable/ic_autorenew_black_24dp"
-            android:text="Cycle"
-            app:backgroundTint="@color/cycle"
-            app:fab_size="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/btnSettings"
-            app:layout_constraintLeft_toRightOf="@+id/btnSettings" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/launchmode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:onClick="LaunchMode"
-            android:src="@drawable/ic_navigation_black_24dp"
-            app:backgroundTint="@color/launchmode"
-            app:fab_size="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/cycle"
-            app:layout_constraintLeft_toRightOf="@+id/cycle" />
-
-        <TextView
-            android:id="@+id/txt_Mode"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="center_vertical"
-            android:onClick="QuickChangeMode"
-            android:text="DEMO"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/start"
-            app:layout_constraintRight_toLeftOf="@+id/start" />
-
-        <TextView
-            android:id="@+id/txtDataFileName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="arduino.csv"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        tools:context="com.ben.drivenbluetooth.MainActivity"
+        tools:ignore="PrivateResource">
 
         <Chronometer
             android:id="@+id/LapTimer"
             android:layout_width="49dp"
             android:layout_height="21dp"
             android:layout_marginEnd="8dp"
-            android:gravity="center_vertical|right"
-            android:text="00:00"
+            android:gravity="center_vertical|end"
+            android:text="@string/_00_00"
             android:textColor="@color/secondary_text_default_material_light"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -152,48 +43,14 @@
             app:layout_constraintRight_toLeftOf="@+id/lap"
             app:layout_constraintTop_toTopOf="@+id/txtDataFileName" />
 
-        <TextView
-            android:id="@+id/lap"
-            android:layout_width="28dp"
-            android:layout_height="21dp"
-            android:gravity="center_vertical"
-            android:onClick="CrossFinishLine"
-            android:text="##"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/LapTimer"
-            app:layout_constraintRight_toLeftOf="@+id/textView4" />
-
-        <TextClock
-            android:id="@+id/textClock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/txtBTCarName"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/txtBTCarName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="middle"
-            android:text="BTDEVICE :: VEHICLE"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtDataFileName" />
-
         <ImageView
+            android:contentDescription="@string/shift_indicator_sprite"
             android:id="@+id/imgShiftIndicator"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:visibility="visible"
@@ -202,58 +59,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/shift_up" />
 
-        <TextView
-            android:id="@+id/txtGear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:gravity="center_vertical"
-            android:text="4"
-            android:textAppearance="@android:style/TextAppearance.Material.Headline"
-            android:textColor="?android:attr/textColorTertiary"
-            android:textSize="30sp"
-            android:textStyle="normal|bold"
-            app:layout_constraintBottom_toBottomOf="@+id/imgShiftIndicator"
-            app:layout_constraintRight_toLeftOf="@+id/imgShiftIndicator"
-            app:layout_constraintTop_toTopOf="@+id/imgShiftIndicator" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="bottom"
-            android:rotation="270"
-            android:text="GEAR"
-            android:textAlignment="center"
-            android:textSize="12sp"
-            android:textStyle="normal|italic"
-            app:layout_constraintBottom_toBottomOf="@+id/txtGear"
-            app:layout_constraintRight_toLeftOf="@+id/txtGear"
-            app:layout_constraintTop_toTopOf="@+id/txtGear" />
-
-        <TextView
-            android:id="@+id/previousLapTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="##:##"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/CenterView"
-            app:layout_constraintRight_toRightOf="@+id/LapTimer" />
-
-        <TextView
-            android:id="@+id/txtDataFileSize"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="##kb"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            app:layout_constraintLeft_toRightOf="@+id/txtDataFileName"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ImageView
+            android:contentDescription="@string/bluetooth_symbol_sprite"
             android:id="@+id/btSymbol"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
@@ -273,22 +80,11 @@
             app:layout_constraintBottom_toTopOf="@+id/CenterView"
             app:layout_constraintRight_toLeftOf="@+id/logStatusSymbol"
             app:layout_constraintTop_toBottomOf="@+id/btSymbol"
-            app:srcCompat="@drawable/ic_save_black_24dp" />
-
-        <RelativeLayout
-            android:id="@+id/CenterView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:gravity="center"
-            app:layout_constraintBottom_toTopOf="@+id/btnSettings"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtBTCarName">
-
-        </RelativeLayout>
+            app:srcCompat="@drawable/ic_save_black_24dp"
+            android:contentDescription="@string/log_status_indicator_sprite" />
 
         <ImageView
+            android:contentDescription="@string/bluetooth_status_indicator_sprite"
             android:id="@+id/btStatusSymbol"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
@@ -298,6 +94,7 @@
             app:srcCompat="@drawable/ic_cancel_black_24dp" />
 
         <ImageView
+            android:contentDescription="@string/logging_status_indicator"
             android:id="@+id/logStatusSymbol"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
@@ -306,28 +103,222 @@
             app:layout_constraintTop_toTopOf="@+id/logSymbol"
             app:srcCompat="@drawable/ic_cancel_black_24dp" />
 
-    </android.support.constraint.ConstraintLayout>
+        <RelativeLayout
+            android:id="@+id/CenterView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"            
+            app:layout_constraintBottom_toTopOf="@+id/btnSettings"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtBTCarName">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="50dp"
+                android:textAlignment="center"
+                android:text="If you are stuck on this screen and can't load settings, please force close and re launch the app. If this doesn't fix it exit the app, go to the main Android settings > apps > eChook > Storage and clear the cache\n\nApologies for the bug, we're working on it!"/>
 
-    <FrameLayout
-        android:layout_width="0dp"
-        android:id="@+id/overlay"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        </RelativeLayout>
 
-    </FrameLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/txtBTCarName"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.design.widget.CoordinatorLayout
+        <TextView
+            android:id="@+id/txt_Mode"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:gravity="center_vertical"
+            android:text="@string/race"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            android:layout_marginEnd="32dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/start" />
+        <!--            android:onClick="QuickChangeMode"-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:gravity="center_vertical"
+            android:onClick="QuickChangeMode"
+            android:text="@string/loggingLabel"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintBottom_toBottomOf="@+id/txt_Mode"
+            app:layout_constraintRight_toLeftOf="@+id/start" />
+
+        <TextView
+            android:id="@+id/txtDataFileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/arduino_csv"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lap"
+            android:layout_width="28dp"
+            android:layout_height="21dp"
+            android:gravity="center_vertical"
+            android:onClick="CrossFinishLine"
+            android:text="@string/double_hash"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/LapTimer"
+            app:layout_constraintRight_toLeftOf="@+id/textView4" />
+
+        <TextView
+            android:id="@+id/txtBTCarName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="middle"
+            android:text="@string/btdevice_vehicle"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtDataFileName" />
+
+        <TextView
+            android:id="@+id/txtGear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:gravity="center_vertical"
+            android:text="@string/_4"
+            android:textAppearance="@android:style/TextAppearance.Material.Headline"
+            android:textColor="?android:attr/textColorTertiary"
+            android:textSize="30sp"
+            android:textStyle="normal|bold"
+            app:layout_constraintBottom_toBottomOf="@+id/imgShiftIndicator"
+            app:layout_constraintRight_toLeftOf="@+id/imgShiftIndicator"
+            app:layout_constraintTop_toTopOf="@+id/imgShiftIndicator" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:rotation="270"
+            android:text="@string/gear"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            android:textStyle="normal|italic"
+            app:layout_constraintBottom_toBottomOf="@+id/txtGear"
+            app:layout_constraintRight_toLeftOf="@+id/txtGear"
+            app:layout_constraintTop_toTopOf="@+id/txtGear" />
+
+        <TextView
+            android:id="@+id/previousLapTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text="@string/TimerPlaceholder"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/CenterView"
+            app:layout_constraintRight_toRightOf="@+id/LapTimer" />
+
+        <TextView
+            android:id="@+id/txtDataFileSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/PlaceholderFileSize"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            app:layout_constraintLeft_toRightOf="@+id/txtDataFileName"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/open"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:cropToPadding="false"
+            android:onClick="ToggleBT"
+            android:src="@drawable/ic_bluetooth_connected_black_24dp"
+            app:background="@color/bt_connect"
+            app:fab_size="mini"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:cropToPadding="false"
+            android:onClick="LaunchSettings"
+            android:src="@drawable/ic_settings_black_24dp"
+            app:backgroundTint="@color/settings"
+            app:fab_size="mini"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/open"
+
+            />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:longClickable="true"
+            android:onClick="toggleLogging"
+            android:src="@drawable/ic_play_arrow_black_24dp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/play"
+            app:fab_size="mini"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/cycle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="Cycle"
+            android:src="@drawable/carousel_24"
+            app:backgroundTint="@color/cycle"
+            app:fab_size="mini"
+            android:layout_margin="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/btnSettings" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="LaunchMode"
+            android:src="@drawable/launch_flag_24"
+            app:backgroundTint="@color/launchmode"
+            app:fab_size="mini"
+            android:layout_margin="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/cycle" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/snackbarPosition"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent">
-    </android.support.design.widget.CoordinatorLayout>
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout2" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

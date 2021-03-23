@@ -112,10 +112,8 @@ e.printStackTrace();
 	private boolean CheckIfCrossStartFinishLine_StartVector(Location location) {
 		if (location.distanceTo(Global.StartFinishLineLocation) <= Global.LAP_TRIGGER_RANGE) {
 			// we are in range! check to see if the bearing adds up
-			if (Global.StartFinishLineLocation.bearingTo(location) <= Global.StartFinishLineBearing + 45
-					&& Global.StartFinishLineLocation.bearingTo(location) >= Global.StartFinishLineBearing - 45) {
-				return true;
-			}
+			return Global.StartFinishLineLocation.bearingTo(location) <= Global.StartFinishLineBearing + 45
+					&& Global.StartFinishLineLocation.bearingTo(location) >= Global.StartFinishLineBearing - 45;
 		}
 		return false;
 	}

@@ -11,6 +11,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 
 public class DataToCsvFile extends Thread {
 
@@ -60,8 +61,19 @@ public class DataToCsvFile extends Thread {
                     "SFLBearing (deg)",
                     "ObserverBearing (deg)",
                     "Slope (deg)",
-                    "PerformanceMetric",		// Arduino performance metric - higher is better
-                    "Mangled data"          // mangled data count (Bluetooth)
+                    "PerformanceMetric",	    // Arduino performance metric - higher is better
+                    "Mangled data",             // mangled data count (Bluetooth)
+
+                    "Custom 0",
+                    "Custom 1",
+                    "Custom 2",
+                    "Custom 3",
+                    "Custom 4",
+                    "Custom 5",
+                    "Custom 6",
+                    "Custom 7",
+                    "Custom 8",
+                    "Custom 9"
             };
         } catch (Exception e) {
             EventBus.getDefault().post(new SnackbarEvent(e));
@@ -79,43 +91,54 @@ public class DataToCsvFile extends Thread {
             while (!this.stopWorker) {
                 try {
                     this.ArrayOfVariables = new String[] {
-                            String.format("%.0f", Global.InputThrottle),
-                            String.format("%.0f", Global.ActualThrottle),
-                            String.format("%.2f", Global.Volts),
-                            String.format("%.2f", Global.VoltsAux),
-                            String.format("%.2f", Global.Amps),
-                            String.format("%.2f", Global.AmpHours),
-                            String.format("%.0f", Global.MotorRPM),
-                            String.format("%.1f", Global.SpeedMPS),
-                            String.format("%.3f", Global.DistanceMeters),
-                            String.format("%.1f", Global.TempC1),
-                            String.format("%.1f", Global.TempC2),
-                            String.format("%.3f", Global.GearRatio),
-                            String.format("%d", Global.Gear),
-                            String.format("%d", Global.IdealGear),
-                            String.format("%.2f", Global.WattHoursPerMeter * 1000),
-                            String.format("%.0f", Global.SteeringAngle),
-                            String.format("%d", Global.Brake),
-                            String.format("%d", Global.FanStatus),
-                            String.format("%.0f", Global.FanDuty),
+                            String.format(Locale.ENGLISH,"%.0f", Global.InputThrottle),
+                            String.format(Locale.ENGLISH,"%.0f", Global.ActualThrottle),
+                            String.format(Locale.ENGLISH,"%.2f", Global.Volts),
+                            String.format(Locale.ENGLISH,"%.2f", Global.VoltsAux),
+                            String.format(Locale.ENGLISH,"%.2f", Global.Amps),
+                            String.format(Locale.ENGLISH,"%.2f", Global.AmpHours),
+                            String.format(Locale.ENGLISH,"%.0f", Global.MotorRPM),
+                            String.format(Locale.ENGLISH,"%.1f", Global.SpeedMPS),
+                            String.format(Locale.ENGLISH,"%.3f", Global.DistanceMeters),
+                            String.format(Locale.ENGLISH,"%.1f", Global.TempC1),
+                            String.format(Locale.ENGLISH,"%.1f", Global.TempC2),
+                            String.format(Locale.ENGLISH,"%.3f", Global.GearRatio),
+                            String.format(Locale.ENGLISH,"%d", Global.Gear),
+                            String.format(Locale.ENGLISH,"%d", Global.IdealGear),
+                            String.format(Locale.ENGLISH,"%.2f", Global.WattHoursPerMeter * 1000),
+                            String.format(Locale.ENGLISH,"%.0f", Global.SteeringAngle),
+                            String.format(Locale.ENGLISH,"%d", Global.Brake),
+                            String.format(Locale.ENGLISH,"%d", Global.FanStatus),
+                            String.format(Locale.ENGLISH,"%.0f", Global.FanDuty),
 
-                            String.format("%.6f", Global.Latitude),
-                            String.format("%.6f", Global.Longitude),
-                            String.format("%.1f", Global.Altitude),
-                            String.format("%.1f", Global.Bearing),
-                            String.format("%.1f", Global.SpeedGPS),
-                            String.format("%.1f", Global.GPSTime),
-                            String.format("%.1f", Global.GPSAccuracy),
-                            String.format("%d", Global.Lap),
+                            String.format(Locale.ENGLISH,"%.6f", Global.Latitude),
+                            String.format(Locale.ENGLISH,"%.6f", Global.Longitude),
+                            String.format(Locale.ENGLISH,"%.1f", Global.Altitude),
+                            String.format(Locale.ENGLISH,"%.1f", Global.Bearing),
+                            String.format(Locale.ENGLISH,"%.1f", Global.SpeedGPS),
+                            String.format(Locale.ENGLISH,"%.1f", Global.GPSTime),
+                            String.format(Locale.ENGLISH,"%.1f", Global.GPSAccuracy),
+                            String.format(Locale.ENGLISH,"%d", Global.Lap),
                             Global.CarName,
                             Global.Mode.toString(),
                             Global.BTState.toString(),
 
-                            String.format("%.0f", Global.StartFinishLineBearing),
-                            String.format("%.0f", Global.BearingFromObserverToCar),
-                            String.format("%.1f", Global.SlopeGradient),
-                            String.format("%.1f", Global.PerformanceMetric),
-                            String.format("%d", Global.MangledDataCount)
+                            String.format(Locale.ENGLISH,"%.0f", Global.StartFinishLineBearing),
+                            String.format(Locale.ENGLISH,"%.0f", Global.BearingFromObserverToCar),
+                            String.format(Locale.ENGLISH,"%.1f", Global.SlopeGradient),
+                            String.format(Locale.ENGLISH,"%.1f", Global.PerformanceMetric),
+                            String.format(Locale.ENGLISH,"%d", Global.MangledDataCount),
+
+                            String.format(Locale.ENGLISH,"%.3f", Global.Custom0),
+                            String.format(Locale.ENGLISH,"%.3f", Global.Custom1),
+                            String.format(Locale.ENGLISH,"%.3f", Global.Custom2),
+                            String.format(Locale.ENGLISH,"%.3f", Global.Custom3),
+                            String.format(Locale.ENGLISH,"%.3f", Global.Custom4),
+                            String.format(Locale.ENGLISH,"%.3f", Global.Custom5),
+                            String.format(Locale.ENGLISH,"%.3f", Global.Custom6),
+                            String.format(Locale.ENGLISH,"%.3f", Global.Custom7),
+                            String.format(Locale.ENGLISH,"%.3f", Global.Custom8),
+                            String.format(Locale.ENGLISH,"%.3f", Global.Custom9)
                     };
 
                     WriteToFile(GetLatestDataAsString());
@@ -157,19 +180,19 @@ public class DataToCsvFile extends Thread {
      * @return a string formatted as "timestamp,x,y,z,..."
      */
     private String GetLatestDataAsString() {
-        String data_string = String.valueOf(System.currentTimeMillis()) + ",";
+        StringBuilder data_string = new StringBuilder(System.currentTimeMillis() + ",");
 
         for (String value : this.ArrayOfVariables) {
-            data_string += value + ",";
+            data_string.append(value).append(",");
         }
 
         //remove last comma
-        data_string = data_string.substring(0, data_string.length() - 1);
+        data_string = new StringBuilder(data_string.substring(0, data_string.length() - 1));
 
         // add newline
-        data_string += "\n";
+        data_string.append("\n");
 
-        return data_string;
+        return data_string.toString();
     }
 
     private void WriteToFile(String data) {
@@ -182,18 +205,18 @@ public class DataToCsvFile extends Thread {
 					/* 	|	timestamp	|	t 	| 	v	|	i	|  ...	|
 						|				|		|		|		|		|
 					*/
-                    String headers = "timestamp,";
+                    StringBuilder headers = new StringBuilder("timestamp,");
                     for (int i = 0; i <= this.variable_identifiers.length - 1; i++) {
-                        headers += variable_identifiers[i] + ",";
+                        headers.append(variable_identifiers[i]).append(",");
                     }
                     // remove the last comma
-                    headers = headers.substring(0, headers.length() - 1);
+                    headers = new StringBuilder(headers.substring(0, headers.length() - 1));
 
                     // add newline
-                    headers += "\n";
+                    headers.append("\n");
 
                     // write to file
-                    oStream.write(headers.getBytes());
+                    oStream.write(headers.toString().getBytes());
 
                     resetValues();
                 }
@@ -223,7 +246,9 @@ public class DataToCsvFile extends Thread {
     public void cancel() {
         this.stopWorker = true;
         try {
-            oStream.close();
+            if (oStream != null) {
+                oStream.close();
+            }
         } catch (Exception e) {
             EventBus.getDefault().post(new SnackbarEvent(e));
             e.printStackTrace();

@@ -2,18 +2,20 @@
 			 xmlns:tools="http://schemas.android.com/tools"
 			 android:layout_width="match_parent"
 			 android:layout_height="match_parent"
-			 tools:context="com.ben.drivenbluetooth.fragments.RaceMapFragment">
+			 tools:context="com.ben.drivenbluetooth.fragments.RaceMapFragment"
+	 		 android:background="#F9F9F9"
+	android:elevation="2dp">
 
-	<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-			  android:name="com.google.android.gms.maps.MapFragment"
-			  android:id="@+id/map"
-			  android:layout_width="match_parent"
-			  android:layout_height="match_parent"
-			  android:layout_alignParentLeft="true"
-			  android:layout_marginLeft="0dp"
-			  android:layout_alignParentTop="true"
-			  android:layout_marginTop="0dp"
-			  android:layout_above="@+id/rpm"/>
+	<fragment
+		android:name="com.google.android.gms.maps.MapFragment"
+		android:id="@+id/map"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_alignParentLeft="true"
+		android:layout_marginLeft="0dp"
+		android:layout_alignParentTop="true"
+		android:layout_marginTop="0dp"
+		android:layout_above="@+id/rpm"/>
 
 	<TextView
 		android:layout_width="@dimen/view4_field_width"

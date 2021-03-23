@@ -1,7 +1,7 @@
 package com.ben.drivenbluetooth.util;
 
 import android.graphics.Path;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
 

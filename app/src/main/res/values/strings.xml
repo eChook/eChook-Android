@@ -1,6 +1,30 @@
 <resources>
-    <string name="app_name">eChook Companion</string>
-    <string name="google_maps_api_key">AIzaSyBpcKddfAxD9ESmg4lLPLOmbzguagX5_pY</string>
+    <string name="app_name">eChook</string>
+    <string name="race">RACE</string>
+    <string name="_00_00">00:00</string>
+    <string name="arduino_csv">arduino.csv</string>
+    <string name="double_hash">##</string>
+    <string name="btdevice_vehicle">BTDEVICE :: VEHICLE</string>
+    <string name="_4">4</string>
+    <string name="gear">GEAR</string>
+    <string name="TimerPlaceholder">##:##</string>
+    <string name="PlaceholderFileSize">##kb</string>
+    <string name="loggingLabel">Logging:</string>
+    <string name="logging_status_indicator">Logging Status Indicator</string>
+    <string name="shift_indicator_sprite">Shift Indicator Sprite</string>
+    <string name="bluetooth_status_indicator_sprite">Bluetooth Status Indicator Sprite</string>
+    <string name="log_status_indicator_sprite">Log Status Indicator Sprite</string>
+    <string name="bluetooth_symbol_sprite">Bluetooth Symbol Sprite</string>
+    <string name="voltage">Voltage</string>
+    <string name="last_lap">Last Lap</string>
+    <string name="placeholder">---</string>
+    <string name="lastLapPlaceholder">(---)</string>
+    <string name="current">Current</string>
+    <string name="oneDpPlaceholder">##.#</string>
+    <string name="rpm">RPM</string>
+    <string name="FourDigitPlaceholder">####</string>
+    <string name="ahPlaceholder">##.## Ah</string>
+    <string name="wh_km_placeholder">##.## Wh/km</string>
+    <string name="speed">Speed</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
 </resources>

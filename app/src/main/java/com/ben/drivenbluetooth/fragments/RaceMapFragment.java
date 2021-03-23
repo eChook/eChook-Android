@@ -1,8 +1,10 @@
 package com.ben.drivenbluetooth.fragments;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
@@ -19,7 +21,7 @@ import com.ben.drivenbluetooth.R;
 import com.ben.drivenbluetooth.events.ArduinoEvent;
 import com.ben.drivenbluetooth.events.SnackbarEvent;
 import com.ben.drivenbluetooth.util.Bezier;
-import com.ben.drivenbluetooth.util.DrivenLocation;
+import com.ben.drivenbluetooth.util.LocationMonitor;
 import com.ben.drivenbluetooth.util.RaceObserver;
 import com.ben.drivenbluetooth.util.UnitHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,14 +44,16 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.core.app.ActivityCompat;
+
 public class RaceMapFragment extends Fragment
-        implements 	OnMapReadyCallback,
+        implements OnMapReadyCallback,
         GoogleMap.OnMapClickListener,
-        GoogleMap.OnInfoWindowClickListener
-{
+        GoogleMap.OnInfoWindowClickListener {
     private static Timer FragmentUpdateTimer;
     private GoogleMap map;
     private MapFragment mFragment;
@@ -66,7 +70,7 @@ public class RaceMapFragment extends Fragment
     private Polyline ObserverToCarLine;
     private Circle ObserverLocation;
 
-    private DrivenLocation myDrivenLocation;
+    private LocationMonitor myLocationMonitor;
 
     /*===================*/
 	/* RACEMAPFRAGMENT
@@ -75,8 +79,8 @@ public class RaceMapFragment extends Fragment
         // Required empty public constructor
     }
 
-    public void initialize(DrivenLocation dl) {
-        myDrivenLocation = dl;
+    public void initialize(LocationMonitor dl) {
+        myLocationMonitor = dl;
     }
 
     /*===================*/
@@ -84,15 +88,15 @@ public class RaceMapFragment extends Fragment
 	/*===================*/
     private void InitializeDataFields() {
         View v = getView();
-        Current 		= v.findViewById(R.id.current);
-        Voltage 		= v.findViewById(R.id.voltage);
-        RPM 			= v.findViewById(R.id.rpm);
-        Speed 			= v.findViewById(R.id.speed);
-        AmpHours		= v.findViewById(R.id.ampHours);
+        Current = v.findViewById(R.id.current);
+        Voltage = v.findViewById(R.id.voltage);
+        RPM = v.findViewById(R.id.rpm);
+        Speed = v.findViewById(R.id.speed);
+        AmpHours = v.findViewById(R.id.ampHours);
 
-        CurBearing		= v.findViewById(R.id.txtCurBearing);
-        SFLBearing		= v.findViewById(R.id.txtSFLBearing);
-        Accuracy		= v.findViewById(R.id.txtAccuracy);
+        CurBearing = v.findViewById(R.id.txtCurBearing);
+        SFLBearing = v.findViewById(R.id.txtSFLBearing);
+        Accuracy = v.findViewById(R.id.txtAccuracy);
     }
 
     private void InitializeMap(GoogleMap googleMap) {
@@ -197,7 +201,7 @@ e.printStackTrace();
     private void GetObserver() {
         if (ObserverLocation != null) {
             try {
-                ObserverLocation = map.addCircle(myDrivenLocation.ObserverLocation);
+                ObserverLocation = map.addCircle(myLocationMonitor.ObserverLocation);
             } catch (NullPointerException ignored) {}
         }
     }
@@ -226,17 +230,17 @@ e.printStackTrace();
         builder.setMessage("Track orientation");
         builder.setPositiveButton("Clockwise", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                myDrivenLocation.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.CLOCKWISE);
-                myDrivenLocation.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.CLOCKWISE);
+                myLocationMonitor.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.CLOCKWISE);
+                myLocationMonitor.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.CLOCKWISE);
                 map.clear();
-                ObserverLocation = map.addCircle(myDrivenLocation.ObserverLocation);
+                ObserverLocation = map.addCircle(myLocationMonitor.ObserverLocation);
             }
         });
         builder.setNegativeButton("Anticlockwise", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                myDrivenLocation.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.ANTICLOCKWISE);
+                myLocationMonitor.setMyRaceObserverLocation(loc, RaceObserver.ORIENTATION.ANTICLOCKWISE);
                 map.clear();
-                ObserverLocation = map.addCircle(myDrivenLocation.ObserverLocation);
+                ObserverLocation = map.addCircle(myLocationMonitor.ObserverLocation);
             }
         });
         builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
@@ -277,10 +281,10 @@ e.printStackTrace();
 	/* FRAGMENT UPDATING
 	/*===================*/
     public void UpdateFragmentUI() {
-        Voltage.setText(String.format("%.2f", Global.Volts) + " V");
-        Current.setText(String.format("%.1f", Global.Amps) + " A");
-        AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
-        RPM.setText(String.format("%.0f", Global.MotorRPM) + " RPM");
+        Voltage.setText(String.format(Locale.ENGLISH,"%.2f", Global.Volts) + " V");
+        Current.setText(String.format(Locale.ENGLISH,"%.1f", Global.Amps) + " A");
+        AmpHours.setText(String.format(Locale.ENGLISH,"%.2f", Global.AmpHours) + " Ah");
+        RPM.setText(String.format(Locale.ENGLISH,"%.0f", Global.MotorRPM) + " RPM");
     }
 
     private void UpdateMap() {
@@ -288,23 +292,23 @@ e.printStackTrace();
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(Global.Latitude, Global.Longitude))
                     .zoom(16)                   // Sets the zoom
-                    .bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
+//                    .bearing(Global.Bearing.floatValue())                // Sets the orientation of the camera to east
                     //.tilt(30)                   // Sets the tilt of the camera to 30 degrees
                     .build();
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
             if (pathHistory != null) {
-//                pathHistory.setPoints(myDrivenLocation.pathHistory.getPoints());
+//                pathHistory.setPoints(myLocationMonitor.pathHistory.getPoints());
             }
 
             // debugger lines
-            if (ObserverLocation != null && myDrivenLocation.getCurrentLocation() != null) {
+            if (ObserverLocation != null && myLocationMonitor.getCurrentLocation() != null) {
                 ObserverToCarLine.setPoints(new ArrayList<>(
                         Arrays.asList(
                                 ObserverLocation.getCenter(),
                                 new LatLng(
-                                        myDrivenLocation.getCurrentLocation().getLatitude(),
-                                        myDrivenLocation.getCurrentLocation().getLongitude()
+                                        myLocationMonitor.getCurrentLocation().getLatitude(),
+                                        myLocationMonitor.getCurrentLocation().getLongitude()
                                 )
                         )
                 ));
@@ -323,7 +327,7 @@ e.printStackTrace();
             }
 
             try {
-                ObserverLocation.setCenter(myDrivenLocation.ObserverLocation.getCenter());
+                ObserverLocation.setCenter(myLocationMonitor.ObserverLocation.getCenter());
             } catch (NullPointerException ignored) {
             }            // Observerlocation has not been initialized yet so do nothing
 
@@ -343,19 +347,19 @@ e.printStackTrace();
             switch (event.eventType) {
 
                 case Volts:
-                    Voltage.setText(String.format("%.2f", Global.Volts) + " V");
+                    Voltage.setText(String.format(Locale.ENGLISH,"%.2f", Global.Volts) + " V");
                     break;
                 case Amps:
-                    Current.setText(String.format("%.1f", Global.Amps) + " A");
+                    Current.setText(String.format(Locale.ENGLISH,"%.1f", Global.Amps) + " A");
                     break;
                 case AmpHours:
-                    AmpHours.setText(String.format("%.2f", Global.AmpHours) + " Ah");
+                    AmpHours.setText(String.format(Locale.ENGLISH,"%.2f", Global.AmpHours) + " Ah");
                     break;
                 case WheelSpeedMPS:
-                    Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.Unit));
+                    Speed.setText(UnitHelper.getSpeedText(Global.SpeedMPS, Global.SpeedUnit));
                     break;
                 case MotorSpeedRPM:
-                    RPM.setText(String.format("%.0f", Global.MotorRPM) + " RPM");
+                    RPM.setText(String.format(Locale.ENGLISH,"%.0f", Global.MotorRPM) + " RPM");
                     break;
             }
         } catch (Exception e) {
@@ -364,9 +368,9 @@ e.printStackTrace();
     }
 
     private void UpdateMapText() {
-        CurBearing.setText("car: " + String.format("%.1f", myDrivenLocation.GetRaceObserverBearing_Current()));
-        SFLBearing.setText("sfl: " + String.format("%.1f", myDrivenLocation.GetRaceObserverBearing_SFL()));
-        Accuracy.setText("acc: " + String.format("%.1f", Global.GPSAccuracy));
+        CurBearing.setText("car: " + String.format(Locale.ENGLISH,"%.1f", myLocationMonitor.GetRaceObserverBearing_Current()));
+        SFLBearing.setText("sfl: " + String.format(Locale.ENGLISH,"%.1f", myLocationMonitor.GetRaceObserverBearing_SFL()));
+        Accuracy.setText("acc: " + String.format(Locale.ENGLISH,"%.1f", Global.GPSAccuracy));
     }
 
     private void StartFragmentUpdater() {

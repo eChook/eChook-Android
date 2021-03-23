@@ -2,6 +2,8 @@ package com.ben.drivenbluetooth.util;
 
 import com.ben.drivenbluetooth.Global;
 
+import java.util.Locale;
+
 /**
  * Created by BNAGY4 on 12/10/2016.
  */
@@ -36,19 +38,19 @@ public final class UnitHelper {
         speedMPS = getSpeed(speedMPS, unit);
         switch (unit) {
             case MPH:
-                retString = String.format("%.0f mph", speedMPS);
+                retString = String.format(Locale.ENGLISH,"%.0f mph", speedMPS);
                 break;
             case KPH:
-                retString = String.format("%.0f kph", speedMPS);
+                retString = String.format(Locale.ENGLISH,"%.0f kph", speedMPS);
                 break;
             case MPS:
-                retString = String.format("%.0f m/s", speedMPS);
+                retString = String.format(Locale.ENGLISH,"%.0f m/s", speedMPS);
                 break;
             case FFF:
-                retString = String.format("%.0f kFl/Fn", speedMPS / 1000);
+                retString = String.format(Locale.ENGLISH,"%.0f kFl/Fn", speedMPS / 1000);
                 break;
             case KNOT:
-                retString = String.format("%.0f kts", speedMPS);
+                retString = String.format(Locale.ENGLISH,"%.0f kts", speedMPS);
                 break;
         }
 

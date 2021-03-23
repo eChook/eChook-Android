@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="throttle">#000000</color>
-	<color name="volts">#33b5e5</color>
-	<color name="amps">#F5D76E</color>
-	<color name="rpm">#96281b</color>
-	<color name="speed">#674172</color>
-	<color name="temperature">#1e824c</color>
     <color name="negative">#b71c1c</color>
     <color name="neutral">#ffab00</color>
     <color name="positive">#558b2f</color>
     <color name="bt_connect">#1e88e5</color>
-    <color name="bt_disconnect">#94b6d4</color>
-    <color name="settings">#757575</color>
+    <color name="settings">#78CAD2</color>
     <color name="cycle">#f57f17</color>
     <color name="play">#64dd17</color>
     <color name="pause">#e53935</color>
     <color name="launchmode">#cce573</color>
+    <color name="grey">#7E8287</color>
+    <color name="amber">#EC7D10</color>
+    <color name="green">#81C14B</color>
 </resources>

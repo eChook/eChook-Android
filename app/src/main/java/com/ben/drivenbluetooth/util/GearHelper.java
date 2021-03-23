@@ -85,9 +85,7 @@ public final class GearHelper {
             double estimatedRPM = exactRatios.get(i) / gearRatio * motorRPM;
             if (Math.abs(TARGET_RPM - estimatedRPM) < deltaToTargetRPM) {
                 Global.IdealGear = i + 1;
-                if (i < CurrentGear - 1) return -1;
-                else if (i > CurrentGear - 1) return 1;
-                else return 0;
+                return Integer.compare(i, CurrentGear - 1);
             }
         }
         return 0;

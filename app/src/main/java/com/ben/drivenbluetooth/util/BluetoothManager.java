@@ -54,10 +54,10 @@ public final class BluetoothManager {
 
         if(!mBluetoothAdapter.isEnabled()) {
             mListener.onBluetoothDisabled();
-			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); // Why are we redefining it here?
 
 			if(!mBluetoothAdapter.isEnabled()) {
-				EventBus.getDefault().post(new SnackbarEvent("Bluetooth adapter not enabled"));
+				EventBus.getDefault().post(new SnackbarEvent("Bluetooth is turned off - Please enable bluetooth"));
 				return;
 			}
         }
@@ -78,19 +78,21 @@ public final class BluetoothManager {
 		EventBus.getDefault().post(new SnackbarEvent(Global.BTDeviceName + " is not paired with this phone. Please open Settings and pair the device first"));
     }
 
-    /** Attempts to open a connection to the Bluetooth device by using a background thread.
-     *
-     * @param wait  If set to true, this function will block until the background thread finishes. This is used for the Bluetooth reconnect routine if the connection fails during a race
-     */
-    public void openBT(boolean wait) {
+    /**
+	 * Attempts to open a connection to the Bluetooth device by using a background thread.
+	 *
+	 * @param wait If set to true, this function will block until the background thread finishes. This is used for the Bluetooth reconnect routine if the connection fails during a race
+	 */
+
+	public void openBT(boolean wait) {
 		if (matchingDeviceFound && !isConnecting) {
 			Global.BTState = Global.BTSTATE.CONNECTING;
-            if (wait) {
-                // usually wait is only true when we are in a reconnect loop...
-                mListener.onBluetoothReconnecting();
-            } else {
-                mListener.onBluetoothConnecting();
-            }
+			if (wait) {
+				// usually wait is only true when we are in a reconnect loop...
+				mListener.onBluetoothReconnecting();
+			} else {
+				mListener.onBluetoothConnecting();
+			}
 			Thread connectToBTDevice = new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -133,7 +135,7 @@ public final class BluetoothManager {
 
     /** Closes the Bluetooth connection if open
      *
-     * @throws IOException
+	 *  throws IOException
      */
     public void closeBT() throws IOException {
 		if (Global.BTState != Global.BTSTATE.DISCONNECTED) {

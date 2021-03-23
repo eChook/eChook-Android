@@ -2,6 +2,9 @@ package com.ben.drivenbluetooth.threads;
 
 import com.ben.drivenbluetooth.Global;
 import com.ben.drivenbluetooth.MainActivity;
+import com.ben.drivenbluetooth.events.RaceStartEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class RaceStartMonitor extends Thread {
 	private volatile boolean stop = false;
@@ -30,6 +33,7 @@ public class RaceStartMonitor extends Thread {
 						_fireThrottleMaxEvent();
 					}
 				});
+                EventBus.getDefault().post(new RaceStartEvent());
 				this.cancel();
 			}
 			try {
