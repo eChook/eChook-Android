@@ -119,7 +119,7 @@
                 android:layout_centerVertical="true"
                 android:layout_margin="50dp"
                 android:textAlignment="center"
-                android:text="If you are stuck on this screen and can't load settings, please force close and re launch the app. If this doesn't fix it exit the app, go to the main Android settings > apps > eChook > Storage and clear the cache\n\nApologies for the bug, we're working on it!"/>
+                android:text="If you are stuck on this screen and can't load settings here are three fixes to try: \n 1. Take a screenshot (Forces a screen refresh) \n 2. Force close and re launch the app. \n 3.Clear the cache.\n\nApologies for the bug, we're working on it!"/>
 
         </RelativeLayout>
 

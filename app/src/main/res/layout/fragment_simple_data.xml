@@ -73,7 +73,7 @@
             android:gravity="center"
             android:inputType="none"
             android:singleLine="false"
-            android:text="---"
+            android:text=""
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -88,7 +88,7 @@
             android:gravity="center"
             android:inputType="none"
             android:singleLine="false"
-            android:text="(---)"
+            android:text=""
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -153,7 +153,7 @@
             android:gravity="center"
             android:inputType="none"
             android:singleLine="false"
-            android:text="---"
+            android:text=""
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -168,7 +168,7 @@
             android:gravity="center"
             android:inputType="none"
             android:singleLine="false"
-            android:text="(---)"
+            android:text=""
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -234,7 +234,7 @@
             android:gravity="center"
             android:inputType="none"
             android:singleLine="false"
-            android:text="---"
+            android:text=""
             android:textAlignment="center"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -250,7 +250,7 @@
             android:gravity="center"
             android:inputType="none"
             android:singleLine="false"
-            android:text="(---)"
+            android:text=""
             android:textAlignment="center"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -381,7 +381,7 @@
             android:gravity="center"
             android:inputType="none"
             android:singleLine="false"
-            android:text="---"
+            android:text=""
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -396,7 +396,7 @@
             android:gravity="center"
             android:inputType="none"
             android:singleLine="false"
-            android:text="(---)"
+            android:text=""
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

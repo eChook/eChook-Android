@@ -131,11 +131,8 @@ public final class Global {
     public static LOCATION LocationStatus;
     public static boolean dispalyGpsSpeed;
     public static ACCELEROMETER Accelerometer;
-//    public static THROTTLEMODE ThrottleMode;
 
     public static String BTDeviceName;
-    public static boolean EnableGraphs = true;
-//	public static Double BatteryCapacityAh;
 
     public static List<String> BTDeviceNames = new ArrayList<>(248); //248 is the maximum number of devices it is possible to bond
     public static boolean dweetEnabled = false;

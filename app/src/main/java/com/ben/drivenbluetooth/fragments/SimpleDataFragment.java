@@ -2,6 +2,7 @@ package com.ben.drivenbluetooth.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,11 @@ public class SimpleDataFragment extends Fragment {
     private TextView DiffRPM;
     private TextView DiffSpeed;
 
+    // Last Lap and Diff values
+	int voltageLl, currentLl, rpmLl, SpeedLl, voltageLlDiff, currentLlDiff, rpmLlDiff, SpeedLlDiff;
+
+
+    String TAG = "SDF";
 	/*===================*/
 	/* FOURGRAPHSBARS
 	/*===================*/
@@ -114,6 +120,7 @@ public class SimpleDataFragment extends Fragment {
 		UpdateSpeed();
 		UpdateMotorRPM();
 		UpdateWattHours();
+		UpdateLap();
 	}
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -144,7 +151,7 @@ public class SimpleDataFragment extends Fragment {
             }
         } catch (Exception e) {
             EventBus.getDefault().post(new SnackbarEvent(e));
-e.printStackTrace();
+			e.printStackTrace();
         }
     }
 
@@ -200,28 +207,28 @@ e.printStackTrace();
 	}
 
     private void UpdateLap() {
-        if (Global.Lap > 2) { //have data to calc diff
-            double tempDiff = Double.valueOf(LapVolts.getText().toString()) - Global.LapDataList.get(Global.Lap - 1).getAverageVolts();
-            DiffVolts.setText(String.format(Locale.ENGLISH, "(%.2f)", tempDiff));
-            LapVolts.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(Global.Lap - 1).getAverageVolts()));
+		int lapDataIndex = Global.LapDataList.size() -2; // -1 is current lap, -2 is last lap, -3 is lap before last
+        if (Global.LapDataList.size() > 2) { //have data to calc diff
+            double tempDiff;
+			tempDiff = Global.LapDataList.get(lapDataIndex-1).getAverageVolts() - Global.LapDataList.get(lapDataIndex).getAverageVolts();
+			DiffVolts.setText(String.format(Locale.ENGLISH, "(%.2f)", tempDiff));
 
-            tempDiff = Double.valueOf(LapAmps.getText().toString()) - Global.LapDataList.get(Global.Lap - 1).getAverageAmps();
+            tempDiff = Global.LapDataList.get(lapDataIndex-1).getAverageAmps() - Global.LapDataList.get(lapDataIndex).getAverageAmps();
             DiffAmps.setText(String.format(Locale.ENGLISH, "(%.2f)", tempDiff));
-            LapAmps.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(Global.Lap - 1).getAverageAmps()));
 
-            tempDiff = Double.valueOf(LapRPM.getText().toString()) - Global.LapDataList.get(Global.Lap - 1).getAverageRPM();
+            tempDiff = Global.LapDataList.get(lapDataIndex-1).getAverageRPM() - Global.LapDataList.get(lapDataIndex).getAverageRPM();
             DiffRPM.setText(String.format(Locale.ENGLISH, "(%.0f)", tempDiff));
 
-            tempDiff = Double.valueOf(LapVolts.getText().toString()) - Global.LapDataList.get(Global.Lap - 1).getAverageSpeed();
+            tempDiff = Global.LapDataList.get(lapDataIndex-1).getAverageSpeed() - Global.LapDataList.get(lapDataIndex).getAverageSpeed();
             DiffSpeed.setText(String.format(Locale.ENGLISH, "(%.2f)", tempDiff));
 
         }
 
-        if (Global.Lap > 1) { // have data to fill last lap
-            LapVolts.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(Global.Lap - 1).getAverageVolts()));
-            LapAmps.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(Global.Lap - 1).getAverageAmps()));
-            LapRPM.setText(String.format(Locale.ENGLISH, "%.0f", Global.LapDataList.get(Global.Lap - 1).getAverageRPM()));
-            LapSpeed.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(Global.Lap - 1).getAverageSpeed()));
+        if (Global.LapDataList.size() > 1) { // have data to fill last lap
+            LapVolts.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(lapDataIndex).getAverageVolts()));
+            LapAmps.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(lapDataIndex).getAverageAmps()));
+            LapRPM.setText(String.format(Locale.ENGLISH, "%.0f", Global.LapDataList.get(lapDataIndex).getAverageRPM()));
+            LapSpeed.setText(String.format(Locale.ENGLISH, "%.2f", Global.LapDataList.get(lapDataIndex).getAverageSpeed()));
         }
     }
 

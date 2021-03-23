@@ -93,6 +93,7 @@ public class MainActivity
     private TextView LapNumber;
     private Context context;
     private View SnackbarPosition;
+    private NewLapEvent e;
 
     /* ========= */
     /* LIFECYCLE */
@@ -955,6 +956,7 @@ public class MainActivity
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLocationEvent(NewLapEvent e) {
+        this.e = e;
         UpdateLap();
     }
 
